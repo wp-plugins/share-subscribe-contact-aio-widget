@@ -1,0 +1,75 @@
+#free_profitquery p {font-family: Arial, sans-serif; font-size: 16px; color: #A2A2A2;}
+#free_profitquery.container-fluid {text-align: center; max-width: 840px; background: white; margin-top: 0px;}
+#free_profitquery h4 {font-family: pt sans narrow; font-size: 46px!important; color: #3F3F3F!important; padding-bottom: 3px;}
+#free_profitquery h5 {font-family: pt sans narrow; font-size: 30px; color: #5F5F5F; margin-top: 17px; padding: 0 20px;}
+#free_profitquery .more h5 {font-size: 24px;}
+#free_profitquery .panel-heading {position: relative;}
+.pq_tooltip, .x30 .pq_tooltip {background: url(../images/tooltip.png); width: 17px; height: 17px; position: absolute!important; left: 8%;}
+#free_profitquery .panel-heading:hover .pq_settings {background: url(../images/settings_hover.png);}
+#free_profitquery #accordion .panel-heading:hover h4 {text-decoration: none!important;}
+#free_profitquery .panel-heading {box-shadow: 0 2px 1px grey;}
+#free_profitquery h3 {font-family: pt sans narrow; font-size: 18px;}
+#free_profitquery .bootstrap-switch>.bootstrap-switch {border: none;}
+#free_profitquery .btn_big_red {background: red;  color: white;  font-family: pt sans narrow;  font-size: 25px; border-radius: 3px; padding: 8px 57px; display: block;  margin: 0 auto; width: inherit!important;}
+#free_profitquery .btn_big_red:hover {background: rgb(203, 3, 3);  color: white;}
+#free_profitquery .btn_m_red {background: red;  color: white;  font-family: pt sans narrow;  font-size: 19px; border-radius: 3px; padding: 5px 45px 8px; display: block;  margin: 0 auto; width: initial!important;}
+#free_profitquery .btn_m_red:hover {background: rgb(203, 3, 3);  color: white;}
+#free_profitquery .btn-link {color: #2a6496;}
+#free_profitquery .btn-m {font-size: 15px; color: #F4335C; border: 1px solid red; padding: 5px 20px; border-radius: 3px;}
+#free_profitquery img {max-width: 100%;}
+#free_profitquery .panel-body>.col-sm-6 {margin-top: 45px; margin-bottom: 10px;}
+#free_profitquery input, #free_profitquery select {color: #B1B1B1; font-size: 16px; border-radius: 2px; border: 1px solid rgb(176, 176, 176);}
+#free_profitquery .col-sm-6>select  {width: 100%; box-sizing: border-box; padding: 4px; display: block; border: 1px solid rgb(176, 176, 176);}
+#free_profitquery .col-sm-6>input{width: 90%; box-sizing: border-box;padding: 4px;height: 31px;}
+#free_profitquery .col-sm-6>img{display: block; margin: 0 auto;}
+#free_profitquery .col-sm-12>select{  width: 88%; box-sizing: border-box; padding: 4px; margin: 10px 0; border: 1px solid rgb(176, 176, 176);}
+#free_profitquery .col-sm-12.x30 input[type="text"]{width: 72%; box-sizing: border-box;padding: 4px; height: 31px;}
+
+#free_profitquery .col-sm-6 .btn-link {font-size: 16px; color: #F4335C;}
+#free_profitquery .col-sm-12 .btn-link, .col-sm-12+.btn-link, #collapseservices+.btn-link {font-size: 16px; color: rgb(89, 89, 89);}
+#free_profitquery .col-xs-4 {padding-top: 13px; margin-bottom: 15px;}
+#free_profitquery .col-xs-4:hover {background: white;}
+#free_profitquery .close {width: 17px; height: 17px; position: absolute!important; top: 0; right: 0; background: url(../images/close.png); opacity: 0.6;}
+#free_profitquery .close:hover {opacity: 1;}
+
+#free_profitquery .panel-body {padding: 0 15px 5px;}
+#free_profitquery .col-sm-6.icons {margin: 0;}
+
+#free_profitquery .col-sm-10 select, .col-sm-10 input, .col-sm-10 textarea {width: 100%;}
+#free_profitquery select {box-sizing: border-box; padding: 4px; display: block; border: 1px solid rgb(176, 176, 176); font-weight: normal;}
+#free_profitquery input {padding: 3px 10px;}
+#free_profitquery .col-sm-10, #free_profitquery .col-md-10, #free_profitquery .col-lg-10 {float: none; display: inline-block;}
+#free_profitquery .x30 input[type="checkbox"] {margin: 9px 1px; vertical-align: top; width: 15px;}
+#free_profitquery .more {margin:10px auto; min-height: 100px; background: #F3F3F3;  padding: 20px; position: relative;}
+#free_profitquery .more .close {width: 17px; height: 17px; position: absolute!important; top: 15px; right: 15px; background: url(../images/close_more.png); opacity: 0.6;}
+#free_profitquery .box {overflow: hidden; border-top: 1px solid lightgrey; border-bottom: 1px solid lightgrey; padding: 5px 0; width: 100%;}
+#free_profitquery .box p {display: inline-block; float: left; margin: 0; line-height: 28px;}
+#free_profitquery .box>div {display: inline-block; float: right; width: initial; height: initial;}
+#free_profitquery .x30 label {width: 15%; display: inline-block!important;}
+#free_profitquery .x30 label div {display: inline-block;}
+#free_profitquery .x30 label input {margin: 9px 4px; vertical-align: top;}
+#free_profitquery .col-sm-12.x30 label {width: initial;}
+#free_profitquery .col-sm-12.x30 label input {display: block; margin: 4px auto;}
+#free_profitquery .col-sm-12.x30 div {display: inline-block; vertical-align: middle;}
+#free_profitquery .clear {clear:both;}
+#free_profitquery label p {text-align: left; /*width: 100%; */margin: 0 auto; font-weight: normal;}
+#free_profitquery .in div {position: relative; overflow: hidden;}
+#free_profitquery .bootstrap-switch-mini {margin-top: 3px;}
+#free_profitquery .col-sm-6>.col-sm-10 label {display: block;}
+#free_profitquery .more label, .col-sm-6 label {display:block;}
+#free_profitquery label {font-weight: normal; overflow: hidden; margin-bottom: 10px;}
+#free_profitquery .items {padding:0; margin-top: 20px;}
+#free_profitquery .items>div{padding: 0 0 10px; float: none; display: inline-block; border: 1px solid lightgrey; margin-bottom:10px;}
+#free_profitquery .items h5 {font-size: 26px; color: #939393; margin:0;}
+#free_profitquery .items input[type="button"] {width: initial; margin: 20px auto 8px; text-transform: uppercase; background: transparent; color: grey;  border: 1px solid red; font-size: 14px; font-family: arial; padding: 3px 26px;}
+#free_profitquery .pro {width: 46px; height: 46px; position: absolute; top: 0; right: 0; background: url(../images/pro.png);}
+#free_profitquery .services .pq_fb, #free_profitquery .services .pq_tw, #free_profitquery .services .pq_gp, #free_profitquery .services .pq_pi, #free_profitquery .services .pq_vk, #free_profitquery .services .pq_od {display: inline-block; float: left;}
+#free_profitquery .services input[type="text"] {width: 65%; float: right; display: inline-block;}
+#free_profitquery .services p {display: inline-block; line-height: 30px; float: left; padding-left: 10px;}
+
+@media screen and (max-width: 782px) {
+#free_profitquery .col-sm-6, #free_profitquery .col-md-6 {padding: 0!important;}
+#free_profitquery #pq_input input[type="text"] {display: block; width: 100%;}
+#free_profitquery #pq_input .col-sm-10, #free_profitquery .more .col-md-10 {display: block;}
+.pq_tooltip, .x30 .pq_tooltip {display: none;}
+#free_profitquery .x30 input[type="checkbox"] {width: initial; margin: 0;}}
