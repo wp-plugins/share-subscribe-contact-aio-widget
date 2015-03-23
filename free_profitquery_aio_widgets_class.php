@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 1.0
+* @version  SVN: 1.1
 */
 
 class ProfitQuerySmartWidgetsClass
@@ -42,6 +42,8 @@ class ProfitQuerySmartWidgetsClass
     function __construct()
     {
 		$this->_options = $this->getSettings();
+		/*get Options From Old Image Sharer and delete them*/
+		$this->getOldSettings();
 		add_action( 'admin_init', array($this, 'wpbootstrap_scripts_with_jquery') );
         add_action('admin_menu', array($this, 'ProfitquerySmartWidgetsMenu'));		
 		
@@ -88,6 +90,86 @@ class ProfitQuerySmartWidgetsClass
     {
         return admin_url("options-general.php?page=" . PROFITQUERY_SMART_WIDGETS_PAGE_NAME);
     }
+	
+	function setDefaultProductData(){
+		//Other default params
+		$this->_options[sharingSideBar][disabled] = 0;				
+		$this->_options[subscribeBar][disabled] = 1;
+		$this->_options[subscribeExit][disabled] = 1;
+		$this->_options[thankPopup][disabled] = 1;
+		$this->_options[follow][disabled] = 1;
+		$this->_options[callMe][disabled] = 1;
+																		
+		$this->_options[sharingSideBar][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'LI'=>1, 'MailTo'=>1);
+		$this->_options[sharingSideBar][position] = 'pq_left pq_middle';
+		$this->_options[sharingSideBar][design][color] = 'c4';
+		$this->_options[sharingSideBar][design][size] = 'x40';
+
+		$this->_options[contactUs][disabled] = 0;
+		$this->_options[contactUs][position] = 'pq_right pq_bottom';
+		$this->_options['contactUs']['typeWindow'] = 'pq_medium';				
+		$this->_options['contactUs']['background'] = 'bg_grey';
+		$this->_options['contactUs']['button_color'] = 'btn_lightblue';				
+		$this->_options['contactUs']['title'] = 'Contact Us';
+		$this->_options['contactUs']['buttonTitle'] = 'Send';				
+		$this->_options['contactUs']['loader_background'] = 'bg_black';
+		$this->_options['contactUs']['afterProceed'][thank] = 1;
+		
+		$this->_options['thankPopup']['title'] = 'Thank You';
+		$this->_options['thankPopup']['buttonTitle'] = 'Close';
+		$this->_options['thankPopup']['background'] = 'bg_grey';
+		$this->_options['thankPopup']['img'] = 'img_10.png';								
+		
+		$this->_options[subscribeBar][background] = 'bg_grey';
+		$this->_options[subscribeBar][button_color] = 'btn_lightblue invert';
+		$this->_options[subscribeExit][background] = 'bg_grey';
+		$this->_options[subscribeExit][button_color] = 'btn_lightblue invert';
+		$this->_options[subscribeExit][typeWindow] = 'pq_medium';
+		
+		$this->_options['adminEmail'] = get_settings('admin_email');
+		$this->_options[aio_widgets_loaded] = 1;
+		update_option('profitquery', $this->_options);
+	}	
+	
+	function getOldSettings(){
+		$oldImageOptions = get_option('free_pq_image_sharer_option');
+		
+		//IF non apiKey and Non old image sharer
+		if(!$this->_options[apiKey]){
+			if($oldImageOptions[apiKey]){
+				$this->_options[apiKey] = $oldImageOptions[apiKey];
+				$this->_options[aio_widgets_loaded] = 1;
+				$this->_options[imageSharer][disabled] = 0;
+				$this->_options[imageSharer][socnet] = $oldImageOptions['social_network'];
+				$this->_options[imageSharer][design][form] = $oldImageOptions['type_design'];
+				$this->_options[imageSharer][design][size] = 'x30';
+				$this->_options[imageSharer][design][color] = $oldImageOptions['type_color'];
+				$this->_options[imageSharer][design][shadow] = $oldImageOptions['type_background'];
+				$this->_options[imageSharer][position] = $oldImageOptions['type_inline'];
+				if((int)$oldImageOptions['min_share_image_width_size'] > 0)
+					$this->_options[imageSharer][minWidth] = (int)$oldImageOptions['min_share_image_width_size'];
+				else
+					$this->_options[imageSharer][minWidth] = 100;
+				
+				update_option('profitquery', $this->_options);
+				update_option('free_pq_image_sharer_option', array());
+				
+				$this->setDefaultProductData();
+			}
+		//IF not yet Loaded
+		} else if((int)$this->_options[aio_widgets_loaded] == 0) {
+			//DEFAULT OPTIONS
+			$this->_options[imageSharer][disabled] = 0;
+			$this->_options[imageSharer][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'PI'=>1);				
+			$this->_options[imageSharer][design][color] = 'c4';
+			$this->_options[imageSharer][design][size] = 'x30';
+			$this->_options[imageSharer][design][shadow] = 'sh6';
+			$this->_options[imageSharer][minWidth] = 100;
+			update_option('profitquery', $this->_options);
+			
+			$this ->setDefaultProductData();
+		}
+	}
 	
 	/**
      *  Get LitePQ Share Image settings array
@@ -456,60 +538,20 @@ class ProfitQuerySmartWidgetsClass
 		
 		//save api key
 		if(trim($_POST[apiKey]) != '' || trim($_GET[apiKey]) != ''){
+			if(trim($_POST[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_POST[apiKey]);
+			if(trim($_GET[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_GET[apiKey]);
 			if(!trim($this->_options['apiKey'])){
 				//DEFAULT OPTIONS
 				$this->_options[imageSharer][disabled] = 0;
-				$this->_options[sharingSideBar][disabled] = 0;
-				
-				$this->_options[subscribeBar][disabled] = 1;
-				$this->_options[subscribeExit][disabled] = 1;
-				$this->_options[thankPopup][disabled] = 1;
-				$this->_options[follow][disabled] = 1;
-				$this->_options[callMe][disabled] = 1;
-								
-				
 				$this->_options[imageSharer][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'PI'=>1);				
 				$this->_options[imageSharer][design][color] = 'c4';
 				$this->_options[imageSharer][design][size] = 'x30';
 				$this->_options[imageSharer][design][shadow] = 'sh6';
 				$this->_options[imageSharer][minWidth] = 100;
+				update_option('profitquery', $this->_options);
 				
-				$this->_options[sharingSideBar][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'LI'=>1, 'MailTo'=>1);
-				$this->_options[sharingSideBar][position] = 'pq_left pq_middle';
-				$this->_options[sharingSideBar][design][color] = 'c4';
-				$this->_options[sharingSideBar][design][size] = 'x40';
-
-				$this->_options[contactUs][disabled] = 0;
-				$this->_options[contactUs][position] = 'pq_right pq_bottom';
-				$this->_options['contactUs']['typeWindow'] = 'pq_medium';				
-				$this->_options['contactUs']['background'] = 'bg_grey';
-				$this->_options['contactUs']['button_color'] = 'btn_lightblue';				
-				$this->_options['contactUs']['title'] = 'Contact Us';
-				$this->_options['contactUs']['buttonTitle'] = 'Send';				
-				$this->_options['contactUs']['loader_background'] = 'bg_black';
-				$this->_options['contactUs']['afterProceed'][thank] = 1;
-				
-				$this->_options['thankPopup']['title'] = 'Thank You';
-				$this->_options['thankPopup']['buttonTitle'] = 'Close';
-				$this->_options['thankPopup']['background'] = 'bg_grey';
-				$this->_options['thankPopup']['img'] = 'img_10.png';								
-				
-				$this->_options[subscribeBar][background] = 'bg_grey';
-				$this->_options[subscribeBar][button_color] = 'btn_lightblue invert';
-				$this->_options[subscribeExit][background] = 'bg_grey';
-				$this->_options[subscribeExit][button_color] = 'btn_lightblue invert';
-				$this->_options[subscribeExit][typeWindow] = 'pq_medium';
-				
-				$this->_options['adminEmail'] = get_settings('admin_email');
-				
-				
-								
-			}
-						
-			
-			if(trim($_POST[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_POST[apiKey]);
-			if(trim($_GET[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_GET[apiKey]);
-			update_option('profitquery', $this->_options);
+				$this ->setDefaultProductData();
+			}															
 			echo '			
 				<div id="successPQBlock" style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(151, 255, 0, 0.5); text-align: center;">
 					<p style="color: rgb(104, 174, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">API Key Was Saved!</p>
