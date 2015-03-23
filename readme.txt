@@ -181,6 +181,7 @@ All of the options required through this plugin require javascript. JavaScript m
 6. Many color, size, type popups
 7. Many header images popup
 
+== Changelog ==
 = 1.1.0 =
 no conflict with other profitquery plugins
 
