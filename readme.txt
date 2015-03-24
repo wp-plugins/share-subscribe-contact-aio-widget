@@ -183,7 +183,7 @@ All of the options required through this plugin require javascript. JavaScript m
 
 == Changelog ==
 
-= 1.1.1 =
+= 1.1.2 =
 with www. in domain name get api Key processing
 
 = 1.1.1 =
