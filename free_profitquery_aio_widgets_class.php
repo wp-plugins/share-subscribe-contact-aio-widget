@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 1.1.1
+* @version  SVN: 1.1.2
 */
 
 class ProfitQuerySmartWidgetsClass
@@ -1997,6 +1997,7 @@ class ProfitQuerySmartWidgetsClass
         $url     = get_option('siteurl');
         $urlobj  = parse_url($url);
         $domain  = $urlobj['host'];
+        $domain  = str_replace('www.', '', $domain);
         return $domain;
     }
 }
