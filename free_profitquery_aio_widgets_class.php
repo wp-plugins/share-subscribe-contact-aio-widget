@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 1.1.2
+* @version  SVN: 1.1.3
 */
 
 class ProfitQuerySmartWidgetsClass
@@ -537,10 +537,10 @@ class ProfitQuerySmartWidgetsClass
 				
 		
 		//save api key
-		if(trim($_POST[apiKey]) != '' || trim($_GET[apiKey]) != ''){
-			if(trim($_POST[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_POST[apiKey]);
-			if(trim($_GET[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_GET[apiKey]);
+		if(trim($_POST[apiKey]) != '' || trim($_GET[apiKey]) != ''){			
 			if(!trim($this->_options['apiKey'])){
+				if(trim($_POST[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_POST[apiKey]);
+				if(trim($_GET[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_GET[apiKey]);
 				//DEFAULT OPTIONS
 				$this->_options[imageSharer][disabled] = 0;
 				$this->_options[imageSharer][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'PI'=>1);				
