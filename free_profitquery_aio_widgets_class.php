@@ -51,6 +51,8 @@ class ProfitQuerySmartWidgetsClass
 	
 	function wpbootstrap_scripts_with_jquery(){
 		wp_enqueue_style('google_fonts','http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&amp;subset=latin,cyrillic');		
+		wp_enqueue_style('profitquery_smart_widgets_bootstrap',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'bootstrap.css');
+		wp_enqueue_style('profitquery_smart_widgets_bootstrap_theme',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'bootstrap-theme.css');
 		wp_enqueue_style('profitquery_smart_widgets_main',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'profitquery_smart_widgets_wordpress.css');
 		wp_enqueue_style('profitquery_smart_widgets_icons',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'icons.css');				
 	}
