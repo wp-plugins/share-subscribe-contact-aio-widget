@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 1.1.4
+* @version  SVN: 1.1.5
 */
 
 class ProfitQuerySmartWidgetsClass
@@ -49,20 +49,11 @@ class ProfitQuerySmartWidgetsClass
 		
     }
 	
-	function wpbootstrap_scripts_with_jquery(){				
-		wp_register_script('jquery-2.1.3', 'https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js', '','2.1.3');		
-		wp_register_script('bootstrap-min', plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/js/bootstrap.min.js', array('jquery-2.1.3'));		
-		wp_register_script('bootstrap-switch', plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/js/bootstrap-switch.js', array('bootstrap-min'));
-		
-		wp_enqueue_script('jquery-2.1.3');
-		wp_enqueue_script('bootstrap-min');
-		wp_enqueue_script('bootstrap-switch');
-		
-		
+	function wpbootstrap_scripts_with_jquery(){
 		wp_enqueue_style('google_fonts','http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&amp;subset=latin,cyrillic');
-		wp_enqueue_style('profitquery_smart_widgets_bootstrap',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'bootstrap.css');
-		wp_enqueue_style('profitquery_smart_widgets_bootstrap_theme',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'bootstrap-theme.css');
-		wp_enqueue_style('profitquery_smart_widgets_bootstrap_switch',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'bootstrap-switch.css');
+		//wp_enqueue_style('profitquery_smart_widgets_bootstrap',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'bootstrap.css');
+		//wp_enqueue_style('profitquery_smart_widgets_bootstrap_theme',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'bootstrap-theme.css');
+		//wp_enqueue_style('profitquery_smart_widgets_bootstrap_switch',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'bootstrap-switch.css');
 		wp_enqueue_style('profitquery_smart_widgets_main',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'profitquery_smart_widgets_wordpress.css');
 		wp_enqueue_style('profitquery_smart_widgets_icons',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'icons.css');				
 	}
@@ -537,21 +528,21 @@ class ProfitQuerySmartWidgetsClass
 				
 		
 		//save api key
-		if(trim($_POST[apiKey]) != '' || trim($_GET[apiKey]) != ''){			
-			if(!trim($this->_options['apiKey'])){
-				if(trim($_POST[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_POST[apiKey]);
-				if(trim($_GET[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_GET[apiKey]);
+		if(trim($_POST[apiKey]) != '' || trim($_GET[apiKey]) != ''){						
+			if(!trim($this->_options['apiKey'])){				
 				//DEFAULT OPTIONS
 				$this->_options[imageSharer][disabled] = 0;
 				$this->_options[imageSharer][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'PI'=>1);				
 				$this->_options[imageSharer][design][color] = 'c4';
 				$this->_options[imageSharer][design][size] = 'x30';
 				$this->_options[imageSharer][design][shadow] = 'sh6';
-				$this->_options[imageSharer][minWidth] = 100;
-				update_option('profitquery', $this->_options);
-				
+				$this->_options[imageSharer][minWidth] = 100;							
 				$this ->setDefaultProductData();
-			}															
+			}			
+			if(trim($_POST[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_POST[apiKey]);
+			if(trim($_GET[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_GET[apiKey]);
+			$this->_options['errorApiKey'] = 0;				
+			update_option('profitquery', $this->_options);
 			echo '			
 				<div id="successPQBlock" style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(151, 255, 0, 0.5); text-align: center;">
 					<p style="color: rgb(104, 174, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">API Key Was Saved!</p>
@@ -571,9 +562,11 @@ class ProfitQuerySmartWidgetsClass
 		//printr($this->_options);
 			//die();
 		
-		if(!trim($this->_options['apiKey']) || $_GET[action] == 'changeApiKey'){
+		if(!trim($this->_options['apiKey']) || $_GET[action] == 'changeApiKey' || (int)$this->_options['errorApiKey'] == 1){
 			$redirect_url = str_replace(".", "%2E", urlencode($this->getSettingsPageUrl().'&action=changeApiKey'));
 			if((int)$_GET[is_error] == 1){
+				$this->_options['errorApiKey'] = 1;
+				update_option('profitquery', $this->_options);
 				echo '
 					<div id="errorPQBlock" style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(242, 20, 67, 0.5); text-align: center;">
 					 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">Wrong Lite Profitquery API Key. <a href="http://litelib.profitquery.com/cms-sign-in/?domain='.$this->getDomain().'&cms=wp&redirect='.
@@ -583,13 +576,19 @@ class ProfitQuerySmartWidgetsClass
 					setTimeout(function(){document.getElementById("errorPQBlock").style.display="none";}, 10000);
 					</script>
 				';
+			} elseif((int)$this->_options['errorApiKey'] == 1){
+				echo '
+						<div style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(242, 20, 67, 0.5); text-align: center;">
+						 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">Wrong Lite Profitquery API Key.</p>
+						</div>						
+					';
 			}
 			echo '			
 			<div style="text-align: center; margin: 0 auto;">			
 			<section style="margin: 20px auto 100px; width: 60%; ">
 			<div style="overflow: hidden; margin: 0 0 40px;">
 			  <h1 class="pq" style="font-family: pt sans narrow; font-size: 30px; color: #7A7A7A; font-weight: normal; display: inline-block; float: left; margin: 0; line-height: 40px;">Start to use AIO Widgets by Profitquery</h1>
-			  <p style="font-family: arial; font-size: 16px; color: #929292; display: inline-block; float: right; margin: 0; height: 40px; padding: 10px 0 0; box-sizing: border-box;">Need help? <a style="color: #222222; text-decoration: none;" href="http://profitquery.com/aio_widgets_wordpress.html" target="_pq_image_sharer_wordpress">Check instructions <img src="'.plugins_url('images/icon.png', __FILE__).'" style="margin: 0 0 -5px;" /></a></p>
+			  <p style="font-family: arial; font-size: 16px; color: #929292; display: inline-block; float: right; margin: 0; height: 40px; padding: 10px 0 0; box-sizing: border-box;">Need help? <a style="color: #222222; text-decoration: none;" href="http://profitquery.com/aio_widgets.html" target="_pq_image_sharer_wordpress">Check instructions <img src="'.plugins_url('images/icon.png', __FILE__).'" style="margin: 0 0 -5px;" /></a></p>
 			 </div>				
 				<p style="font-family: arial; font-size: 16px; color: #A9A9A9; margin: 16px 0 50px;">To start using the AIO Widgets By Profitquery, we first need your Profitquery Lite API Key.</p>
 				<img src="'.plugins_url('images/logo.png', __FILE__).'" style="display: block; margin: 0px auto;" />
@@ -623,7 +622,7 @@ class ProfitQuerySmartWidgetsClass
 			</section>
 			</div>
 			';	
-		} else {
+		} else if((int)$this->_options['errorApiKey'] == 0) {
 			if(profitquery_is_subscribe_enabled($this->_options)){
 				if(trim($this->_options[subscribeProviderUrl]) == ''){
 					echo '
@@ -642,7 +641,7 @@ class ProfitQuerySmartWidgetsClass
 					';
 			}
 			?>
-			<div style="width: 100%; overflow: hidden; background: white;">
+			<div style="width: 100%; overflow: hidden;">
 				<div class="container-fluid" id="free_profitquery">
 				<script>
 					var photoPath = "<?php echo plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_IMG_PATH;?>";
@@ -663,7 +662,7 @@ class ProfitQuerySmartWidgetsClass
 						}catch(err){};
 					}
 				  </script>
-				  <div style="margin-top: 35px; background: #fffde1; padding: 45px 0;">
+				  <div class="pq_block" id="v1">
 					<h4 class="panel-title">Share Tools</h4>											
 					<div id="collapseOne" class="panel-collapse collapse in">
 					<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
@@ -678,9 +677,22 @@ class ProfitQuerySmartWidgetsClass
 							<div class="col-sm-10">							
 								
 								<label>
-									<div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-small bootstrap-switch-success">
-										<input type="checkbox" name="sharingSideBar[enabled]" <?php if((int)$this->_options[sharingSideBar][disabled] == 0) echo 'checked';?> >
+									<div id="sharingSideBarEnabledStyle">
+										<input type="checkbox" name="sharingSideBar[enabled]" id="sharingSideBarEnabledCheckbox" onclick="changeSharingSideBarEnabled();" <?php if((int)$this->_options[sharingSideBar][disabled] == 0) echo 'checked';?>>
+										<p id="sharingSideBarEnabledText"></p>
 									</div>
+									<script>
+										function changeSharingSideBarEnabled(){											
+											if(document.getElementById('sharingSideBarEnabledCheckbox').checked){
+												document.getElementById('sharingSideBarEnabledStyle').className = 'switch-bg on';
+												document.getElementById('sharingSideBarEnabledText').innerHTML = 'On';
+											} else {
+												document.getElementById('sharingSideBarEnabledStyle').className = 'switch-bg off';
+												document.getElementById('sharingSideBarEnabledText').innerHTML = 'Off';
+											}
+										}
+										changeSharingSideBarEnabled();
+									</script>									
 								</label>
 								
 								<label>
@@ -707,10 +719,24 @@ class ProfitQuerySmartWidgetsClass
 							<img id="imageSharer_IMG" src="<?php echo plugins_url('images/image_sharer.png', __FILE__);?>" />
 							<h5>Image Sharer</h5>
 							<div class="col-sm-10">							
-								<label>
-									<div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-small bootstrap-switch-success">
-										<input type="checkbox" name="imageSharer[enabled]" <?php if((int)$this->_options[imageSharer][disabled] == 0) echo 'checked';?>>
+								<label>									
+									<div id="imageSharerEnabledStyle">
+										<input type="checkbox" name="imageSharer[enabled]" id="imageSharerEnabledCheckbox" onclick="changeImageSharerEnabled();" <?php if((int)$this->_options[imageSharer][disabled] == 0) echo 'checked';?>>
+										<p id="imageSharerEnabledText"></p>
 									</div>
+									<script>
+										function changeImageSharerEnabled(){											
+											if(document.getElementById('imageSharerEnabledCheckbox').checked){
+												document.getElementById('imageSharerEnabledStyle').className = 'switch-bg on';
+												document.getElementById('imageSharerEnabledText').innerHTML = 'On';
+											} else {
+												document.getElementById('imageSharerEnabledStyle').className = 'switch-bg off';
+												document.getElementById('imageSharerEnabledText').innerHTML = 'Off';
+											}
+										}
+										changeImageSharerEnabled();
+									</script>
+									
 								</label>
 								<label>	
 									<select id="imageSharer_design_position" onchange="changeImageSharerBlockImg();" name="imageSharer[position]">
@@ -731,11 +757,7 @@ class ProfitQuerySmartWidgetsClass
 								</label>	
 									<a href="#Image_Sharer" onclick="document.getElementById('Image_Sharer').style.display='block';"><button type="button" class="btn btn-link btn-bg">More Option</button></a>							
 							</div>
-						</div>
-						<script>
-							$("[name='sharingSideBar[enabled]']").bootstrapSwitch();
-							$("[name='imageSharer[enabled]']").bootstrapSwitch();
-						</script>
+						</div>						
 										
 					</div>
 					<div class="panel-body">
@@ -783,7 +805,7 @@ class ProfitQuerySmartWidgetsClass
 								</div>
 								
 								<div class="col-sm-12 icons" style="padding: 0; margin: 20px 0 0;">
-									<label><select id="sharingSideBar_design_color" name="sharingSideBar[design][color]">
+									<label><select id="sharingSideBar_design_color" onchange="sharingSideBarPreview();" name="sharingSideBar[design][color]">
 										<option value="c4" <?php if($this->_options[sharingSideBar][design][color] == 'c4') echo 'selected';?>>Color</option>
 										<option value="c1" <?php if($this->_options[sharingSideBar][design][color] == 'c1') echo 'selected';?>>Color light</option>
 										<option value="c2" <?php if($this->_options[sharingSideBar][design][color] == 'c2') echo 'selected';?>>Color volume</option>
@@ -795,14 +817,14 @@ class ProfitQuerySmartWidgetsClass
 									</select></label>
 								</div>
 								<div class="col-sm-6 icons" style="padding-left: 0; margin: 10px 0;">
-									<label><select id="sharingSideBar_design_form" name="sharingSideBar[design][form]">
+									<label><select id="sharingSideBar_design_form" onchange="sharingSideBarPreview();" name="sharingSideBar[design][form]">
 										<option value="" <?php if($this->_options[sharingSideBar][design][form] == '') echo 'selected';?>>Square</option>
 										<option value="circle" <?php if($this->_options[sharingSideBar][design][form] == 'circle') echo 'selected';?>>Circle</option>
 										<option value="rounded" <?php if($this->_options[sharingSideBar][design][form] == 'rounded') echo 'selected';?>>Rounded</option>
 									</select></label>
 								</div>
 								<div class="col-sm-6 icons" style="padding-right: 0; margin: 10px 0;">
-									<label><select id="sharingSideBar_design_size" name="sharingSideBar[design][size]">
+									<label><select id="sharingSideBar_design_size" onchange="sharingSideBarPreview();" name="sharingSideBar[design][size]">
 										<option value="x30" <?php if($this->_options[sharingSideBar][design][size] == 'x30') echo 'selected';?>>Size M</option>
 										<option value="x40" <?php if($this->_options[sharingSideBar][design][size] == 'x40') echo 'selected';?>>Size L</option>
 										<option value="x20" <?php if($this->_options[sharingSideBar][design][size] == 'x20') echo 'selected';?>>Size S</option>
@@ -821,23 +843,25 @@ class ProfitQuerySmartWidgetsClass
 								<div class="box">
 								<p>Thank Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
 								<input type="checkbox" name="sharingSideBar[afterProceed][thank]" <?php if((int)$this->_options[sharingSideBar][afterProceed][thank] == 1) echo 'checked';?>></div>
+								<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off"></div>
 								</div>
 								</label>
-								
-							<script>
-								$("[name='sharingSideBar[afterProceed][follow]']").bootstrapSwitch();
-								$("[name='sharingSideBar[afterProceed][thank]']").bootstrapSwitch();
-								function sharingSideBarPreview(){									
-									var designIcons = 'pq-social-block '+document.getElementById('sharingSideBar_design_size').value+document.getElementById('sharingSideBar_design_form').value+' '+document.getElementById('sharingSideBar_design_color').value;
-									var position = 'pq_icons '+document.getElementById('sharingSideBar_position').value;
-									window.open("http://profitquery.com/aio_widgets_demo.html?p=sidebarShare&position="+position+'&typeBlock='+designIcons, "product_view");							
-								}
-							</script>
+															
 							<div class="clear"></div>
-							<button type="button" class="btn btn-link btn-lg btn-m" onclick="sharingSideBarPreview();">Preview</button>
+							<!--p>Only Design Live Demo</p>
+							<iframe scrolling="yes" id="sharingSideBarLiveViewIframe" width="900px" height="300px" src="" style="background: white; margin: 20px 0 0;"></iframe>
+							<script>
+								function sharingSideBarPreview(){									
+									var designIcons = 'pq-social-block '+document.getElementById('sharingSideBar_design_size').value+document.getElementById('sharingSideBar_design_form').value+' '+document.getElementById('sharingSideBar_design_color').value;									
+									var position = 'pq_icons pq_left pq_middle';
+									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo.html?utm-campaign=wp_aio_widgets&p=sidebarShare&position='+position+'&typeBlock='+designIcons;									
+									document.getElementById('sharingSideBarLiveViewIframe').src = previewUrl;									
+								}
+								sharingSideBarPreview();
+							</script-->
 							
 							</div>
-						<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off" style="bottom: 80px;"></div>
+						
 						<a href="javascript:void(0)" onclick="document.getElementById('Sharing_Sidebar').style.display='none';"><div class="close"></div></a>
 						</div>
 						<a name="Image_Sharer"></a>
@@ -849,7 +873,7 @@ class ProfitQuerySmartWidgetsClass
 						<div style="position: relative; overflow: hidden; max-width: 403px; min-height: 200px; margin: 20px auto 10px;">
 							<img src="<?php echo plugins_url('images/capture.png', __FILE__);?>" style="position: absolute; top: 0; right: 0; width: 100%;" />
 							<input type="text" name="imageSharer[minWidth]" style="position: absolute; top: 86px; width: 80px; font-size: 16px; font-family: arial; color: #9A9A9A; box-sizing: border-box; text-align: center; margin-left: -40px;" value="<?php echo (int)$this->_options[imageSharer][minWidth];?>">
-							<p style="position: absolute; top: 88px; font-size: 16px; font-family: arial; color: #9A9A9A; width: 50%; right: 0; padding-left: 49px;">px</p>
+							<p style="position: absolute; top: 88px; font-size: 16px; font-family: arial; color: #9A9A9A; width: 50%; right: 0; padding-left: 49px; box-sizing: border-box;">px</p>
 						</div>
 						</label>
 						<label>
@@ -862,11 +886,8 @@ class ProfitQuerySmartWidgetsClass
 						<div class="box">
 							<p>Thank Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
 							<input type="checkbox" name="imageSharer[afterProceed][thank]" <?php if((int)$this->_options[imageSharer][afterProceed][thank] == 1) echo 'checked';?>></div>
-						</div></label>
-						<script>
-							$("[name='imageSharer[afterProceed][follow]']").bootstrapSwitch();
-							$("[name='imageSharer[afterProceed][thank]']").bootstrapSwitch();
-						</script>
+							<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off"></div>
+						</div></label>						
 						
 						</div><div class="clear"></div>
 							
@@ -900,8 +921,8 @@ class ProfitQuerySmartWidgetsClass
 							<input type="checkbox" name="imageSharer[socnet][LI]" <?php if((int)$this->_options[imageSharer][socnet][LI] == 1) echo 'checked';?>></label>
 						</div>
 						<div class="col-md-10">
-						<div class="col-md-6 icons" style="padding-left: 0; margin: 20px 0;">
-							<label><select id="imageSharer_design_color" name="imageSharer[design][color]">
+						<div class="col-sm-6 icons" style="padding-left: 0; margin: 20px 0;">
+							<label><select id="imageSharer_design_color" onchange="imageSharerPreview();" name="imageSharer[design][color]">
 								<option value="c4" <?php if($this->_options[imageSharer][design][color] == 'c4') echo 'selected';?>>Color</option>
 								<option value="c1" <?php if($this->_options[imageSharer][design][color] == 'c1') echo 'selected';?>>Color light</option>
 								<option value="c2" <?php if($this->_options[imageSharer][design][color] == 'c2') echo 'selected';?>>Color volume</option>
@@ -911,19 +932,19 @@ class ProfitQuerySmartWidgetsClass
 								<option value="c7" <?php if($this->_options[imageSharer][design][color] == 'c7') echo 'selected';?>>White volume</option>
 								<option value="c8" <?php if($this->_options[imageSharer][design][color] == 'c8') echo 'selected';?>>White</option>
 							</select></label>
-							<label><select id="imageSharer_design_form" name="imageSharer[design][form]">
+							<label><select id="imageSharer_design_form" onchange="imageSharerPreview();" name="imageSharer[design][form]">
 								<option value="" <?php if($this->_options[imageSharer][design][form] == '') echo 'selected';?>>Square</option>
 								<option value="circle" <?php if($this->_options[imageSharer][design][form] == 'circle') echo 'selected';?>>Circle</option>
 								<option value="rounded" <?php if($this->_options[imageSharer][design][form] == 'rounded') echo 'selected';?>>Rounded</option>
 							</select></label>
 						</div>
-						<div class="col-md-6 icons" style="padding-right: 0; margin: 20px 0;">
-							<label><select id="imageSharer_design_size" name="imageSharer[design][size]">
+						<div class="col-sm-6 icons" style="padding-right: 0; margin: 20px 0;">
+							<label><select id="imageSharer_design_size" onchange="imageSharerPreview();" name="imageSharer[design][size]">
 								<option value="x30" <?php if($this->_options[imageSharer][design][size] == 'x30') echo 'selected';?>>Size M</option>
 								<option value="x40" <?php if($this->_options[imageSharer][design][size] == 'x40') echo 'selected';?>>Size L</option>
 								<option value="x20" <?php if($this->_options[imageSharer][design][size] == 'x20') echo 'selected';?>>Size S</option>
 							</select></label>
-							<label><select id="imageSharer_design_shadow" name="imageSharer[design][shadow]">
+							<label><select id="imageSharer_design_shadow" onchange="imageSharerPreview();" name="imageSharer[design][shadow]">
 								<option value="sh_1" <?php if($this->_options[imageSharer][design][shadow] == 'sh1') echo 'selected';?>>Shadow1</option>
 								<option value="sh_2" <?php if($this->_options[imageSharer][design][shadow] == 'sh2') echo 'selected';?>>Shadow2</option>
 								<option value="sh_3" <?php if($this->_options[imageSharer][design][shadow] == 'sh3') echo 'selected';?>>Shadow3</option>
@@ -932,27 +953,30 @@ class ProfitQuerySmartWidgetsClass
 								<option value="sh_6" <?php if($this->_options[imageSharer][design][shadow] == 'sh6') echo 'selected';?>>Shadow6</option>
 							</select></label>
 						</div>																									
-						
-						<button type="button" onclick="imageSharerPreview();" class="btn btn-link btn-lg btn-m">Preview</button>
+						<!--p>Only Design Live Demo</p>
+						<iframe scrolling="yes" id="imageSharerLiveViewIframe" width="900px" height="300px" src="about:blank" style="background: white; margin: 20px 0 0;"></iframe>
 						
 						<script>								
 								function imageSharerPreview(){									
-									var design = document.getElementById('imageSharer_design_size').value+document.getElementById('imageSharer_design_form').value+' '+document.getElementById('imageSharer_design_color').value+' '+document.getElementById('imageSharer_design_shadow').value+' '+document.getElementById('imageSharer_design_position').value;									
-									window.open("http://profitquery.com/aio_widgets_demo.html?p=imageSharer&design="+design, "product_view");							
+									var design = document.getElementById('imageSharer_design_size').value+document.getElementById('imageSharer_design_form').value+' '+document.getElementById('imageSharer_design_color').value+' '+document.getElementById('imageSharer_design_shadow').value+' inline';
+									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo.html?utm-campaign=wp_aio_widgets&p=imageSharer&design='+design;									
+									document.getElementById('imageSharerLiveViewIframe').src = previewUrl;
 								}
-						</script>
+								imageSharerPreview();
+						</script-->
 						
 						</div>
-						<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off" style="bottom: 297px;"></div>
+						
 						</div>												
 						
 					</div>
 					<input type="submit" class="btn btn_m_red" value="Save changes">
+					<a href="mailto:support@profitquery.com" target="_blank" class="help">Need help?</a>
 					</form> 
 					</div>
 				  </div>
 				  <a name="EmailBlock"></a>
-					<div style="margin-top: 35px; background: #f4ffe4; padding: 45px 0;">
+					<div class="pq_block" id="v2">
 					
 						<h4 class="panel-title">Subscribe Tools</h4>
 						
@@ -967,10 +991,11 @@ class ProfitQuerySmartWidgetsClass
 							<h5>Marketing Bar</h5>
 							<div class="col-sm-10">							
 							
-							<label>
-								<div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-small bootstrap-switch-success">
-									<input type="checkbox" name="subscribeBar[enabled]" <?php if((int)$this->_options[subscribeBar][disabled] == 0) echo 'checked';?>>
-								</div>
+							<label>								
+								<div id="subscribeBarEnabledStyle">
+									<input type="checkbox" name="subscribeBar[enabled]" id="subscribeBarEnabledCheckbox" onclick="changeSubscribeBarEnabled();" <?php if((int)$this->_options[subscribeBar][disabled] == 0) echo 'checked';?>>
+									<p id="subscribeBarEnabledText"></p>
+								</div>								
 							</label>
 							
 							<label>
@@ -997,10 +1022,12 @@ class ProfitQuerySmartWidgetsClass
 							<img id="subscribeExit_IMG" src="<?php echo plugins_url('images/subscribe.png', __FILE__);?>" />
 							<h5>Exit Popup</h5>
 							<div class="col-sm-10">							
-							<label>
-								<div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-small bootstrap-switch-success">
-									<input type="checkbox" name="subscribeExit[enabled]" <?php if((int)$this->_options[subscribeExit][disabled] == 0) echo 'checked';?>>
+							<label>								
+								<div id="subscribeExitEnabledStyle">
+									<input type="checkbox" name="subscribeExit[enabled]" id="subscribeExitEnabledCheckbox" onclick="changeSubscribeExitEnabled();" <?php if((int)$this->_options[subscribeExit][disabled] == 0) echo 'checked';?>>
+									<p id="subscribeExitEnabledText"></p>
 								</div>
+								
 							</label>
 							
 							<label>
@@ -1026,23 +1053,19 @@ class ProfitQuerySmartWidgetsClass
 							</label>
 							<a href="#Exit_Popup" onclick="document.getElementById('Exit_Popup').style.display='block';"><button type="button" class="btn btn-link btn-bg">More Option</button></a>							
 							</div>							
-						</div>
-						<script>
-							$("[name='subscribeExit[enabled]']").bootstrapSwitch();
-							$("[name='subscribeBar[enabled]']").bootstrapSwitch();
-						</script>												
+						</div>																
 						</div>					
 					<div class="panel-body">
 						<a name="Marketing_Bar"></a><div class="col-sm-10 more" id="Marketing_Bar" style="display:none;">
 							<h5>More options Marketing Bar</h5>
 							<div class="col-sm-10" style="width: 83.333333%;">
 							
-							<label style="display: block;"><p>Heading</p><input name="subscribeBar[title]" value="<?php echo stripslashes($this->_options[subscribeBar][title]);?>"></label>	
-							<label style="display: block;"><p>Input email text</p><input name="subscribeBar[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][inputEmailTitle]);?>"></label>
-							<label style="display: block;"><p>Button</p><input name="subscribeBar[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][buttonTitle]);?>"></label>
+							<label style="display: block;"><p>Heading</p><input type="text" name="subscribeBar[title]" value="<?php echo stripslashes($this->_options[subscribeBar][title]);?>"></label>	
+							<label style="display: block;"><p>Input email text</p><input type="text" name="subscribeBar[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][inputEmailTitle]);?>"></label>
+							<label style="display: block;"><p>Button</p><input type="text" name="subscribeBar[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][buttonTitle]);?>"></label>
 							
-							<div class="col-sm-6" style="padding-left: 0; margin: 10px 0;">
-							<label><select id="subscribeBar_background" name="subscribeBar[background]">
+							<div class="col-sm-6 icons" style="padding-left: 0; margin: 27px 0 0;">
+							<label><select id="subscribeBar_background" onchange="subscribeBarPreview();" name="subscribeBar[background]">
 								    <option value="bg_grey" <?php if($this->_options[subscribeBar][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
 									<option value="" <?php if($this->_options[subscribeBar][background] == '') echo 'selected';?>>Background - White</option>
 									<option value="bg_yellow" <?php if($this->_options[subscribeBar][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
@@ -1057,8 +1080,8 @@ class ProfitQuerySmartWidgetsClass
 									<option value="bg_lilac" <?php if($this->_options[subscribeBar][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
 							</select></label>
 							</div>
-							<div class="col-sm-6" style="padding-right: 0; margin: 10px 0;">
-							<label><select id="subscribeBar_button_color" name="subscribeBar[button_color]">
+							<div class="col-sm-6 icons down" style="padding-right: 0; margin: 27px 0 10px;">
+							<label><select id="subscribeBar_button_color" onchange="subscribeBarPreview();" name="subscribeBar[button_color]">
 								    <option value="btn_lightblue" <?php if($this->_options[subscribeBar][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
 									<option value="btn_lightblue invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_lightblue invert' || $this->_options[subscribeBar][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
 									<option value="btn_blue" <?php if($this->_options[subscribeBar][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
@@ -1079,9 +1102,9 @@ class ProfitQuerySmartWidgetsClass
 							</div>
 							<div class="clear"></div>
 							<label>
-							<select id="subscribeBar_size" name="subscribeBar[size]">
+							<select id="subscribeBar_size" onchange="subscribeBarPreview();" name="subscribeBar[size]">
 								<option value="" <?php if($this->_options[subscribeBar][size] == '') echo 'selected';?>>Size M</option>
-								<option value="pq_mini" <?php if($this->_options[subscribeBar][size] == 'pq_mini') echo 'selected';?>>Size S</option>
+								<option value="pq_small" <?php if($this->_options[subscribeBar][size] == 'pq_small') echo 'selected';?>>Size S</option>
 							</select>
 							</label>
 							<label>
@@ -1094,38 +1117,38 @@ class ProfitQuerySmartWidgetsClass
 							<div class="box">
 								<p>Thank Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
 								<input type="checkbox" name="subscribeBar[afterProceed][thank]" <?php if((int)$this->_options[subscribeBar][afterProceed][thank] == 1) echo 'checked';?>></div>
+								<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off"></div>
 							</div>
-							</label>
-							<script>
-								$("[name='subscribeBar[afterProceed][follow]']").bootstrapSwitch();
-								$("[name='subscribeBar[afterProceed][thank]']").bootstrapSwitch();
-							</script>
+							</label>							
 							<div class="clear"></div>
-							<button type="button" class="btn btn-link btn-lg btn-m" onclick="subscribeBarPreview();">Preview</button>
+							<!--p>Only Design Live Demo</p>
+							<iframe scrolling="yes" id="subscribeBarLiveViewIframe" width="900px" height="300px" src="" style="background: white; margin: 20px 0 0;"></iframe>
 							
 							<script>								
 								function subscribeBarPreview(){									
 									var design = document.getElementById('subscribeBar_size').value+' '+document.getElementById('subscribeBar_position').value+' '+document.getElementById('subscribeBar_background').value+' '+document.getElementById('imageSharer_design_color').value+' '+document.getElementById('subscribeBar_button_color').value;
-									window.open("http://profitquery.com/aio_widgets_demo.html?p=subscribeBar&design="+design, "product_view");							
+									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo.html?utm-campaign=wp_aio_widgets&p=subscribeBar&design='+design;									
+									document.getElementById('subscribeBarLiveViewIframe').src = previewUrl;									
 								}
-							</script>
+								subscribeBarPreview();
+							</script-->
 							
 							</div>
-							<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off" style="bottom: 80px;"></div>
+							
 						<a href="javascript:void(0)" onclick="document.getElementById('Marketing_Bar').style.display='none';"><div class="close"></div></a>
 						</div>
 						<a name="Exit_Popup"></a><div class="col-sm-10 more" id="Exit_Popup" style="display:none;">
 							<h5>More options Exit Popup</h5>
 							<div class="col-sm-10" style="width: 83.333333%;">
 							
-							<label style="display: block;"><p>Heading</p><input name="subscribeExit[title]" value="<?php echo stripslashes($this->_options[subscribeExit][title]);?>"></label>
-							<label style="display: block;"><p>Text</p><input name="subscribeExit[sub_title]" value="<?php echo stripslashes($this->_options[subscribeExit][sub_title]);?>"></label>
-							<label style="display: block;"><p>Button</p><input name="subscribeExit[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][buttonTitle]);?>"></label>
-							<label style="display: block;"><p>Input email text</p><input name="subscribeExit[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][inputEmailTitle]);?>"></label>
+							<label type="text" style="display: block;"><p>Heading</p><input type="text" name="subscribeExit[title]" value="<?php echo stripslashes($this->_options[subscribeExit][title]);?>"></label>
+							<label style="display: block;"><p>Text</p><input type="text" name="subscribeExit[sub_title]" value="<?php echo stripslashes($this->_options[subscribeExit][sub_title]);?>"></label>
+							<label style="display: block;"><p>Button</p><input type="text" name="subscribeExit[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][buttonTitle]);?>"></label>
+							<label style="display: block;"><p>Input email text</p><input type="text" name="subscribeExit[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][inputEmailTitle]);?>"></label>
 							
-							<div class="col-sm-6" style="padding-left: 0; margin: 10px 0;">
+							<div class="col-sm-6 icons" style="padding-left: 0; margin: 27px 0 0;">
 							<label>
-							<select id="subscribeExit_background" name="subscribeExit[background]">
+							<select id="subscribeExit_background" onchange="subscribeExitPreview();" name="subscribeExit[background]">
 								    <option value="bg_grey" <?php if($this->_options[subscribeExit][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
 									<option value="" <?php if($this->_options[subscribeExit][background] == '') echo 'selected';?>>Background - White</option>
 									<option value="bg_yellow" <?php if($this->_options[subscribeExit][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
@@ -1140,9 +1163,9 @@ class ProfitQuerySmartWidgetsClass
 									<option value="bg_lilac" <?php if($this->_options[subscribeExit][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
 							</select></label>
 							</div>
-							<div class="col-sm-6" style="padding-right: 0; margin: 10px 0;">
+							<div class="col-sm-6 icons down" style="padding-right: 0; margin: 27px 0 10px;">
 							<label>
-							<select id="subscribeExit_button_color" name="subscribeExit[button_color]">
+							<select id="subscribeExit_button_color" onchange="subscribeExitPreview();" name="subscribeExit[button_color]">
 								    <option value="btn_lightblue" <?php if($this->_options[subscribeExit][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
 									<option value="btn_lightblue invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_lightblue invert' || $this->_options[subscribeExit][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
 									<option value="btn_blue" <?php if($this->_options[subscribeExit][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
@@ -1163,7 +1186,7 @@ class ProfitQuerySmartWidgetsClass
 							</div>
 							<div class="clear"></div>
 							<label>
-							<select id="subscribeExit_img" name="subscribeExit[img]" onchange="chagnePopupImg(this.value, 'subscribeExitFotoBlock', 'subscribeExitCustomFotoBlock');">
+							<select id="subscribeExit_img"  name="subscribeExit[img]" onchange="chagnePopupImg(this.value, 'subscribeExitFotoBlock', 'subscribeExitCustomFotoBlock');subscribeExitPreview();">
 								<option value="" selected >No picture</option>
 								<option value="img_01.png" <?php if($this->_options[subscribeExit][img] == 'img_01.png') echo 'selected';?>>Question</option>
 								<option value="img_02.png" <?php if($this->_options[subscribeExit][img] == 'img_02.png') echo 'selected';?>>Attention</option>
@@ -1177,8 +1200,8 @@ class ProfitQuerySmartWidgetsClass
 								<option value="img_10.png" <?php if($this->_options[subscribeExit][img] == 'img_10.png') echo 'selected';?>>Success</option>
 								<option value="custom" <?php if($this->_options[subscribeExit][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
 							</select></label>
-							<label><div class="img"><img id="subscribeExitFotoBlock" />
-							<input name="subscribeExit[imgUrl]"  style="display:none;" id="subscribeExitCustomFotoBlock" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[subscribeExit][imgUrl]);?>">
+							<label style="margin-top: 20px;"><div class="img"><img id="subscribeExitFotoBlock" />
+							<input type="text" name="subscribeExit[imgUrl]" onkeyup="subscribeExitPreview();"  style="display:none;" id="subscribeExitCustomFotoBlock" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[subscribeExit][imgUrl]);?>">
 							</div></label>							
 							<label><div class="box">
 								<p>Follow Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
@@ -1187,6 +1210,7 @@ class ProfitQuerySmartWidgetsClass
 							<label><div class="box">
 								<p>Thank Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
 								<input type="checkbox" name="subscribeExit[afterProceed][thank]" <?php if((int)$this->_options[subscribeExit][afterProceed][thank] == 1) echo 'checked';?>></div>
+								<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off"></div>
 							</div></label>
 							<?php
 								echo "
@@ -1194,31 +1218,33 @@ class ProfitQuerySmartWidgetsClass
 									chagnePopupImg('".$this->_options[subscribeExit][img]."', 'subscribeExitFotoBlock', 'subscribeExitCustomFotoBlock');
 								</script>
 								";
-							?>
-							<script>								
-								$("[name='subscribeExit[afterProceed][follow]']").bootstrapSwitch();
-								$("[name='subscribeExit[afterProceed][thank]']").bootstrapSwitch();
-								
-								function subscribeExitPreview(){									
-									var design = document.getElementById('subscribeExit_typeWindow').value+' '+document.getElementById('subscribeExit_background').value+' '+document.getElementById('subscribeExit_button_color').value;
-									var img = document.getElementById('subscribeExit_img').value;
-									var imgUrl = document.getElementById('subscribeExitCustomFotoBlock').value;
-									window.open("http://profitquery.com/aio_widgets_demo.html?p=subscribeExit&design="+design+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl), "product_view");							
-								}							
-							</script>
+							?>							
 							<div class="clear"></div>
-							<button type="button" class="btn btn-link btn-lg btn-m" onclick="subscribeExitPreview();">Preview</button>
+							<!--p>Only Design Live Demo</p>
+							<iframe scrolling="yes" id="subscribeExitLiveViewIframe" width="900" height="300" src=""></iframe>
+							<script>
+								function subscribeExitPreview(){									
+									var design = document.getElementById('subscribeExit_typeWindow').value+' pq_left pq_top '+document.getElementById('subscribeExit_background').value+' '+document.getElementById('subscribeExit_button_color').value;
+									var img = document.getElementById('subscribeExit_img').value;
+									var imgUrl = document.getElementById('subscribeExitCustomFotoBlock').value;	
+									
+									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo.html?utm-campaign=wp_aio_widgets&p=subscribeExit&design='+design+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl);
+									document.getElementById('subscribeExitLiveViewIframe').src = previewUrl;									
+								}
+								subscribeExitPreview();
+							</script-->
 							</div>
-						<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off" style="bottom: 80px;"></div>
+						
 						<a href="javascript:void(0)" onclick="document.getElementById('Exit_Popup').style.display='none';"><div class="close"></div></a>
 						</div>
 					</div>
-						<div class="col-sm-10" style="overflow: hidden; padding: 0; margin: 0 auto 10px;">
+					<div class="panel-body">
+						<div class="col-sm-10" id="mailchimpBlockID"  style="overflow: hidden; padding: 0 20px; margin: 0 auto 10px; background: #F3F3F3;display:none; ">
 						
-						<div class="panel-body" style="background: #F3F3F3; padding: 20px 0 5px; margin: 0 15px;">
+						<div class="panel-body" style="background: #F3F3F3; padding: 20px 0 0px; margin: 0 15px;">
 							<div class="col-sm-12">
-								<div class="col-sm-6 col-sm-offset-3" style="margin-top: 0; margin-bottom: 0;">
-									<label><select style="width: 98%; box-sizing: border-box; padding: 4px; margin: 10px 0;">
+								<div class="col-sm-6 icons" style="margin: 0 auto; float: none;">
+									<label><select style="width: 100%; box-sizing: border-box; padding: 4px; margin: 10px 0 0;">
 										<option value="mailchimp">MailChimp</option>										
 									</select></label>
 								</div>
@@ -1226,53 +1252,55 @@ class ProfitQuerySmartWidgetsClass
 						</div>
 						<div class="panel-body" style="background: #F3F3F3; padding: 0; margin: 0 15px;">
 							<div class="col-sm-12">
-								<a data-toggle="collapse" href="#step1"><div class="col-xs-4">
+								<a data-toggle="collapse" href="#step1" onclick="document.getElementById('step1').style.display='block';"><div class="col-xs-4">
 									<img src="<?php echo plugins_url('images/1.png', __FILE__);?>" />
-									<p style="color: rgb(162, 162, 162); padding: 12px 0 3px;">Click for the list and choose ‘Signup Forms’</p>
+									<p style="color: rgb(162, 162, 162); padding: 8px 0 3px;">Click for the list and choose ‘Signup Forms’</p>
 									
 								</div></a>
-								<a data-toggle="collapse" href="#step2"><div class="col-xs-4">
+								<a data-toggle="collapse" href="#step2" onclick="document.getElementById('step2').style.display='block';"><div class="col-xs-4">
 									<img src="<?php echo plugins_url('images/2.png', __FILE__);?>" />
-									<p style="color: rgb(162, 162, 162); padding: 12px 0 3px;">Click the Embedded forms option</p>
+									<p style="color: rgb(162, 162, 162); padding: 8px 0 3px;">Click the Embedded forms option</p>
 									
 								</div></a>
-								<a data-toggle="collapse" href="#step3"><div class="col-xs-4">
+								<a data-toggle="collapse" href="#step3" onclick="document.getElementById('step3').style.display='block';"><div class="col-xs-4">
 									<img src="<?php echo plugins_url('images/3.png', __FILE__);?>" />
-									<p style="color: rgb(162, 162, 162); padding: 12px 0 3px;">Paste the Copy/Paste code  Form Action="... ”</p>
+									<p style="color: rgb(162, 162, 162); padding: 8px 0 3px;">Paste the Copy/Paste code  Form Action="... ”</p>
 									
 								</div></a>
 							</div>
 						</div>						
 						<a name="setupFormAction"></a>
-						<div class="panel-body" style="  background: #F3F3F3; padding: 0 0 25px; margin: 0 15px;">							
-							<div class="col-sm-12 panel-collapse collapse" id="step1">
-								<div><img src="<?php echo plugins_url('images/mailchimp_1.png', __FILE__);?>" /><a data-toggle="collapse" href="#step1"><div class="close"></div></a></div>
+						<div class="panel-body" style="  background: #F3F3F3; padding: 0 0 20px; margin: 0 15px;">							
+							<div style="display:none;" id="step1">
+								<div style="max-width: 626px; margin: 0 auto;"><img src="<?php echo plugins_url('images/mailchimp_1.png', __FILE__);?>" /><a data-toggle="collapse" href="#step1" onclick="document.getElementById('step1').style.display='none';"><div class="close"></div></a></div>
 							
 							</div>
-							<div class="col-sm-12 panel-collapse collapse" id="step2">
-								<div><img src="<?php echo plugins_url('images/mailchimp_2.png', __FILE__);?>" /><a data-toggle="collapse" href="#step2"><div class="close"></div></a></div>
+							<div style="display:none;" id="step2">
+								<div style="max-width: 626px; margin: 0 auto;"><img src="<?php echo plugins_url('images/mailchimp_2.png', __FILE__);?>" /><a data-toggle="collapse" href="#step2"  onclick="document.getElementById('step2').style.display='none';"><div class="close"></div></a></div>
 							</div>							
-							<div class="col-sm-12 panel-collapse collapse" id="step3">
-								<div><img src="<?php echo plugins_url('images/mailchimp_3.png', __FILE__);?>" /><a data-toggle="collapse" href="#step3"><div class="close"></div></a></div>
+							<div style="display:none;" id="step3">
+								<div style="max-width: 626px; margin: 0 auto;"><img src="<?php echo plugins_url('images/mailchimp_3.png', __FILE__);?>" /><a data-toggle="collapse" href="#step3"  onclick="document.getElementById('step3').style.display='none';"><div class="close"></div></a></div>
 							</div>
 							
-							<div class="col-sm-12" style="margin-top: 25px;">
-								<div class="col-sm-3" style="padding: 4px 0 0;">
+							<div class="col-sm-12" style="margin-top: 15px;">
+								<div class="col-sm-3" style="padding: 4px 0 0; vertical-align: top;">
 									<p>Form Action=</p>
 								</div>
 								<div class="col-sm-9" style="margin: 0 0 10px;">
-									<label style="display: block;"><input name="subscribeProviderUrl" value="<?php echo stripslashes($this->_options[subscribeProviderUrl]);?>"></label>
+									<label style="display: block; width: 90%; margin: 0px;"><input type="text" name="subscribeProviderUrl" value="<?php echo stripslashes($this->_options[subscribeProviderUrl]);?>"></label>
 								</div>
 								
 							</div>							
 						</div>
-						</div><input type="submit" class="btn btn_m_red" value="Save changes">
+						</div></div>
+						<input type="submit" class="btn btn_m_red" value="Save changes">
+						<a href="mailto:support@profitquery.com" target="_blank" class="help">Need help?</a>
 					  </form>	
 					</div>
 				  </div>
 				  <a name="ContactBlock"></a>
-				  <div style="margin-top: 35px; background: #e4fff9; padding: 45px 0;">					
-						<h4 class="panel-title">Contact Form's</h4>
+				 <div class="pq_block" id="v3">				
+						<h4 class="panel-title">Contact Forms</h4>
 						
 					<div id="collapseFour" class="panel-collapse collapse in">
 					<form action="<?php echo $this->getSettingsPageUrl();?>#ContactBlock" method="post">
@@ -1283,12 +1311,24 @@ class ProfitQuerySmartWidgetsClass
 						<div class="col-sm-6">
 							<img id="contactUs_IMG" src="<?php echo plugins_url('images/contact_us.png', __FILE__);?>" />
 							<h5>Contact Form</h5>
-							<div class="col-sm-10">							
-							
+							<div class="col-sm-10">
 							<label>
-								<div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-small bootstrap-switch-success">
-									<input type="checkbox" name="contactUs[enabled]" <?php if((int)$this->_options[contactUs][disabled] == 0) echo 'checked';?>>
-								</div>
+							<div id="contactUsEnabledStyle">
+								<input type="checkbox" name="contactUs[enabled]" id="contactUsEnabledCheckbox" onclick="changeContactUsEnabled();" <?php if((int)$this->_options[contactUs][disabled] == 0) echo 'checked';?>>
+								<p id="contactUsEnabledText"></p>
+							</div>
+							<script>
+								function changeContactUsEnabled(){											
+									if(document.getElementById('contactUsEnabledCheckbox').checked){
+										document.getElementById('contactUsEnabledStyle').className = 'switch-bg on';
+										document.getElementById('contactUsEnabledText').innerHTML = 'On';
+									} else {
+										document.getElementById('contactUsEnabledStyle').className = 'switch-bg off';
+										document.getElementById('contactUsEnabledText').innerHTML = 'Off';
+									}
+								}
+								changeContactUsEnabled();
+							</script>
 							</label>
 							
 							<label>
@@ -1319,14 +1359,25 @@ class ProfitQuerySmartWidgetsClass
 							<img id="callMe_IMG" src="<?php echo plugins_url('images/call_me_back.png', __FILE__);?>" />
 							<div class="clear"></div>
 							<div class="col-sm-10">
-							<h5>Call Me Back</h5>							
-							
+							<h5>Call Me Back</h5>														
 							<label>
-								<div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-small bootstrap-switch-success">
-									<input type="checkbox" name="callMe[enabled]" <?php if((int)$this->_options[callMe][disabled] == 0) echo 'checked';?>>
-								</div>
+							<div id="callMeEnabledStyle">
+								<input type="checkbox" name="callMe[enabled]" id="callMeEnabledCheckbox" onclick="changeCallMeEnabled();" <?php if((int)$this->_options[callMe][disabled] == 0) echo 'checked';?>>
+								<p id="callMeEnabledText"></p>
+							</div>
+							<script>
+								function changeCallMeEnabled(){											
+									if(document.getElementById('callMeEnabledCheckbox').checked){
+										document.getElementById('callMeEnabledStyle').className = 'switch-bg on';
+										document.getElementById('callMeEnabledText').innerHTML = 'On';
+									} else {
+										document.getElementById('callMeEnabledStyle').className = 'switch-bg off';
+										document.getElementById('callMeEnabledText').innerHTML = 'Off';
+									}
+								}
+								changeCallMeEnabled();
+							</script>
 							</label>
-							
 							<label>
 							<select id="callMe_typeWindow" onchange="changeCallMeBlockImg();" name="callMe[typeWindow]">
 								<option value="pq_large" <?php if($this->_options[callMe][typeWindow] == 'pq_large' || $this->_options[callMe][typeWindow] == '') echo 'selected';?>>Size L</option>
@@ -1351,11 +1402,7 @@ class ProfitQuerySmartWidgetsClass
 							<a href="#Call_Me_Back" onclick="document.getElementById('Call_Me_Back').style.display='block';"><button type="button" class="btn btn-link btn-bg">More Option</button></a>							
 							</div>
 							
-						</div>
-						<script>
-								$("[name='callMe[enabled]']").bootstrapSwitch();
-								$("[name='contactUs[enabled]']").bootstrapSwitch();
-						</script>
+						</div>						
 					</div>
 					<div class="clear"></div>
 					
@@ -1364,11 +1411,11 @@ class ProfitQuerySmartWidgetsClass
 							<h5>More options Contact Form</h5>
 							<div class="col-sm-10" style="width: 83.333333%;">
 							
-							<label style="display: block;"><p>Heading</p><input name="contactUs[title]" value="<?php echo stripslashes($this->_options[contactUs][title]);?>"></label>
-							<label style="display: block;"><p>Text</p><input name="contactUs[sub_title]" value="<?php echo stripslashes($this->_options[contactUs][sub_title]);?>"></label>							
-							<label style="display: block;"><p>Button Title</p><input name="contactUs[buttonTitle]" value="<?php echo stripslashes($this->_options[contactUs][buttonTitle]);?>"></label>							
+							<label style="display: block;"><p>Heading</p><input type="text" name="contactUs[title]" value="<?php echo stripslashes($this->_options[contactUs][title]);?>"></label>
+							<label style="display: block;"><p>Text</p><input type="text"name="contactUs[sub_title]" value="<?php echo stripslashes($this->_options[contactUs][sub_title]);?>"></label>							
+							<label style="display: block;"><p>Button Title</p><input type="text" name="contactUs[buttonTitle]" value="<?php echo stripslashes($this->_options[contactUs][buttonTitle]);?>"></label>							
 							
-							<label style="padding-left:0; margin: 20px 0;">
+							<label style="padding-left:0; margin: 37px 0 20px;">
 							<select id="contactUs_position" name="contactUs[position]">
 							    <option value="pq_right pq_bottom" <?php if($this->_options[contactUs][position] == 'pq_right pq_bottom' || $this->_options[contactUs][position] == '') echo 'selected';?>>Loader - Right/Bottom</option>
 								<option value="pq_right pq_top" <?php if($this->_options[contactUs][position] == 'pq_right pq_top') echo 'selected';?>>Loader - Right/Top</option>		
@@ -1376,7 +1423,7 @@ class ProfitQuerySmartWidgetsClass
 								<option value="pq_left pq_top" <?php if($this->_options[contactUs][position] == 'pq_left pq_top') echo 'selected';?>>Loader - Left/Top</option>
 							</select>
 							</label>
-							<label><select id="contactUs_loader_background" name="contactUs[loader_background]">
+							<label><select id="contactUs_loader_background" onchange="contactUsPreview();" name="contactUs[loader_background]">
 								    <option value="bg_grey" <?php if($this->_options[contactUs][loader_background] == 'bg_grey') echo 'selected';?>>Loader - Background - Grey</option>
 									<option value="" <?php if($this->_options[contactUs][loader_background] == '') echo 'selected';?>>Loader - Background - White</option>
 									<option value="bg_yellow" <?php if($this->_options[contactUs][loader_background] == 'bg_yellow') echo 'selected';?>>Loader - Background - Yellow</option>
@@ -1391,8 +1438,9 @@ class ProfitQuerySmartWidgetsClass
 									<option value="bg_lilac" <?php if($this->_options[contactUs][loader_background] == 'bg_lilac') echo 'selected';?>>Loader - Background - Lilac</option>
 							</select></label>
 							<div class="clear"></div>	
-							<div class="col-sm-6" style="padding-left:0; margin: 10px 0 0;">                          						
-							<label><select id="contactUs_background" name="contactUs[background]">
+							<div class="col-sm-6 icons down" style="padding-left:0; margin: 10px 0;">                          						
+							<label style="margin-bottom:0;">
+							<select id="contactUs_background" onchange="contactUsPreview();" name="contactUs[background]">
 								    <option value="bg_grey" <?php if($this->_options[contactUs][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
 									<option value="" <?php if($this->_options[contactUs][background] == '') echo 'selected';?>>Background - White</option>
 									<option value="bg_yellow" <?php if($this->_options[contactUs][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
@@ -1405,10 +1453,10 @@ class ProfitQuerySmartWidgetsClass
 									<option value="bg_black" <?php if($this->_options[contactUs][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
 									<option value="bg_skyblue" <?php if($this->_options[contactUs][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
 									<option value="bg_lilac" <?php if($this->_options[contactUs][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
-							</select><label>
+							</select></label>
 							</div>
-							<div class="col-sm-6" style="padding-right:0; margin: 10px 0 0;">
-							<label><select id="contactUs_button_color" name="contactUs[button_color]">
+							<div class="col-sm-6 icons down" style="padding-right:0; margin: 10px 0;">
+							<label><select id="contactUs_button_color" onchange="contactUsPreview();" name="contactUs[button_color]">
 								    <option value="btn_lightblue" <?php if($this->_options[contactUs][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
 									<option value="btn_lightblue invert" <?php if($this->_options[contactUs][button_color] == 'btn_lightblue invert' || $this->_options[contactUs][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
 									<option value="btn_blue" <?php if($this->_options[contactUs][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
@@ -1425,10 +1473,10 @@ class ProfitQuerySmartWidgetsClass
 									<option value="btn_red invert" <?php if($this->_options[contactUs][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
 									<option value="btn_lilac" <?php if($this->_options[contactUs][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
 									<option value="btn_lilac invert" <?php if($this->_options[contactUs][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
-							</select><label>
+							</select></label>
 							</div>
 							<div class="clear"></div>
-							<label><select id="contactUs_img" name="contactUs[img]" onchange="chagnePopupImg(this.value, 'contactUsFotoBlock', 'contactUsCustomFotoBlock');">
+							<label><select id="contactUs_img" name="contactUs[img]" onchange="chagnePopupImg(this.value, 'contactUsFotoBlock', 'contactUsCustomFotoBlock');contactUsPreview();">
 								<option value="" selected >No picture</option>
 								<option value="img_01.png" <?php if($this->_options[contactUs][img] == 'img_01.png') echo 'selected';?>>Question</option>
 								<option value="img_02.png" <?php if($this->_options[contactUs][img] == 'img_02.png') echo 'selected';?>>Attention</option>
@@ -1442,8 +1490,8 @@ class ProfitQuerySmartWidgetsClass
 								<option value="img_10.png" <?php if($this->_options[contactUs][img] == 'img_10.png') echo 'selected';?>>Success</option>
 								<option value="custom" <?php if($this->_options[contactUs][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
 							</select></label>
-							<label><div class="img"><img id="contactUsFotoBlock" src="" />
-							<input name="contactUs[imgUrl]" style="display:none;" id="contactUsCustomFotoBlock" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[contactUs][imgUrl]);?>">
+							<label style="margin-top: 20px;"><div class="img"><img id="contactUsFotoBlock" src="" />
+							<input type="text" name="contactUs[imgUrl]" onkeyup="contactUsPreview();" style="display:none;" id="contactUsCustomFotoBlock" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[contactUs][imgUrl]);?>">
 							</div></label>
 							<label><div class="box">
 								<p>Follow Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
@@ -1452,6 +1500,7 @@ class ProfitQuerySmartWidgetsClass
 							<label><div class="box">
 								<p>Thank Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
 								<input type="checkbox" name="contactUs[afterProceed][thank]" <?php if((int)$this->_options[contactUs][afterProceed][thank] == 1) echo 'checked';?>></div>
+								<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off"></div>
 							</div></label>
 							<?php
 								echo "
@@ -1459,38 +1508,44 @@ class ProfitQuerySmartWidgetsClass
 									chagnePopupImg('".$this->_options[contactUs][img]."', 'contactUsFotoBlock', 'contactUsCustomFotoBlock');
 								</script>
 								";
-							?>
+							?>							
+							
+							<div class="clear"></div>
+							<div style="margin: 15px 0 20px;">
+							<label style="display: block;">			
+								<p style="padding:0;">Send Mail To</p>
+								<input type="text" name="adminEmail" value="<?php echo stripslashes($this->_options[adminEmail])?>">
+							</label>		
+							</div>
+							<!--p>Only Design Live Demo</p>
+							<iframe scrolling="yes" id="contactUsLiveViewIframe" width="900px" height="300px" src="" style="background: white; margin: 20px 0 0;"></iframe>
+							
 							<script>
-								$("[name='contactUs[afterProceed][follow]']").bootstrapSwitch();
-								$("[name='contactUs[afterProceed][thank]']").bootstrapSwitch();
-								
 								function contactUsPreview(){									
-									var design = document.getElementById('contactUs_typeWindow').value+' '+document.getElementById('contactUs_background').value+' '+document.getElementById('contactUs_button_color').value;
+									var design = document.getElementById('contactUs_typeWindow').value+' pq_left pq_top '+document.getElementById('contactUs_background').value+' '+document.getElementById('contactUs_button_color').value;
 									var img = document.getElementById('contactUs_img').value;
 									var imgUrl = document.getElementById('contactUsCustomFotoBlock').value;
 									var loaderBackground = document.getElementById('contactUs_loader_background').value;
-									var position = document.getElementById('contactUs_position').value;
-									window.open("http://profitquery.com/aio_widgets_demo.html?p=contactUs&design="+design+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position, "product_view");							
+									var position = 'pq_left pq_top';
+									
+									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo.html?utm-campaign=wp_aio_widgets&p=contactUs&design='+design+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position;
+									document.getElementById('contactUsLiveViewIframe').src = previewUrl;									
 								}
-							</script>
-							
-							<div class="clear"></div>
-							<button type="button" class="btn btn-link btn-lg btn-m" onclick="contactUsPreview()">Preview</button>
-							
-							
+								contactUsPreview()
+							</script-->
 							</div>
-							<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off" style="bottom: 80px;"></div>
+							
 						<a href="javascript:void(0)" onclick="document.getElementById('Contact_Form').style.display='none';"><div class="close"></div></a>
 						</div>
 						<a name="Call_Me_Back"></a><div class="col-sm-10 more" id="Call_Me_Back" style="display:none;">
 							<h5>More options Call Me Back</h5>
 							<div class="col-sm-10" style="width: 83.333333%;">
 							
-							<label style="display: block;"><p>Heading</p><input name="callMe[title]" value="<?php echo stripslashes($this->_options[callMe][title])?>"></label>
-							<label style="display: block;"><p>Text</p><input name="callMe[sub_title]" value="<?php echo stripslashes($this->_options[callMe][sub_title])?>"></label>
-							<label style="display: block;"><p>Button</p><input name="callMe[buttonTitle]" value="<?php echo stripslashes($this->_options[callMe][buttonTitle])?>"></label>
+							<label style="display: block;"><p>Heading</p><input type="text" name="callMe[title]" value="<?php echo stripslashes($this->_options[callMe][title])?>"></label>
+							<label style="display: block;"><p>Text</p><input type="text" name="callMe[sub_title]" value="<?php echo stripslashes($this->_options[callMe][sub_title])?>"></label>
+							<label style="display: block;"><p>Button</p><input type="text" name="callMe[buttonTitle]" value="<?php echo stripslashes($this->_options[callMe][buttonTitle])?>"></label>
 						    
-                            <label style="padding-left:0; margin: 20px 0;">
+                            <label style="padding-left:0; margin: 37px 0 20px;">
 							<select id="callMe_position" name="callMe[position]">
 							    <option value="pq_right pq_bottom" <?php if($this->_options[callMe][position] == 'pq_right pq_bottom' ) echo 'selected';?>>Loader - Right/Bottom</option>
 								<option value="pq_right pq_top" <?php if($this->_options[callMe][position] == 'pq_right pq_top') echo 'selected';?>>Loader - Right/Top</option>		
@@ -1498,7 +1553,7 @@ class ProfitQuerySmartWidgetsClass
 								<option value="pq_left pq_top" <?php if($this->_options[callMe][position] == 'pq_left pq_top') echo 'selected';?>>Loader - Left/Top</option>
 							</select>
 							</label>
-							<label><select id="callMe_loader_background" name="callMe[loader_background]">
+							<label><select id="callMe_loader_background" onchange="callMePreview();" name="callMe[loader_background]">
 								    <option value="bg_grey" <?php if($this->_options[callMe][loader_background] == 'bg_grey') echo 'selected';?>>Loader - Background - Grey</option>
 									<option value="" <?php if($this->_options[callMe][loader_background] == '') echo 'selected';?>>Loader - Background - White</option>
 									<option value="bg_yellow" <?php if($this->_options[callMe][loader_background] == 'bg_yellow') echo 'selected';?>>Loader - Background - Yellow</option>
@@ -1514,8 +1569,8 @@ class ProfitQuerySmartWidgetsClass
 							</select></label>
 							
 							<div class="clear"></div>
-							<div class="col-sm-6" style="padding-left:0; margin-top: 10px;">
-							<label><select id="callMe_background" name="callMe[background]">
+							<div class="col-sm-6 icons down" style="padding-left:0; margin-top: 10px;">
+							<label><select id="callMe_background" onchange="callMePreview();" name="callMe[background]">
 								    <option value="bg_grey" <?php if($this->_options[callMe][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
 									<option value="" <?php if($this->_options[callMe][background] == '') echo 'selected';?>>Background - White</option>
 									<option value="bg_yellow" <?php if($this->_options[callMe][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
@@ -1528,10 +1583,10 @@ class ProfitQuerySmartWidgetsClass
 									<option value="bg_black" <?php if($this->_options[callMe][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
 									<option value="bg_skyblue" <?php if($this->_options[callMe][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
 									<option value="bg_lilac" <?php if($this->_options[callMe][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
-							</select><label>
+							</select></label>
 							</div>
-							<div class="col-sm-6" style="padding-right:0; margin-top: 10px;">
-							<label><select id="callMe_button_color" name="callMe[button_color]">
+							<div class="col-sm-6 icons down" style="padding-right:0; margin: 10px 0;">
+							<label><select id="callMe_button_color" onchange="callMePreview();" name="callMe[button_color]">
 								    <option value="btn_lightblue" <?php if($this->_options[callMe][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
 									<option value="btn_lightblue invert" <?php if($this->_options[callMe][button_color] == 'btn_lightblue invert' || $this->_options[callMe][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
 									<option value="btn_blue" <?php if($this->_options[callMe][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
@@ -1548,11 +1603,11 @@ class ProfitQuerySmartWidgetsClass
 									<option value="btn_red invert" <?php if($this->_options[callMe][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
 									<option value="btn_lilac" <?php if($this->_options[callMe][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
 									<option value="btn_lilac invert" <?php if($this->_options[callMe][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
-							</select><label>
+							</select></label>
 							</div>
 							<div class="clear"></div>
 						
-							<label><select id="callMe_img" name="callMe[img]" onchange="chagnePopupImg(this.value, 'callMeFotoBlock', 'callMeCustomFotoBlock');">
+							<label><select id="callMe_img" name="callMe[img]" onchange="chagnePopupImg(this.value, 'callMeFotoBlock', 'callMeCustomFotoBlock');callMePreview();">
 								<option value="" selected >No picture</option>
 								<option value="img_01.png" <?php if($this->_options[callMe][img] == 'img_01.png') echo 'selected';?>>Question</option>
 								<option value="img_02.png" <?php if($this->_options[callMe][img] == 'img_02.png') echo 'selected';?>>Attention</option>
@@ -1566,8 +1621,8 @@ class ProfitQuerySmartWidgetsClass
 								<option value="img_10.png" <?php if($this->_options[callMe][img] == 'img_10.png') echo 'selected';?>>Success</option>
 								<option value="custom" <?php if($this->_options[callMe][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
 							</select></label>
-							<label><div class="img"><img id="callMeFotoBlock" src="" />
-							<input name="callMe[imgUrl]" style="display:none;" id="callMeCustomFotoBlock" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[callMe][imgUrl])?>">
+							<label style="margin-top: 20px;"><div class="img"><img id="callMeFotoBlock" src="" />
+							<input type="text" name="callMe[imgUrl]" onkeyup="callMePreview();" style="display:none;" id="callMeCustomFotoBlock" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[callMe][imgUrl])?>">
 							</div></label>
 							<label><div class="box">
 								<p>Follow Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
@@ -1576,6 +1631,7 @@ class ProfitQuerySmartWidgetsClass
 							<label><div class="box">
 								<p>Thank Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
 								<input type="checkbox" name="callMe[afterProceed][thank]" <?php if((int)$this->_options[callMe][afterProceed][thank] == 1) echo 'checked';?>></div>
+								<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off"></div>
 							</div></label>
 							<?php
 								echo "
@@ -1583,48 +1639,45 @@ class ProfitQuerySmartWidgetsClass
 									chagnePopupImg('".$this->_options[callMe][img]."', 'callMeFotoBlock', 'callMeCustomFotoBlock');
 								</script>
 								";
-							?>
+							?>							
+							<div class="clear"></div>
+							
+							<div style="margin: 15px 0 20px;">
+							<label style="display: block;">			
+								<p style="padding:0;">Send Mail To</p>
+								<input type="text" name="adminEmail" value="<?php echo stripslashes($this->_options[adminEmail])?>">
+							</label>		
+							</div>	
+							<!--p>Only Design Live Demo</p>
+							<iframe scrolling="yes" id="callMeLiveViewIframe" width="900px" height="300px" src="" style="background: white; margin: 20px 0 0;"></iframe>
+							
 							<script>
-								$("[name='callMe[afterProceed][follow]']").bootstrapSwitch();
-								$("[name='callMe[afterProceed][thank]']").bootstrapSwitch();
-								
-								function callMePreview(){									
-									var design = document.getElementById('callMe_typeWindow').value+' '+document.getElementById('callMe_background').value+' '+document.getElementById('callMe_button_color').value;
+								function callMePreview(){
+									var design = document.getElementById('callMe_typeWindow').value+' pq_left pq_top '+document.getElementById('callMe_background').value+' '+document.getElementById('callMe_button_color').value;
 									var img = document.getElementById('callMe_img').value;
 									var imgUrl = document.getElementById('callMeCustomFotoBlock').value;
 									var loaderBackground = document.getElementById('callMe_loader_background').value;
-									var position = document.getElementById('callMe_position').value;
-									window.open("http://profitquery.com/aio_widgets_demo.html?p=callMe&design="+design+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position, "product_view");							
+									var position = 'pq_left pq_top';
+																		
+									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo.html?utm-campaign=wp_aio_widgets&p=callMe&design='+design+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position;
+																		
+									document.getElementById('callMeLiveViewIframe').src = previewUrl;
 								}
-							</script>
-							<div class="clear"></div>
-							<button type="button" class="btn btn-link btn-lg btn-m" onclick="callMePreview()">Preview</button>
-							
+								callMePreview();
+							</script-->
 							
 							</div>
-						<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off" style="bottom: 80px;"></div>
+						
 						<a href="javascript:void(0)" onclick="document.getElementById('Call_Me_Back').style.display='none';"><div class="close"></div></a>
 						</div>
 					</div>
-						<div class="panel-body">
-						<div class="col-sm-10" style="background: #F3F3F3; overflow: hidden; padding: 20px 0 10px; margin: 0 auto 25px; width: 83.333333%!important;">
-							
-							<div class="col-sm-12">
-								<div class="col-sm-3" style="padding: 4px 0 0;">
-									<p>Send Mail To</p>
-								</div>
-								<div class="col-sm-9" style="margin: 0 0 10px;">
-									<label style="display: block;"><input name="adminEmail" value="<?php echo stripslashes($this->_options[adminEmail])?>"></label>
-								</div>
-								
-							</div>							
-						</div>
-						</div><input type="submit" class="btn btn_m_red" value="Save changes">						
-					</form>
+						<input type="submit" class="btn btn_m_red" value="Save changes">
+						<a href="mailto:support@profitquery.com" target="_blank" class="help">Need help?</a>
+						</form>
 					</div>					
 				</div>
 				<a name="AfterSuccessBlock"></a>
-				<div style="margin-top: 35px; background: #ffeafe; padding: 45px 0;">					
+				<div class="pq_block" id="v4">					
 						<h4 class="panel-title">After Success</h4>
 						
 					<div id="collapseThree" class="panel-collapse collapse in">
@@ -1651,7 +1704,7 @@ class ProfitQuerySmartWidgetsClass
 									<option value="bg_black" <?php if($this->_options[follow][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
 									<option value="bg_skyblue" <?php if($this->_options[follow][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
 									<option value="bg_lilac" <?php if($this->_options[follow][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
-							</select><label>
+							</select></label>
 							<script>
 								function changeFollowBlockImg(){
 									if(document.getElementById('follow_background').value == 'bg_grey'){
@@ -1769,10 +1822,42 @@ class ProfitQuerySmartWidgetsClass
 							<h5>More options Follow Us After Sharing</h5>
 							<div class="col-sm-10" style="width: 83.333333%;">
 							
-							<label style="display: block;"><p>Heading</p><input name="follow[title]" value="<?php echo stripslashes($this->_options[follow][title])?>"></label>					
-							<label style="display: block;"><p>Text</p><input name="follow[sub_title]" value="<?php echo stripslashes($this->_options[follow][sub_title])?>"></label>					
-							
-							<div class="col-sm-6" style="padding-left: 0; margin: 20px 0;">
+							<label style="display: block;"><p>Heading</p><input type="text" name="follow[title]" value="<?php echo stripslashes($this->_options[follow][title])?>"></label>					
+							<label style="display: block;"><p>Text</p><input type="text" name="follow[sub_title]" value="<?php echo stripslashes($this->_options[follow][sub_title])?>"></label>					
+							<div class="services" style="overflow: hidden; padding: 20px 0 10px;" id="pq_input">							
+							<label style="display: block;"><div class="x30">
+								<div class="pq_fb"></div>
+									<p>facebook.com/</p><input type="text" name="follow[follow_socnet][FB]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][FB]);?>">
+							</div></label>
+							<label style="display: block;"><div class="x30">
+								<div class="pq_tw"></div>
+									<p>twitter.com/</p><input type="text" name="follow[follow_socnet][TW]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][TW]);?>">
+										
+							</div></label>
+							<div id="collapseservices" style="display:none;">
+							<label style="display: block;"><div class="x30">
+								<div class="pq_gp"></div>
+									<p>plus.google.com/</p><input type="text" name="follow[follow_socnet][GP]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][GP]);?>">
+										
+							</div></label>
+							<label style="display: block;"><div class="x30">
+								<div class="pq_pi"></div>
+									<p>pinterest.com/</p><input type="text" name="follow[follow_socnet][PI]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][PI]);?>">
+										
+							</div></label>
+							<label style="display: block;"><div class="x30">
+								<div class="pq_vk"></div>
+									<p>vk.com/</p><input type="text" name="follow[follow_socnet][VK]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][VK]);?>">
+										
+							</div></label>
+							<label style="display: block;"><div class="x30">
+								<div class="pq_od"></div>
+									<p>ok.ru/</p><input type="text" name="follow[follow_socnet][OD]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][OD]);?>">
+							</div></label>
+							</div>
+							<button type="button" class="btn btn-link btn-bg" onclick="document.getElementById('collapseservices').style.display='block';" >More Services</button>
+						</div>
+							<div class="col-sm-6 icons" style="padding-left: 0; margin: 20px 0;">
 							<label><div class="box">
 								<p>After Sharing Sidebar</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
 								<input type="checkbox" name="sharingSideBar[afterProceed][follow]" <?php if((int)$this->_options[sharingSideBar][afterProceed][follow] == 1) echo 'checked';?>></div>
@@ -1786,7 +1871,7 @@ class ProfitQuerySmartWidgetsClass
 								<input type="checkbox" name="subscribeBar[afterProceed][follow]" <?php if((int)$this->_options[subscribeBar][afterProceed][follow] == 1) echo 'checked';?>></div>
 							</div></label>
 							</div>
-							<div class="col-sm-6" style="padding-right: 0; margin: 20px 0;">
+							<div class="col-sm-6 icons" style="padding-right: 0; margin: 20px 0;">
 							<label><div class="box">
 								<p>After Exit Popup</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
 								<input type="checkbox" name="subscribeExit[afterProceed][follow]" <?php if((int)$this->_options[subscribeExit][afterProceed][follow] == 1) echo 'checked';?>></div>
@@ -1799,31 +1884,18 @@ class ProfitQuerySmartWidgetsClass
 								<p>After Call Me Back</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
 								<input type="checkbox" name="callMe[afterProceed][follow]" <?php if((int)$this->_options[callMe][afterProceed][follow] == 1) echo 'checked';?>></div>
 							</div><label>
-							</div>
-							<script>
-								$("[name='sharingSideBar[afterProceed][follow]']").bootstrapSwitch();
-								$("[name='imageSharer[afterProceed][follow]']").bootstrapSwitch();
-								$("[name='subscribeBar[afterProceed][follow]']").bootstrapSwitch();
-								$("[name='subscribeExit[afterProceed][follow]']").bootstrapSwitch();
-								$("[name='contactUs[afterProceed][follow]']").bootstrapSwitch();
-								$("[name='callMe[afterProceed][follow]']").bootstrapSwitch();
-								
-								function followPreview(){									
-									var design = document.getElementById('follow_background').value;									
-									window.open("http://profitquery.com/aio_widgets_demo.html?p=follow&design="+design, "product_view");
-								}
-							</script>
+							</div>							
 							<div style="clear: both;"></div>
-							<button type="button" class="btn btn-link btn-lg btn-m" onclick="followPreview();">Preview</button>
+																				
 							</div>
 						<a href="javascript:void(0)" onclick="document.getElementById('After_Sharing').style.display='none';"><div class="close"></div></a>
 						</div>
 						<a name="Thankyou_Popup"></a><div class="col-sm-10 more" id="Thankyou_Popup" style="display:none;">
 							<h5>More options Thankyou Popup</h5>
 							<div class="col-sm-10" style="width: 83.333333%;">
-							<label style="display: block;"><p>Heading</p><input name="thankPopup[title]" value="<?php echo stripslashes($this->_options[thankPopup][title])?>"></label>
-							<label style="display: block;"><p>Text</p><input name="thankPopup[sub_title]" value="<?php echo stripslashes($this->_options[thankPopup][sub_title])?>"></label>							
-							<label style="display: block;"><p>Button Title</p><input name="thankPopup[buttonTitle]" value="<?php echo stripslashes($this->_options[thankPopup][buttonTitle])?>"></label>							
+							<label style="display: block;"><p>Heading</p><input type="text" name="thankPopup[title]" value="<?php echo stripslashes($this->_options[thankPopup][title])?>"></label>
+							<label style="display: block;"><p>Text</p><input type="text" name="thankPopup[sub_title]" value="<?php echo stripslashes($this->_options[thankPopup][sub_title])?>"></label>							
+							<label style="display: block;"><p>Button Title</p><input type="text" name="thankPopup[buttonTitle]" value="<?php echo stripslashes($this->_options[thankPopup][buttonTitle])?>"></label>							
 							<div class="clear"></div>							
 							<label style="margin: 10px 0;">
 							<select id="thankPopup_img" name="thankPopup[img]" onchange="chagnePopupImg(this.value, 'thankPopupFotoBlock', 'thankPopupCustomFotoBlock');">
@@ -1843,7 +1915,7 @@ class ProfitQuerySmartWidgetsClass
 							<label style="margin: 10px 0;">
 							<div class="img">
 								<img id="thankPopupFotoBlock" src="" />
-							<input name="thankPopup[imgUrl]" style="display:none; margin-top: 10px;" id="thankPopupCustomFotoBlock" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[thankPopup][imgUrl])?>">
+							<input type="text" name="thankPopup[imgUrl]" style="display:none; margin-top: 10px;" id="thankPopupCustomFotoBlock" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[thankPopup][imgUrl])?>">
 							</div></label>
 							<?php
 								echo "
@@ -1853,7 +1925,7 @@ class ProfitQuerySmartWidgetsClass
 								";
 							?>
 							<div class="clear"></div>
-							<div class="col-sm-6" style="padding-left: 0; margin: 20px 0;">
+							<div class="col-sm-6 icons" style="padding-left: 0; margin: 20px 0;">
 							<label><div class="box">
 								<p>After Sharing Sidebar</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
 								<input type="checkbox" name="sharingSideBar[afterProceed][thank]" <?php if((int)$this->_options[sharingSideBar][afterProceed][thank] == 1) echo 'checked';?>></div>
@@ -1867,7 +1939,7 @@ class ProfitQuerySmartWidgetsClass
 								<input type="checkbox" name="subscribeBar[afterProceed][thank]" <?php if((int)$this->_options[subscribeBar][afterProceed][thank] == 1) echo 'checked';?>></div>
 							</div></label>
 							</div>
-							<div class="col-sm-6" style="padding-right: 0; margin: 20px 0;">
+							<div class="col-sm-6 icons" style="padding-right: 0; margin: 20px 0;">
 							<label><div class="box">
 								<p>After Exit Popup</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
 								<input type="checkbox" name="subscribeExit[afterProceed][thank]" <?php if((int)$this->_options[subscribeExit][afterProceed][thank] == 1) echo 'checked';?>></div>
@@ -1880,109 +1952,94 @@ class ProfitQuerySmartWidgetsClass
 								<p>After Call Me Back</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
 								<input type="checkbox" name="callMe[afterProceed][thank]" <?php if((int)$this->_options[callMe][afterProceed][thank] == 1) echo 'checked';?>></div>
 							</div><label>
-							</div>
-							<script>
-								$("[name='sharingSideBar[afterProceed][thank]']").bootstrapSwitch();
-								$("[name='imageSharer[afterProceed][thank]']").bootstrapSwitch();
-								$("[name='subscribeBar[afterProceed][thank]']").bootstrapSwitch();
-								$("[name='subscribeExit[afterProceed][thank]']").bootstrapSwitch();
-								$("[name='contactUs[afterProceed][thank]']").bootstrapSwitch();
-								$("[name='callMe[afterProceed][thank]']").bootstrapSwitch();
-								
-								function thankPopupPreview(){									
-									var design = document.getElementById('thankPopup_background').value;
-									var img = document.getElementById('thankPopup_img').value;
-									var imgUrl = document.getElementById('thankPopupCustomFotoBlock').value;									
-									window.open("http://profitquery.com/aio_widgets_demo.html?p=thankPopup&design="+design+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl), "product_view");							
-								}
-							</script>
-							<div class="clear"></div>
-							<button type="button" class="btn btn-link btn-lg btn-m" onclick="thankPopupPreview();">Preview</button>							
+							</div>							
+							<div class="clear"></div>							
 							</div>
 						<a href="javascript:void(0)" onclick="document.getElementById('Thankyou_Popup').style.display='none';"><div class="close"></div></a>
 						</div>
 					</div>
-					<a name="setupFollow"></a>
-					<div class="panel-body">
-						<div class="col-md-10 services" style="background: #F3F3F3; overflow: hidden; padding: 40px 0 20px; margin: 0 auto 25px; width: 83.333333%!important;" id="pq_input">							
-							<label style="display: block;"><div class="col-sm-10 x30">
-								<div class="pq_fb"></div>
-									<p>facebook.com/</p><input type="text" name="follow[follow_socnet][FB]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][FB]);?>">
-							</div></label>
-							<label style="display: block;"><div class="col-sm-10 x30">
-								<div class="pq_tw"></div>
-									<p>twitter.com/</p><input type="text" name="follow[follow_socnet][TW]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][TW]);?>">
-										
-							</div></label>
-							<div id="collapseservices" class="panel-collapse collapse">
-							<label style="display: block;"><div class="col-sm-10 x30">
-								<div class="pq_gp"></div>
-									<p>plus.google.com/</p><input type="text" name="follow[follow_socnet][GP]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][GP]);?>">
-										
-							</div></label>
-							<label style="display: block;"><div class="col-sm-10 x30">
-								<div class="pq_pi"></div>
-									<p>pinterest.com/</p><input type="text" name="follow[follow_socnet][PI]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][PI]);?>">
-										
-							</div></label>
-							<label style="display: block;"><div class="col-sm-10 x30">
-								<div class="pq_vk"></div>
-									<p>vk.com/</p><input type="text" name="follow[follow_socnet][VK]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][VK]);?>">
-										
-							</div></label>
-							<label style="display: block;"><div class="col-sm-10 x30">
-								<div class="pq_od"></div>
-									<p>ok.ru/</p><input type="text" name="follow[follow_socnet][OD]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][OD]);?>">
-							</div></label>
-							</div>
-							<button type="button" class="btn btn-link btn-bg" data-toggle="collapse" href="#collapseservices" >More Services</button>
-						</div>
-						
-					  </div><input type="submit" class="btn btn_m_red" value="Save changes">
+					
+					  <input type="submit" class="btn btn_m_red" value="Save changes">
+					  <a href="mailto:support@profitquery.com" target="_blank" class="help">Need help?</a>
 					  </form>
 					</div>
 				  </div>				  
 			</div>
-<div class="container-fluid" id="free_profitquery" style="padding-top: 150px;">
+<div class="container-fluid" id="free_profitquery" style="padding: 90px 0; margin-top: 80px;">
 	<div class="col-sm-12">
 		<h4>More Tools from Profitquery</h4>
 		<div class="col-sm-12 items">
-			<div class="col-sm-5">
+		<div style="overflow: hidden; width: 100%; max-width: 740px; margin: 0 auto;">
+			<a href="http://profitquery.com/referral_system.html" target="_blank"><div class="col-sm-6">
 					<img src="<?php echo plugins_url('images/referral_system.png', __FILE__);?>" />
 					<h5>Refferal System</h3>
-					<a href="http://profitquery.com/referral_system.html" target="_blank"><input type="button" class="btn btn_m_red" style="width: initial; margin: 20px auto 8px;" value="Learn more"></a>
-			</div>
-			<div class="col-sm-5">
+					<a href="http://profitquery.com/referral_system.html" target="_blank"><input type="button" class="btn btn_m_red" style="width: initial; margin: 12px auto 8px;" value="Learn more"></a>
+			</div></a>
+			<a href="http://profitquery.com/social_login.html" target="_blank"><div class="col-sm-6" id="odd">
 					<img src="<?php echo plugins_url('images/social_login.png', __FILE__);?>" />
 					<h5>Social Login</h5>
-					<a href="http://profitquery.com/social_login.html" target="_blank"><input type="button" class="btn btn_m_red" style="width: initial; margin: 20px auto 8px;" value="Learn more"></a>
-			</div>
-			<div class="col-sm-5">
+					<a href="http://profitquery.com/social_login.html" target="_blank"><input type="button" class="btn btn_m_red" style="width: initial; margin: 12px auto 8px;" value="Learn more"></a>
+			</div></a>
+			<a href="http://profitquery.com/trigger_mail.html" target="_blank"><div class="col-sm-6">
 					<img src="<?php echo plugins_url('images/trigger_mail.png', __FILE__);?>" />
 					<h5>Trigger Mail</h3>
-					<a href="http://profitquery.com/trigger_mail.html" target="_blank"><input type="button" class="btn btn_m_red" style="width: initial; margin: 20px auto 8px;" value="Learn more"></a>
-			</div>
-			<div class="col-sm-5">
+					<a href="http://profitquery.com/trigger_mail.html" target="_blank"><input type="button" class="btn btn_m_red" style="width: initial; margin: 12px auto 8px;" value="Learn more"></a>
+			</div></a>
+			<a href="http://profitquery.com/product_discount.html" target="_blank"><div class="col-sm-6" id="odd">
 					<img src="<?php echo plugins_url('images/product_discount.png', __FILE__);?>" />
 					<h5>Product Discount</h5>
-					<a href="http://profitquery.com/product_discount.html" target="_blank"><input type="button" class="btn btn_m_red" style="width: initial; margin: 20px auto 8px;" value="Learn more"></a>
-			</div>
-			
+					<a href="http://profitquery.com/product_discount.html" target="_blank"><input type="button" class="btn btn_m_red" style="width: initial; margin: 12px auto 8px;" value="Learn more"></a>
+			</div></a>
+		</div>	
 		</div>
-		<div class="col-sm-10" style="overflow: hidden; padding: 20px 0; margin: 30px 0 25px; background: rgb(244, 244, 244);">
+		<div class="col-sm-10" style="overflow: hidden; padding: 20px; margin: 30px 0 25px; background: white;">
 			<img src="<?php echo plugins_url('images/ecom.png', __FILE__);?>" />
 			
 			<h5>Free Profitquery Widgets for Ecommerce</h5>
-			<a href="http://profitquery.com/ecom.html" target="_blank"><input type="button" class="btn btn_m_red" style="width: initial; margin: 20px auto 8px; background: transparent; color: red;  border: 1px solid red;" value="Learn more"></a>
+			<a href="http://profitquery.com/ecom.html" target="_blank"><input type="button" class="btn btn_m_white" value="Learn more"></a>
 		</div>
-		<div class="col-sm-10" style="overflow: hidden; padding: 20px 0; margin: 10px 0 25px; background: #f8dde3;">
+		<div class="col-sm-10" style="overflow: hidden; padding: 20px; margin: 70px 0 20px; background: #f8dde3;">
 			<h5 style="color: white; background: #008AFF; width: 100px; margin: 0 auto; line-height: 35px; font-size: 26px;">PRO</h5>
 			<h5>Get Profitquery Pro version</h5>
 			<a href="http://profitquery.com/promo.html" target="_blank"><input type="button" class="btn btn_m_red" style="width: initial; margin: 20px auto 8px;" value="Learn more"></a>
 		</div>
 	</div>
 </div>
-</div>			
+</div>
+		<script>
+			function changeSubscribeBarEnabled(){											
+				if(document.getElementById('subscribeBarEnabledCheckbox').checked){
+					document.getElementById('subscribeBarEnabledStyle').className = 'switch-bg on';
+					document.getElementById('subscribeBarEnabledText').innerHTML = 'On';					
+				} else {
+					document.getElementById('subscribeBarEnabledStyle').className = 'switch-bg off';
+					document.getElementById('subscribeBarEnabledText').innerHTML = 'Off';
+				}
+				
+				if(!document.getElementById('subscribeBarEnabledCheckbox').checked && !document.getElementById('subscribeExitEnabledCheckbox').checked){
+					document.getElementById('mailchimpBlockID').style.display = 'none';
+				} else {
+					document.getElementById('mailchimpBlockID').style.display = 'block';
+				}
+			}			
+			function changeSubscribeExitEnabled(){											
+				if(document.getElementById('subscribeExitEnabledCheckbox').checked){
+					document.getElementById('subscribeExitEnabledStyle').className = 'switch-bg on';
+					document.getElementById('subscribeExitEnabledText').innerHTML = 'On';																
+				} else {
+					document.getElementById('subscribeExitEnabledStyle').className = 'switch-bg off';
+					document.getElementById('subscribeExitEnabledText').innerHTML = 'Off';											
+				}																				
+				
+				if(!document.getElementById('subscribeBarEnabledCheckbox').checked && !document.getElementById('subscribeExitEnabledCheckbox').checked){
+					document.getElementById('mailchimpBlockID').style.display = 'none';
+				} else {
+					document.getElementById('mailchimpBlockID').style.display = 'block';
+				}
+			}
+			changeSubscribeExitEnabled();								
+			changeSubscribeBarEnabled();
+		</script>
 			<?php
 		}       
     }
