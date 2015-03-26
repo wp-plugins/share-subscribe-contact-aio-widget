@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 1.1.7
+* @version  SVN: 1.1.8
 */
 
 class ProfitQuerySmartWidgetsClass
@@ -43,17 +43,10 @@ class ProfitQuerySmartWidgetsClass
     {
 		$this->_options = $this->getSettings();
 		/*get Options From Old Image Sharer and delete them*/
-		$this->getOldSettings();
-		add_action( 'admin_init', array($this, 'wpbootstrap_scripts_with_jquery') );
+		$this->getOldSettings();		
         add_action('admin_menu', array($this, 'ProfitquerySmartWidgetsMenu'));		
 		
-    }
-	
-	function wpbootstrap_scripts_with_jquery(){
-		wp_enqueue_style('google_fonts','http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&amp;subset=latin,cyrillic');				
-		wp_enqueue_style('profitquery_smart_widgets_main',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'profitquery_smart_widgets_wordpress.css');
-		wp_enqueue_style('profitquery_smart_widgets_icons',plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH.'icons.css');				
-	}
+    }	
 	
 	/**
      * Adds sub menu page to the WP settings menu
@@ -181,11 +174,14 @@ class ProfitQuerySmartWidgetsClass
                 __('You do not have sufficient permissions to access this page.')
             );
         }
-		echo '
+		echo "
+			<link rel='stylesheet'  href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&amp;subset=latin,cyrillic' type='text/css' media='all' />
+			<link rel='stylesheet'  href='".plugins_url()."/".PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME."/".PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH."profitquery_smart_widgets_wordpress.css' type='text/css' media='all' />
+			<link rel='stylesheet'  href='".plugins_url()."/".PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME."/".PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH."icons.css' type='text/css' media='all' />
 		<noscript>				
 				<p>Please enable JavaScript in your browser.</p>				
 		</noscript>
-		';		
+		";		
 		
 		if($_POST[action] == 'editAdditionalData'){
 			//follow
