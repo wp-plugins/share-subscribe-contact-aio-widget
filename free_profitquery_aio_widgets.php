@@ -49,6 +49,12 @@ if (!defined('PROFITQUERY_SMART_WIDGETS_ADMIN_IMG_PATH'))
 if (!defined('PROFITQUERY_SMART_WIDGETS_ADMIN_IMG_PREVIEW_PATH'))
 	define('PROFITQUERY_SMART_WIDGETS_ADMIN_IMG_PREVIEW_PATH', 'preview/');
 
+$pathParts = pathinfo(__FILE__);
+$path = $pathParts['dirname'];
+
+if (!defined('PROFITQUERY_SMART_WIDGETS_FILENAME'))
+	define('PROFITQUERY_SMART_WIDGETS_FILENAME', $path.'/free_profitquery_aio_widgets.php');
+
 
 require_once 'free_profitquery_aio_widgets_class.php';
 new ProfitQuerySmartWidgetsClass();

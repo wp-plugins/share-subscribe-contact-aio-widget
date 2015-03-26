@@ -45,8 +45,25 @@ class ProfitQuerySmartWidgetsClass
 		/*get Options From Old Image Sharer and delete them*/
 		$this->getOldSettings();		
         add_action('admin_menu', array($this, 'ProfitquerySmartWidgetsMenu'));		
-		
-    }	
+		// Deactivation
+        register_deactivation_hook(
+            PROFITQUERY_SMART_WIDGETS_FILENAME,
+            array($this, 'pluginDeactivation')
+        );
+    }
+	
+	 /**
+     * Functions to execute on plugin deactivation
+     * 
+     * @return null
+     */
+    public function pluginDeactivation()
+    {
+        if (get_option('profitquery')) {
+			$this->_options[aio_widgets_loaded] = 0;
+			update_option('profitquery', $this->_options);
+        }
+    }
 	
 	/**
      * Adds sub menu page to the WP settings menu
