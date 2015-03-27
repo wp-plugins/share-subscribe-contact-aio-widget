@@ -4,15 +4,14 @@ Donate link: http://profitquery.com/aio_widgets.html
 Tags: contact, contact form, email, feedback, form, multilingual, addthis, sumome, sumo, profitquery, profitquery widgets, bookmark, bookmarking, bookmarks, floating, floating buttons, sidebar, share sidebar, sharing sidebar,share button, onhover sharing, on hover sharer, image sharer, image shares, widget, widgets, aio widget, aio, growth tools, boost, growth widgets, conversion tools, e-mail, ecommerce tools, email, email tools, Facebook, google, linkedin, pinterest, Share, share this, sharing buttons, subscription button, sidebar, floating sidebar, follow button, follow us, google, google analytics, google webmaster tools, admin, Post, posts, simple, widget, widgets, wordpress,contact form 7, mailchimp, mailchimp for wordpress, mailchimp for wp, MailChimp form, mailchimp sign-up, mailchimp subscribe
 Requires at least: 2.9
 Tested up to: 4.1.1
-Stable tag: 1.1.8
+Stable tag: 1.1.9
 License: GPL 2. See License below for copyright jots and tittles.
 
-To get more shares, email subscribers, contact information, followers in social network and all fo free.
+Simply widgets for growth website share's, social networks referral's, folllowers and all for free.
 
 
 == Description ==
-All in one widgets for any website to get more shares, email subscribers, contact information, followers in social network and all fo free.
-Most popular widgets in one plugin - Sharing Sidebar, On Hover Image Sharer, Mailchimp Bar, Exit Popup, Contact Form, Call Me Now, Follow Popup.
+Simply widgets for growth website share's, social networks referral's, folllowers and all for free.
 
 
 = Sharing Sidebar  = 
@@ -182,6 +181,9 @@ All of the options required through this plugin require javascript. JavaScript m
 7. Many header images popup
 
 == Changelog ==
+
+= 1.1.9 =
+other plugin integration
 
 = 1.1.8 =
 css conflict update

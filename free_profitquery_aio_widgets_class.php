@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 1.1.8
+* @version  SVN: 1.1.9
 */
 
 class ProfitQuerySmartWidgetsClass
@@ -91,40 +91,67 @@ class ProfitQuerySmartWidgetsClass
 	
 	function setDefaultProductData(){
 		//Other default params
-		$this->_options[sharingSideBar][disabled] = 0;				
-		$this->_options[subscribeBar][disabled] = 1;
-		$this->_options[subscribeExit][disabled] = 1;
-		$this->_options[thankPopup][disabled] = 1;
-		$this->_options[follow][disabled] = 1;
-		$this->_options[callMe][disabled] = 1;
-																		
-		$this->_options[sharingSideBar][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'LI'=>1, 'MailTo'=>1);
-		$this->_options[sharingSideBar][position] = 'pq_left pq_middle';
-		$this->_options[sharingSideBar][design][color] = 'c4';
-		$this->_options[sharingSideBar][design][size] = 'x40';
-
-		$this->_options[contactUs][disabled] = 0;
-		$this->_options[contactUs][position] = 'pq_right pq_bottom';
-		$this->_options['contactUs']['typeWindow'] = 'pq_medium';				
-		$this->_options['contactUs']['background'] = 'bg_grey';
-		$this->_options['contactUs']['button_color'] = 'btn_lightblue';				
-		$this->_options['contactUs']['title'] = 'Contact Us';
-		$this->_options['contactUs']['buttonTitle'] = 'Send';				
-		$this->_options['contactUs']['loader_background'] = 'bg_black';
-		$this->_options['contactUs']['afterProceed'][thank] = 1;
 		
-		$this->_options['thankPopup']['title'] = 'Thank You';
-		$this->_options['thankPopup']['buttonTitle'] = 'Close';
-		$this->_options['thankPopup']['background'] = 'bg_grey';
-		$this->_options['thankPopup']['img'] = 'img_10.png';								
+		if(!$this->_options[imageSharer]){
+			$this->_options[imageSharer][disabled] = 0;
+			$this->_options[imageSharer][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'PI'=>1);				
+			$this->_options[imageSharer][design][color] = 'c4';
+			$this->_options[imageSharer][design][size] = 'x30';
+			$this->_options[imageSharer][design][shadow] = 'sh6';
+			$this->_options[imageSharer][minWidth] = 100;
+		}	
 		
-		$this->_options[subscribeBar][background] = 'bg_red';
-		$this->_options[subscribeBar][button_color] = 'btn_black';
-		$this->_options[subscribeExit][background] = 'bg_red';
-		$this->_options[subscribeExit][button_color] = 'btn_black invert';
-		$this->_options[subscribeExit][typeWindow] = 'pq_medium';
+		if(!$this->_options[subscribeExit]){
+			$this->_options[subscribeExit][disabled] = 1;		
+		}
+		if(!$this->_options[follow]){
+			$this->_options[follow][disabled] = 1;
+		}
+		if(!$this->_options[callMe]){
+			$this->_options[callMe][disabled] = 1;
+		}
 		
-		$this->_options['adminEmail'] = get_settings('admin_email');
+		if(!$this->_options[sharingSideBar]){
+			$this->_options[sharingSideBar][disabled] = 0;		
+			$this->_options[sharingSideBar][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'LI'=>1, 'MailTo'=>1);
+			$this->_options[sharingSideBar][position] = 'pq_left pq_middle';
+			$this->_options[sharingSideBar][design][color] = 'c4';
+			$this->_options[sharingSideBar][design][size] = 'x40';
+		}
+		
+		if(!$this->_options[contactUs]){
+			$this->_options[contactUs][disabled] = 0;
+			$this->_options[contactUs][position] = 'pq_right pq_bottom';
+			$this->_options['contactUs']['typeWindow'] = 'pq_medium';				
+			$this->_options['contactUs']['background'] = 'bg_grey';
+			$this->_options['contactUs']['button_color'] = 'btn_lightblue';				
+			$this->_options['contactUs']['title'] = 'Contact Us';
+			$this->_options['contactUs']['buttonTitle'] = 'Send';				
+			$this->_options['contactUs']['loader_background'] = 'bg_black';
+			$this->_options['contactUs']['afterProceed'][thank] = 1;
+		}
+		
+		if(!$this->_options[thankPopup]){
+			$this->_options[thankPopup][disabled] = 1;
+			$this->_options['thankPopup']['title'] = 'Thank You';
+			$this->_options['thankPopup']['buttonTitle'] = 'Close';
+			$this->_options['thankPopup']['background'] = 'bg_grey';
+			$this->_options['thankPopup']['img'] = 'img_10.png';
+		}
+		
+		if(!$this->_options[subscribeBar]){
+			$this->_options[subscribeBar][disabled] = 1;
+			$this->_options[subscribeBar][background] = 'bg_red';
+			$this->_options[subscribeBar][button_color] = 'btn_black';
+			$this->_options[subscribeExit][background] = 'bg_red';
+			$this->_options[subscribeExit][button_color] = 'btn_black invert';
+			$this->_options[subscribeExit][typeWindow] = 'pq_medium';
+		}
+		
+		if(!$this->_options['adminEmail']){
+			$this->_options['adminEmail'] = get_settings('admin_email');
+		}
+		
 		$this->_options[aio_widgets_loaded] = 1;
 		update_option('profitquery', $this->_options);
 	}	
@@ -155,16 +182,7 @@ class ProfitQuerySmartWidgetsClass
 				$this->setDefaultProductData();
 			}
 		//IF not yet Loaded
-		} else if((int)$this->_options[aio_widgets_loaded] == 0) {
-			//DEFAULT OPTIONS
-			$this->_options[imageSharer][disabled] = 0;
-			$this->_options[imageSharer][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'PI'=>1);				
-			$this->_options[imageSharer][design][color] = 'c4';
-			$this->_options[imageSharer][design][size] = 'x30';
-			$this->_options[imageSharer][design][shadow] = 'sh6';
-			$this->_options[imageSharer][minWidth] = 100;
-			update_option('profitquery', $this->_options);
-			
+		} else if((int)$this->_options[aio_widgets_loaded] == 0) {						
 			$this ->setDefaultProductData();
 		}
 	}

@@ -22,7 +22,7 @@
 * Plugin Name: Share + Subscribe + Contact | AIO Widget
 * Plugin URI: http://profitquery.com/aio_widgets.html
 * Description: All in one widgets for any website to get more shares, email subscribers, contact information, followers in social network and all fo free.
-* Version: 1.1.8
+* Version: 1.1.9
 *
 * Author: Profitquery Team <support@profitquery.com>
 * Author URI: http://profitquery.com/?utm_campaign=aio_widgets_wp
