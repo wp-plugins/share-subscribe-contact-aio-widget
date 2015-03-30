@@ -4,7 +4,7 @@ Donate link: http://profitquery.com/aio_widgets.html
 Tags: contact, contact form, email, feedback, form, multilingual, addthis, sumome, sumo, profitquery, profitquery widgets, bookmark, bookmarking, bookmarks, floating, floating buttons, sidebar, share sidebar, sharing sidebar,share button, onhover sharing, on hover sharer, image sharer, image shares, widget, widgets, aio widget, aio, growth tools, boost, growth widgets, conversion tools, e-mail, ecommerce tools, email, email tools, Facebook, google, linkedin, pinterest, Share, share this, sharing buttons, subscription button, sidebar, floating sidebar, follow button, follow us, google, google analytics, google webmaster tools, admin, Post, posts, simple, widget, widgets, wordpress,contact form 7, mailchimp, mailchimp for wordpress, mailchimp for wp, MailChimp form, mailchimp sign-up, mailchimp subscribe, free widgets, free
 Requires at least: 2.9
 Tested up to: 4.1.1
-Stable tag: 1.1.11
+Stable tag: 1.1.12
 License: GPL 2. See License below for copyright jots and tittles.
 
 Simply widgets for growth website share's, social networks referral's, folllowers and all for free.
@@ -181,6 +181,9 @@ All of the options required through this plugin require javascript. JavaScript m
 7. Many header images popup
 
 == Changelog ==
+
+= 1.1.12 =
+profitquery js lib update
 
 = 1.1.11 =
 settings update
