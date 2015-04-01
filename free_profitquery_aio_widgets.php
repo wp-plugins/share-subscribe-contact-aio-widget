@@ -22,7 +22,7 @@
 * Plugin Name: Share + Subscribe + Contact | AIO Widget
 * Plugin URI: http://profitquery.com/aio_widgets.html
 * Description: All in one widgets for any website to get more shares, email subscribers, contact information, followers in social network and all fo free.
-* Version: 1.1.15
+* Version: 1.1.16
 *
 * Author: Profitquery Team <support@profitquery.com>
 * Author URI: http://profitquery.com/?utm_campaign=aio_widgets_wp
@@ -66,9 +66,17 @@ add_action('init', 'profitquery_smart_widgets_init');
 function profitquery_smart_widgets_init(){
 	global $profitquery;	
 	if ( !is_admin() && $profitquery[apiKey] && !$profitquery['errorApiKey']){
+		add_action('wp_head', 'profitquery_smart_widgets_insert_hack_for_cach_code');
 		wp_register_script('lite_profitquery_lib', plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/js/lite.profitquery.min.js?apiKey='.$profitquery[apiKey]);		
 		wp_enqueue_script('lite_profitquery_lib');		
-		add_action('wp_footer', 'profitquery_smart_widgets_insert_code');
+		add_action('wp_footer', 'profitquery_smart_widgets_insert_code');		
+	}
+}
+
+function profitquery_smart_widgets_insert_hack_for_cach_code(){
+	global $profitquery;
+	if($profitquery[apiKey]){
+		echo '<script>var profitqueryLiteAPIKey="'.$profitquery[apiKey].'";</script>';
 	}
 }
 
@@ -312,7 +320,7 @@ function profitquery_smart_widgets_insert_code(){
 		)
 	);
 	print "
-	<script>
+	<script>	
 	profitquery.loadFunc.callAfterPQInit(function(){
 		var smartWidgetsBoxObject = ".json_encode($profitquerySmartWidgetsStructure).";	
 		profitquery.widgets.smartWidgetsBox(smartWidgetsBoxObject);	
