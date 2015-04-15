@@ -1,7 +1,7 @@
 === Share + Subscribe + Contact | AIO Widget ===
 Contributors: schemotechnik, ilya_v, frenly_girl
 Donate link: http://profitquery.com/aio_widgets.html
-Tags: contact form, email, feedback, addthis, profitquery, profitquery widgets, bookmark, floating buttons, sidebar, share sidebar, sharing sidebar,share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets
+Tags: contact form, email, feedback, profitquery, profitquery widgets, bookmark, floating buttons, sidebar, share sidebar, sharing sidebar,share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets
 Requires at least: 2.9
 Tested up to: 4.1.1
 Stable tag: 1.1.17

@@ -222,7 +222,7 @@ function profitquery_prepare_sctructure_product($data){
 	return $return;
 }
 
-$preparedObject = profitquery_prepare_sctructure_product($profitquery[sharingSideBar]);
+//$preparedObject = profitquery_prepare_sctructure_product($profitquery[sharingSideBar]);
 //printr($preparedObject);
 //die();
 
