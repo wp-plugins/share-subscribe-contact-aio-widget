@@ -211,6 +211,10 @@ All of the options required through this plugin require javascript. JavaScript m
 7. Many header images popup
 
 == Changelog ==
+
+= 2.0.1 =
+mobile overlay fixed
+
 = 2.0 =
 major update:
 add 2d 3d animation
