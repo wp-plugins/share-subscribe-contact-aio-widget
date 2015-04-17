@@ -4,7 +4,7 @@ Donate link: http://profitquery.com/aio_widgets.html
 Tags: contact form, email, feedback, profitquery, profitquery widgets, bookmark, floating buttons, sidebar, share sidebar, sharing sidebar,share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets
 Requires at least: 2.9
 Tested up to: 4.1.1
-Stable tag: 2.0
+Stable tag: 2.0.2
 License: GPL 2. See License below for copyright jots and tittles.
 
 Next level widgets for growth your customers email, visitors feedback, share's, social networks referral's, folllowers and all for free.
@@ -211,6 +211,9 @@ All of the options required through this plugin require javascript. JavaScript m
 7. Many header images popup
 
 == Changelog ==
+
+= 2.0.2 =
+js update
 
 = 2.0.1 =
 mobile overlay fixed
