@@ -100,15 +100,7 @@ class ProfitQuerySmartWidgetsClass
 			$this->_options[imageSharer][design][shadow] = 'sh4';
 			$this->_options[imageSharer][minWidth] = 100;
 		}	
-		
-		if(!$this->_options[subscribeExit]){
-			$this->_options[subscribeExit][disabled] = 1;
-			$this->_options[subscribeExit][background] = 'bg_red';
-			$this->_options[subscribeExit][button_color] = 'btn_black invert';
-			$this->_options[subscribeExit][typeWindow] = 'pq_medium';
-			$this->_options[subscribeExit][animation] = 'tada';						
-			$this->_options[subscribeExit][overlay] = 'over_black_lt';
-		}
+				
 		
 		if(!$this->_options[follow]){
 			$this->_options[follow][disabled] = 1;			
@@ -154,6 +146,15 @@ class ProfitQuerySmartWidgetsClass
 			$this->_options[subscribeBar][background] = 'bg_red';
 			$this->_options[subscribeBar][button_color] = 'btn_black';			
 			$this->_options[subscribeBar][animation] = 'bounce';			
+		}
+		
+		if(!$this->_options[subscribeExit]){
+			$this->_options[subscribeExit][disabled] = 1;
+			$this->_options[subscribeExit][background] = 'bg_red';
+			$this->_options[subscribeExit][button_color] = 'btn_black invert';
+			$this->_options[subscribeExit][typeWindow] = 'pq_medium';
+			$this->_options[subscribeExit][animation] = 'tada';						
+			$this->_options[subscribeExit][overlay] = 'over_black_lt';
 		}
 		
 		if(!$this->_options['adminEmail']){
@@ -1235,7 +1236,7 @@ class ProfitQuerySmartWidgetsClass
 									} else {
 										var animation = '';
 									}									
-									var design = document.getElementById('subscribeBar_size').value+' '+document.getElementById('subscribeBar_position').value+' '+document.getElementById('subscribeBar_background').value+' '+document.getElementById('imageSharer_design_color').value+' '+document.getElementById('subscribeBar_button_color').value+' '+animation;
+									var design = document.getElementById('subscribeBar_size').value+' '+document.getElementById('subscribeBar_position').value+' '+document.getElementById('subscribeBar_background').value+' '+document.getElementById('subscribeBar_button_color').value+' '+animation;
 									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v2.html?utm-campaign=wp_aio_widgets&p=subscribeBar&design='+design;									
 									document.getElementById('subscribeBarLiveViewIframe').src = previewUrl;									
 									
