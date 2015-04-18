@@ -22,7 +22,7 @@
 * Plugin Name: Share + Subscribe + Contact | AIO Widget
 * Plugin URI: http://profitquery.com/aio_widgets.html
 * Description: Next level widgets for growth your customers feedback, visitors contact information, share's, social networks referral's, folllowers and all for free.
-* Version: 2.0.2
+* Version: 2.0.3
 *
 * Author: Profitquery Team <support@profitquery.com>
 * Author URI: http://profitquery.com/?utm_campaign=aio_widgets_wp
@@ -66,17 +66,15 @@ add_action('init', 'profitquery_smart_widgets_init');
 function profitquery_smart_widgets_init(){
 	global $profitquery;	
 	if ( !is_admin() && $profitquery[apiKey] && !$profitquery['errorApiKey']){
-		add_action('wp_head', 'profitquery_smart_widgets_insert_hack_for_cach_code');
-		wp_register_script('lite_profitquery_lib', plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/js/lite.profitquery.min.js?apiKey='.$profitquery[apiKey]);		
-		wp_enqueue_script('lite_profitquery_lib');		
+		add_action('wp_head', 'profitquery_smart_widgets_insert_cache_hack_code');		
 		add_action('wp_footer', 'profitquery_smart_widgets_insert_code');		
 	}
 }
 
-function profitquery_smart_widgets_insert_hack_for_cach_code(){
+function profitquery_smart_widgets_insert_cache_hack_code(){
 	global $profitquery;
-	if($profitquery[apiKey]){
-		echo '<script>var profitqueryLiteAPIKey="'.$profitquery[apiKey].'";</script>';
+	if($profitquery[apiKey]){		
+		echo '<script>var profitqueryLiteAPIKey="'.$profitquery[apiKey].'";</script>';		
 	}
 }
 
@@ -337,10 +335,35 @@ function profitquery_smart_widgets_insert_code(){
 	);
 	print "
 	<script>	
-	profitquery.loadFunc.callAfterPQInit(function(){
-		var smartWidgetsBoxObject = ".json_encode($profitquerySmartWidgetsStructure).";	
-		profitquery.widgets.smartWidgetsBox(smartWidgetsBoxObject);	
-	});
+		(function () {
+			var s = document.createElement('script');
+			var _isPQLibraryLoaded = false;
+			s.type = 'text/javascript';
+			s.async = true;
+			s.src = '".plugins_url()."/".PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME."/js/lite.profitquery.min.js?apiKey=".$profitquery[apiKey]."';
+			s.onload = function(){
+				if ( !_isPQLibraryLoaded )
+				{					
+				  _isPQLibraryLoaded = true;				  
+				  profitquery.loadFunc.callAfterPQInit(function(){
+						var smartWidgetsBoxObject = ".json_encode($profitquerySmartWidgetsStructure).";	
+						profitquery.widgets.smartWidgetsBox(smartWidgetsBoxObject);	
+					});
+				}
+			}
+			s.onreadystatechange = function() {								
+				if ( !_isPQLibraryLoaded && (this.readyState == 'complete' || this.readyState == 'loaded') )
+				{					
+				  _isPQLibraryLoaded = true;
+					profitquery.loadFunc.callAfterPQInit(function(){
+						var smartWidgetsBoxObject = ".json_encode($profitquerySmartWidgetsStructure).";	
+						profitquery.widgets.smartWidgetsBox(smartWidgetsBoxObject);	
+					});
+				}
+			};
+			var x = document.getElementsByTagName('script')[0];						
+			x.parentNode.insertBefore(s, x);			
+		})();				
 	</script>
 	";
 }
