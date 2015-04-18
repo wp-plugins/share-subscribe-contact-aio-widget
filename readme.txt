@@ -1,7 +1,7 @@
 === Share + Subscribe + Contact | AIO Widget ===
 Contributors: schemotechnik, ilya_v, frenly_girl
 Donate link: http://profitquery.com/aio_widgets.html
-Tags: free tools, free widgets, marketing, subscription, e-mail, conversion tools, growth tools, share buttons, share button, add to any, add this, contact form, email, feedback, profitquery, profitquery widgets, bookmark, floating buttons, sidebar, share sidebar, sharing sidebar,share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets
+Tags: free tools, social marketing, free widgets, marketing, subscription, e-mail, conversion tools, growth tools, share buttons, share button, add to any, add this, contact form, email, feedback, profitquery, profitquery widgets, content marketing, custom popup, svg, ccs3, animation, bookmark, bookmarking, floating buttons, sidebar, share sidebar, sharing sidebar,share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets, Share, share this, sharing buttons, social marketing, subscription button, twitter, Website Tools, like, monarch, image, images, share links, Shareaholic, sharedaddy, sharethis,  sociable, social, social bookmarking, social bookmarks, social share, social sharing, socialize, statistics, stats, vector
 Requires at least: 2.9
 Tested up to: 4.1.1
 Stable tag: 2.0.3
@@ -27,7 +27,7 @@ Next level free widgets for growth email, subscription, feedback, phone number, 
 * You can customized most option and even more
 * Vector Icons is pixel-perfect at any size (SVG icons)
 * Support latest Technologys HTML5 CSS3 (2D 3D animation)
-* Event Hanlder suuport(exit event)
+* Event Hanlder support(exit event)
 * Profitquery library already minimize and load from your host. WordPress Optimized
 * Very easy integration with Mailchimp
 * Quickly growth your email newsletter list
@@ -41,7 +41,7 @@ Next level free widgets for growth email, subscription, feedback, phone number, 
 * Smart lock mechanism. After close subscribe bar or popup, system lock them
 * Collect phone customers phone numbers with Call me bookmark
 * Contact Form to get feedback from your visitors
-* Contact Form have prevalidation mechanism.
+* Contact Form have pre validation mechanism.
 * All widgets already ready to increase your blog. Very simple installation and integration.
 * Share sidebar for share your website page. Many position, size and type icons you can setup on your admin area
 * Customize all profitquery popup. 
