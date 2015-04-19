@@ -63,7 +63,7 @@ Also you can set up show follow us popup or thank popup after sharer.
 
 
 = On Hover Image Sharer =
-Perhaps the best on hover image sharer. Why? Free distribution, vector graphics, fade animation, many icon types, providers, you can disable logo adn header photo, asynchronous loading (the most optimum loading), Twitter image sharer without any apps. Facebook share throught app or native. A few work mechanism, native share or through gateway page.
+Perhaps the best on hover image sharer. Why? Free distribution, vector graphics, fade animation, many icon types, providers, you can disable logo and header photo, asynchronous loading (the most optimum loading), Twitter image sharer without any apps. Facebook share throught app or native. A few work mechanism, native share or through gateway page.
 Also you can set up show follow us popup or thank popup after sharer.
 
 
