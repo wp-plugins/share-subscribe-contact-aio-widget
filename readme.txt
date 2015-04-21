@@ -143,13 +143,13 @@ Our team make the complex simple. Make pro version similar tools - free. And it'
 Thats wonderfull! You can write about profitquery and send us content link. We paste your work on <a href="http://profitquery.com/blog.html">Profitquery Blog</a>
 
 = I want to translate default profitquery text to the another language =
-Thats Great! Email us on the <a href="mailto:info@profitquery.com">info@profitquery.com</a> And we write about your work on the plugin notes.
+Thats Great! Email us <a href="mailto:info@profitquery.com">info@profitquery.com</a> And we write about your work on the plugin notes.
 
 = I think in pro version must be that features... =
 Please, email us <a href="mailto:info@profitquery.com">info@profitquery.com</a> we like our customer feedback's
 
 == Could you add to the sidebar new share provider ?  ==
-Yes, of course. Email us on the <a href="mailto:info@profitquery.com">info@profitquery.com</a> and we in one day add new providers on the sidebar.
+Yes, of course. Email us <a href="mailto:info@profitquery.com">info@profitquery.com</a> and we add new providers on the sidebar in one day.
 
 = I have a problem and i don't know how fixed that =
 You can write about problem on the plugin forum or email us support@profitquery.com
