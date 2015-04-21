@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 2.0.3
+* @version  SVN: 2.0.4
 */
 
 class ProfitQuerySmartWidgetsClass
@@ -326,6 +326,17 @@ class ProfitQuerySmartWidgetsClass
                     if($_POST[sharingSideBar][socnet][OD] == 'on') $this->_options[sharingSideBar][socnet][OD] = 1; else $this->_options[sharingSideBar][socnet][OD] = 0;
                     if($_POST[sharingSideBar][socnet][MW] == 'on') $this->_options[sharingSideBar][socnet][MW] = 1; else $this->_options[sharingSideBar][socnet][MW] = 0;
                     if($_POST[sharingSideBar][socnet][LJ] == 'on') $this->_options[sharingSideBar][socnet][LJ] = 1; else $this->_options[sharingSideBar][socnet][LJ] = 0;
+					
+					if($_POST[sharingSideBar][socnet][RD] == 'on') $this->_options[sharingSideBar][socnet][RD] = 1; else $this->_options[sharingSideBar][socnet][RD] = 0;
+					if($_POST[sharingSideBar][socnet][SU] == 'on') $this->_options[sharingSideBar][socnet][SU] = 1; else $this->_options[sharingSideBar][socnet][SU] = 0;
+					if($_POST[sharingSideBar][socnet][DG] == 'on') $this->_options[sharingSideBar][socnet][DG] = 1; else $this->_options[sharingSideBar][socnet][DG] = 0;
+					if($_POST[sharingSideBar][socnet][DL] == 'on') $this->_options[sharingSideBar][socnet][DL] = 1; else $this->_options[sharingSideBar][socnet][DL] = 0;
+					if($_POST[sharingSideBar][socnet][WU] == 'on') $this->_options[sharingSideBar][socnet][WU] = 1; else $this->_options[sharingSideBar][socnet][WU] = 0;
+					if($_POST[sharingSideBar][socnet][BR] == 'on') $this->_options[sharingSideBar][socnet][BR] = 1; else $this->_options[sharingSideBar][socnet][BR] = 0;
+					if($_POST[sharingSideBar][socnet][RR] == 'on') $this->_options[sharingSideBar][socnet][RR] = 1; else $this->_options[sharingSideBar][socnet][RR] = 0;
+					if($_POST[sharingSideBar][socnet][WB] == 'on') $this->_options[sharingSideBar][socnet][WB] = 1; else $this->_options[sharingSideBar][socnet][WB] = 0;
+					
+					
                     if($_POST[sharingSideBar][socnet][MailTo] == 'on') $this->_options[sharingSideBar][socnet][MailTo] = 1; else $this->_options[sharingSideBar][socnet][MailTo] = 0;
                     if($_POST[sharingSideBar][socnet]['Print'] == 'on') $this->_options[sharingSideBar][socnet]['Print'] = 1; else $this->_options[sharingSideBar][socnet]['Print'] = 0;
 				}
@@ -812,8 +823,33 @@ class ProfitQuerySmartWidgetsClass
 									<input type="checkbox" name="sharingSideBar[socnet][MW]" <?php if((int)$this->_options[sharingSideBar][socnet][MW] == 1) echo 'checked';?>></label>
 													
 									<label><div class="pq_lj"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][LJ]" <?php if((int)$this->_options[sharingSideBar][socnet][LJ] == 1) echo 'checked';?>></label>
-													
+									<input type="checkbox" name="sharingSideBar[socnet][LJ]" <?php if((int)$this->_options[sharingSideBar][socnet][LJ] == 1) echo 'checked';?>></label>																						
+									
+									<label><div class="pq_rd"></div>
+									<input type="checkbox" name="sharingSideBar[socnet][RD]" <?php if((int)$this->_options[sharingSideBar][socnet]['RD'] == 1) echo 'checked';?>></label>
+									
+									<label><div class="pq_su"></div>
+									<input type="checkbox" name="sharingSideBar[socnet][SU]" <?php if((int)$this->_options[sharingSideBar][socnet]['SU'] == 1) echo 'checked';?>></label>
+									
+									<label><div class="pq_dg"></div>
+									<input type="checkbox" name="sharingSideBar[socnet][DG]" <?php if((int)$this->_options[sharingSideBar][socnet]['DG'] == 1) echo 'checked';?>></label>
+									
+									<label><div class="pq_dl"></div>
+									<input type="checkbox" name="sharingSideBar[socnet][DL]" <?php if((int)$this->_options[sharingSideBar][socnet]['DL'] == 1) echo 'checked';?>></label>
+									
+									<label><div class="pq_wu"></div>
+									<input type="checkbox" name="sharingSideBar[socnet][WU]" <?php if((int)$this->_options[sharingSideBar][socnet]['WU'] == 1) echo 'checked';?>></label>
+									
+									<label><div class="pq_br"></div>
+									<input type="checkbox" name="sharingSideBar[socnet][BR]" <?php if((int)$this->_options[sharingSideBar][socnet]['BR'] == 1) echo 'checked';?>></label>
+									
+									<label><div class="pq_rr"></div>
+									<input type="checkbox" name="sharingSideBar[socnet][RR]" <?php if((int)$this->_options[sharingSideBar][socnet]['RR'] == 1) echo 'checked';?>></label>
+									
+									<label><div class="pq_wb"></div>
+									<input type="checkbox" name="sharingSideBar[socnet][WB]" <?php if((int)$this->_options[sharingSideBar][socnet]['WB'] == 1) echo 'checked';?>></label>
+									
+									<!-- -->
 									<label><div class="pq_em"></div>
 									<input type="checkbox" name="sharingSideBar[socnet][MailTo]" <?php if((int)$this->_options[sharingSideBar][socnet][MailTo] == 1) echo 'checked';?>></label>
 									

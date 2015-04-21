@@ -4,7 +4,7 @@ Donate link: http://profitquery.com/aio_widgets.html
 Tags: free tools, social marketing, free widgets, marketing, subscription, e-mail, conversion tools, growth tools, share buttons, share button, add to any, add this, contact form, email, feedback, profitquery, profitquery widgets, content marketing, custom popup, svg, ccs3, animation, bookmark, bookmarking, floating buttons, sidebar, share sidebar, sharing sidebar, share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets, Share, share this, sharing buttons, social marketing, subscription button, twitter, Website Tools, like, monarch, image, images, share links, Shareaholic, sharedaddy, sharethis, sociable, social, social bookmarking, social bookmarks, social share, social sharing, socialize, statistics, stats, vector
 Requires at least: 2.9
 Tested up to: 4.1.1
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 License: GPL 2. See License below for copyright jots and tittles.
 Next level free widgets for growth email, subscription, feedback, phone number, share visitors, social network referral's, folllowers
 
@@ -148,6 +148,9 @@ Thats Great! Email us on the <a href="mailto:info@profitquery.com">info@profitqu
 = I think in pro version must be that features... =
 Please, email us <a href="mailto:info@profitquery.com">info@profitquery.com</a> we like our customer feedback's
 
+== Can you add to the sidebar new share provider ?  ==
+Yes, of course. Email us on the <a href="mailto:info@profitquery.com">info@profitquery.com</a> and we in one day add new providers on the sidebar.
+
 = I have a problem and i don't know how fixed that =
 You can write about problem on the plugin forum or email us support@profitquery.com
 
@@ -174,6 +177,17 @@ All of the options required through this plugin require javascript. JavaScript m
 7. Many header images popup
 
 == Changelog ==
+
+= 2.0.4 =
+* add sidebar effect
+* add Reddit
+* add StumbleUpon
+* add Digg
+* add Delicious
+* add WhatsApp
+* add Blogger
+* add Renren
+* add Weibo
 
 = 2.0.3 =
 * async load add
