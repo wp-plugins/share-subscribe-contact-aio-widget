@@ -148,7 +148,7 @@ Thats Great! Email us on the <a href="mailto:info@profitquery.com">info@profitqu
 = I think in pro version must be that features... =
 Please, email us <a href="mailto:info@profitquery.com">info@profitquery.com</a> we like our customer feedback's
 
-== Can you add to the sidebar new share provider ?  ==
+== Could you add to the sidebar new share provider ?  ==
 Yes, of course. Email us on the <a href="mailto:info@profitquery.com">info@profitquery.com</a> and we in one day add new providers on the sidebar.
 
 = I have a problem and i don't know how fixed that =
