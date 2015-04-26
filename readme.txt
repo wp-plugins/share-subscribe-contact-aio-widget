@@ -280,8 +280,8 @@ All of the options required through this plugin require javascript. JavaScript m
 * Create list your subscribers
 * Click the drop down and choose 'Signup forms'
 * Click the 'Embedded' forms option
-* Find Form Action="..." value. For example: `//profitquery.us10.list-manage.com/subscribe/post?u=758cdd9af98e2f075f68179e2&amp;id=eff27d7489`
-* Set it on the Form Action= option and Save changes
+* Copy mailchimp code and paste to the `Paste your code here:` textarea
+* Save changes
 * Clear browser cache and enjoy
 
 
