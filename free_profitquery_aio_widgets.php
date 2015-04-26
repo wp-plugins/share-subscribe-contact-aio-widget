@@ -22,14 +22,50 @@
 * Plugin Name: Share + Subscribe + Contact | AIO Widget
 * Plugin URI: http://profitquery.com/aio_widgets.html
 * Description: Next level widgets for growth your customers feedback, visitors contact information, share's, social networks referral's, folllowers and all for free.
-* Version: 2.0.6
+* Version: 2.1.0
 *
 * Author: Profitquery Team <support@profitquery.com>
 * Author URI: http://profitquery.com/?utm_campaign=aio_widgets_wp
 */
 
 
+
 $profitquery = get_option('profitquery');
+
+/*RESAVE BLOCK. For Old Version only*/
+/*Resave rateUs*/
+if(!isset($profitquery[rateUs])){
+	$profitquery[rateUs][timeActivation] = time();
+}
+
+/*Resave Old ShareSidebar Socnet*/
+if(isset($profitquery[sharingSideBar][socnet]) && !isset($profitquery[sharingSideBar][socnet_with_pos])){
+	if(isset($profitquery[sharingSideBar][socnet][FB]) && !isset($profitquery[sharingSideBar][socnet_with_pos])){
+		foreach((array)$profitquery[sharingSideBar][socnet] as $k => $v){
+			if((int)$v == 1){						
+				$profitquery[sharingSideBar][socnet_with_pos][] = $k;
+			}
+		}
+		update_option('profitquery', $profitquery);
+	}
+}
+		
+
+//Resave Old Subsribe Provider
+if(isset($profitquery['subscribeProviderUrl']) && !isset($profitquery['subscribeProvider'])){
+	$profitquery['subscribeProvider'] = 'mailchimp';
+	$profitquery['subscribeProviderOption']['mailchimp']['formAction'] = $profitquery['subscribeProviderUrl'];			
+	$profitquery['subscribeProviderOption']['mailchimp']['is_error'] = 0;			
+	update_option('profitquery', $profitquery);
+}
+//Resave Old additionalOptions
+if(!isset($profitquery['additionalOptions'])){
+	$profitquery[additionalOptions][enableGA] = 1;
+	update_option('profitquery', $profitquery);
+}
+
+
+
 
 if (!defined('PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME'))
 	define('PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME', trim(dirname(plugin_basename(__FILE__)), '/'));
@@ -57,17 +93,59 @@ if (!defined('PROFITQUERY_SMART_WIDGETS_FILENAME'))
 
 
 require_once 'free_profitquery_aio_widgets_class.php';
-new ProfitQuerySmartWidgetsClass();
+$ProfitQuerySmartWidgetsClass = new ProfitQuerySmartWidgetsClass();
+
 
 add_action('init', 'profitquery_smart_widgets_init');
 
 
-
 function profitquery_smart_widgets_init(){
-	global $profitquery;	
+	global $profitquery;
+	global $ProfitQuerySmartWidgetsClass;	
 	if ( !is_admin() && $profitquery[apiKey] && !$profitquery['errorApiKey']){
 		add_action('wp_head', 'profitquery_smart_widgets_insert_cache_hack_code');		
 		add_action('wp_footer', 'profitquery_smart_widgets_insert_code');		
+	}
+	//echo rate us	
+	if(is_admin() && $ProfitQuerySmartWidgetsClass->isPluginPage()){			
+		add_action('admin_head', 'profitquery_message_on_plugin_page');
+	}
+}
+
+function profitquery_message_on_plugin_page(){	
+	global $profitquery;	
+	$timeout = 60*60*24*3;	
+	if((time()-(int)$profitquery[rateUs][timeActivation]) >= $timeout && (int)$profitquery[rateUs][clickByRate] == 0 && (int)$profitquery[aio_widgets_loaded] == 1){	
+	?>		
+	<div class="updated" style="padding: 0; margin: 0; border: none; background: none;">
+	<style type="text/css">
+	 
+	.pq_activate{min-width:825px;padding:5px;margin:15px 0;background:lightgrey; -moz-border-radius:3px;border-radius:3px;-webkit-border-radius:3px;position:relative;overflow:hidden}
+	.pq_activate .aa_a{position:absolute;top:-5px;right:10px;font-size:140px;color:#769F33;font-family:Georgia, "Times New Roman", Times, serif;z-index:1}
+	.pq_activate .aa_button{font-weight:bold;border:1px solid red;font-size:15px;text-align:center;padding:9px 0 8px 0;color:#FFF;background:red;-moz-border-radius:2px;border-radius:2px;-webkit-border-radius:2px;opacity:.8;}
+	.pq_activate .aa_button:hover{opacity:1;}
+	.pq_activate .aa_button_border{border:1px solid transparent;-moz-border-radius:2px;border-radius:2px;-webkit-border-radius:2px;}
+	.pq_activate .aa_button_container{cursor:pointer;display:inline-block;padding:5px;-moz-border-radius:2px;border-radius:2px;-webkit-border-radius:2px;width:266px; float: right;  margin-right: 25px;}
+	.pq_activate .aa_description{position:absolute;top:22px;margin-left:25px;color:rgb(63, 63, 63);font-size:15px;z-index:1000}
+
+	</style>
+				
+		<form name="pq_activate" action="<?php echo admin_url("options-general.php?page=" . PROFITQUERY_SMART_WIDGETS_PAGE_NAME);?>" method="POST"> 
+			<input type="hidden" name="return" value="1">
+			<input type="hidden" name="jetpack" value="">
+			<input type="hidden" name="user" value="admin">
+			<div class="pq_activate">  
+				
+				<div class="aa_button_container" onclick="document.pq_activate.submit();">  
+					<div class="aa_button_border">          
+						<div class="aa_button">Read message</div>  
+					</div>  
+				</div>  
+				<div class="aa_description">System detected new message from Profitquery Team</div>  
+			</div>  
+		</form>  
+	</div>	
+	<?php
 	}
 }
 
@@ -180,6 +258,21 @@ function profitquery_prepare_sctructure_product($data){
 		}
 		
 	}
+	//socnet_with_pos
+	if(isset($data[socnet_with_pos])){
+		unset($return[socnet]);
+		foreach((array)$data[socnet_with_pos] as $k => $v){
+			if($v){
+				$return[socnet][$v] = $data[socnetOption][$v];
+				if($data[socnetOption][$v][type] == 'pq'){
+					$return[socnet][$v][exactPageShare] = 0;
+				} else {
+					$return[socnet][$v][exactPageShare] = 1;
+				}
+			}
+		}
+		
+	}
 	
 	//socnet
 	if(isset($data[follow_socnet])){
@@ -209,6 +302,7 @@ function profitquery_prepare_sctructure_product($data){
 			$return[img] = '';
 		}
 	}
+	
 	
 	//design
 	if(isset($data[design])){
@@ -248,19 +342,21 @@ function profitquery_smart_widgets_insert_code(){
 		'afterProfitLoader'=>stripslashes($preparedObject[afterProceed])
 	);	
 	
-	$preparedObject = profitquery_prepare_sctructure_product($profitquery[subscribeBar]);
-	if($preparedObject[animation] && $preparedObject[animation] != 'fade') $preparedObject[animation] = 'pq_animated '.$preparedObject[animation];
+	$preparedObject = profitquery_prepare_sctructure_product($profitquery[subscribeBar]);	
+	if($preparedObject[animation] && $preparedObject[animation] != 'fade') $preparedObject[animation] = 'pq_animated '.$preparedObject[animation];	
 	$profitquerySmartWidgetsStructure['subscribeBarOptions'] = array(
 		'title'=>stripslashes($preparedObject[title]),		
 		'disabled'=>(int)$preparedObject[disabled],
 		'afterProfitLoader'=>$preparedObject[afterProceed],
 		'typeWindow'=>'pq_bar '.stripslashes($preparedObject[position]).' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[button_color]).' '.stripslashes($preparedObject[animation]),		
 		'inputEmailTitle'=>stripslashes($preparedObject[inputEmailTitle]),
+		'inputNameTitle'=>stripslashes($preparedObject[inputNameTitle]),
 		'buttonTitle'=>stripslashes($preparedObject[buttonTitle]),
-		'formAction'=>stripslashes($profitquery[subscribeProviderUrl])
+		'subscribeProvider'=>stripslashes($profitquery[subscribeProvider]),
+		'subscribeProviderOption'=>$profitquery[subscribeProviderOption][$profitquery[subscribeProvider]]
 	);
 	
-	$preparedObject = profitquery_prepare_sctructure_product($profitquery[subscribeExit]);
+	$preparedObject = profitquery_prepare_sctructure_product($profitquery[subscribeExit]);	
 	if($preparedObject[animation] && $preparedObject[animation] != 'fade') $preparedObject[animation] = 'pq_animated '.$preparedObject[animation];
 	$profitquerySmartWidgetsStructure['subscribeExitPopupOptions'] = array(
 		'title'=>stripslashes($preparedObject[title]),
@@ -271,8 +367,10 @@ function profitquery_smart_widgets_insert_code(){
 		'typeWindow'=>stripslashes($preparedObject[typeWindow]).' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[button_color]).' '.stripslashes($preparedObject[animation]),
 		'blackoutOption'=>array('disable'=>0, 'style'=>stripslashes($preparedObject[overlay])),
 		'inputEmailTitle'=>stripslashes($preparedObject[inputEmailTitle]),
+		'inputNameTitle'=>stripslashes($preparedObject[inputNameTitle]),
 		'buttonTitle'=>stripslashes($preparedObject[buttonTitle]),
-		'formAction'=>stripslashes($profitquery[subscribeProviderUrl])
+		'subscribeProvider'=>stripslashes($profitquery[subscribeProvider]),
+		'subscribeProviderOption'=>$profitquery[subscribeProviderOption][$profitquery[subscribeProvider]]
 	);
 	
 	$preparedObject = profitquery_prepare_sctructure_product($profitquery[thankPopup]);
@@ -332,7 +430,12 @@ function profitquery_smart_widgets_insert_code(){
 		'emailOption'=>array(
 			'to_email'=>stripslashes($profitquery[adminEmail])			
 		)
-	);	
+	);
+	
+	$additionalOptionText = '';
+	if((int)$profitquery[additionalOptions][enableGA] == 0 && isset($profitquery[additionalOptions])){
+		$additionalOptionText = 'profitquery.productOptions.disableGA = 1;';
+	}
 	print "
 	<script>	
 		(function () {
@@ -346,6 +449,7 @@ function profitquery_smart_widgets_insert_code(){
 				{					
 				  _isPQLibraryLoaded = true;				  
 				  profitquery.loadFunc.callAfterPQInit(function(){
+						".$additionalOptionText."
 						var smartWidgetsBoxObject = ".json_encode($profitquerySmartWidgetsStructure).";	
 						profitquery.widgets.smartWidgetsBox(smartWidgetsBoxObject);	
 					});
@@ -356,6 +460,7 @@ function profitquery_smart_widgets_insert_code(){
 				{					
 				  _isPQLibraryLoaded = true;
 					profitquery.loadFunc.callAfterPQInit(function(){
+						".$additionalOptionText."
 						var smartWidgetsBoxObject = ".json_encode($profitquerySmartWidgetsStructure).";	
 						profitquery.widgets.smartWidgetsBox(smartWidgetsBoxObject);	
 					});

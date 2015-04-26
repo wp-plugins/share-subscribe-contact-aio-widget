@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 2.0.6
+* @version  SVN: 2.1.0
 */
 
 class ProfitQuerySmartWidgetsClass
@@ -41,13 +41,40 @@ class ProfitQuerySmartWidgetsClass
      * */
     function __construct()
     {
-		$this->_options = $this->getSettings();			
+		$this->_options = $this->getSettings();				
         add_action('admin_menu', array($this, 'ProfitquerySmartWidgetsMenu'));		
 		// Deactivation
         register_deactivation_hook(
             PROFITQUERY_SMART_WIDGETS_FILENAME,
             array($this, 'pluginDeactivation')
         );
+		register_activation_hook(
+            PROFITQUERY_SMART_WIDGETS_FILENAME,
+            array($this, 'pluginActivation')
+        );
+    }
+	
+	
+	function isPluginPage(){
+		$ret = false;
+		if(strstr($_SERVER[REQUEST_URI], 'wp-admin/plugins.php')){
+			$ret = true;
+		}		
+		return $ret;
+	}
+	
+	
+	/**
+     * Functions to execute on plugin activation
+     * 
+     * @return null
+     */
+    public function pluginActivation()
+    {
+		$this->_options[rateUs] = array();
+		$this->_options[rateUs][timeActivation] = time();
+		$this->_options[aio_widgets_loaded] = 1;		
+		update_option('profitquery', $this->_options);    
     }
 	
 	 /**
@@ -57,7 +84,7 @@ class ProfitQuerySmartWidgetsClass
      */
     public function pluginDeactivation()
     {
-        if (get_option('profitquery')) {
+        if (get_option('profitquery')) {			
 			$this->_options[aio_widgets_loaded] = 0;
 			update_option('profitquery', $this->_options);
         }
@@ -176,6 +203,80 @@ class ProfitQuerySmartWidgetsClass
         return get_option('profitquery');
     }
 	
+	/*
+	 *	parseSubscribeProviderForm
+	 *	
+	 *	@return array
+	 */
+	function parseSubscribeProviderForm()
+	{		
+		if($_POST[subscribeProvider] == 'mailchimp'){
+			$return = $this->_parseMailchimpForm();
+		}
+		if($_POST[subscribeProvider] == 'aweber'){
+			$return = $this->_parseAweberForm();
+		}
+		return $return;
+	}
+	
+	
+	function _parseMailchimpForm()
+	{
+		$txt = trim($_POST[subscribeProviderFormContent]);		
+		$array = array();
+		$matches = array();
+		if($txt){
+			$txt = stripslashes($txt);
+			$txt = str_replace("\t", ' ', $txt);
+			$txt = str_replace("\r", '', $txt);
+			$txt = str_replace("\n", '', $txt);
+			$txt = str_replace("  ", " ", $txt);
+			$txt = str_replace("  ", " ", $txt);			
+			preg_match_all('/(\<)(.*)(form)(.*)(action=)(.*)([\"\'])(.*)([\"\'])(.*)(\>)/Ui', $txt, $matches);
+			$array[formAction] = trim($matches[8][0]);
+			if(!strstr($array[formAction], 'list-manage.com')){
+				$array[formAction] = '';
+				$array[is_error] = 1;
+			}			
+		}
+		return $array;
+	}
+	
+	function _parseAweberForm()
+	{
+		$txt = trim($_POST[subscribeProviderFormContent]);		
+		$array = array();
+		$matches = array();
+		$hiddenField = array();
+		if($txt){
+			$txt = stripslashes($txt);
+			$txt = str_replace("\t", ' ', $txt);
+			$txt = str_replace("\r", '', $txt);
+			$txt = str_replace("\n", '', $txt);
+			$txt = str_replace("  ", " ", $txt);
+			$txt = str_replace("  ", " ", $txt);			
+			preg_match_all('/(\<)(.*)(form)(.*)(action=)(.*)([\"\'])(.*)([\"\'])(.*)(\>)/Ui', $txt, $matches);
+			$array[formAction] = trim($matches[8][0]);
+			if(!strstr($array[formAction], 'aweber.com')){
+				$array[formAction] = '';
+				$array[is_error] = 1;
+			} else {
+				preg_match_all('/(\<)(.*)(input)(.*)(hidden)(.*)(name=)(.*)([\"\'])(.*)([\"\'])(.*)(value=)(.*)([\"\'])(.*)([\"\'])(.*)(\>)/Ui', $txt, $matches);
+				foreach((array)$matches[10] as $k => $v){
+					$hiddenField[$v] = $matches[16][$k];
+				}
+				if($hiddenField[meta_web_form_id]){
+					$array[hidden] = $hiddenField;
+				} else {
+					$array[formAction] = '';
+					$array[is_error] = 1;
+				}
+			}
+		}
+		return $array;
+	}
+	
+	
 	 /**
      * Manages the WP settings page
      * 
@@ -190,12 +291,67 @@ class ProfitQuerySmartWidgetsClass
         }
 		echo "
 			<link rel='stylesheet'  href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&amp;subset=latin,cyrillic' type='text/css' media='all' />
-			<link rel='stylesheet'  href='".plugins_url()."/".PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME."/".PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH."profitquery_smart_widgets_wordpress.css' type='text/css' media='all' />
+			<link rel='stylesheet'  href='".plugins_url()."/".PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME."/".PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH."profitquery_smart_widgets_wordpress_v2.css' type='text/css' media='all' />
 			<link rel='stylesheet'  href='".plugins_url()."/".PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME."/".PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH."icons.css' type='text/css' media='all' />
 		<noscript>				
 				<p>Please enable JavaScript in your browser.</p>				
 		</noscript>
 		";		
+		/**************RATE US*************/
+		if($_GET[action] == 'closeRateUs'){
+			$this->_options[rateUs][timeActivation] = time();
+			update_option('profitquery', $this->_options);
+		}
+		
+		if($_POST[action] == 'RateUs'){
+			$this->_options[rateUs][clickByRate] = 1;
+			update_option('profitquery', $this->_options);
+			print "<script>location.href='https://wordpress.org/support/view/plugin-reviews/share-subscribe-contact-aio-widget';</script>";
+		}
+		
+		$timeout = 60*60*24*3;		
+		if((time()-(int)$this->_options[rateUs][timeActivation]) >= $timeout && (int)$this->_options[rateUs][clickByRate] == 0){
+			if($this->_options[apiKey]){
+				echo '
+					<form action="'.$this->getSettingsPageUrl().'" method="POST">
+					<input type="hidden" name="action" value="RateUs">
+					<div id="free_profitquery_popup" style="display:block;">
+						<div class="pq_overlay"></div>
+						<div class="pq_popup">
+							<h1>Thank you for stay with Profitquery Team</h1>
+							<p>Our team work hard to make this amazing tools free, take this tools to the next level and all for your website growth. You can make us a little happy. If you like our work, please, rate us.</p>
+							<input type="submit" value="Rate This Work">
+							<input type="button" class="pq_link" value="Close" onclick="location.href=\''.$this->getSettingsPageUrl().'&action=closeRateUs\'">
+						</div>
+					</div>
+					</form>								
+				';
+			}
+		}
+		/**************END RATE US*************/
+		
+		
+		
+		/*POST*/
+		
+		if($_POST[action] == 'editAdditionalOptions'){						
+			if($_POST[additionalOptions][enableGA] == 'on') $this->_options[additionalOptions][enableGA] = 1; else $this->_options[additionalOptions][enableGA] = 0;			
+			update_option('profitquery', $this->_options);
+		}
+						
+		if($_POST[action] == 'subscribeProviderSetup'){
+			if(isset($_POST[subscribeProvider])){
+				unset($this->_options['subscribeProviderUrl']);
+				$this->_options['subscribeProvider'] = sanitize_text_field($_POST[subscribeProvider]);
+				if($_POST[subscribeProviderFormContent]){
+					unset($this->_options['subscribeProviderOption']);					
+					$this->_options['subscribeProviderOption'][$this->_options['subscribeProvider']] = $this->parseSubscribeProviderForm();					
+				}else{					
+					$this->_options['subscribeProviderOption'][$this->_options['subscribeProvider']][is_error] = 1;
+				}				
+			}
+			update_option('profitquery', $this->_options);
+		}		
 		
 		if($_POST[action] == 'editAdditionalData'){
 			//follow
@@ -309,37 +465,24 @@ class ProfitQuerySmartWidgetsClass
 				</script>
 			';
 		}
+				
+		
 		
 		if($_POST[action] == 'edit'){
 			//sharingSideBar
 			if($_POST[sharingSideBar]){
 				if($_POST[sharingSideBar][enabled] == 'on') $this->_options['sharingSideBar']['disabled'] = 0; else $this->_options['sharingSideBar']['disabled'] = 1;
 				if(trim($_POST[sharingSideBar][position])) $this->_options['sharingSideBar']['position'] = sanitize_text_field($_POST[sharingSideBar][position]); else $this->_options['sharingSideBar']['position'] = '';
-				if($_POST[sharingSideBar][socnet]){
-					if($_POST[sharingSideBar][socnet][FB] == 'on') $this->_options[sharingSideBar][socnet][FB] = 1; else $this->_options[sharingSideBar][socnet][FB] = 0;
-                    if($_POST[sharingSideBar][socnet][TW] == 'on') $this->_options[sharingSideBar][socnet][TW] = 1; else $this->_options[sharingSideBar][socnet][TW] = 0;
-                    if($_POST[sharingSideBar][socnet][GP] == 'on') $this->_options[sharingSideBar][socnet][GP] = 1; else $this->_options[sharingSideBar][socnet][GP] = 0;
-                    if($_POST[sharingSideBar][socnet][PI] == 'on') $this->_options[sharingSideBar][socnet][PI] = 1; else $this->_options[sharingSideBar][socnet][PI] = 0;
-                    if($_POST[sharingSideBar][socnet][TR] == 'on') $this->_options[sharingSideBar][socnet][TR] = 1; else $this->_options[sharingSideBar][socnet][TR] = 0;
-                    if($_POST[sharingSideBar][socnet][LI] == 'on') $this->_options[sharingSideBar][socnet][LI] = 1; else $this->_options[sharingSideBar][socnet][LI] = 0;
-                    if($_POST[sharingSideBar][socnet][VK] == 'on') $this->_options[sharingSideBar][socnet][VK] = 1; else $this->_options[sharingSideBar][socnet][VK] = 0;
-                    if($_POST[sharingSideBar][socnet][OD] == 'on') $this->_options[sharingSideBar][socnet][OD] = 1; else $this->_options[sharingSideBar][socnet][OD] = 0;
-                    if($_POST[sharingSideBar][socnet][MW] == 'on') $this->_options[sharingSideBar][socnet][MW] = 1; else $this->_options[sharingSideBar][socnet][MW] = 0;
-                    if($_POST[sharingSideBar][socnet][LJ] == 'on') $this->_options[sharingSideBar][socnet][LJ] = 1; else $this->_options[sharingSideBar][socnet][LJ] = 0;
-					
-					if($_POST[sharingSideBar][socnet][RD] == 'on') $this->_options[sharingSideBar][socnet][RD] = 1; else $this->_options[sharingSideBar][socnet][RD] = 0;
-					if($_POST[sharingSideBar][socnet][SU] == 'on') $this->_options[sharingSideBar][socnet][SU] = 1; else $this->_options[sharingSideBar][socnet][SU] = 0;
-					if($_POST[sharingSideBar][socnet][DG] == 'on') $this->_options[sharingSideBar][socnet][DG] = 1; else $this->_options[sharingSideBar][socnet][DG] = 0;
-					if($_POST[sharingSideBar][socnet][DL] == 'on') $this->_options[sharingSideBar][socnet][DL] = 1; else $this->_options[sharingSideBar][socnet][DL] = 0;
-					if($_POST[sharingSideBar][socnet][WU] == 'on') $this->_options[sharingSideBar][socnet][WU] = 1; else $this->_options[sharingSideBar][socnet][WU] = 0;
-					if($_POST[sharingSideBar][socnet][BR] == 'on') $this->_options[sharingSideBar][socnet][BR] = 1; else $this->_options[sharingSideBar][socnet][BR] = 0;
-					if($_POST[sharingSideBar][socnet][RR] == 'on') $this->_options[sharingSideBar][socnet][RR] = 1; else $this->_options[sharingSideBar][socnet][RR] = 0;
-					if($_POST[sharingSideBar][socnet][WB] == 'on') $this->_options[sharingSideBar][socnet][WB] = 1; else $this->_options[sharingSideBar][socnet][WB] = 0;
-					
-					
-                    if($_POST[sharingSideBar][socnet][MailTo] == 'on') $this->_options[sharingSideBar][socnet][MailTo] = 1; else $this->_options[sharingSideBar][socnet][MailTo] = 0;
-                    if($_POST[sharingSideBar][socnet]['Print'] == 'on') $this->_options[sharingSideBar][socnet]['Print'] = 1; else $this->_options[sharingSideBar][socnet]['Print'] = 0;
-				}
+				if($_POST[sharingSideBar][socnet_with_pos]){
+					unset($this->_options['sharingSideBar']['socnet']);//for old version
+					foreach((array)$_POST[sharingSideBar][socnet_with_pos] as $pos => $socName){
+						if($socName){
+							$this->_options['sharingSideBar']['socnet_with_pos'][(int)$pos] = sanitize_text_field($socName);
+						}else{
+							$this->_options['sharingSideBar']['socnet_with_pos'][(int)$pos] = '';
+						}
+					}
+				}				
 				
 				if(trim($_POST[sharingSideBar][design][color])) $this->_options['sharingSideBar']['design']['color'] = sanitize_text_field($_POST[sharingSideBar][design][color]); else $this->_options['sharingSideBar']['design']['color'] = 'c4';
 				if(trim($_POST[sharingSideBar][design][form])) $this->_options['sharingSideBar']['design']['form'] = sanitize_text_field($_POST[sharingSideBar][design][form]); else $this->_options['sharingSideBar']['design']['form'] = '';
@@ -416,8 +559,8 @@ class ProfitQuerySmartWidgetsClass
 			
 			
 			//Subscribe Design Block
-			if(trim($_POST[subscribeDesign]) != '') $this->_options['subscribeDesign'] = sanitize_text_field($_POST[subscribeDesign]);
-			if(trim($_POST[subscribeProviderUrl]) != '') $this->_options['subscribeProviderUrl'] = sanitize_text_field($_POST[subscribeProviderUrl]);			
+			if(trim($_POST[subscribeDesign]) != '') $this->_options['subscribeDesign'] = sanitize_text_field($_POST[subscribeDesign]);												
+			
 			//subscribeBar
 			if($_POST[subscribeBar]){
 				if($_POST[subscribeBar][enabled] == 'on') $this->_options['subscribeBar']['disabled'] = 0; else $this->_options['subscribeBar']['disabled'] = 1;
@@ -425,6 +568,7 @@ class ProfitQuerySmartWidgetsClass
 				if(trim($_POST[subscribeBar][typeWindow])) $this->_options['subscribeBar']['typeWindow'] = sanitize_text_field($_POST[subscribeBar][typeWindow]); else $this->_options['subscribeBar']['typeWindow'] = '';
 				if(trim($_POST[subscribeBar][title])) $this->_options['subscribeBar']['title'] = sanitize_text_field($_POST[subscribeBar][title]); else $this->_options['subscribeBar']['title'] = '';
 				if(trim($_POST[subscribeBar][inputEmailTitle])) $this->_options['subscribeBar']['inputEmailTitle'] = sanitize_text_field($_POST[subscribeBar][inputEmailTitle]); else $this->_options['subscribeBar']['inputEmailTitle'] = '';
+				if(trim($_POST[subscribeBar][inputNameTitle])) $this->_options['subscribeBar']['inputNameTitle'] = sanitize_text_field($_POST[subscribeBar][inputNameTitle]); else $this->_options['subscribeBar']['inputNameTitle'] = '';
 				if(trim($_POST[subscribeBar][buttonTitle])) $this->_options['subscribeBar']['buttonTitle'] = sanitize_text_field($_POST[subscribeBar][buttonTitle]); else $this->_options['subscribeBar']['buttonTitle'] = '';
 				if(trim($_POST[subscribeBar][background])) $this->_options['subscribeBar']['background'] = sanitize_text_field($_POST[subscribeBar][background]); else $this->_options['subscribeBar']['background'] = '';
 				if(trim($_POST[subscribeBar][button_color])) $this->_options['subscribeBar']['button_color'] = sanitize_text_field($_POST[subscribeBar][button_color]); else $this->_options['subscribeBar']['button_color'] = '';
@@ -456,6 +600,7 @@ class ProfitQuerySmartWidgetsClass
 				if(trim($_POST[subscribeExit][title])) $this->_options['subscribeExit']['title'] = sanitize_text_field($_POST[subscribeExit][title]); else $this->_options['subscribeExit']['title'] = '';
 				if(trim($_POST[subscribeExit][sub_title])) $this->_options['subscribeExit']['sub_title'] = sanitize_text_field($_POST[subscribeExit][sub_title]); else $this->_options['subscribeExit']['sub_title'] = '';
 				if(trim($_POST[subscribeExit][inputEmailTitle])) $this->_options['subscribeExit']['inputEmailTitle'] = sanitize_text_field($_POST[subscribeExit][inputEmailTitle]); else $this->_options['subscribeExit']['inputEmailTitle'] = '';
+				if(trim($_POST[subscribeExit][inputNameTitle])) $this->_options['subscribeExit']['inputNameTitle'] = sanitize_text_field($_POST[subscribeExit][inputNameTitle]); else $this->_options['subscribeExit']['inputNameTitle'] = '';
 				if(trim($_POST[subscribeExit][buttonTitle])) $this->_options['subscribeExit']['buttonTitle'] = sanitize_text_field($_POST[subscribeExit][buttonTitle]); else $this->_options['subscribeExit']['buttonTitle'] = '';
 				if(trim($_POST[subscribeExit][background])) $this->_options['subscribeExit']['background'] = sanitize_text_field($_POST[subscribeExit][background]); else $this->_options['subscribeExit']['background'] = '';
 				if(trim($_POST[subscribeExit][button_color])) $this->_options['subscribeExit']['button_color'] = sanitize_text_field($_POST[subscribeExit][button_color]); else $this->_options['subscribeExit']['button_color'] = '';
@@ -549,7 +694,8 @@ class ProfitQuerySmartWidgetsClass
 					$this->_options['callMe']['afterProceed']['follow'] = 0;
 					$this->_options['callMe']['afterProceed']['thank'] = 0;
 				}
-			}			
+			}
+			
 			update_option('profitquery', $this->_options);
 			echo '
 			<div id="successPQBlock" style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(151, 255, 0, 0.5); text-align: center;">
@@ -561,8 +707,30 @@ class ProfitQuerySmartWidgetsClass
 			';
 		}
 		
-		//update_option('profitquery', '');
-				
+		
+		
+		/*Check for dublicate sharingSideBar socnet_with_pos*/
+		if(isset($this->_options['sharingSideBar']['socnet_with_pos'])){
+			$tempArray = $socnet_with_pos_error = array();
+			foreach((array)$this->_options['sharingSideBar']['socnet_with_pos'] as $k => $v){
+				if(!$tempArray[$v]){
+					$tempArray[$v] = 1;
+				} else {					
+					if(trim($v)){
+						$socnet_with_pos_error[$v] = 1;
+					}
+				}
+			}
+			if($socnet_with_pos_error){
+				echo '
+						<div style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(242, 20, 67, 0.5); text-align: center;">
+						 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">Sharing Sidebar. Dublicate social networks detected.</p>
+						</div>						
+					';
+			}
+		}		
+		
+		
 		
 		//save api key
 		if(trim($_POST[apiKey]) != '' || trim($_GET[apiKey]) != ''){						
@@ -652,10 +820,10 @@ class ProfitQuerySmartWidgetsClass
 			';	
 		} else if((int)$this->_options['errorApiKey'] == 0) {
 			if(profitquery_is_subscribe_enabled($this->_options)){
-				if(trim($this->_options[subscribeProviderUrl]) == ''){
+				if(trim($this->_options[subscribeProvider]) == '' || (int)$this->_options['subscribeProviderOption'][$this->_options['subscribeProvider']][is_error] == 1){
 					echo '
 						<div style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(242, 20, 67, 0.5); text-align: center;">
-						 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">For complete install Subscribe tools please set up Subscribe Form action option <a href="'.$this->getSettingsPageUrl().'#setupFormAction" style="text-decoration: none;" >Complete setup</a></p>
+						 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">For complete install Subscribe tools please copy/paste correct sign up form from selected provider <a href="'.$this->getSettingsPageUrl().'#setupFormAction" style="text-decoration: none;" >Complete setup</a></p>
 						</div>						
 					';
 				}
@@ -793,69 +961,512 @@ class ProfitQuerySmartWidgetsClass
 						<div class="pq-sm-10 pq_more" id="Sharing_Sidebar" style="display:none;">
 							<h5>More Options Sharing Sidebar</h5>
 							<div class="pq-sm-10">
-								
-								<div class="x30" style="margin-top: 15px; overflow: hidden;  margin: 15px auto 0;">
-									<label><div class="pq_fb"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][FB]" <?php if((int)$this->_options[sharingSideBar][socnet][FB] == 1) echo 'checked';?>></label>
-													
-									<label><div class="pq_tw"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][TW]" <?php if((int)$this->_options[sharingSideBar][socnet][TW] == 1) echo 'checked';?>></label>
-													
-									<label><div class="pq_gp"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][GP]" <?php if((int)$this->_options[sharingSideBar][socnet][GP] == 1) echo 'checked';?>></label>
-													
-									<label><div class="pq_pi"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][PI]" <?php if((int)$this->_options[sharingSideBar][socnet][PI] == 1) echo 'checked';?>></label>
-													
-									<label><div class="pq_tr"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][TR]" <?php if((int)$this->_options[sharingSideBar][socnet][TR] == 1) echo 'checked';?>></label>
-									
-									<label><div class="pq_li"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][LI]" <?php if((int)$this->_options[sharingSideBar][socnet][LI] == 1) echo 'checked';?>></label>
-													
-									<label><div class="pq_vk"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][VK]" <?php if((int)$this->_options[sharingSideBar][socnet][VK] == 1) echo 'checked';?>></label>
-													
-									<label><div class="pq_od"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][OD]" <?php if((int)$this->_options[sharingSideBar][socnet][OD] == 1) echo 'checked';?>></label>
-									
-									<label><div class="pq_mw"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][MW]" <?php if((int)$this->_options[sharingSideBar][socnet][MW] == 1) echo 'checked';?>></label>
-													
-									<label><div class="pq_lj"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][LJ]" <?php if((int)$this->_options[sharingSideBar][socnet][LJ] == 1) echo 'checked';?>></label>																						
-									
-									<label><div class="pq_rd"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][RD]" <?php if((int)$this->_options[sharingSideBar][socnet]['RD'] == 1) echo 'checked';?>></label>
-									
-									<label><div class="pq_su"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][SU]" <?php if((int)$this->_options[sharingSideBar][socnet]['SU'] == 1) echo 'checked';?>></label>
-									
-									<label><div class="pq_dg"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][DG]" <?php if((int)$this->_options[sharingSideBar][socnet]['DG'] == 1) echo 'checked';?>></label>
-									
-									<label><div class="pq_dl"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][DL]" <?php if((int)$this->_options[sharingSideBar][socnet]['DL'] == 1) echo 'checked';?>></label>
-									
-									<label><div class="pq_wu"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][WU]" <?php if((int)$this->_options[sharingSideBar][socnet]['WU'] == 1) echo 'checked';?>></label>
-									
-									<label><div class="pq_br"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][BR]" <?php if((int)$this->_options[sharingSideBar][socnet]['BR'] == 1) echo 'checked';?>></label>
-									
-									<label><div class="pq_rr"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][RR]" <?php if((int)$this->_options[sharingSideBar][socnet]['RR'] == 1) echo 'checked';?>></label>
-									
-									<label><div class="pq_wb"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][WB]" <?php if((int)$this->_options[sharingSideBar][socnet]['WB'] == 1) echo 'checked';?>></label>
-									
-									<!-- -->
-									<label><div class="pq_em"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][MailTo]" <?php if((int)$this->_options[sharingSideBar][socnet][MailTo] == 1) echo 'checked';?>></label>
-									
-									<label><div class="pq_pr"></div>
-									<input type="checkbox" name="sharingSideBar[socnet][Print]" <?php if((int)$this->_options[sharingSideBar][socnet]['Print'] == 1) echo 'checked';?>></label>
-								</div>
+								<div class="pq_selects" style="overflow: hidden; padding: 20px 0 10px;" id="pq_input">
+					
+									<label><p>1.</p><select name="sharingSideBar[socnet_with_pos][0]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][0]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'MW') echo 'selected';?>>My World</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'Print') echo 'selected';?>>Print</option>
+										<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'MailTo') echo 'selected';?>>Email</option>
+										</select>
+									</label>
+									<label><p>2.</p>
+									<select name="sharingSideBar[socnet_with_pos][1]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][1]]) echo 'class="pq_error"';?>>
+									<option value="" selected>None</option>
+									<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'FB') echo 'selected';?> >Facebook</option>
+									<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'TW') echo 'selected';?>>Twitter</option>
+									<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'GP') echo 'selected';?>>Google plus</option>
+									<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'RD') echo 'selected';?>>Reddit</option>
+									<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'PI') echo 'selected';?>>Pinterest</option>
+									<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'VK') echo 'selected';?>>Vkontakte</option>
+									<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+									<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'LJ') echo 'selected';?>>Live Journal</option>
+									<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'TR') echo 'selected';?>>Tumblr</option>
+									<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'LI') echo 'selected';?>>LinkedIn</option>
+									<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'SU') echo 'selected';?>>StumbleUpon</option>
+									<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'DG') echo 'selected';?>>Digg</option>
+									<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'DL') echo 'selected';?>>Delicious</option>
+									<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'WU') echo 'selected';?>>WhatsApp</option>
+									<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'BR') echo 'selected';?>>Blogger</option>
+									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'RR') echo 'selected';?>>Renren</option>
+									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'WB') echo 'selected';?>>Weibo</option>
+									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'MW') echo 'selected';?>>My World</option>
+									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'Print') echo 'selected';?>>Print</option>
+									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'MailTo') echo 'selected';?>>Email</option>
+									</select>
+									</label>
+									<label><p>3.</p>
+									<select name="sharingSideBar[socnet_with_pos][2]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][2]]) echo 'class="pq_error"';?>>
+									<option value="" selected>None</option>
+									<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'FB') echo 'selected';?> >Facebook</option>
+									<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'TW') echo 'selected';?>>Twitter</option>
+									<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'GP') echo 'selected';?>>Google plus</option>
+									<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'RD') echo 'selected';?>>Reddit</option>
+									<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'PI') echo 'selected';?>>Pinterest</option>
+									<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'VK') echo 'selected';?>>Vkontakte</option>
+									<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+									<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'LJ') echo 'selected';?>>Live Journal</option>
+									<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'TR') echo 'selected';?>>Tumblr</option>
+									<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'LI') echo 'selected';?>>LinkedIn</option>
+									<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'SU') echo 'selected';?>>StumbleUpon</option>
+									<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'DG') echo 'selected';?>>Digg</option>
+									<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'DL') echo 'selected';?>>Delicious</option>
+									<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'WU') echo 'selected';?>>WhatsApp</option>
+									<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'BR') echo 'selected';?>>Blogger</option>
+									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'RR') echo 'selected';?>>Renren</option>
+									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'WB') echo 'selected';?>>Weibo</option>
+									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'MW') echo 'selected';?>>My World</option>
+									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'Print') echo 'selected';?>>Print</option>
+									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'MailTo') echo 'selected';?>>Email</option>
+									</select>
+									</label>
+									<label><p>4.</p>
+									<select name="sharingSideBar[socnet_with_pos][3]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][3]]) echo 'class="pq_error"';?>>
+									<option value="" selected>None</option>
+									<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'FB') echo 'selected';?> >Facebook</option>
+									<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'TW') echo 'selected';?>>Twitter</option>
+									<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'GP') echo 'selected';?>>Google plus</option>
+									<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'RD') echo 'selected';?>>Reddit</option>
+									<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'PI') echo 'selected';?>>Pinterest</option>
+									<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'VK') echo 'selected';?>>Vkontakte</option>
+									<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+									<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'LJ') echo 'selected';?>>Live Journal</option>
+									<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'TR') echo 'selected';?>>Tumblr</option>
+									<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'LI') echo 'selected';?>>LinkedIn</option>
+									<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'SU') echo 'selected';?>>StumbleUpon</option>
+									<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'DG') echo 'selected';?>>Digg</option>
+									<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'DL') echo 'selected';?>>Delicious</option>
+									<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'WU') echo 'selected';?>>WhatsApp</option>
+									<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'BR') echo 'selected';?>>Blogger</option>
+									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'RR') echo 'selected';?>>Renren</option>
+									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'WB') echo 'selected';?>>Weibo</option>
+									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'MW') echo 'selected';?>>My World</option>
+									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'Print') echo 'selected';?>>Print</option>
+									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'MailTo') echo 'selected';?>>Email</option>
+									</select>
+									</label>
+									<label><p>5.</p>
+									<select name="sharingSideBar[socnet_with_pos][4]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][4]]) echo 'class="pq_error"';?>>
+									<option value="" selected>None</option>
+									<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'FB') echo 'selected';?> >Facebook</option>
+									<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'TW') echo 'selected';?>>Twitter</option>
+									<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'GP') echo 'selected';?>>Google plus</option>
+									<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'RD') echo 'selected';?>>Reddit</option>
+									<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'PI') echo 'selected';?>>Pinterest</option>
+									<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'VK') echo 'selected';?>>Vkontakte</option>
+									<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+									<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'LJ') echo 'selected';?>>Live Journal</option>
+									<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'TR') echo 'selected';?>>Tumblr</option>
+									<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'LI') echo 'selected';?>>LinkedIn</option>
+									<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'SU') echo 'selected';?>>StumbleUpon</option>
+									<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'DG') echo 'selected';?>>Digg</option>
+									<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'DL') echo 'selected';?>>Delicious</option>
+									<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'WU') echo 'selected';?>>WhatsApp</option>
+									<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'BR') echo 'selected';?>>Blogger</option>
+									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'RR') echo 'selected';?>>Renren</option>
+									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'WB') echo 'selected';?>>Weibo</option>
+									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'MW') echo 'selected';?>>My World</option>
+									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'Print') echo 'selected';?>>Print</option>
+									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'MailTo') echo 'selected';?>>Email</option>
+									</select>
+									</label>
+									<label><p>6.</p>
+									<select name="sharingSideBar[socnet_with_pos][5]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][5]]) echo 'class="pq_error"';?>>
+									<option value="" selected>None</option>
+									<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'FB') echo 'selected';?> >Facebook</option>
+									<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'TW') echo 'selected';?>>Twitter</option>
+									<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'GP') echo 'selected';?>>Google plus</option>
+									<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'RD') echo 'selected';?>>Reddit</option>
+									<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'PI') echo 'selected';?>>Pinterest</option>
+									<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'VK') echo 'selected';?>>Vkontakte</option>
+									<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+									<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'LJ') echo 'selected';?>>Live Journal</option>
+									<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'TR') echo 'selected';?>>Tumblr</option>
+									<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'LI') echo 'selected';?>>LinkedIn</option>
+									<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'SU') echo 'selected';?>>StumbleUpon</option>
+									<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'DG') echo 'selected';?>>Digg</option>
+									<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'DL') echo 'selected';?>>Delicious</option>
+									<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'WU') echo 'selected';?>>WhatsApp</option>
+									<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'BR') echo 'selected';?>>Blogger</option>
+									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'RR') echo 'selected';?>>Renren</option>
+									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'WB') echo 'selected';?>>Weibo</option>
+									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'MW') echo 'selected';?>>My World</option>
+									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'Print') echo 'selected';?>>Print</option>
+									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'MailTo') echo 'selected';?>>Email</option>
+									</select>
+									</label>
+										<div class="clear"></div>
+										<div id="collapseservices" style="display:none;">
+											<label><p>7.</p>
+											<select name="sharingSideBar[socnet_with_pos][6]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][6]]) echo 'class="pq_error"';?>>
+											<option value="" selected>None</option>
+											<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'FB') echo 'selected';?> >Facebook</option>
+											<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'TW') echo 'selected';?>>Twitter</option>
+											<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'GP') echo 'selected';?>>Google plus</option>
+											<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'RD') echo 'selected';?>>Reddit</option>
+											<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'PI') echo 'selected';?>>Pinterest</option>
+											<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'VK') echo 'selected';?>>Vkontakte</option>
+											<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+											<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'LJ') echo 'selected';?>>Live Journal</option>
+											<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'TR') echo 'selected';?>>Tumblr</option>
+											<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'LI') echo 'selected';?>>LinkedIn</option>
+											<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'SU') echo 'selected';?>>StumbleUpon</option>
+											<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'DG') echo 'selected';?>>Digg</option>
+											<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'DL') echo 'selected';?>>Delicious</option>
+											<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'WU') echo 'selected';?>>WhatsApp</option>
+											<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'BR') echo 'selected';?>>Blogger</option>
+											<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'RR') echo 'selected';?>>Renren</option>
+											<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'WB') echo 'selected';?>>Weibo</option>
+											<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'MW') echo 'selected';?>>My World</option>
+											<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'Print') echo 'selected';?>>Print</option>
+											<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'MailTo') echo 'selected';?>>Email</option>
+											</select>
+											</label>
+											<label><p>8.</p>
+											<select name="sharingSideBar[socnet_with_pos][7]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][7]]) echo 'class="pq_error"';?>>
+											<option value="" selected>None</option>
+											<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'FB') echo 'selected';?> >Facebook</option>
+											<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'TW') echo 'selected';?>>Twitter</option>
+											<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'GP') echo 'selected';?>>Google plus</option>
+											<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'RD') echo 'selected';?>>Reddit</option>
+											<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'PI') echo 'selected';?>>Pinterest</option>
+											<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'VK') echo 'selected';?>>Vkontakte</option>
+											<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+											<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'LJ') echo 'selected';?>>Live Journal</option>
+											<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'TR') echo 'selected';?>>Tumblr</option>
+											<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'LI') echo 'selected';?>>LinkedIn</option>
+											<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'SU') echo 'selected';?>>StumbleUpon</option>
+											<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'DG') echo 'selected';?>>Digg</option>
+											<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'DL') echo 'selected';?>>Delicious</option>
+											<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'WU') echo 'selected';?>>WhatsApp</option>
+											<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'BR') echo 'selected';?>>Blogger</option>
+											<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'RR') echo 'selected';?>>Renren</option>
+											<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'WB') echo 'selected';?>>Weibo</option>
+											<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'MW') echo 'selected';?>>My World</option>
+											<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'Print') echo 'selected';?>>Print</option>
+											<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'MailTo') echo 'selected';?>>Email</option>
+											</select>
+											</label>
+											<label><p>9.</p>
+											<select name="sharingSideBar[socnet_with_pos][8]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][8]]) echo 'class="pq_error"';?>>
+<option value="" selected>None</option>
+<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'FB') echo 'selected';?> >Facebook</option>
+<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'TW') echo 'selected';?>>Twitter</option>
+<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'GP') echo 'selected';?>>Google plus</option>
+<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'RD') echo 'selected';?>>Reddit</option>
+<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'PI') echo 'selected';?>>Pinterest</option>
+<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'VK') echo 'selected';?>>Vkontakte</option>
+<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'LJ') echo 'selected';?>>Live Journal</option>
+<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'TR') echo 'selected';?>>Tumblr</option>
+<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'LI') echo 'selected';?>>LinkedIn</option>
+<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'SU') echo 'selected';?>>StumbleUpon</option>
+<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'DG') echo 'selected';?>>Digg</option>
+<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'DL') echo 'selected';?>>Delicious</option>
+<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'WU') echo 'selected';?>>WhatsApp</option>
+<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'BR') echo 'selected';?>>Blogger</option>
+<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'RR') echo 'selected';?>>Renren</option>
+<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'WB') echo 'selected';?>>Weibo</option>
+<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'MW') echo 'selected';?>>My World</option>
+<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'Print') echo 'selected';?>>Print</option>
+<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'MailTo') echo 'selected';?>>Email</option>
+</select>
+											</label>
+											<label><p>10.</p>
+											<select name="sharingSideBar[socnet_with_pos][9]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][9]]) echo 'class="pq_error"';?>>
+<option value="" selected>None</option>
+<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'FB') echo 'selected';?> >Facebook</option>
+<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'TW') echo 'selected';?>>Twitter</option>
+<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'GP') echo 'selected';?>>Google plus</option>
+<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'RD') echo 'selected';?>>Reddit</option>
+<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'PI') echo 'selected';?>>Pinterest</option>
+<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'VK') echo 'selected';?>>Vkontakte</option>
+<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'LJ') echo 'selected';?>>Live Journal</option>
+<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'TR') echo 'selected';?>>Tumblr</option>
+<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'LI') echo 'selected';?>>LinkedIn</option>
+<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'SU') echo 'selected';?>>StumbleUpon</option>
+<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'DG') echo 'selected';?>>Digg</option>
+<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'DL') echo 'selected';?>>Delicious</option>
+<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'WU') echo 'selected';?>>WhatsApp</option>
+<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'BR') echo 'selected';?>>Blogger</option>
+<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'RR') echo 'selected';?>>Renren</option>
+<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'WB') echo 'selected';?>>Weibo</option>
+<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'MW') echo 'selected';?>>My World</option>
+<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'Print') echo 'selected';?>>Print</option>
+<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'MailTo') echo 'selected';?>>Email</option>
+</select>
+											</label>
+											<label><p>11.</p>
+											<select name="sharingSideBar[socnet_with_pos][10]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][10]]) echo 'class="pq_error"';?>>
+<option value="" selected>None</option>
+<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'FB') echo 'selected';?> >Facebook</option>
+<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'TW') echo 'selected';?>>Twitter</option>
+<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'GP') echo 'selected';?>>Google plus</option>
+<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'RD') echo 'selected';?>>Reddit</option>
+<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'PI') echo 'selected';?>>Pinterest</option>
+<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'VK') echo 'selected';?>>Vkontakte</option>
+<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'LJ') echo 'selected';?>>Live Journal</option>
+<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'TR') echo 'selected';?>>Tumblr</option>
+<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'LI') echo 'selected';?>>LinkedIn</option>
+<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'SU') echo 'selected';?>>StumbleUpon</option>
+<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'DG') echo 'selected';?>>Digg</option>
+<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'DL') echo 'selected';?>>Delicious</option>
+<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'WU') echo 'selected';?>>WhatsApp</option>
+<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'BR') echo 'selected';?>>Blogger</option>
+<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'RR') echo 'selected';?>>Renren</option>
+<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'WB') echo 'selected';?>>Weibo</option>
+<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'MW') echo 'selected';?>>My World</option>
+<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'Print') echo 'selected';?>>Print</option>
+<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'MailTo') echo 'selected';?>>Email</option>
+</select>
+											</label>
+											<label><p>12.</p>
+											<select name="sharingSideBar[socnet_with_pos][11]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][11]]) echo 'class="pq_error"';?>>
+<option value="" selected>None</option>
+<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'FB') echo 'selected';?> >Facebook</option>
+<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'TW') echo 'selected';?>>Twitter</option>
+<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'GP') echo 'selected';?>>Google plus</option>
+<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'RD') echo 'selected';?>>Reddit</option>
+<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'PI') echo 'selected';?>>Pinterest</option>
+<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'VK') echo 'selected';?>>Vkontakte</option>
+<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'LJ') echo 'selected';?>>Live Journal</option>
+<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'TR') echo 'selected';?>>Tumblr</option>
+<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'LI') echo 'selected';?>>LinkedIn</option>
+<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'SU') echo 'selected';?>>StumbleUpon</option>
+<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'DG') echo 'selected';?>>Digg</option>
+<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'DL') echo 'selected';?>>Delicious</option>
+<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'WU') echo 'selected';?>>WhatsApp</option>
+<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'BR') echo 'selected';?>>Blogger</option>
+<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'RR') echo 'selected';?>>Renren</option>
+<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'WB') echo 'selected';?>>Weibo</option>
+<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'MW') echo 'selected';?>>My World</option>
+<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'Print') echo 'selected';?>>Print</option>
+<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'MailTo') echo 'selected';?>>Email</option>
+</select>
+											</label>
+											<label><p>13.</p>
+											<select name="sharingSideBar[socnet_with_pos][12]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][12]]) echo 'class="pq_error"';?>>
+<option value="" selected>None</option>
+<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'FB') echo 'selected';?> >Facebook</option>
+<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'TW') echo 'selected';?>>Twitter</option>
+<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'GP') echo 'selected';?>>Google plus</option>
+<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'RD') echo 'selected';?>>Reddit</option>
+<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'PI') echo 'selected';?>>Pinterest</option>
+<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'VK') echo 'selected';?>>Vkontakte</option>
+<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'LJ') echo 'selected';?>>Live Journal</option>
+<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'TR') echo 'selected';?>>Tumblr</option>
+<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'LI') echo 'selected';?>>LinkedIn</option>
+<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'SU') echo 'selected';?>>StumbleUpon</option>
+<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'DG') echo 'selected';?>>Digg</option>
+<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'DL') echo 'selected';?>>Delicious</option>
+<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'WU') echo 'selected';?>>WhatsApp</option>
+<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'BR') echo 'selected';?>>Blogger</option>
+<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'RR') echo 'selected';?>>Renren</option>
+<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'WB') echo 'selected';?>>Weibo</option>
+<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'MW') echo 'selected';?>>My World</option>
+<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'Print') echo 'selected';?>>Print</option>
+<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'MailTo') echo 'selected';?>>Email</option>
+</select>
+											</label>
+											<label><p>14.</p>
+											<select name="sharingSideBar[socnet_with_pos][13]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][13]]) echo 'class="pq_error"';?>>
+<option value="" selected>None</option>
+<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'FB') echo 'selected';?> >Facebook</option>
+<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'TW') echo 'selected';?>>Twitter</option>
+<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'GP') echo 'selected';?>>Google plus</option>
+<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'RD') echo 'selected';?>>Reddit</option>
+<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'PI') echo 'selected';?>>Pinterest</option>
+<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'VK') echo 'selected';?>>Vkontakte</option>
+<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'LJ') echo 'selected';?>>Live Journal</option>
+<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'TR') echo 'selected';?>>Tumblr</option>
+<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'LI') echo 'selected';?>>LinkedIn</option>
+<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'SU') echo 'selected';?>>StumbleUpon</option>
+<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'DG') echo 'selected';?>>Digg</option>
+<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'DL') echo 'selected';?>>Delicious</option>
+<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'WU') echo 'selected';?>>WhatsApp</option>
+<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'BR') echo 'selected';?>>Blogger</option>
+<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'RR') echo 'selected';?>>Renren</option>
+<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'WB') echo 'selected';?>>Weibo</option>
+<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'MW') echo 'selected';?>>My World</option>
+<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'Print') echo 'selected';?>>Print</option>
+<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'MailTo') echo 'selected';?>>Email</option>
+</select>
+											</label>
+											<label><p>15.</p>
+											<select name="sharingSideBar[socnet_with_pos][14]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][14]]) echo 'class="pq_error"';?>>
+<option value="" selected>None</option>
+<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'FB') echo 'selected';?> >Facebook</option>
+<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'TW') echo 'selected';?>>Twitter</option>
+<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'GP') echo 'selected';?>>Google plus</option>
+<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'RD') echo 'selected';?>>Reddit</option>
+<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'PI') echo 'selected';?>>Pinterest</option>
+<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'VK') echo 'selected';?>>Vkontakte</option>
+<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'LJ') echo 'selected';?>>Live Journal</option>
+<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'TR') echo 'selected';?>>Tumblr</option>
+<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'LI') echo 'selected';?>>LinkedIn</option>
+<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'SU') echo 'selected';?>>StumbleUpon</option>
+<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'DG') echo 'selected';?>>Digg</option>
+<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'DL') echo 'selected';?>>Delicious</option>
+<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'WU') echo 'selected';?>>WhatsApp</option>
+<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'BR') echo 'selected';?>>Blogger</option>
+<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'RR') echo 'selected';?>>Renren</option>
+<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'WB') echo 'selected';?>>Weibo</option>
+<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'MW') echo 'selected';?>>My World</option>
+<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'Print') echo 'selected';?>>Print</option>
+<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'MailTo') echo 'selected';?>>Email</option>
+</select>
+											</label>
+											<label><p>16.</p>
+											<select name="sharingSideBar[socnet_with_pos][15]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][15]]) echo 'class="pq_error"';?>>
+<option value="" selected>None</option>
+<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'FB') echo 'selected';?> >Facebook</option>
+<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'TW') echo 'selected';?>>Twitter</option>
+<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'GP') echo 'selected';?>>Google plus</option>
+<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'RD') echo 'selected';?>>Reddit</option>
+<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'PI') echo 'selected';?>>Pinterest</option>
+<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'VK') echo 'selected';?>>Vkontakte</option>
+<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'LJ') echo 'selected';?>>Live Journal</option>
+<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'TR') echo 'selected';?>>Tumblr</option>
+<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'LI') echo 'selected';?>>LinkedIn</option>
+<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'SU') echo 'selected';?>>StumbleUpon</option>
+<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'DG') echo 'selected';?>>Digg</option>
+<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'DL') echo 'selected';?>>Delicious</option>
+<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'WU') echo 'selected';?>>WhatsApp</option>
+<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'BR') echo 'selected';?>>Blogger</option>
+<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'RR') echo 'selected';?>>Renren</option>
+<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'WB') echo 'selected';?>>Weibo</option>
+<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'MW') echo 'selected';?>>My World</option>
+<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'Print') echo 'selected';?>>Print</option>
+<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'MailTo') echo 'selected';?>>Email</option>
+</select>
+											</label>
+											<label><p>17.</p>
+											<select name="sharingSideBar[socnet_with_pos][16]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][16]]) echo 'class="pq_error"';?>>
+<option value="" selected>None</option>
+<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'FB') echo 'selected';?> >Facebook</option>
+<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'TW') echo 'selected';?>>Twitter</option>
+<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'GP') echo 'selected';?>>Google plus</option>
+<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'RD') echo 'selected';?>>Reddit</option>
+<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'PI') echo 'selected';?>>Pinterest</option>
+<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'VK') echo 'selected';?>>Vkontakte</option>
+<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'LJ') echo 'selected';?>>Live Journal</option>
+<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'TR') echo 'selected';?>>Tumblr</option>
+<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'LI') echo 'selected';?>>LinkedIn</option>
+<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'SU') echo 'selected';?>>StumbleUpon</option>
+<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'DG') echo 'selected';?>>Digg</option>
+<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'DL') echo 'selected';?>>Delicious</option>
+<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'WU') echo 'selected';?>>WhatsApp</option>
+<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'BR') echo 'selected';?>>Blogger</option>
+<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'RR') echo 'selected';?>>Renren</option>
+<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'WB') echo 'selected';?>>Weibo</option>
+<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'MW') echo 'selected';?>>My World</option>
+<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'Print') echo 'selected';?>>Print</option>
+<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'MailTo') echo 'selected';?>>Email</option>
+</select>
+											</label>
+											<label><p>18.</p>
+											<select name="sharingSideBar[socnet_with_pos][17]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][17]]) echo 'class="pq_error"';?>>
+<option value="" selected>None</option>
+<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'FB') echo 'selected';?> >Facebook</option>
+<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'TW') echo 'selected';?>>Twitter</option>
+<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'GP') echo 'selected';?>>Google plus</option>
+<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'RD') echo 'selected';?>>Reddit</option>
+<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'PI') echo 'selected';?>>Pinterest</option>
+<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'VK') echo 'selected';?>>Vkontakte</option>
+<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'LJ') echo 'selected';?>>Live Journal</option>
+<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'TR') echo 'selected';?>>Tumblr</option>
+<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'LI') echo 'selected';?>>LinkedIn</option>
+<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'SU') echo 'selected';?>>StumbleUpon</option>
+<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'DG') echo 'selected';?>>Digg</option>
+<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'DL') echo 'selected';?>>Delicious</option>
+<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'WU') echo 'selected';?>>WhatsApp</option>
+<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'BR') echo 'selected';?>>Blogger</option>
+<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'RR') echo 'selected';?>>Renren</option>
+<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'WB') echo 'selected';?>>Weibo</option>
+<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'MW') echo 'selected';?>>My World</option>
+<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'Print') echo 'selected';?>>Print</option>
+<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'MailTo') echo 'selected';?>>Email</option>
+</select>
+											</label>
+											<label><p>19.</p>
+											<select name="sharingSideBar[socnet_with_pos][18]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][18]]) echo 'class="pq_error"';?>>
+<option value="" selected>None</option>
+<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'FB') echo 'selected';?> >Facebook</option>
+<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'TW') echo 'selected';?>>Twitter</option>
+<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'GP') echo 'selected';?>>Google plus</option>
+<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'RD') echo 'selected';?>>Reddit</option>
+<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'PI') echo 'selected';?>>Pinterest</option>
+<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'VK') echo 'selected';?>>Vkontakte</option>
+<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'LJ') echo 'selected';?>>Live Journal</option>
+<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'TR') echo 'selected';?>>Tumblr</option>
+<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'LI') echo 'selected';?>>LinkedIn</option>
+<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'SU') echo 'selected';?>>StumbleUpon</option>
+<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'DG') echo 'selected';?>>Digg</option>
+<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'DL') echo 'selected';?>>Delicious</option>
+<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'WU') echo 'selected';?>>WhatsApp</option>
+<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'BR') echo 'selected';?>>Blogger</option>
+<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'RR') echo 'selected';?>>Renren</option>
+<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'WB') echo 'selected';?>>Weibo</option>
+<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'MW') echo 'selected';?>>My World</option>
+<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'Print') echo 'selected';?>>Print</option>
+<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'MailTo') echo 'selected';?>>Email</option>
+</select>
+											</label>
+											<label><p>20.</p>
+											<select name="sharingSideBar[socnet_with_pos][19]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][19]]) echo 'class="pq_error"';?>>
+<option value="" selected>None</option>
+<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'FB') echo 'selected';?> >Facebook</option>
+<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'TW') echo 'selected';?>>Twitter</option>
+<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'GP') echo 'selected';?>>Google plus</option>
+<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'RD') echo 'selected';?>>Reddit</option>
+<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'PI') echo 'selected';?>>Pinterest</option>
+<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'VK') echo 'selected';?>>Vkontakte</option>
+<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'LJ') echo 'selected';?>>Live Journal</option>
+<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'TR') echo 'selected';?>>Tumblr</option>
+<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'LI') echo 'selected';?>>LinkedIn</option>
+<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'SU') echo 'selected';?>>StumbleUpon</option>
+<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'DG') echo 'selected';?>>Digg</option>
+<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'DL') echo 'selected';?>>Delicious</option>
+<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'WU') echo 'selected';?>>WhatsApp</option>
+<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'BR') echo 'selected';?>>Blogger</option>
+<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'RR') echo 'selected';?>>Renren</option>
+<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'WB') echo 'selected';?>>Weibo</option>
+<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'MW') echo 'selected';?>>My World</option>
+<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'Print') echo 'selected';?>>Print</option>
+<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'MailTo') echo 'selected';?>>Email</option>
+</select>
+											</label>
+									</div>
+									<button type="button" class="pq-btn-link btn-bg" onclick="document.getElementById('collapseservices').style.display='block';" >More Services</button>
+								</div>								
 								
 								<div class="pq-sm-12 icons" style="padding: 0; margin: 20px 0 0;">
 									<label><select id="sharingSideBar_design_color" onchange="sharingSideBarPreview();" name="sharingSideBar[design][color]">
@@ -1112,7 +1723,7 @@ class ProfitQuerySmartWidgetsClass
 					<form action="<?php echo $this->getSettingsPageUrl();?>#EmailBlock" method="post">
 					<input type="hidden" name="action" value="edit">
 					  <div class="pq-panel-body">
-					  <p>Get more subscribers, simply mailchimp integration.</p>						
+					  <p>Get more subscribers, simply mailchimp, aweber integration.</p>						
 						
 						<div class="pq-sm-6">
 							<img id="subscribeBar_IMG" src="<?php echo plugins_url('images/bar.png', __FILE__);?>" />
@@ -1190,6 +1801,7 @@ class ProfitQuerySmartWidgetsClass
 							
 							<label style="display: block;"><p>Heading</p><input type="text" name="subscribeBar[title]" value="<?php echo stripslashes($this->_options[subscribeBar][title]);?>"></label>	
 							<label style="display: block;"><p>Input email text</p><input type="text" name="subscribeBar[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][inputEmailTitle]);?>"></label>
+							<label style="display: block;"><p>Input name text (Aweber)</p><input type="text" name="subscribeBar[inputNameTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][inputNameTitle]);?>"></label>
 							<label style="display: block;"><p>Button</p><input type="text" name="subscribeBar[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][buttonTitle]);?>"></label>
 							
 							<div class="pq-sm-6 icons" style="padding-left: 0; margin: 27px 0 0;">
@@ -1292,6 +1904,7 @@ class ProfitQuerySmartWidgetsClass
 							<label style="display: block;"><p>Text</p><input type="text" name="subscribeExit[sub_title]" value="<?php echo stripslashes($this->_options[subscribeExit][sub_title]);?>"></label>
 							<label style="display: block;"><p>Button</p><input type="text" name="subscribeExit[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][buttonTitle]);?>"></label>
 							<label style="display: block;"><p>Input email text</p><input type="text" name="subscribeExit[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][inputEmailTitle]);?>"></label>
+							<label style="display: block;"><p>Input name text (Aweber)</p><input type="text" name="subscribeExit[inputNameTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][inputNameTitle]);?>"></label>
 							
 							<div class="pq-sm-6 icons" style="padding-left: 0; margin: 27px 0 0;">
 							<label>
@@ -1446,66 +2059,70 @@ class ProfitQuerySmartWidgetsClass
 						<a href="javascript:void(0)" onclick="document.getElementById('Exit_Popup').style.display='none';"><div class="pq_close"></div></a>
 						</div>
 					</div>
+					<input type="submit" class="btn_m_red" value="Save changes">
+					<a href="mailto:support@profitquery.com" target="_blank" class="pq_help">Need help?</a>
+					</form>
+					<a name="setupFormAction"></a>
+					<form action="<?php echo $this->getSettingsPageUrl();?>#setupFormAction" method="post">
+					<input type="hidden" name="action" value="subscribeProviderSetup">					
 					<div class="pq-panel-body">
-						<div class="pq-sm-10" id="mailchimpBlockID"  style="overflow: hidden; padding: 0 20px; margin: 0 auto 10px; background: #F3F3F3;display:none; ">
-						
+						<div class="pq-sm-10" id="mailchimpBlockID"  style="overflow: hidden; padding: 0 20px; margin: 0 auto 10px; background: #F3F3F3;display:none; ">						
+						<h5>Subscribe Provider Setup</h5>
 						<div class="pq-panel-body" style="background: #F3F3F3; padding: 20px 0 0px; margin: 0 15px;">
 							<div class="pq-sm-12">
 								<div class="pq-sm-10 icons" style="margin: 0 auto; float: none;">
-									<label><select style="width: 100%; box-sizing: border-box; padding: 4px; margin: 10px 0 0;">
-										<option value="mailchimp">MailChimp</option>										
+									<label><select onchange="changeSubscribeProviderHelpUrl(1);" id="subscribeProvider" name="subscribeProvider" style="width: 100%; box-sizing: border-box; padding: 4px; margin: 10px 0 0;">
+										<option value="mailchimp" <?php if($this->_options[subscribeProvider] == '' || $this->_options[subscribeProvider] == 'mailchimp') echo "selected";?>>MailChimp</option>
+										<option value="aweber" <?php if($this->_options[subscribeProvider] == 'aweber') echo "selected";?>>AWeber</option>										
 									</select></label>
+									<div class="pq_mch">									
+										<div id="subscribeProviderFormID" class="pq_ent <?php if($this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]]['is_error']) echo 'pq_error';?>" <?php if((int)$this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]]['is_error'] == 1 || !$this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]][formAction]) echo 'style="display:block;";'; else echo 'style="display:none;";';?> />
+											<a href="http://profitquery.com/mailchimp.html" id="subscribeProviderHelpUrl" target="_blank">How to get code</a>
+											<label><p>Paste your code here:</p>
+												<textarea name="subscribeProviderFormContent" rows="5"></textarea>												
+												<input type="submit" value="Save" />												
+											</label>
+										</div>									
+										<div id="subscribeProviderEditLinkID" class="pq_result" onclick="enableSubsribeForm();" <?php if($this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]]['is_error']) echo 'pq_error';?>" <?php if((int)$this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]]['is_error'] == 1 || !$this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]][formAction]) echo 'style="display:none;";'; else echo 'style="display:block;";';?> />
+											<img src="<?php echo plugins_url('images/ok.png', __FILE__);?>" />
+											<a href="javascript:void(0)" onclick="return false;">Change settings</a>
+										</div>
+										<script>
+											function changeSubscribeProviderHelpUrl(withCheckCurrent){
+												var currentSubscribeProvider = '<?php echo $this->_options[subscribeProvider];?>'
+												if(document.getElementById('subscribeProvider').value == 'mailchimp'){
+													document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/mailchimp.html';
+												}
+												if(document.getElementById('subscribeProvider').value == 'aweber'){
+													document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/aweber.html';
+												}
+												if(withCheckCurrent == '1'){
+													if(currentSubscribeProvider){
+														if(currentSubscribeProvider == document.getElementById('subscribeProvider').value){
+															document.getElementById('subscribeProviderFormID').style.display = 'none';												
+															document.getElementById('subscribeProviderEditLinkID').style.display = 'block';
+														} else {
+															document.getElementById('subscribeProviderFormID').style.display = 'block';												
+															document.getElementById('subscribeProviderEditLinkID').style.display = 'none';
+														}
+													}
+												}
+											}											
+											function enableSubsribeForm(){												
+												document.getElementById('subscribeProviderFormID').style.display = 'block';												
+												document.getElementById('subscribeProviderEditLinkID').style.display = 'none';												
+											}
+											
+											changeSubscribeProviderHelpUrl();
+										</script>
+									</div>									
 								</div>
-							</div>
-						</div>
-						<div class="pq-panel-body" style="background: #F3F3F3; padding: 0; margin: 0 15px;">
-							<div class="pq-sm-12">
-								<a data-toggle="collapse" href="#step1" onclick="document.getElementById('step1').style.display='block';"><div class="pq-xs-4">
-									<img src="<?php echo plugins_url('images/1.png', __FILE__);?>" />
-									<p style="color: rgb(162, 162, 162); padding: 8px 0 3px;">Click for the list and choose ‘Signup Forms’</p>
-									
-								</div></a>
-								<a data-toggle="collapse" href="#step2" onclick="document.getElementById('step2').style.display='block';"><div class="pq-xs-4">
-									<img src="<?php echo plugins_url('images/2.png', __FILE__);?>" />
-									<p style="color: rgb(162, 162, 162); padding: 8px 0 3px;">Click the Embedded forms option</p>
-									
-								</div></a>
-								<a data-toggle="collapse" href="#step3" onclick="document.getElementById('step3').style.display='block';"><div class="pq-xs-4">
-									<img src="<?php echo plugins_url('images/3.png', __FILE__);?>" />
-									<p style="color: rgb(162, 162, 162); padding: 8px 0 3px;">Paste the Copy/Paste code  Form Action="... ”</p>
-									
-								</div></a>
 							</div>
 						</div>						
-						<a name="setupFormAction"></a>
-						<div class="pq-panel-body" style="  background: #F3F3F3; padding: 0 0 20px; margin: 0 15px;">							
-							<div style="display:none;" id="step1">
-								<div style="max-width: 626px; margin: 0 auto;"><img src="<?php echo plugins_url('images/mailchimp_1.png', __FILE__);?>" /><a data-toggle="collapse" href="#step1" onclick="document.getElementById('step1').style.display='none';"><div class="pq_close"></div></a></div>
-							
-							</div>
-							<div style="display:none;" id="step2">
-								<div style="max-width: 626px; margin: 0 auto;"><img src="<?php echo plugins_url('images/mailchimp_2.png', __FILE__);?>" /><a data-toggle="collapse" href="#step2"  onclick="document.getElementById('step2').style.display='none';"><div class="pq_close"></div></a></div>
-							</div>							
-							<div style="display:none;" id="step3">
-								<div style="max-width: 626px; margin: 0 auto;"><img src="<?php echo plugins_url('images/mailchimp_3.png', __FILE__);?>" /><a data-toggle="collapse" href="#step3"  onclick="document.getElementById('step3').style.display='none';"><div class="pq_close"></div></a></div>
-							</div>
-							
-							<div class="pq-sm-12" style="margin-top: 15px;">
-								<div class="pq-sm-3" style="padding: 4px 0 0; vertical-align: top;">
-									<p>Form Action=</p>
-								</div>
-								<div class="pq-sm-9" style="margin: 0 0 10px;">
-									<label style="display: block; width: 90%; margin: 0px;"><input type="text" name="subscribeProviderUrl" value="<?php echo stripslashes($this->_options[subscribeProviderUrl]);?>"></label>
-								</div>
-								
-							</div>							
-						</div>
-						</div></div>
-						<input type="submit" class="btn_m_red" value="Save changes">
-						<a href="mailto:support@profitquery.com" target="_blank" class="pq_help">Need help?</a>
-					  </form>	
+						</div></div>						
 					</div>
 				  </div>
+				  </form>
 				  <a name="ContactBlock"></a>
 				 <div class="pq_block" id="v3">				
 						<h4>Contact Forms</h4>
@@ -2398,11 +3015,30 @@ class ProfitQuerySmartWidgetsClass
 					
 					  <input type="submit" class="btn_m_red" value="Save changes">
 					  <a href="mailto:support@profitquery.com" target="_blank" class="pq_help">Need help?</a>
+					  
 					  </form>
 					</div>
-				  </div>				  
+				  </div>	
+				<a name="AdditionalOptions">
+				<div class="pq_uga">
+					<h5>Additional Options</h5>
+					<form action="<?php echo $this->getSettingsPageUrl();?>#AdditionalOptions" method="post">
+					<input type="hidden" name="action" value="editAdditionalOptions">
+							<input type="checkbox" name="additionalOptions[enableGA]" <?php if((int)$this->_options[additionalOptions][enableGA] == 1) echo 'checked';?> ><p>Use google analytics</p>
+							<input type="submit" value="Save">
+					</form>
+				</div>				  
 			</div>
-<div class="pq-container-fluid" id="free_profitquery" style="padding: 90px 0; margin-top: 80px;">
+						
+			
+<div class="pq-container-fluid" id="free_profitquery" style="padding: 90px 0; margin-top: 10px;">
+		<div class="pq-sm-10" style="overflow: hidden; padding: 20px; margin: 30px 0 155px; background: white;">
+		<h5>For developer</h5>
+			<p>You can bind any enabled profitquery popup for any event on your website.This is wonderfull opportunity to make your website smarter. You can use Thank popup , Share popup, Follow us even Subscribe popup anywhere you want</p>
+		<a href="http://profitquery.com/developer.html" target="_blank"><input type="button" class="btn_m_white" value="Learn More"></a>
+		</div>
+
+
 	<div class="pq-sm-12">
 		<h4>More Tools from Profitquery</h4>
 		<div class="pq-sm-12 pq-items">
