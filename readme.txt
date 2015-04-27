@@ -1,7 +1,7 @@
 === Share + Subscribe + Contact | AIO Widget ===
 Contributors: schemotechnik, ilya_v, frenly_girl
 Donate link: http://profitquery.com/aio_widgets.html
-Tags: free tools, social marketing, free widgets, marketing, subscription, e-mail, conversion tools, growth tools, share buttons, share button, add to any, add this, contact form, email, feedback, profitquery, profitquery widgets, content marketing, custom popup, svg, ccs3, animation, bookmark, bookmarking, floating buttons, sidebar, share sidebar, sharing sidebar, share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets, Share, share this, sharing buttons, social marketing, subscription button, twitter, Website Tools, like, monarch, image, images, share links, Shareaholic, sharedaddy, sharethis, sociable, social, social bookmarking, social bookmarks, social share, social sharing, socialize, statistics, stats, vector
+Tags: free tools, social marketing, free widgets, marketing, subscription, e-mail, aweber, aweber subscribe, aweber subscription, conversion tools, growth tools, share buttons, share button, add to any, add this, contact form, email, feedback, profitquery, profitquery widgets, content marketing, custom popup, svg, ccs3, animation, bookmark, bookmarking, floating buttons, sidebar, share sidebar, sharing sidebar, share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets, Share, share this, sharing buttons, social marketing, subscription button, twitter, Website Tools, like, monarch, image, images, share links, Shareaholic, sharedaddy, sharethis, sociable, social, social bookmarking, social bookmarks, social share, social sharing, socialize, statistics, stats, vector
 Requires at least: 2.9
 Tested up to: 4.2
 Stable tag: 2.1.0
@@ -29,6 +29,7 @@ Next level free widgets for growth email, subscription, feedback, phone number, 
 * Support latest Technologys HTML5 CSS3 (2D 3D animation)
 * Event Hanlder support(exit event)
 * Profitquery library already minimize and load from your host. WordPress Optimized
+* Mailchimp, Aweber integration
 * Very easy integration with Mailchimp
 * Quickly growth your email newsletter list
 * Automatic add Facebook, Twitter, and Pinterest and more share button to your images
@@ -74,14 +75,14 @@ Also you can set up show follow us popup or thank popup after sharer.
 Your email list it's most important on your blog, because it's way to contact with your reading audience. All you doing it's all for your followers. When you want to promote your blog all time you need contact information your customers to send him laterst news or link with amazing post on your blog. Thats why subscribe bar is most popular tools for wordpress blog.
 And we can get you a few way ask customers email. It is marketing bar, always on the top, with amazing animation effect, custom color, mobile adaptation and lock mechanism, and exit popup, which work when your customers move mouse to close page, or click on the close icon in the mobile version.
 Subscribe bar and exit popup integrate each other, that mean that if your customers proceed one of them second tools will be close and locked too. On the admin area you can customization many text, design, animation option. Thats way you can usage in the different language.
-All Latest Technology for your website, to make collect contact information easily. By the way, you can set up follow Us popup or just thank popup after procced action.
+All Latest Technology for your website, to make collect contact information easily. Support Mailchimp and Aweber integration, also you can ask us integrate with any service you want. By the way, you can set up follow Us popup or just thank popup after procced action.
 
 <br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=subscribeBar" target="_blank">Subscribe Bar Live Demo</a><br>
 
 
 = Exit Popup =
 It is subscription floating popup, last chance to ask email outgoing customers. Thats way we develope them with fun animation (you can turned it off on your admin area) Color, size, 3D animation, color overlay and more another options all for you and your customers.
-Perhaps the most attractive is that Exit popup have free distribution too. After proceed exit popup you can set up to show popup with follow us buttons or thank popup.
+Perhaps the most attractive is that Exit popup have free distribution too. After proceed exit popup you can set up to show popup with follow us buttons or thank popup. Support Mailchimp and Aweber integration, also you can ask us integrate with any service you want.
 
 <br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=subscribeExit" target="_blank">Exit Popup Live Demo</a><br>
 
@@ -275,14 +276,9 @@ All of the options required through this plugin require javascript. JavaScript m
 
 
 == Marketing Bar not displaying  ==
-* For run marketing bar you need turned on on the admin area.
-* You need <a href="https://login.mailchimp.com/">sign in</a> or create MailChimp account.
-* Create list your subscribers
-* Click the drop down and choose 'Signup forms'
-* Click the 'Embedded' forms option
-* Copy mailchimp code and paste to the `Paste your code here:` textarea
-* Save changes
-* Clear browser cache and enjoy
+* <a href="http://profitquery.com/mailchimp.html">Mailchimp integration</a>
+* <a href="http://profitquery.com/aweber.html">Aweber integration</a>
+* You need a new provider integration ? Email us <a href="mailto:support@profitquery.com">support@profitquery.com</a>
 
 
 == Tools Not displaying But I have any cache plugin  ==
