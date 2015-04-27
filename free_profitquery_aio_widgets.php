@@ -130,10 +130,7 @@ function profitquery_message_on_plugin_page(){
 
 	</style>
 				
-		<form name="pq_activate" action="<?php echo admin_url("options-general.php?page=" . PROFITQUERY_SMART_WIDGETS_PAGE_NAME);?>" method="POST"> 
-			<input type="hidden" name="return" value="1">
-			<input type="hidden" name="jetpack" value="">
-			<input type="hidden" name="user" value="admin">
+		<form name="pq_activate" action="<?php echo admin_url("options-general.php?page=" . PROFITQUERY_SMART_WIDGETS_PAGE_NAME);?>" method="POST"> 			
 			<div class="pq_activate">  
 				
 				<div class="aa_button_container" onclick="document.pq_activate.submit();">  
