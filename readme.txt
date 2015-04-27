@@ -9,7 +9,7 @@ License: GPL 2. See License below for copyright jots and tittles.
 Next level free widgets for growth email, subscription, feedback, phone number, share visitors, social network referral's, folllowers
 
 == Description ==
-<strong>Social sidebar, follow us button, mailchimp subscribe bar, exit popup, image sharer by Profitquery</strong> there are more than words. There are most popular tools which can make your blog more popular, make you content virals, turn casual visitors into loyal customers.
+<strong>Social sidebar, follow us button, mailchimp & aweber subscribe bar, exit popup, image sharer by Profitquery</strong> there are more than words. There are most popular tools which can make your blog more popular, make you content virals, turn casual visitors into loyal customers.
 = Why use Profitquery Marketing Intelligence Platform? =
 >Profitquery is fast-growing intelligence system for boost any website. For now we have over 20 smart tools some of them are unique. And this is just the beginning.
 >Our team make the complex simple. Make pro version similar tools - free. And it's all thanks unprecedented use of the Latest Technology. Vector graphics, 2D & 3D animation, more than you can imagine for your website for free right now.
