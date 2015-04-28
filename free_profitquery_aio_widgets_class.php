@@ -54,7 +54,10 @@ class ProfitQuerySmartWidgetsClass
         );
     }
 	
-	
+	/*
+		IsPLuginPage
+		return boolean
+	*/
 	function isPluginPage(){
 		$ret = false;
 		if(strstr($_SERVER[REQUEST_URI], 'wp-admin/plugins.php')){

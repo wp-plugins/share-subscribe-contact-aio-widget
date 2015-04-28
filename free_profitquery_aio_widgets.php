@@ -112,6 +112,7 @@ function profitquery_smart_widgets_init(){
 	}
 }
 
+/*Code generator*/
 function profitquery_message_on_plugin_page(){	
 	global $profitquery;	
 	$timeout = 60*60*24*3;	
