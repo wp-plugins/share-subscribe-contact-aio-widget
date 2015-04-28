@@ -302,7 +302,7 @@ class ProfitQuerySmartWidgetsClass
 		";		
 		/**************RATE US*************/
 		if($_GET[action] == 'closeRateUs'){
-			$this->_options[rateUs][timeActivation] = time();
+			$this->_options[rateUs][timeActivation] = time()+60*60*24*4;
 			update_option('profitquery', $this->_options);
 		}
 		
