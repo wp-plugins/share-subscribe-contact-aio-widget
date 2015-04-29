@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 2.1.1
+* @version  SVN: 2.1.2
 */
 
 class ProfitQuerySmartWidgetsClass
@@ -716,7 +716,11 @@ class ProfitQuerySmartWidgetsClass
 		/*Check for dublicate sharingSideBar socnet_with_pos*/
 		if(isset($this->_options['sharingSideBar']['socnet_with_pos'])){
 			$tempArray = $socnet_with_pos_error = array();
+			$flagAllEmpty = true;
 			foreach((array)$this->_options['sharingSideBar']['socnet_with_pos'] as $k => $v){
+				if(trim($v)) {
+					$flagAllEmpty = false;
+				}
 				if(!$tempArray[$v]){
 					$tempArray[$v] = 1;
 				} else {					
@@ -731,7 +735,14 @@ class ProfitQuerySmartWidgetsClass
 						 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">Sharing Sidebar. Dublicate social networks detected.</p>
 						</div>						
 					';
-			}
+			}			
+			if($flagAllEmpty && (int)$this->_options['sharingSideBar'][disabled] == 0){
+				echo '
+						<div style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(242, 20, 67, 0.5); text-align: center;">
+						 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">Sharing Sidebar enable, but no one social network selected.</p>
+						</div>						
+					';					
+			}			
 		}		
 		
 		
