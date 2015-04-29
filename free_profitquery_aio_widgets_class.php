@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 2.1.0
+* @version  SVN: 2.1.1
 */
 
 class ProfitQuerySmartWidgetsClass
@@ -74,8 +74,9 @@ class ProfitQuerySmartWidgetsClass
      */
     public function pluginActivation()
     {
-		$this->_options[rateUs] = array();
-		$this->_options[rateUs][timeActivation] = time();
+		if((int)$this->_options[rateUs][timeActivation] == 0){			
+			$this->_options[rateUs][timeActivation] = time();
+		}
 		$this->_options[aio_widgets_loaded] = 1;		
 		update_option('profitquery', $this->_options);    
     }
