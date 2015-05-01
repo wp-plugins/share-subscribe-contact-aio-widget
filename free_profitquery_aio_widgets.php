@@ -32,6 +32,8 @@
 
 $profitquery = get_option('profitquery');
 
+
+
 /*RESAVE BLOCK. For Old Version only*/
 /*Resave rateUs*/
 if(!isset($profitquery[rateUs])){
