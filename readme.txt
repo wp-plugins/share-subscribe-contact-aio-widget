@@ -1,10 +1,10 @@
 === Share + Subscribe + Contact | AIO Widget ===
 Contributors: schemotechnik, ilya_v, frenly_girl
 Donate link: http://profitquery.com/aio_widgets.html
-Tags: free tools, social marketing, free widgets, marketing, subscription, e-mail, aweber, aweber subscribe, aweber subscription, conversion tools, growth tools, share buttons, share button, add to any, add this, contact form, email, feedback, profitquery, profitquery widgets, content marketing, custom popup, svg, ccs3, animation, bookmark, bookmarking, floating buttons, sidebar, share sidebar, sharing sidebar, share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets, Share, share this, sharing buttons, social marketing, subscription button, twitter, Website Tools, like, monarch, image, images, share links, Shareaholic, sharedaddy, sharethis, sociable, social, social bookmarking, social bookmarks, social share, social sharing, socialize, statistics, stats, vector, newsletter, Hubspot, lightbox, mailing list, social media, marketing
+Tags: free tools, social marketing, free widgets, marketing, subscription, e-mail, aweber, aweber subscribe, aweber subscription, conversion tools, growth tools, share buttons, share button, add to any, add this, contact form, email, feedback, profitquery, profitquery widgets, content marketing, custom popup, svg, ccs3, animation, bookmark, bookmarking, floating buttons, sidebar, share sidebar, sharing sidebar, share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets, Share, share this, sharing buttons, social marketing, subscription button, twitter, Website Tools, like, monarch, image, images, share links, Shareaholic, sharedaddy, sharethis, sociable, social, social bookmarking, social bookmarks, social share, social sharing, socialize, statistics, stats, vector, newsletter, Hubspot, lightbox, mailing list, social media, Hubspot, image bookmarking, inbound marketing, infusionsoft, klaviyo, MyEmma, Ontraport, pardot, sailthru, vero, zapier
 Requires at least: 2.9
 Tested up to: 4.2.1
-Stable tag: 2.1.3
+Stable tag: 2.1.4
 License: GPL 2. See License below for copyright jots and tittles.
 Next level free widgets for growth email, subscription, feedback, phone number, share visitors, social network referral's, folllowers
 
@@ -13,6 +13,9 @@ Next level free widgets for growth email, subscription, feedback, phone number, 
 = Why use Profitquery Marketing Intelligence Platform? =
 >Profitquery is fast-growing intelligence system for boost any website. For now we have over 20 smart tools some of them are unique. And this is just the beginning.
 >Our team make the complex simple. Make pro version similar tools - free. And it's all thanks unprecedented use of the Latest Technology. Vector graphics, 2D & 3D animation, more than you can imagine for your website for free right now.
+>
+>Profitquery use over 1 000 000 people around the world per day. For wordpress community we prepare a few plugin for demonstration a small part profitquery platform features. Choosing profitquery you get access to the latest developments, great support team which work even with free tools distribution and you can influence the course of development.
+>We work hard seven days a week to make you website smarter and growth faster.
 >
 >AIO Widgets collect most popular tools for growth your email subscribers, social subscribers, for get feedback from customers, for make your content virals. You do not need to go to the any dashboard, all tools can set up on your admin area.
 >All tools can be use for free or pro version(for more efficient, intelligent use). Thats why you can trust Profitquery Platform to increase your blog, website, ecommerce or any online business. 
@@ -29,7 +32,10 @@ Next level free widgets for growth email, subscription, feedback, phone number, 
 * Support latest Technologys HTML5 CSS3 (2D 3D animation)
 * Event Hanlder support(exit event)
 * Profitquery library already minimize and load from your host. WordPress Optimized
-* Mailchimp, Aweber integration
+* Mailchimp subscribe bar
+* Mailchimp exit intent subscription
+* Aweber subscribe bar
+* Aweber exit intent subscription
 * Very easy integration with Mailchimp
 * Quickly growth your email newsletter list
 * Automatic add Facebook, Twitter, and Pinterest and more share button to your images
