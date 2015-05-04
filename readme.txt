@@ -4,7 +4,7 @@ Donate link: http://profitquery.com/aio_widgets.html
 Tags: free tools, social marketing, free widgets, marketing, subscription, e-mail, aweber, aweber subscribe, aweber subscription, conversion tools, growth tools, share buttons, share button, add to any, add this, contact form, email, feedback, profitquery, profitquery widgets, content marketing, custom popup, svg, ccs3, animation, bookmark, bookmarking, floating buttons, sidebar, share sidebar, sharing sidebar, share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets, Share, share this, sharing buttons, social marketing, subscription button, twitter, Website Tools, like, monarch, image, images, share links, Shareaholic, sharedaddy, sharethis, sociable, social, social bookmarking, social bookmarks, social share, social sharing, socialize, statistics, stats, vector, newsletter, Hubspot, lightbox, mailing list, social media, Hubspot, image bookmarking, inbound marketing, infusionsoft, klaviyo, MyEmma, Ontraport, pardot, sailthru, vero, zapier
 Requires at least: 2.9
 Tested up to: 4.2.1
-Stable tag: 2.1.4
+Stable tag: 2.1.5
 License: GPL 2. See License below for copyright jots and tittles.
 Next level free widgets for growth email, subscription, feedback, phone number, share visitors, social network referral's, folllowers
 
@@ -185,6 +185,12 @@ All of the options required through this plugin require javascript. JavaScript m
 7. Many header images popup
 
 == Changelog ==
+
+= 2.1.5 =
+* image sharer fade out fixed
+
+= 2.1.4 =
+* js update
 
 = 2.1.3 =
 * add rss follow button
