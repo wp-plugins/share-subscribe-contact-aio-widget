@@ -22,7 +22,7 @@
 * Plugin Name: Share + Subscribe + Contact | AIO Widget
 * Plugin URI: http://profitquery.com/aio_widgets.html
 * Description: Next level widgets for growth your customers feedback, visitors contact information, share's, social networks referral's, folllowers and all for free.
-* Version: 2.1.6
+* Version: 2.1.7
 *
 * Author: Profitquery Team <support@profitquery.com>
 * Author URI: http://profitquery.com/?utm_campaign=aio_widgets_wp
@@ -332,6 +332,7 @@ function profitquery_smart_widgets_insert_code(){
 	$profitquerySmartWidgetsStructure['sharingSideBarOptions'] = array(
 		'typeWindow'=>'pq_icons '.$preparedObject[position],
 		'socnetIconsBlock'=>$preparedObject[socnet],
+		'mobile_title'=>stripslashes($preparedObject[mobile_title]),
 		'disabled'=>(int)$preparedObject[disabled],
 		'afterProfitLoader'=>$preparedObject[afterProceed]
 	);
@@ -348,7 +349,8 @@ function profitquery_smart_widgets_insert_code(){
 	$preparedObject = profitquery_prepare_sctructure_product($profitquery[subscribeBar]);	
 	if($preparedObject[animation] && $preparedObject[animation] != 'fade') $preparedObject[animation] = 'pq_animated '.$preparedObject[animation];	
 	$profitquerySmartWidgetsStructure['subscribeBarOptions'] = array(
-		'title'=>stripslashes($preparedObject[title]),		
+		'title'=>stripslashes($preparedObject[title]),
+		'mobile_title'=>stripslashes($preparedObject[mobile_title]),
 		'disabled'=>(int)$preparedObject[disabled],
 		'afterProfitLoader'=>$preparedObject[afterProceed],
 		'typeWindow'=>'pq_bar '.stripslashes($preparedObject[position]).' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[button_color]).' '.stripslashes($preparedObject[animation]),		
