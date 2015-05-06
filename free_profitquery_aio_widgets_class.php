@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 2.1.7
+* @version  SVN: 2.1.8
 */
 
 
@@ -516,6 +516,9 @@ class ProfitQuerySmartWidgetsClass
 			//imageSharer
 			if($_POST[imageSharer]){
 				if($_POST[imageSharer][enabled] == 'on') $this->_options['imageSharer']['disabled'] = 0; else $this->_options['imageSharer']['disabled'] = 1;
+				if($_POST[imageSharer][disableAfterClick] == 'on') $this->_options['imageSharer']['disableAfterClick'] = 1; else $this->_options['imageSharer']['disableAfterClick'] = 0;
+				
+				
 				if(trim($_POST[imageSharer][position])) $this->_options['imageSharer']['position'] = sanitize_text_field($_POST[imageSharer][position]); else $this->_options['imageSharer']['position'] = '';
 				if($_POST[imageSharer][socnet]){					
 					if($_POST[imageSharer][socnet][FB] == 'on') $this->_options[imageSharer][socnet][FB] = 1; else $this->_options[imageSharer][socnet][FB] = 0;
@@ -1708,7 +1711,9 @@ class ProfitQuerySmartWidgetsClass
 								<option value="sh5" <?php if($this->_options[imageSharer][design][shadow] == 'sh5') echo 'selected';?>>Shadow5</option>
 								<option value="sh6" <?php if($this->_options[imageSharer][design][shadow] == 'sh6') echo 'selected';?>>Shadow6</option>
 							</select></label>
-						</div>
+						</div>						
+						<p>Disable share box after click on image</p>
+						<input type="checkbox" name="imageSharer[disableAfterClick]" <?php if((int)$this->_options[imageSharer][disableAfterClick] == 1) echo 'checked';?> >
 						<p style="font-family: pt sans narrow; font-size: 19px; margin: 20px 0 10px;">Only Design Live Demo</p>
 							<img src="<?php echo plugins_url('images/browser.png', __FILE__);?>" style="width: 100%; margin-bottom: -6px;" />
 							<div style="transform-origin: 0 0; transform: scale(0.8); width: 125%; height: 300px; box-sizing: border-box; border: 1px solid lightgrey;">
