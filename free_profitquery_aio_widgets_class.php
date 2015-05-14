@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 2.1.8
+* @version  SVN: 2.1.9
 */
 
 
@@ -303,42 +303,9 @@ class ProfitQuerySmartWidgetsClass
 				<p>Please enable JavaScript in your browser.</p>				
 		</noscript>
 		";		
+				
 		
-		/**************RATE US*************/
-		if($_GET[action] == 'closeRateUs'){
-			$this->_options[rateUs][timeActivation] = time()+60*60*24*4;
-			update_option('profitquery', $this->_options);
-		}
-		
-		if($_POST[action] == 'RateUs'){
-			$this->_options[rateUs][clickByRate] = 1;
-			update_option('profitquery', $this->_options);
-			print "<script>location.href='https://wordpress.org/support/view/plugin-reviews/share-subscribe-contact-aio-widget';</script>";
-		}
-		
-		$timeout = 60*60*24*3;		
-		if((time()-(int)$this->_options[rateUs][timeActivation]) >= $timeout && (int)$this->_options[rateUs][clickByRate] == 0){
-			if($this->_options[apiKey]){
-				echo '
-					<form action="'.$this->getSettingsPageUrl().'" method="POST">
-					<input type="hidden" name="action" value="RateUs">
-					<div id="free_profitquery_popup" style="display:block;">
-						<div class="pq_overlay"></div>
-						<div class="pq_popup">
-							<h1>Thank you for stay with Profitquery Team</h1>
-							<p>Our team work hard to make this amazing tools free, take this tools to the next level and all for your website growth. You can make us a little happy. If you like our work, please, rate us.</p>
-							<input type="submit" value="Rate This Work">
-							<input type="button" class="pq_link" value="Close" onclick="location.href=\''.$this->getSettingsPageUrl().'&action=closeRateUs\'">
-						</div>
-					</div>
-					</form>								
-				';
-			}
-		}
-		/**************END RATE US*************/
-		
-		/*POST*/
-		
+		/*POST*/		
 		if($_POST[action] == 'editAdditionalOptions'){						
 			if($_POST[additionalOptions][enableGA] == 'on') $this->_options[additionalOptions][enableGA] = 1; else $this->_options[additionalOptions][enableGA] = 0;			
 			update_option('profitquery', $this->_options);
@@ -490,7 +457,15 @@ class ProfitQuerySmartWidgetsClass
 							$this->_options['sharingSideBar']['socnet_with_pos'][(int)$pos] = '';
 						}
 					}
-				}				
+				}
+				
+				if($_POST[sharingSideBar][galleryOption]){
+					if($_POST[sharingSideBar][galleryOption][disable] == 'on') $this->_options['sharingSideBar']['galleryOption']['disable'] = 1; else $this->_options['sharingSideBar']['galleryOption']['disable'] = 0;
+					if(trim($_POST[sharingSideBar][galleryOption][title])) $this->_options['sharingSideBar']['galleryOption']['title'] = sanitize_text_field($_POST[sharingSideBar][galleryOption][title]); else $this->_options['sharingSideBar']['galleryOption']['title'] = '';
+					if(trim($_POST[sharingSideBar][galleryOption][button_color])) $this->_options['sharingSideBar']['galleryOption']['button_color'] = sanitize_text_field($_POST[sharingSideBar][galleryOption][button_color]); else $this->_options['sharingSideBar']['galleryOption']['button_color'] = '';
+					if(trim($_POST[sharingSideBar][galleryOption][buttonTitle])) $this->_options['sharingSideBar']['galleryOption']['buttonTitle'] = sanitize_text_field($_POST[sharingSideBar][galleryOption][buttonTitle]); else $this->_options['sharingSideBar']['galleryOption']['buttonTitle'] = '';
+					if(trim($_POST[sharingSideBar][galleryOption][minWidth])) $this->_options['sharingSideBar']['galleryOption']['minWidth'] = sanitize_text_field($_POST[sharingSideBar][galleryOption][minWidth]); else $this->_options['sharingSideBar']['galleryOption']['minWidth'] = '';
+				}
 				
 				if(trim($_POST[sharingSideBar][design][color])) $this->_options['sharingSideBar']['design']['color'] = sanitize_text_field($_POST[sharingSideBar][design][color]); else $this->_options['sharingSideBar']['design']['color'] = 'c4';
 				if(trim($_POST[sharingSideBar][design][form])) $this->_options['sharingSideBar']['design']['form'] = sanitize_text_field($_POST[sharingSideBar][design][form]); else $this->_options['sharingSideBar']['design']['form'] = '';
@@ -881,6 +856,28 @@ class ProfitQuerySmartWidgetsClass
 						}catch(err){};
 					}
 				  </script>
+				  <div style="overflow: hidden; padding: 20px; margin: 10px 0 25px;">
+				
+					<h5>Thanks for your choose!</h5>
+					<p style="padding: 0px 45px"> Latest news and plans of our team. </p><br>
+					<div>
+						<p><strong>New in 2.1.9</strong></p>
+						<p><strong>1.</strong> Add new share provider Evernote, Pocket, Kindle, Flipboard. If you need a new share provider, just email us <a href="mailto:support@profitquery.com">support@profitquery.com.</a> <strong>2.</strong> Add wonderfull features. Now you can share image from sharing sidebar through (Tumblr, Pinterest, VK). All image profitquery collect from your page, if profitquery library not found any photo by click on Tumblr or Pinterest or VK start default sharing. <strong>3.</strong> Try to add Opera mini support (most of kind tools not displaying on this browser)</p><br>						
+						
+						
+						<p>For wordpress community we make a few plugin for demonstration a small part of Profitquery platform features. AIO widgets most popular.
+						Now we working for pro version wordpress plugin with new dashboard where you can generate any popup you want, ecom plugin (referral system etc.)
+						If you have any question or feedback or some ideas you can email us any time you want <a href="mailto:support@profitquery.com;">support@profitquery.com</a>.</p><br>
+						<a href="http://profitquery.com/community.html" target="_blank"><input type="button" class="" value="Community"></a><br><br><br>
+						<img id="" src="<?php echo plugins_url('images/stars.png', __FILE__);?>" />
+						<p>We work hard 7 days of week for make a best ever growth tools. If you like our work, you can make our team happy, please, rate our plugin.</p>
+					</div><br>
+									
+					
+				<a href="https://wordpress.org/support/view/plugin-reviews/share-subscribe-contact-aio-widget" target="_blank"><input type="button" class="" value="Please Rate Plugin"></a>
+				
+				
+				</div>
 				  <div class="pq_block" id="v1">
 					<h4>Share Tools</h4>											
 					<div id="collapseOne" class="panel-collapse collapse in">
@@ -984,7 +981,7 @@ class ProfitQuerySmartWidgetsClass
 						<div class="pq-sm-10 pq_more" id="Sharing_Sidebar" style="display:none;">
 							<h5>More Options Sharing Sidebar</h5>
 							<div class="pq-sm-10">
-								<div class="pq_selects" style="overflow: hidden; padding: 20px 0 10px;" id="pq_input">
+								<div class="pq_selects" style="overflow: hidden; padding: 20px 0 30px;" id="pq_input">
 					
 									<label><p>1.</p><select name="sharingSideBar[socnet_with_pos][0]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][0]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
@@ -1006,6 +1003,10 @@ class ProfitQuerySmartWidgetsClass
 										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'RR') echo 'selected';?>>Renren</option>
 										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'WB') echo 'selected';?>>Weibo</option>
 										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'FL') echo 'selected';?>>Flipboard</option>
 										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'Print') echo 'selected';?>>Print</option>
 										<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'MailTo') echo 'selected';?>>Email</option>
 										</select>
@@ -1031,6 +1032,10 @@ class ProfitQuerySmartWidgetsClass
 									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'RR') echo 'selected';?>>Renren</option>
 									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'WB') echo 'selected';?>>Weibo</option>
 									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'MW') echo 'selected';?>>My World</option>
+									<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'EN') echo 'selected';?>>Evernote</option>
+									<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'PO') echo 'selected';?>>Pocket</option>
+									<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'AK') echo 'selected';?>>Kindle</option>
+									<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'FL') echo 'selected';?>>Flipboard</option>
 									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'Print') echo 'selected';?>>Print</option>
 									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'MailTo') echo 'selected';?>>Email</option>
 									</select>
@@ -1056,6 +1061,10 @@ class ProfitQuerySmartWidgetsClass
 									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'RR') echo 'selected';?>>Renren</option>
 									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'WB') echo 'selected';?>>Weibo</option>
 									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'MW') echo 'selected';?>>My World</option>
+									<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'EN') echo 'selected';?>>Evernote</option>
+									<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'PO') echo 'selected';?>>Pocket</option>
+									<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'AK') echo 'selected';?>>Kindle</option>
+									<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'FL') echo 'selected';?>>Flipboard</option>
 									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'Print') echo 'selected';?>>Print</option>
 									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'MailTo') echo 'selected';?>>Email</option>
 									</select>
@@ -1081,6 +1090,10 @@ class ProfitQuerySmartWidgetsClass
 									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'RR') echo 'selected';?>>Renren</option>
 									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'WB') echo 'selected';?>>Weibo</option>
 									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'MW') echo 'selected';?>>My World</option>
+									<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'EN') echo 'selected';?>>Evernote</option>
+									<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'PO') echo 'selected';?>>Pocket</option>
+									<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'AK') echo 'selected';?>>Kindle</option>
+									<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'FL') echo 'selected';?>>Flipboard</option>
 									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'Print') echo 'selected';?>>Print</option>
 									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'MailTo') echo 'selected';?>>Email</option>
 									</select>
@@ -1106,6 +1119,10 @@ class ProfitQuerySmartWidgetsClass
 									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'RR') echo 'selected';?>>Renren</option>
 									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'WB') echo 'selected';?>>Weibo</option>
 									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'MW') echo 'selected';?>>My World</option>
+									<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'EN') echo 'selected';?>>Evernote</option>
+									<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'PO') echo 'selected';?>>Pocket</option>
+									<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'AK') echo 'selected';?>>Kindle</option>
+									<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'FL') echo 'selected';?>>Flipboard</option>
 									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'Print') echo 'selected';?>>Print</option>
 									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'MailTo') echo 'selected';?>>Email</option>
 									</select>
@@ -1131,6 +1148,10 @@ class ProfitQuerySmartWidgetsClass
 									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'RR') echo 'selected';?>>Renren</option>
 									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'WB') echo 'selected';?>>Weibo</option>
 									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'MW') echo 'selected';?>>My World</option>
+									<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'EN') echo 'selected';?>>Evernote</option>
+									<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'PO') echo 'selected';?>>Pocket</option>
+									<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'AK') echo 'selected';?>>Kindle</option>
+									<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'FL') echo 'selected';?>>Flipboard</option>
 									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'Print') echo 'selected';?>>Print</option>
 									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'MailTo') echo 'selected';?>>Email</option>
 									</select>
@@ -1158,6 +1179,10 @@ class ProfitQuerySmartWidgetsClass
 											<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'RR') echo 'selected';?>>Renren</option>
 											<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'WB') echo 'selected';?>>Weibo</option>
 											<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'MW') echo 'selected';?>>My World</option>
+											<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'EN') echo 'selected';?>>Evernote</option>
+											<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'PO') echo 'selected';?>>Pocket</option>
+											<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'AK') echo 'selected';?>>Kindle</option>
+											<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'FL') echo 'selected';?>>Flipboard</option>
 											<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'Print') echo 'selected';?>>Print</option>
 											<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'MailTo') echo 'selected';?>>Email</option>
 											</select>
@@ -1183,6 +1208,10 @@ class ProfitQuerySmartWidgetsClass
 											<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'RR') echo 'selected';?>>Renren</option>
 											<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'WB') echo 'selected';?>>Weibo</option>
 											<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'MW') echo 'selected';?>>My World</option>
+											<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'EN') echo 'selected';?>>Evernote</option>
+											<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'PO') echo 'selected';?>>Pocket</option>
+											<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'AK') echo 'selected';?>>Kindle</option>
+											<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'FL') echo 'selected';?>>Flipboard</option>
 											<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'Print') echo 'selected';?>>Print</option>
 											<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'MailTo') echo 'selected';?>>Email</option>
 											</select>
@@ -1208,6 +1237,10 @@ class ProfitQuerySmartWidgetsClass
 <option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'RR') echo 'selected';?>>Renren</option>
 <option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'WB') echo 'selected';?>>Weibo</option>
 <option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'MW') echo 'selected';?>>My World</option>
+<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'EN') echo 'selected';?>>Evernote</option>
+<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'PO') echo 'selected';?>>Pocket</option>
+<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'AK') echo 'selected';?>>Kindle</option>
+<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'FL') echo 'selected';?>>Flipboard</option>
 <option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'Print') echo 'selected';?>>Print</option>
 <option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'MailTo') echo 'selected';?>>Email</option>
 </select>
@@ -1233,6 +1266,10 @@ class ProfitQuerySmartWidgetsClass
 <option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'RR') echo 'selected';?>>Renren</option>
 <option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'WB') echo 'selected';?>>Weibo</option>
 <option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'MW') echo 'selected';?>>My World</option>
+<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'EN') echo 'selected';?>>Evernote</option>
+<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'PO') echo 'selected';?>>Pocket</option>
+<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'AK') echo 'selected';?>>Kindle</option>
+<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'FL') echo 'selected';?>>Flipboard</option>
 <option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'Print') echo 'selected';?>>Print</option>
 <option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'MailTo') echo 'selected';?>>Email</option>
 </select>
@@ -1258,6 +1295,10 @@ class ProfitQuerySmartWidgetsClass
 <option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'RR') echo 'selected';?>>Renren</option>
 <option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'WB') echo 'selected';?>>Weibo</option>
 <option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'MW') echo 'selected';?>>My World</option>
+<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'EN') echo 'selected';?>>Evernote</option>
+<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'PO') echo 'selected';?>>Pocket</option>
+<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'AK') echo 'selected';?>>Kindle</option>
+<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'FL') echo 'selected';?>>Flipboard</option>
 <option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'Print') echo 'selected';?>>Print</option>
 <option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'MailTo') echo 'selected';?>>Email</option>
 </select>
@@ -1283,6 +1324,10 @@ class ProfitQuerySmartWidgetsClass
 <option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'RR') echo 'selected';?>>Renren</option>
 <option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'WB') echo 'selected';?>>Weibo</option>
 <option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'MW') echo 'selected';?>>My World</option>
+<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'EN') echo 'selected';?>>Evernote</option>
+<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'PO') echo 'selected';?>>Pocket</option>
+<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'AK') echo 'selected';?>>Kindle</option>
+<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'FL') echo 'selected';?>>Flipboard</option>
 <option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'Print') echo 'selected';?>>Print</option>
 <option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'MailTo') echo 'selected';?>>Email</option>
 </select>
@@ -1308,6 +1353,10 @@ class ProfitQuerySmartWidgetsClass
 <option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'RR') echo 'selected';?>>Renren</option>
 <option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'WB') echo 'selected';?>>Weibo</option>
 <option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'MW') echo 'selected';?>>My World</option>
+<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'EN') echo 'selected';?>>Evernote</option>
+<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'PO') echo 'selected';?>>Pocket</option>
+<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'AK') echo 'selected';?>>Kindle</option>
+<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'FL') echo 'selected';?>>Flipboard</option>
 <option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'Print') echo 'selected';?>>Print</option>
 <option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'MailTo') echo 'selected';?>>Email</option>
 </select>
@@ -1333,6 +1382,10 @@ class ProfitQuerySmartWidgetsClass
 <option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'RR') echo 'selected';?>>Renren</option>
 <option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'WB') echo 'selected';?>>Weibo</option>
 <option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'MW') echo 'selected';?>>My World</option>
+<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'EN') echo 'selected';?>>Evernote</option>
+<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'PO') echo 'selected';?>>Pocket</option>
+<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'AK') echo 'selected';?>>Kindle</option>
+<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'FL') echo 'selected';?>>Flipboard</option>
 <option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'Print') echo 'selected';?>>Print</option>
 <option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'MailTo') echo 'selected';?>>Email</option>
 </select>
@@ -1358,6 +1411,10 @@ class ProfitQuerySmartWidgetsClass
 <option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'RR') echo 'selected';?>>Renren</option>
 <option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'WB') echo 'selected';?>>Weibo</option>
 <option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'MW') echo 'selected';?>>My World</option>
+<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'EN') echo 'selected';?>>Evernote</option>
+<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'PO') echo 'selected';?>>Pocket</option>
+<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'AK') echo 'selected';?>>Kindle</option>
+<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'FL') echo 'selected';?>>Flipboard</option>
 <option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'Print') echo 'selected';?>>Print</option>
 <option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'MailTo') echo 'selected';?>>Email</option>
 </select>
@@ -1383,6 +1440,10 @@ class ProfitQuerySmartWidgetsClass
 <option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'RR') echo 'selected';?>>Renren</option>
 <option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'WB') echo 'selected';?>>Weibo</option>
 <option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'MW') echo 'selected';?>>My World</option>
+<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'EN') echo 'selected';?>>Evernote</option>
+<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'PO') echo 'selected';?>>Pocket</option>
+<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'AK') echo 'selected';?>>Kindle</option>
+<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'FL') echo 'selected';?>>Flipboard</option>
 <option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'Print') echo 'selected';?>>Print</option>
 <option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'MailTo') echo 'selected';?>>Email</option>
 </select>
@@ -1408,6 +1469,10 @@ class ProfitQuerySmartWidgetsClass
 <option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'RR') echo 'selected';?>>Renren</option>
 <option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'WB') echo 'selected';?>>Weibo</option>
 <option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'MW') echo 'selected';?>>My World</option>
+<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'EN') echo 'selected';?>>Evernote</option>
+<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'PO') echo 'selected';?>>Pocket</option>
+<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'AK') echo 'selected';?>>Kindle</option>
+<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'FL') echo 'selected';?>>Flipboard</option>
 <option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'Print') echo 'selected';?>>Print</option>
 <option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'MailTo') echo 'selected';?>>Email</option>
 </select>
@@ -1433,6 +1498,10 @@ class ProfitQuerySmartWidgetsClass
 <option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'RR') echo 'selected';?>>Renren</option>
 <option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'WB') echo 'selected';?>>Weibo</option>
 <option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'MW') echo 'selected';?>>My World</option>
+<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'EN') echo 'selected';?>>Evernote</option>
+<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'PO') echo 'selected';?>>Pocket</option>
+<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'AK') echo 'selected';?>>Kindle</option>
+<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'FL') echo 'selected';?>>Flipboard</option>
 <option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'Print') echo 'selected';?>>Print</option>
 <option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'MailTo') echo 'selected';?>>Email</option>
 </select>
@@ -1458,6 +1527,10 @@ class ProfitQuerySmartWidgetsClass
 <option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'RR') echo 'selected';?>>Renren</option>
 <option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'WB') echo 'selected';?>>Weibo</option>
 <option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'MW') echo 'selected';?>>My World</option>
+<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'EN') echo 'selected';?>>Evernote</option>
+<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'PO') echo 'selected';?>>Pocket</option>
+<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'AK') echo 'selected';?>>Kindle</option>
+<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'FL') echo 'selected';?>>Flipboard</option>
 <option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'Print') echo 'selected';?>>Print</option>
 <option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'MailTo') echo 'selected';?>>Email</option>
 </select>
@@ -1483,13 +1556,63 @@ class ProfitQuerySmartWidgetsClass
 <option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'RR') echo 'selected';?>>Renren</option>
 <option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'WB') echo 'selected';?>>Weibo</option>
 <option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'MW') echo 'selected';?>>My World</option>
+<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'EN') echo 'selected';?>>Evernote</option>
+<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'PO') echo 'selected';?>>Pocket</option>
+<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'AK') echo 'selected';?>>Kindle</option>
+<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'FL') echo 'selected';?>>Flipboard</option>
 <option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'Print') echo 'selected';?>>Print</option>
 <option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'MailTo') echo 'selected';?>>Email</option>
 </select>
 											</label>
 									</div>
 									<button type="button" class="pq-btn-link btn-bg" onclick="document.getElementById('collapseservices').style.display='block';" >More Services</button>
-								</div>								
+								</div>	
+								
+								<label><p>Title for Sharing Image Window (for Pinterest, Tumblr and VK)</p><input type="text" name="sharingSideBar[galleryOption][title]" value="<?php echo stripslashes($this->_options[sharingSideBar][galleryOption][title]);?>"></label>	
+								
+								<div class="pq-sm-6 icons" style="padding-left: 0; margin: 0;">
+									<label style="margin:0;"><p>Color</p><select id="sharingSideBar_button_color" onchange="sharingSideBarPreview();" name="sharingSideBar[galleryOption][button_color]">
+								    <option value="btn_lightblue" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
+									<option value="btn_lightblue invert" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_lightblue invert' || $this->_options[sharingSideBar][galleryOption][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
+									<option value="btn_blue" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
+									<option value="btn_blue invert" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_blue invert') echo 'selected';?>>Button - Blue Transparent</option>
+									<option value="btn_black" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_black') echo 'selected';?>>Button - Black</option>
+									<option value="btn_black invert" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_black invert') echo 'selected';?>>Button - Black Transparent</option>
+									<option value="btn_green" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_green') echo 'selected';?>>Button - Green</option>
+									<option value="btn_green invert" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_green invert') echo 'selected';?>>Button - Green Transparent</option>
+									<option value="btn_violet" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_violet') echo 'selected';?>>Button - Violet</option>
+									<option value="btn_violet invert" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_violet invert') echo 'selected';?>>Button - Violet Transparent</option>
+									<option value="btn_orange" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_orange') echo 'selected';?>>Button - Orange</option>
+									<option value="btn_orange invert" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_orange invert') echo 'selected';?>>Button - Orange Transparent</option>
+									<option value="btn_red" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_red') echo 'selected';?>>Button - Red</option>
+									<option value="btn_red invert" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
+									<option value="btn_lilac" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
+									<option value="btn_lilac invert" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
+							</select></label>
+								</div>
+								<div class="pq-sm-6 icons" style="padding-right: 0; margin: 0;">
+									<label><p>Text in button</p><input type="text" name="sharingSideBar[galleryOption][buttonTitle]" value="<?php echo stripslashes($this->_options[sharingSideBar][galleryOption][buttonTitle]);?>"></label>
+									
+								</div>
+								<div style="clear: both;"></div>
+								<div class="pq-sm-12 icons" style="padding: 0; margin: 0 0 30px;">
+									<label><p>Image from width</p><select  name="sharingSideBar[galleryOption][minWidth]">
+										<option value="100" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '100' || $this->_options[sharingSideBar][galleryOption][minWidth] == '') echo 'selected';?>>100px and more</option>
+										<option value="200" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '200') echo 'selected';?>>200px and more</option>
+										<option value="300" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '300') echo 'selected';?>>300px and more</option>
+										<option value="400" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '400') echo 'selected';?>>400px and more</option>
+										<option value="500" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '500') echo 'selected';?>>500px and more</option>
+										<option value="600" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '600') echo 'selected';?>>600px and more</option>										
+									</select></label>
+								</div>
+								<div class="pq-sm-12 icons" style="padding: 0; margin: 0 0 30px;">
+									<label><input type="checkbox" name="sharingSideBar[galleryOption][disable]" <?php if((int)$this->_options[sharingSideBar][galleryOption][disable] == 1) echo 'checked';?> ><p style="text-align:center;">Disable image sharer window triggered on Pinterest, Tumblr, VK</p>
+									<p style="text-align:center; color:rgb(194, 194, 194);">This features work if page contains images width greater than or equal to "Image from width" option.</p></label>
+									
+								</div>
+								<div class="pq-sm-12 icons" style="padding: 0; margin: 0 0 30px;">
+								
+								<div style="clear: both;"></div>
 								<label><p>Heading for Mobile</p><input type="text" name="sharingSideBar[mobile_title]" value="<?php echo stripslashes($this->_options[sharingSideBar][mobile_title]);?>"></label>	
 								<div class="pq-sm-12 icons" style="padding: 0; margin: 20px 0 0;">
 									<label><select id="sharingSideBar_design_color" onchange="sharingSideBarPreview();" name="sharingSideBar[design][color]">
@@ -1519,7 +1642,7 @@ class ProfitQuerySmartWidgetsClass
 										<option value="x40" <?php if($this->_options[sharingSideBar][design][size] == 'x40') echo 'selected';?>>Size L</option>
 										<option value="x20" <?php if($this->_options[sharingSideBar][design][size] == 'x20') echo 'selected';?>>Size S</option>
 									</select></label>
-									<label>
+									
 								</div>
 								
 								<div style="clear: both;"></div>
@@ -1555,9 +1678,10 @@ class ProfitQuerySmartWidgetsClass
 							</script>
 							
 							</div>
-						
+						</div>
 						<a href="javascript:void(0)" onclick="document.getElementById('Sharing_Sidebar').style.display='none';"><div class="pq_close"></div></a>
 						</div>
+						
 						<a name="Image_Sharer"></a>
 						<div class="pq-sm-10 pq_more" id="Image_Sharer" style="display:none;">
 							<h5>More options Image Sharer</h5>
@@ -3099,17 +3223,17 @@ class ProfitQuerySmartWidgetsClass
 			</div></a>
 		</div>	
 		</div>
-		<div class="pq-sm-10" style="overflow: hidden; padding: 20px; margin: 30px 0 25px; background: white;">
+		<!--div class="pq-sm-10" style="overflow: hidden; padding: 20px; margin: 30px 0 25px; background: white;">
 			<img src="<?php echo plugins_url('images/ecom.png', __FILE__);?>" />
 			
 			<h5>Free Profitquery Widgets for Ecommerce</h5>
 			<a href="http://profitquery.com/ecom.html" target="_blank"><input type="button" class="btn_m_white" value="Learn more"></a>
-		</div>
-		<div class="pq-sm-10" style="overflow: hidden; padding: 20px; margin: 70px 0 20px; background: #f8dde3;">
+		</div-->
+		<!--div class="pq-sm-10" style="overflow: hidden; padding: 20px; margin: 70px 0 20px; background: #f8dde3;">
 			<h5 style="color: white; background: #008AFF; width: 100px; margin: 0 auto; line-height: 35px; font-size: 26px;">PRO</h5>
 			<h5>Get Profitquery Pro version</h5>
 			<a href="http://profitquery.com/promo.html" target="_blank"><input type="button" class="btn_m_red" style="width: initial; margin: 20px auto 8px;" value="Learn more"></a>
-		</div>
+		</div-->
 		
 		
 		<div class="pq-sm-10" style="overflow: hidden; padding: 20px; margin: 30px 0 25px; background: white;">
