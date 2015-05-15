@@ -867,7 +867,7 @@ class ProfitQuerySmartWidgetsClass
 						
 						<p>For wordpress community we make a few plugin for demonstration a small part of Profitquery platform features. AIO widgets most popular.
 						Now we working for pro version wordpress plugin with new dashboard where you can generate any popup you want, ecom plugin (referral system etc.)
-						If you have any question or feedback or some ideas you can email us any time you want <a href="mailto:support@profitquery.com;">support@profitquery.com</a>.</p><br>
+						If you have any question or feedback or some ideas you can email us any time you want <a href="mailto:support@profitquery.com;">support@profitquery.com</a> or visit profitquery <a href="http://profitquery.com/community.html" target="_blank">community page</a></p><br>
 						<a href="http://profitquery.com/community.html" target="_blank"><input type="button" class="" value="Community"></a><br><br><br>
 						<img id="" src="<?php echo plugins_url('images/stars.png', __FILE__);?>" />
 						<p>We work hard 7 days of week for make a best ever growth tools. If you like our work, you can make our team happy, please, rate our plugin.</p>
