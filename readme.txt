@@ -174,6 +174,10 @@ No. All needfull information profitquery get automatically. That's why Profitque
 = Is JavaScript required? =
 All of the options required through this plugin require javascript. JavaScript must be enabled. We load the actual interface via JavaScript at run-time, which allows us to upgrade the functionality of the all tools itself automatically everywhere.
 
+= How Profitquery work =
+Profitquery is SaaS marketing intelligence platform, thats why for correct work on any website we need load javascript library from our cdn server. 
+Profitquery javascript library already minimized and have asynchronous mode loading for optimized your website.
+
 == Screenshots ==
 
 1. Share tools customization
