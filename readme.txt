@@ -121,6 +121,9 @@ All features customize on your admin area and all for free.
 <br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=thankPopup" target="_blank">Thank Popup Live Demo</a><br>
 
 
+= Translators = 
+* Persian (Farsi; fa_IR) - <a href='https://www.facebook.com/fourough.a'>Fourough Alabakhsh</a>
+
 = Write your article. Promote your blog. =
 You can write any article about Profitquery for your customers, friends and <a href="http://profitquery.com/blog.html#send" target="_blank">send </a> for us your link or content. We paste your work on our <a href="http://profitquery.com/blog.html" target="_blank">blog</a>. Use your native language.
 
