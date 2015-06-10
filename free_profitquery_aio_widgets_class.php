@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 3.0.3
+* @version  SVN: 3.0.4
 */
 
 
@@ -221,6 +221,10 @@ class ProfitQuerySmartWidgetsClass
 		if($_POST[subscribeProvider] == 'mailchimp'){
 			$return = $this->_parseMailchimpForm();
 		}
+		
+		if($_POST[subscribeProvider] == 'acampaign'){
+			$return = $this->_parseACampaignForm();
+		}
 		if($_POST[subscribeProvider] == 'aweber'){
 			$return = $this->_parseAweberForm();
 		}
@@ -247,6 +251,40 @@ class ProfitQuerySmartWidgetsClass
 				$array[is_error] = 1;
 			}			
 		}
+		return $array;
+	}
+	
+	function _parseACampaignForm()
+	{
+		$txt = trim($_POST[subscribeProviderFormContent]);		
+		$array = array();
+		$matches = array();
+		$hiddenField = array();		
+		if($txt){
+			$txt = stripslashes($txt);
+			$txt = str_replace("\t", ' ', $txt);
+			$txt = str_replace("\r", '', $txt);
+			$txt = str_replace("\n", '', $txt);
+			$txt = str_replace("  ", " ", $txt);
+			$txt = str_replace("  ", " ", $txt);			
+			preg_match_all('/(\<)(.*)(form)(.*)(action=)(.*)([\"\'])(.*)([\"\'])(.*)(\>)/Ui', $txt, $matches);
+			$array[formAction] = trim($matches[8][0]);			
+			if(!strstr($array[formAction], 'activehosted.com')){
+				$array[formAction] = '';
+				$array[is_error] = 1;
+			} else {
+				preg_match_all('/(\<)(.*)(input)(.*)(hidden)(.*)(name=)(.*)([\"\'])(.*)([\"\'])(.*)(value=)(.*)([\"\'])(.*)([\"\'])(.*)(\>)/Ui', $txt, $matches);				
+				foreach((array)$matches[10] as $k => $v){
+					$hiddenField[$v] = $matches[16][$k];
+				}				
+				if($hiddenField[act]){
+					$array[hidden] = $hiddenField;
+				} else {
+					$array[formAction] = '';
+					$array[is_error] = 1;
+				}
+			}
+		}		
 		return $array;
 	}
 	
@@ -5039,6 +5077,7 @@ function changePopupImg(img, custom_photo_block_id){
 				<select onchange="changeSubscribeProviderHelpUrl(1);" id="subscribeProvider" name="subscribeProvider">
 					<option value="mailchimp" <?php if($this->_options[subscribeProvider] == '' || $this->_options[subscribeProvider] == 'mailchimp') echo "selected";?>>MailChimp</option>
 					<option value="aweber" <?php if($this->_options[subscribeProvider] == 'aweber') echo "selected";?>>AWeber</option>
+					<option value="acampaign" <?php if($this->_options[subscribeProvider] == 'acampaign') echo "selected";?>>Active Campaign</option>
 				</select>
 			</label>
 			<label>
@@ -5063,6 +5102,9 @@ function changePopupImg(img, custom_photo_block_id){
 			}
 			if(document.getElementById('subscribeProvider').value == 'aweber'){
 				document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/aweber.html';
+			}
+			if(document.getElementById('subscribeProvider').value == 'acampaign'){
+				document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/acampaign.html';
 			}
 			if(withCheckCurrent == '1'){
 				if(currentSubscribeProvider){
