@@ -4909,7 +4909,7 @@ function changePopupImg(img, custom_photo_block_id){
 		<div id="Hello" class="pq_popup hello selected">
 			<h1>Thanks for your choise!</h1>
 			<p>Latest news and plans of our team.</p>
-			<p>New in 2.1.9: 1. Add new share provider Evernote, Pocket, Kindle, Flipboard. If you need a new share provider, just email ussupport@profitquery.com. 2. Add wonderfull features. Now you can share image from sharing sidebar through (Tumblr, Pinterest, VK). All image profitquery collect from your page, if profitquery library not found any photo by click on Tumblr or Pinterest or VK start default sharing. 3. Try to add Opera mini support (most of kind tools not displaying on this browser)</p>
+			<p>New in 3+: 1. New dashboard, that can most comfortable for set-up option 2 Add mail and Whats App service for image share. 3. Add free trial pro features, all features you can test with live demo section (right side window) 4. Add order pro features. 5. Add many design and position option. Now you can generate uniwue popup and tools for your website. 6. Add language chose for default tools text, and many more. Stay turned.</p>
 			<br>
 			<img src="<?php echo plugins_url('i/lesson.png', __FILE__);?>" />
 			<br><br>
