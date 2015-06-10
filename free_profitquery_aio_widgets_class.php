@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 3.0
+* @version  SVN: 3.0.1
 */
 
 
@@ -42,7 +42,7 @@ class ProfitQuerySmartWidgetsClass
      * @return null
      * */
     function __construct()
-    {
+    {		
 		$this->_options = $this->getSettings();				
         add_action('admin_menu', array($this, 'ProfitquerySmartWidgetsMenu'));		
 		// Deactivation
@@ -79,8 +79,9 @@ class ProfitQuerySmartWidgetsClass
 		$this->_options[aio_widgets_loaded] = 1;
 		if((int)$this->_options[rateUs][timeActivation] == 0){			
 			$this->_options[rateUs][timeActivation] = time();
-		}
+		}			
 		update_option('profitquery', $this->_options);    
+		$this->setDefaultProductData();
     }
 	
 	 /**
@@ -151,7 +152,7 @@ class ProfitQuerySmartWidgetsClass
 		}
 		
 		if(!$this->_options[contactUs]){
-			$this->_options[contactUs][disabled] = 0;
+			$this->_options[contactUs][disabled] = 1;
 			$this->_options[contactUs][position] = 'pq_right pq_bottom';
 			$this->_options['contactUs']['typeWindow'] = 'pq_medium';				
 			$this->_options['contactUs']['background'] = 'bg_grey';
