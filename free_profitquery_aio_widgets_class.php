@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 3.0.2
+* @version  SVN: 3.0.3
 */
 
 
@@ -196,7 +196,7 @@ class ProfitQuerySmartWidgetsClass
 		}
 		
 		$this->_options[aio_widgets_loaded] = 1;
-		$this->_options[proOptions]['proLoaderFilename'] = $this->getDomain().'.pq_pro_loader.js';
+		$this->_options[proOptions]['proLoaderFilename'] = $this->getDomain().'.pq_pro_loader';
 		update_option('profitquery', $this->_options);
 	}	
 		
