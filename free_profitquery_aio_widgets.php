@@ -22,7 +22,7 @@
 * Plugin Name: Share + Subscribe + Contact | AIO Widget
 * Plugin URI: http://profitquery.com/aio_widgets.html
 * Description: Next level widgets for growth your customers feedback, visitors contact information, share's, social networks referral's, folllowers and all for free.
-* Version: 2.1.10
+* Version: 3.0
 *
 * Author: Profitquery Team <support@profitquery.com>
 * Author URI: http://profitquery.com/?utm_campaign=aio_widgets_wp
@@ -259,7 +259,7 @@ function profitquery_prepare_sctructure_product($data){
 		if($data[img] == 'custom' && $data[imgUrl]){
 			$return[img] = $data[imgUrl];
 		}elseif($data[img] != 'custom' && $data[img] != ''){
-			$return[img] = plugins_url('images/'.$data[img], __FILE__);;
+			$return[img] = plugins_url('i/'.$data[img], __FILE__);;
 		} else {
 			$return[img] = '';
 		}
@@ -269,10 +269,12 @@ function profitquery_prepare_sctructure_product($data){
 	if(isset($data[galleryOption])){
 		$return[title] = stripslashes($data[galleryOption][title]);
 		$return[button_color] = stripslashes($data[galleryOption][button_color]);
+		$return[background_color] = stripslashes($data[galleryOption][background_color]);
 		$return[buttonTitle] = stripslashes($data[galleryOption][buttonTitle]);
 		$return[minWidth] = stripslashes($data[galleryOption][minWidth]);
 		$return[disable] = (int)$data[galleryOption][disable];
-	}
+	}		
+		
 	
 	//design
 	if(isset($data[design])){
@@ -283,6 +285,50 @@ function profitquery_prepare_sctructure_product($data){
 	}		
 	
 	return $return;
+}
+
+
+function profitquery_prepare_exp_options($name){
+	global $profitquery;
+	$ret = array();
+	if($profitquery[proOptions][$name]){		
+		if($profitquery[proOptions][$name][disableExeptExtensions]){
+			foreach((array)$profitquery[proOptions][$name][disableExeptExtensions] as $k => $v){
+				if($v){
+					$ret[$k] = $v;
+				}
+			}
+		}
+	}
+	return $ret;
+}
+
+function profitquery_prepare_disable_options($name){
+	global $profitquery;
+	$ret = array();
+	if($profitquery[proOptions][$name]){
+		if((int)$profitquery[proOptions][$name][disableMainPage]){
+			$ret[disableMainPage] = stripslashes($profitquery[proOptions][mainPageUrl]);
+		}
+		if($profitquery[proOptions][$name][disableExeptPageMask]){
+			foreach((array)$profitquery[proOptions][$name][disableExeptPageMask] as $k => $v){
+				if($v){
+					$ret[disableExeptPageMask][$k] = $v;
+				}
+			}
+		}
+	}
+	return $ret;
+}
+
+
+function profitquery_prepare_pro_options($name){
+	global $profitquery;
+	$ret = array();
+	if($profitquery[proOptions][$name]){
+		$ret = $profitquery[proOptions][$name];
+	}
+	return $ret;
 }
 //$preparedObject = profitquery_prepare_sctructure_product($profitquery[sharingSideBar]);
 //printr($preparedObject);
@@ -295,157 +341,273 @@ function profitquery_smart_widgets_insert_code(){
 	$profitquerySmartWidgetsStructure = array();
 	
 	$preparedObject = profitquery_prepare_sctructure_product($profitquery[sharingSideBar]);
-	if(!$preparedObject[socnet]) $preparedObject[disabled] = 1;
-	$preparedObject[socnet][typeBlock] = 'pq-social-block '.$preparedObject[design];
-	if(trim($preparedObject[position]) == '') $preparedObject[position] = 'pq_left pq_middle';
+	$disableOptions = profitquery_prepare_disable_options('sharingSideBar');	
+		
+	if(!$preparedObject[socnet]) $preparedObject[disabled] = 1;	
+	
+	$proOptions = profitquery_prepare_pro_options('sharingSideBar');
+	$animation = '';
+	if($proOptions[animation]){
+		$animation = 'pq_animated '.$proOptions[animation];
+	}
+	
+	//from right to left
+	if($profitquery[additionalOptions][lang] == 'fa'){
+		$langContOption = 'pq_rtl';
+	}else{
+		$langContOption = '';
+	}
+	
+	$preparedObject[socnet][typeBlock] = 'pq-social-block '.$preparedObject[design];	
+	$preparedObject[socnet][hoverAnimation] = $proOptions[hover_animation];
+	//hack for old version
+	if($preparedObject[position]){
+		$temp = explode(' ', $preparedObject[position]);
+		$profitquery[sharingSideBar][side] = $preparedObject[side] = $temp[0];
+		$profitquery[sharingSideBar][top] = $preparedObject[top] = $temp[1];		
+		unset($profitquery[sharingSideBar][position]);
+		update_option('profitquery', $profitquery);
+	}
+	
 	$profitquerySmartWidgetsStructure['sharingSideBarOptions'] = array(
-		'typeWindow'=>'pq_icons '.$preparedObject[position],
+		'typeWindow'=>'pq_icons '.$preparedObject[side].' '.$preparedObject[top].' '.$animation,
 		'socnetIconsBlock'=>$preparedObject[socnet],
 		'mobile_title'=>stripslashes($preparedObject[mobile_title]),
 		'disabled'=>(int)$preparedObject[disabled],
 		'galleryOption'=>$preparedObject[galleryOption],
+		'disablePageOptions'=>$disableOptions,	
 		'afterProfitLoader'=>$preparedObject[afterProceed]
 	);
 	
 	$preparedObject = profitquery_prepare_sctructure_product($profitquery[imageSharer]);
+	$disableOptions = profitquery_prepare_disable_options('imageSharer');		
+	$enabledExpressions = profitquery_prepare_exp_options('imageSharer');		
+	$proOptions = profitquery_prepare_pro_options('imageSharer');
+	//printr($proOptions);
+	//die();
 	$profitquerySmartWidgetsStructure['imageSharer'] = array(
 		'typeDesign'=>$preparedObject[design].' '.$preparedObject[position],
 		'minWidth'=>(int)$preparedObject[minWidth],
 		'disabled'=>(int)$preparedObject[disabled],
 		'activeSocnet'=>$preparedObject[socnet],
 		'disableAfterClick'=>$preparedObject[disableAfterClick],
+		'disablePageOptions'=>$disableOptions,
+		'minHeight'=>$proOptions[minHeight],
+		'hoverAnimation'=>$proOptions[hover_animation],
+		'enabledExpressions'=>$enabledExpressions,				
 		'afterProfitLoader'=>stripslashes($preparedObject[afterProceed])
 	);	
 	
 	$preparedObject = profitquery_prepare_sctructure_product($profitquery[subscribeBar]);	
 	if($preparedObject[animation] && $preparedObject[animation] != 'fade') $preparedObject[animation] = 'pq_animated '.$preparedObject[animation];	
+	$disableOptions = profitquery_prepare_disable_options('subscribeBar');	
+	$proOptions = profitquery_prepare_pro_options('subscribeBar');	
+	if($proOptions[animation]){
+		$preparedObject[animation] = 'pq_animated '.$proOptions[animation];
+	}	
 	$profitquerySmartWidgetsStructure['subscribeBarOptions'] = array(
 		'title'=>stripslashes($preparedObject[title]),
 		'mobile_title'=>stripslashes($preparedObject[mobile_title]),
 		'disabled'=>(int)$preparedObject[disabled],
 		'afterProfitLoader'=>$preparedObject[afterProceed],
-		'typeWindow'=>'pq_bar '.stripslashes($preparedObject[position]).' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[button_color]).' '.stripslashes($preparedObject[animation]),		
+		'typeWindow'=>$langContOption.' pq_bar '.stripslashes($preparedObject[position]).' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[button_color]).' '.stripslashes($preparedObject[animation]).' '.$proOptions[font].' '.$proOptions[head_font].' '.$proOptions[head_color].' '.$proOptions[head_size].' '.$proOptions[text_size].' '.$proOptions[text_color].' '.$proOptions[b_radius].' '.$proOptions[b_color].' '.$proOptions[b_opacity].' '.$proOptions[b_style].' '.$proOptions[b_shadow].' '.$proOptions[b_width].' '.$proOptions[b_c_color],
 		'inputEmailTitle'=>stripslashes($preparedObject[inputEmailTitle]),
 		'inputNameTitle'=>stripslashes($preparedObject[inputNameTitle]),
 		'buttonTitle'=>stripslashes($preparedObject[buttonTitle]),
 		'subscribeProvider'=>stripslashes($profitquery[subscribeProvider]),
+		'disablePageOptions'=>$disableOptions,	
 		'subscribeProviderOption'=>$profitquery[subscribeProviderOption][$profitquery[subscribeProvider]]
 	);
 	
 	$preparedObject = profitquery_prepare_sctructure_product($profitquery[subscribeExit]);	
 	if($preparedObject[animation] && $preparedObject[animation] != 'fade') $preparedObject[animation] = 'pq_animated '.$preparedObject[animation];
+	$disableOptions = profitquery_prepare_disable_options('subscribeExit');	
+	$proOptions = profitquery_prepare_pro_options('subscribeExit');	
+	if($proOptions[animation]){
+		$preparedObject[animation] = 'pq_animated '.$proOptions[animation];
+	}	
 	$profitquerySmartWidgetsStructure['subscribeExitPopupOptions'] = array(
 		'title'=>stripslashes($preparedObject[title]),
 		'sub_title'=>stripslashes($preparedObject[sub_title]),		
 		'img'=>stripslashes($preparedObject[img]),
 		'disabled'=>(int)$preparedObject[disabled],
 		'afterProfitLoader'=>$preparedObject[afterProceed],
-		'typeWindow'=>stripslashes($preparedObject[typeWindow]).' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[button_color]).' '.stripslashes($preparedObject[animation]),
+		'typeWindow'=>$langContOption.' '.stripslashes($preparedObject[typeWindow]).' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[button_color]).' '.stripslashes($preparedObject[animation]).' '.$proOptions[font].' '.$proOptions[head_font].' '.$proOptions[head_color].' '.$proOptions[head_size].' '.$proOptions[text_size].' '.$proOptions[text_color].' '.$proOptions[b_radius].' '.$proOptions[b_color].' '.$proOptions[b_opacity].' '.$proOptions[b_style].' '.$proOptions[b_shadow].' '.$proOptions[b_width].' '.$proOptions[b_c_color],
+		'background_image'=>stripslashes($proOptions[background_image]),
 		'blackoutOption'=>array('disable'=>0, 'style'=>stripslashes($preparedObject[overlay])),
 		'inputEmailTitle'=>stripslashes($preparedObject[inputEmailTitle]),
 		'inputNameTitle'=>stripslashes($preparedObject[inputNameTitle]),
 		'buttonTitle'=>stripslashes($preparedObject[buttonTitle]),
 		'subscribeProvider'=>stripslashes($profitquery[subscribeProvider]),
+		'disablePageOptions'=>$disableOptions,	
 		'subscribeProviderOption'=>$profitquery[subscribeProviderOption][$profitquery[subscribeProvider]]
 	);
 	
 	$preparedObject = profitquery_prepare_sctructure_product($profitquery[thankPopup]);
 	if($preparedObject[animation] && $preparedObject[animation] != 'fade') $preparedObject[animation] = 'pq_animated '.$preparedObject[animation];
+	$disableOptions = profitquery_prepare_disable_options('thankPopup');	
+	$proOptions = profitquery_prepare_pro_options('thankPopup');	
+	if($proOptions[animation]){
+		$preparedObject[animation] = 'pq_animated '.$proOptions[animation];
+	}	
 	$profitquerySmartWidgetsStructure['thankPopupOptions'] = array(
 		'title'=>stripslashes($preparedObject[title]),
 		'sub_title'=>stripslashes($preparedObject[sub_title]),
-		'typeWindow'=>stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[animation]),
+		'typeWindow'=>$langContOption.' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[animation]).' '.$proOptions[font].' '.$proOptions[head_font].' '.$proOptions[head_color].' '.$proOptions[head_size].' '.$proOptions[text_size].' '.$proOptions[text_color].' '.$proOptions[b_radius].' '.$proOptions[b_color].' '.$proOptions[b_opacity].' '.$proOptions[b_style].' '.$proOptions[b_shadow].' '.$proOptions[b_width].' '.$proOptions[b_c_color],
 		'blackoutOption'=>array('disable'=>0, 'style'=>stripslashes($preparedObject[overlay])),
+		'background_image'=>stripslashes($proOptions[background_image]),
 		'img'=>stripslashes($preparedObject[img]),
+		'disablePageOptions'=>$disableOptions,	
 		'buttonTitle'=>stripslashes($preparedObject[buttonTitle])
 	);
 	
 	$preparedObject = profitquery_prepare_sctructure_product($profitquery[follow]);
 	if($preparedObject[animation] && $preparedObject[animation] != 'fade') $preparedObject[animation] = 'pq_animated '.$preparedObject[animation];
+	$disableOptions = profitquery_prepare_disable_options('follow');	
+	$proOptions = profitquery_prepare_pro_options('follow');	
+	if($proOptions[animation]){
+		$preparedObject[animation] = 'pq_animated '.$proOptions[animation];
+	}
+	$preparedObject[follow_socnet][hoverAnimation] = $proOptions[hover_animation];
+	//printr($proOptions);
+	//die();
 	$profitquerySmartWidgetsStructure['followUsOptions'] = array(
 		'title'=>stripslashes($preparedObject[title]),
 		'sub_title'=>stripslashes($preparedObject[sub_title]),
-		'typeWindow'=>stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[animation]),
+		'typeWindow'=>$langContOption.' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[animation]).' '.$proOptions[font].' '.$proOptions[head_font].' '.$proOptions[head_color].' '.$proOptions[head_size].' '.$proOptions[text_size].' '.$proOptions[text_color].' '.$proOptions[b_radius].' '.$proOptions[b_color].' '.$proOptions[b_opacity].' '.$proOptions[b_style].' '.$proOptions[b_shadow].' '.$proOptions[b_width].' '.$proOptions[b_c_color],
+		'background_image'=>stripslashes($proOptions[background_image]),
 		'blackoutOption'=>array('disable'=>0, 'style'=>stripslashes($preparedObject[overlay])),
+		'disablePageOptions'=>$disableOptions,	
 		'socnetIconsBlock'=>$preparedObject[follow_socnet]
-	);	
-
+	);		
 	$profitquerySmartWidgetsStructure['followUsFloatingPopup'] = array(
 		'disabled'=>1		
 	);
 	
 	$preparedObject = profitquery_prepare_sctructure_product($profitquery[callMe]);
 	if($preparedObject[animation] && $preparedObject[animation] != 'fade') $preparedObject[animation] = 'pq_animated '.$preparedObject[animation];
+	$disableOptions = profitquery_prepare_disable_options('phoneCollectOptions');
+	//hack for old version
+	if($preparedObject[position]){		
+		$temp = explode(' ', $preparedObject[position]);
+		$profitquery[callMe][side] = $preparedObject[side] = $temp[0];
+		$profitquery[callMe][top] = $preparedObject[top] = $temp[1];		
+		unset($profitquery[callMe][position]);
+		update_option('profitquery', $profitquery);
+	}
+	$preparedObject[position] = $preparedObject[side].' '.$preparedObject[top];
+	$proOptions = profitquery_prepare_pro_options('callMe');		
+	if($proOptions[animation]){
+		$preparedObject[animation] = 'pq_animated '.$proOptions[animation];
+	}	
 	$profitquerySmartWidgetsStructure['phoneCollectOptions'] = array(
 		'disabled'=>(int)$preparedObject[disabled],
 		'title'=>stripslashes($preparedObject[title]),
 		'sub_title'=>stripslashes($preparedObject[sub_title]),
 		'img'=>stripslashes($preparedObject[img]),
 		'buttonTitle'=>stripslashes($preparedObject[buttonTitle]),
+		'bookmarkTitle'=>stripslashes($preparedObject[loaderText]),
+		'background_image'=>stripslashes($proOptions[background_image]),		
 		'typeBookmark'=>stripslashes($preparedObject[position]).' '.stripslashes($preparedObject[loader_background]).' pq_call',			
-		'typeWindow'=>stripslashes($preparedObject[typeWindow]).' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[button_color]).' '.stripslashes($preparedObject[animation]),
+		'typeWindow'=>$langContOption.' '.stripslashes($preparedObject[typeWindow]).' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[button_color]).' '.stripslashes($preparedObject[animation]).' '.$proOptions[font].' '.$proOptions[head_font].' '.$proOptions[head_color].' '.$proOptions[head_size].' '.$proOptions[text_size].' '.$proOptions[text_color].' '.$proOptions[b_radius].' '.$proOptions[b_color].' '.$proOptions[b_opacity].' '.$proOptions[b_style].' '.$proOptions[b_shadow].' '.$proOptions[b_width].' '.$proOptions[b_c_color],
 		'blackoutOption'=>array('disable'=>0, 'style'=>stripslashes($preparedObject[overlay])),
+		'disablePageOptions'=>$disableOptions,	
+		'formTextOptions'=>array('enterPhoneText'=>stripslashes($preparedObject[enter_phone_text]), 'enterNameText'=> stripslashes($preparedObject[enter_name_text])),
 		'afterProfitLoader'=>$preparedObject[afterProceed],
 		'emailOption'=>array(
 			'to_email'=>stripslashes($profitquery[adminEmail])			
 		)
 	);
 	
-	$preparedObject = profitquery_prepare_sctructure_product($profitquery[contactUs]);
+	$preparedObject = profitquery_prepare_sctructure_product($profitquery[contactUs]);	
 	if($preparedObject[animation] && $preparedObject[animation] != 'fade') $preparedObject[animation] = 'pq_animated '.$preparedObject[animation];
+	$disableOptions = profitquery_prepare_disable_options('contactUs');	
+	
+	//hack for old version
+	if($preparedObject[position]){
+		$temp = explode(' ', $preparedObject[position]);
+		$profitquery[contactUs][side] = $preparedObject[side] = $temp[0];
+		$profitquery[contactUs][top] = $preparedObject[top] = $temp[1];		
+		unset($profitquery[contactUs][position]);
+		update_option('profitquery', $profitquery);
+	}
+	
+	$preparedObject[position] = $preparedObject[side].' '.$preparedObject[top];	
+	
+	$proOptions = profitquery_prepare_pro_options('contactUs');		
+	if($proOptions[animation]){
+		$preparedObject[animation] = 'pq_animated '.$proOptions[animation];
+	}
+	$preparedObject[typeWindow] .= ' '.$proOptions[font].' '.$proOptions[head_font].' '.$proOptions[head_color].' '.$proOptions[head_size].' '.$proOptions[text_size].' '.$proOptions[text_color].' '.$proOptions[b_radius].' '.$proOptions[b_color].' '.$proOptions[b_opacity].' '.$proOptions[b_style].' '.$proOptions[b_shadow].' '.$proOptions[b_width].' '.$proOptions[b_c_color];
+	
 	$profitquerySmartWidgetsStructure['contactUsOptions'] = array(
 		'disabled'=>(int)$preparedObject[disabled],
 		'title'=>stripslashes($preparedObject[title]),
 		'sub_title'=>stripslashes($preparedObject[sub_title]),
+		'background_image'=>stripslashes($proOptions[background_image]),
 		'img'=>stripslashes($preparedObject[img]),
 		'buttonTitle'=>stripslashes($preparedObject[buttonTitle]),
+		'bookmarkTitle'=>stripslashes($preparedObject[loaderText]),
 		'typeBookmark'=>stripslashes($preparedObject[position]).' '.stripslashes($preparedObject[loader_background]).' pq_contact',			
-		'typeWindow'=>stripslashes($preparedObject[typeWindow]).' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[button_color]).' '.stripslashes($preparedObject[animation]),
+		'typeWindow'=>$langContOption.' '.stripslashes($preparedObject[typeWindow]).' '.stripslashes($preparedObject[background]).' '.stripslashes($preparedObject[button_color]).' '.stripslashes($preparedObject[animation]),
 		'blackoutOption'=>array('disable'=>0, 'style'=>stripslashes($preparedObject[overlay])),
 		'afterProfitLoader'=>$preparedObject[afterProceed],
+		'formTextOptions'=>array('enterEmailText'=>stripslashes($preparedObject[enter_email_text]), 'enterNameText'=> stripslashes($preparedObject[enter_name_text]), 'enterMessageText'=> stripslashes($preparedObject[enter_message_text])),
+		'disablePageOptions'=>$disableOptions,	
 		'emailOption'=>array(
 			'to_email'=>stripslashes($profitquery[adminEmail])			
 		)
-	);
+	);	
 	
 	$additionalOptionText = '';
 	if((int)$profitquery[additionalOptions][enableGA] == 0 && isset($profitquery[additionalOptions])){
 		$additionalOptionText = 'profitquery.productOptions.disableGA = 1;';
 	}
 	print "
-	<script>	
-		(function () {
+	<script>
+	(function () {
+			var PQInit = function(){
+				profitquery.loadFunc.callAfterPQInit(function(){					
+					profitquery.loadFunc.callAfterPluginsInit(						
+						function(){							
+							PQLoadTools();
+						}
+						, ['//api.profitquery.com/plugins/aio.plugin.profitquery.min.js']
+					);
+				});
+			};
 			var s = document.createElement('script');
 			var _isPQLibraryLoaded = false;
 			s.type = 'text/javascript';
-			s.async = true;
-			s.src = '//litelib.profitquery.com/api/lite.profitquery.min.js?apiKey=".$profitquery[apiKey]."';
+			s.async = true;			
+			s.src = 'http://api.profitquery.com/lib/profitquery.min.js?version=v3.0.0&lang=".stripslashes($profitquery[additionalOptions][lang])."&pro_loader_name=".stripslashes($profitquery[proOptions][proLoaderFilename])."&apiKey=".stripslashes($profitquery[apiKey])."';
 			s.onload = function(){
 				if ( !_isPQLibraryLoaded )
 				{					
 				  _isPQLibraryLoaded = true;				  
-				  profitquery.loadFunc.callAfterPQInit(function(){
-						".$additionalOptionText."
-						var smartWidgetsBoxObject = ".json_encode($profitquerySmartWidgetsStructure).";	
-						profitquery.widgets.smartWidgetsBox(smartWidgetsBoxObject);	
-					});
+				  PQInit();
 				}
 			}
 			s.onreadystatechange = function() {								
 				if ( !_isPQLibraryLoaded && (this.readyState == 'complete' || this.readyState == 'loaded') )
 				{					
-				  _isPQLibraryLoaded = true;
-					profitquery.loadFunc.callAfterPQInit(function(){
-						".$additionalOptionText."
-						var smartWidgetsBoxObject = ".json_encode($profitquerySmartWidgetsStructure).";	
-						profitquery.widgets.smartWidgetsBox(smartWidgetsBoxObject);	
-					});
+				  _isPQLibraryLoaded = true;				    
+					
+					PQInit();					
 				}
 			};
 			var x = document.getElementsByTagName('script')[0];						
 			x.parentNode.insertBefore(s, x);			
-		})();				
-	</script>
+		})();
+		
+		function PQLoadTools(){
+			profitquery.loadFunc.callAfterPQInit(function(){
+						".$additionalOptionText."
+						var smartWidgetsBoxObject = ".json_encode($profitquerySmartWidgetsStructure).";	
+						profitquery.widgets.smartWidgetsBox.init(smartWidgetsBoxObject);	
+					});
+		}
+	</script>	
 	";
 }
 

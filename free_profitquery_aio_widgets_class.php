@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 2.1.10
+* @version  SVN: 3.0
 */
 
 
@@ -144,7 +144,7 @@ class ProfitQuerySmartWidgetsClass
 		
 		if(!$this->_options[sharingSideBar]){
 			$this->_options[sharingSideBar][disabled] = 0;		
-			$this->_options[sharingSideBar][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'LI'=>1, 'MailTo'=>1);
+			$this->_options[sharingSideBar][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'LI'=>1, 'Mail'=>1);
 			$this->_options[sharingSideBar][position] = 'pq_left pq_middle';
 			$this->_options[sharingSideBar][design][color] = 'c4';
 			$this->_options[sharingSideBar][design][size] = 'x40';
@@ -195,6 +195,7 @@ class ProfitQuerySmartWidgetsClass
 		}
 		
 		$this->_options[aio_widgets_loaded] = 1;
+		$this->_options[proOptions]['proLoaderFilename'] = $this->getDomain().'.pq_pro_loader.js';
 		update_option('profitquery', $this->_options);
 	}	
 		
@@ -282,6 +283,131 @@ class ProfitQuerySmartWidgetsClass
 		return $array;
 	}
 	
+	function checkDisableExeptExtensions(){
+		$ret = 0;
+		foreach((array)$this->_options[proOptions][imageSharer][disableExeptExtensions] as $k => $v){
+			if(trim($v)) {
+				$ret = 1;
+				break;
+			}			
+		}
+		return $ret;
+	}
+	
+	function checkDisableExeptPageMask($name){
+		$ret = 0;
+		foreach((array)$this->_options[proOptions][$name][disableExeptPageMask] as $k => $v){			
+			if(trim($v)) {
+				$ret = 1;
+				break;
+			}			
+		}
+		return $ret;
+	}
+	
+	function checkUseProAnimation($name){
+		$ret = 0;
+		if($this->_options[proOptions][$name]){
+			foreach((array)$this->_options[proOptions][$name] as $k => $v){
+				if(!is_array($v)){
+					if(strstr($v, 'pq_pro_a_')){
+						$ret = 1;
+						break;
+					}
+				}
+			}
+		}
+		return $ret;
+	}
+	
+	function checkUseProHoverAnimation($name){
+		$ret = 0;
+		if($this->_options[proOptions][$name]){
+			foreach((array)$this->_options[proOptions][$name] as $k => $v){
+				if(!is_array($v)){
+					if(strstr($v, 'pq_pro_ha_')){
+						$ret = 1;
+						break;
+					}
+				}
+			}
+		}
+		return $ret;
+	}
+	
+	function checkUseProDO($name){
+		$ret = 0;
+		if($this->_options[proOptions][$name]){
+			if($this->_options[proOptions][$name][font]) $ret = 1;
+			if($this->_options[proOptions][$name][head_font]) $ret = 1;
+			if($this->_options[proOptions][$name][head_color]) $ret = 1;
+			if($this->_options[proOptions][$name][head_size]) $ret = 1;
+			if($this->_options[proOptions][$name][text_size]) $ret = 1;
+			if($this->_options[proOptions][$name][text_color]) $ret = 1;
+			if($this->_options[proOptions][$name][b_radius]) $ret = 1;
+			if($this->_options[proOptions][$name][b_color]) $ret = 1;
+			if($this->_options[proOptions][$name][b_opacity]) $ret = 1;
+			if($this->_options[proOptions][$name][b_style]) $ret = 1;
+			if($this->_options[proOptions][$name][b_shadow]) $ret = 1;
+			if($this->_options[proOptions][$name][b_width]) $ret = 1;
+			if($this->_options[proOptions][$name][b_c_color]) $ret = 1;			
+		}
+		return $ret;
+	}
+	
+	function checkProOptions()
+	{
+		$ret = array();		
+		if((int)$this->_options[proOptions][sharingSideBar][disableMainPage]) $ret[disableMainPage]=1;
+		if((int)$this->_options[proOptions][imageSharer][disableMainPage]) $ret[disableMainPage]=1;
+		if((int)$this->_options[proOptions][subscribeBar][disableMainPage]) $ret[disableMainPage]=1;
+		if((int)$this->_options[proOptions][subscribeExit][disableMainPage]) $ret[disableMainPage]=1;
+		if((int)$this->_options[proOptions][contactUs][disableMainPage]) $ret[disableMainPage]=1;
+		if((int)$this->_options[proOptions][callMe][disableMainPage]) $ret[disableMainPage]=1;
+		if((int)$this->_options[proOptions][thankPopup][disableMainPage]) $ret[disableMainPage]=1;
+		if((int)$this->_options[proOptions][follow][disableMainPage]) $ret[disableMainPage]=1;
+		
+		if($this->checkDisableExeptPageMask('sharingSideBar')) $ret[disableExeptPageMask]=1;
+		if($this->checkDisableExeptPageMask('imageSharer')) $ret[disableExeptPageMask]=1;
+		if($this->checkDisableExeptPageMask('subscribeBar')) $ret[disableExeptPageMask]=1;
+		if($this->checkDisableExeptPageMask('subscribeExit')) $ret[disableExeptPageMask]=1;
+		if($this->checkDisableExeptPageMask('contactUs')) $ret[disableExeptPageMask]=1;
+		if($this->checkDisableExeptPageMask('callMe')) $ret[disableExeptPageMask]=1;
+		if($this->checkDisableExeptPageMask('thankPopup')) $ret[disableExeptPageMask]=1;
+		if($this->checkDisableExeptPageMask('follow')) $ret[disableExeptPageMask]=1;
+		
+		if($this->checkDisableExeptExtensions()) $ret[ISdisableExeptExtensions]=1;
+		if((int)$this->_options[proOptions][imageSharer][minHeight]) $ret[ISminHeight]=1;
+		
+		if($this->checkUseProAnimation('sharingSideBar')) $ret[useProAnimation]=1;
+		if($this->checkUseProAnimation('imageSharer')) $ret[useProAnimation]=1;
+		if($this->checkUseProAnimation('subscribeBar')) $ret[useProAnimation]=1;
+		if($this->checkUseProAnimation('subscribeExit')) $ret[useProAnimation]=1;
+		if($this->checkUseProAnimation('contactUs')) $ret[useProAnimation]=1;
+		if($this->checkUseProAnimation('callMe')) $ret[useProAnimation]=1;
+		if($this->checkUseProAnimation('thankPopup')) $ret[useProAnimation]=1;
+		if($this->checkUseProAnimation('follow')) $ret[useProAnimation]=1;
+		
+		if($this->checkUseProDO('sharingSideBar')) $ret[useProDesignOptions]=1;
+		if($this->checkUseProDO('imageSharer')) $ret[useProDesignOptions]=1;
+		if($this->checkUseProDO('subscribeBar')) $ret[useProDesignOptions]=1;
+		if($this->checkUseProDO('subscribeExit')) $ret[useProDesignOptions]=1;
+		if($this->checkUseProDO('contactUs')) $ret[useProDesignOptions]=1;
+		if($this->checkUseProDO('callMe')) $ret[useProDesignOptions]=1;
+		if($this->checkUseProDO('thankPopup')) $ret[useProDesignOptions]=1;
+		if($this->checkUseProDO('follow')) $ret[useProDesignOptions]=1;
+		
+		if($this->checkUseProHoverAnimation('sharingSideBar')) $ret[useProHover]=1;
+		if($this->checkUseProHoverAnimation('imageSharer')) $ret[useProHover]=1;
+		if($this->checkUseProHoverAnimation('subscribeBar')) $ret[useProHover]=1;
+		if($this->checkUseProHoverAnimation('subscribeExit')) $ret[useProHover]=1;
+		if($this->checkUseProHoverAnimation('contactUs')) $ret[useProHover]=1;
+		if($this->checkUseProHoverAnimation('callMe')) $ret[useProHover]=1;
+		if($this->checkUseProHoverAnimation('thankPopup')) $ret[useProHover]=1;
+		if($this->checkUseProHoverAnimation('follow')) $ret[useProHover]=1;
+		
+		return $ret;
+	}
 	
 	 /**
      * Manages the WP settings page
@@ -295,25 +421,99 @@ class ProfitQuerySmartWidgetsClass
                 __('You do not have sufficient permissions to access this page.')
             );
         }
-		echo "
-			<link rel='stylesheet'  href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&amp;subset=latin,cyrillic' type='text/css' media='all' />
-			<link rel='stylesheet'  href='".plugins_url()."/".PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME."/".PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH."profitquery_smart_widgets_wordpress_v2.css' type='text/css' media='all' />
-			<link rel='stylesheet'  href='".plugins_url()."/".PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME."/".PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH."icons.css' type='text/css' media='all' />
+		echo "			
+			<link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&amp;subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+			<link rel='stylesheet'  href='".plugins_url()."/".PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME."/".PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH."pq_wordpress.css' type='text/css' media='all' />			
 		<noscript>				
 				<p>Please enable JavaScript in your browser.</p>				
 		</noscript>
-		";		
+		";
 				
 		
-		/*POST*/		
-		if($_POST[action] == 'editAdditionalOptions'){						
-			if($_POST[additionalOptions][enableGA] == 'on') $this->_options[additionalOptions][enableGA] = 1; else $this->_options[additionalOptions][enableGA] = 0;			
+		//deleteProOptions
+		if($_GET[action] == 'deleteProOptions'){
+			$proLoaderFilename = $this->_options['proOptions'][proLoaderFilename];
+			$mainPageUrl = $this->_options['proOptions'][mainPageUrl];
+			$this->_options['proOptions'] = array();
+			$this->_options['proOptions'][proLoaderFilename] = $proLoaderFilename;
+			$this->_options['proOptions'][mainPageUrl] = $mainPageUrl;
 			update_option('profitquery', $this->_options);
 		}
-						
+		
+		//disableSharingSidebar
+		if($_POST[action] == 'disableSharingSidebar'){
+			$this->_options['sharingSideBar']['disabled'] = 1;
+			update_option('profitquery', $this->_options);
+		}
+		//disableImageSharer
+		if($_POST[action] == 'disableImageSharer'){
+			$this->_options['imageSharer']['disabled'] = 1;
+			update_option('profitquery', $this->_options);
+		}
+		//disableSubscribeBar
+		if($_POST[action] == 'disableSubscribeBar'){
+			$this->_options['subscribeBar']['disabled'] = 1;
+			update_option('profitquery', $this->_options);
+		}
+		//disableSubscribeExit
+		if($_POST[action] == 'disableSubscribeExit'){
+			$this->_options['subscribeExit']['disabled'] = 1;
+			update_option('profitquery', $this->_options);
+		}
+		//disableContactUs
+		if($_POST[action] == 'disableContactUs'){
+			$this->_options['contactUs']['disabled'] = 1;
+			update_option('profitquery', $this->_options);
+		}
+		//disableCallMe
+		if($_POST[action] == 'disableCallMe'){
+			$this->_options['callMe']['disabled'] = 1;
+			update_option('profitquery', $this->_options);
+		}
+	
+		
+		//savePro
+		if($_POST[action] == 'savePro'){
+			if(trim($_POST[apiKey]) != '') {
+				$this->_options['apiKey'] = sanitize_text_field($_POST[apiKey]);
+				$this->_options['errorApiKey'] = 0;
+			}else{
+				$this->_options['apiKey'] = '';
+				$this->_options['errorApiKey'] = 1;
+			}
+			if(trim($_POST[proOptions][proLoaderFilename])) $this->_options['proOptions'][proLoaderFilename] = sanitize_text_field($_POST[proOptions][proLoaderFilename]); else $this->_options['proOptions'][proLoaderFilename] = '';
+			if(trim($_POST[proOptions][mainPageUrl])) $this->_options['proOptions'][mainPageUrl] = sanitize_text_field($_POST[proOptions][mainPageUrl]); else $this->_options['proOptions'][mainPageUrl] = '';
+			update_option('profitquery', $this->_options);
+		}
+		
+		//save api key
+		if(trim($_GET[apiKey]) != ''){			
+			if(trim($_GET[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_GET[apiKey]);						
+			$this->_options['errorApiKey'] = 0;				
+			update_option('profitquery', $this->_options);			
+		}
+		
+		//editGA
+		if($_POST[action] == 'editGA'){
+			if((int)$_POST[additionalOptions][enableGA] == 1) $this->_options[additionalOptions][enableGA] = 1; else $this->_options[additionalOptions][enableGA] = 0;			
+			update_option('profitquery', $this->_options);			
+		}
+		
+		//editLang
+		if($_POST[action] == 'editLang'){
+			$this->_options[additionalOptions][lang] = $_POST[additionalOptions][lang];
+			update_option('profitquery', $this->_options);			
+		}
+		
+		//setAdminEmail
+		if($_POST[action] == 'setAdminEmail'){
+			if(trim($_POST[adminEmail]) != '') $this->_options['adminEmail'] = sanitize_text_field($_POST[adminEmail]);
+			update_option('profitquery', $this->_options);
+		}
+		
+		//Providers Setup
 		if($_POST[action] == 'subscribeProviderSetup'){
-			if(isset($_POST[subscribeProvider])){
-				unset($this->_options['subscribeProviderUrl']);
+			if(isset($_POST[subscribeProvider])){				
 				$this->_options['subscribeProvider'] = sanitize_text_field($_POST[subscribeProvider]);
 				if($_POST[subscribeProviderFormContent]){
 					unset($this->_options['subscribeProviderOption']);					
@@ -322,10 +522,12 @@ class ProfitQuerySmartWidgetsClass
 					$this->_options['subscribeProviderOption'][$this->_options['subscribeProvider']][is_error] = 1;
 				}				
 			}
-			update_option('profitquery', $this->_options);
-		}		
+			update_option('profitquery', $this->_options);			
+		}
 		
-		if($_POST[action] == 'editAdditionalData'){
+		if($_POST[action] == 'edit'){		
+			//printr($this->_options['proOptions']);
+			//die();
 			//follow
 			if($_POST[follow]){				
 				if(trim($_POST[follow][title])) $this->_options['follow']['title'] = sanitize_text_field($_POST[follow][title]); else $this->_options['follow']['title'] = '';
@@ -333,6 +535,7 @@ class ProfitQuerySmartWidgetsClass
 				if(trim($_POST[follow][background])) $this->_options['follow']['background'] = sanitize_text_field($_POST[follow][background]); else $this->_options['follow']['background'] = '';
 				if(trim($_POST[follow][animation])) $this->_options['follow']['animation'] = sanitize_text_field($_POST[follow][animation]); else $this->_options['follow']['animation'] = '';
 				if(trim($_POST[follow][overlay])) $this->_options['follow']['overlay'] = sanitize_text_field($_POST[follow][overlay]); else $this->_options['follow']['overlay'] = '';
+				if(trim($_POST[follow][typeWindow])) $this->_options['follow']['typeWindow'] = sanitize_text_field($_POST[follow][typeWindow]); else $this->_options['follow']['typeWindow'] = '';				
 				if($_POST[follow][follow_socnet]){
 					if(trim($_POST[follow][follow_socnet][FB]) != '') $this->_options[follow][follow_socnet][FB] = sanitize_text_field($_POST[follow][follow_socnet][FB]); else $this->_options[follow][follow_socnet][FB] = '';
 					if(trim($_POST[follow][follow_socnet][TW]) != '') $this->_options[follow][follow_socnet][TW] = sanitize_text_field($_POST[follow][follow_socnet][TW]); else $this->_options[follow][follow_socnet][TW] = '';
@@ -341,8 +544,12 @@ class ProfitQuerySmartWidgetsClass
 					if(trim($_POST[follow][follow_socnet][VK]) != '') $this->_options[follow][follow_socnet][VK] = sanitize_text_field($_POST[follow][follow_socnet][VK]); else $this->_options[follow][follow_socnet][VK] = '';
 					if(trim($_POST[follow][follow_socnet][OD]) != '') $this->_options[follow][follow_socnet][OD] = sanitize_text_field($_POST[follow][follow_socnet][OD]); else $this->_options[follow][follow_socnet][OD] = '';
 					if(trim($_POST[follow][follow_socnet][RSS]) != '') $this->_options[follow][follow_socnet][RSS] = sanitize_text_field($_POST[follow][follow_socnet][RSS]); else $this->_options[follow][follow_socnet][RSS] = '';
-					if(trim($_POST[follow][follow_socnet][IG]) != '') $this->_options[follow][follow_socnet][IG] = sanitize_text_field($_POST[follow][follow_socnet][IG]); else $this->_options[follow][follow_socnet][IG] = '';
+					if(trim($_POST[follow][follow_socnet][IG]) != '') $this->_options[follow][follow_socnet][IG] = sanitize_text_field($_POST[follow][follow_socnet][IG]); else $this->_options[follow][follow_socnet][IG] = '';					
 				}
+				if(trim($_POST[follow][design][color])) $this->_options['follow']['design']['color'] = sanitize_text_field($_POST[follow][design][color]); else $this->_options['sharingSideBar']['design']['color'] = 'c4';
+				if(trim($_POST[follow][design][form])) $this->_options['follow']['design']['form'] = sanitize_text_field($_POST[follow][design][form]); else $this->_options['sharingSideBar']['design']['form'] = '';
+				if(trim($_POST[follow][design][size])) $this->_options['follow']['design']['size'] = sanitize_text_field($_POST[follow][design][size]); else $this->_options['sharingSideBar']['design']['size'] = 'x30';
+				if(trim($_POST[follow][design][shadow])) $this->_options['follow']['design']['shadow'] = sanitize_text_field($_POST[follow][design][shadow]); else $this->_options['sharingSideBar']['design']['shadow'] = '';
 			}
 			
 			//thankPopup
@@ -355,98 +562,14 @@ class ProfitQuerySmartWidgetsClass
 				if(trim($_POST[thankPopup][imgUrl])) $this->_options['thankPopup']['imgUrl'] = sanitize_text_field($_POST[thankPopup][imgUrl]); else $this->_options['thankPopup']['imgUrl'] = '';				
 				if(trim($_POST[thankPopup][animation])) $this->_options['thankPopup']['animation'] = sanitize_text_field($_POST[thankPopup][animation]); else $this->_options['thankPopup']['animation'] = '';				
 				if(trim($_POST[thankPopup][overlay])) $this->_options['thankPopup']['overlay'] = sanitize_text_field($_POST[thankPopup][overlay]); else $this->_options['thankPopup']['overlay'] = '';				
-			}						
-			
-			//sharingSideBar
-			if($_POST[sharingSideBar][afterProceed][follow] == 'on'){
-				$this->_options['sharingSideBar']['afterProceed']['follow'] = 1;
-				$this->_options['sharingSideBar']['afterProceed']['thank'] = 0;
-			} elseif($_POST[sharingSideBar][afterProceed][thank] == 'on'){
-				$this->_options['sharingSideBar']['afterProceed']['follow'] = 0;
-				$this->_options['sharingSideBar']['afterProceed']['thank'] = 1;
-			} else {
-				$this->_options['sharingSideBar']['afterProceed']['follow'] = 0;
-				$this->_options['sharingSideBar']['afterProceed']['thank'] = 0;
+				if(trim($_POST[thankPopup][button_color])) $this->_options['thankPopup']['button_color'] = sanitize_text_field($_POST[thankPopup][button_color]); else $this->_options['thankPopup']['button_color'] = '';				
+				if(trim($_POST[thankPopup][typeWindow])) $this->_options['thankPopup']['typeWindow'] = sanitize_text_field($_POST[thankPopup][typeWindow]); else $this->_options['thankPopup']['typeWindow'] = '';				
 			}
 			
-			//imageSharer
-			if($_POST[imageSharer][afterProceed][follow] == 'on'){
-				$this->_options['imageSharer']['afterProceed']['follow'] = 1;
-				$this->_options['imageSharer']['afterProceed']['thank'] = 0;
-			} elseif($_POST[imageSharer][afterProceed][thank] == 'on'){
-				$this->_options['imageSharer']['afterProceed']['follow'] = 0;
-				$this->_options['imageSharer']['afterProceed']['thank'] = 1;
-			} else {
-				$this->_options['imageSharer']['afterProceed']['follow'] = 0;
-				$this->_options['imageSharer']['afterProceed']['thank'] = 0;
-			}
-			
-			//subscribeBar
-			if($_POST[subscribeBar][afterProceed][follow] == 'on'){
-				$this->_options['subscribeBar']['afterProceed']['follow'] = 1;
-				$this->_options['subscribeBar']['afterProceed']['thank'] = 0;
-			} elseif($_POST[subscribeBar][afterProceed][thank] == 'on'){
-				$this->_options['subscribeBar']['afterProceed']['follow'] = 0;
-				$this->_options['subscribeBar']['afterProceed']['thank'] = 1;
-			} else {
-				$this->_options['subscribeBar']['afterProceed']['follow'] = 0;
-				$this->_options['subscribeBar']['afterProceed']['thank'] = 0;
-			}
-			
-			//callMe
-			if($_POST[callMe][afterProceed][follow] == 'on'){
-				$this->_options['callMe']['afterProceed']['follow'] = 1;
-				$this->_options['callMe']['afterProceed']['thank'] = 0;
-			} elseif($_POST[callMe][afterProceed][thank] == 'on'){
-				$this->_options['callMe']['afterProceed']['follow'] = 0;
-				$this->_options['callMe']['afterProceed']['thank'] = 1;
-			} else {
-				$this->_options['callMe']['afterProceed']['follow'] = 0;
-				$this->_options['callMe']['afterProceed']['thank'] = 0;
-			}
-			
-			//contactUs
-			if($_POST[contactUs][afterProceed][follow] == 'on'){
-				$this->_options['contactUs']['afterProceed']['follow'] = 1;
-				$this->_options['contactUs']['afterProceed']['thank'] = 0;
-			} elseif($_POST[contactUs][afterProceed][thank] == 'on'){
-				$this->_options['contactUs']['afterProceed']['follow'] = 0;
-				$this->_options['contactUs']['afterProceed']['thank'] = 1;
-			} else {
-				$this->_options['contactUs']['afterProceed']['follow'] = 0;
-				$this->_options['contactUs']['afterProceed']['thank'] = 0;
-			}
-			
-			//subscribeExit
-			if($_POST[subscribeExit][afterProceed][follow] == 'on'){
-				$this->_options['subscribeExit']['afterProceed']['follow'] = 1;
-				$this->_options['subscribeExit']['afterProceed']['thank'] = 0;
-			} elseif($_POST[subscribeExit][afterProceed][thank] == 'on'){
-				$this->_options['subscribeExit']['afterProceed']['follow'] = 0;
-				$this->_options['subscribeExit']['afterProceed']['thank'] = 1;
-			} else {
-				$this->_options['subscribeExit']['afterProceed']['follow'] = 0;
-				$this->_options['subscribeExit']['afterProceed']['thank'] = 0;
-			}			
-			
-			update_option('profitquery', $this->_options);
-			echo '
-			<div id="successPQBlock" style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(151, 255, 0, 0.5); text-align: center;">
-					<p style="color: rgb(104, 174, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">Data changed!</p>
-			</div>
-			<script>
-				setTimeout(function(){document.getElementById("successPQBlock").style.display="none";}, 5000);
-				</script>
-			';
-		}
-				
-		
-		
-		if($_POST[action] == 'edit'){
-			//sharingSideBar
 			if($_POST[sharingSideBar]){
 				if($_POST[sharingSideBar][enabled] == 'on') $this->_options['sharingSideBar']['disabled'] = 0; else $this->_options['sharingSideBar']['disabled'] = 1;
-				if(trim($_POST[sharingSideBar][position])) $this->_options['sharingSideBar']['position'] = sanitize_text_field($_POST[sharingSideBar][position]); else $this->_options['sharingSideBar']['position'] = '';
+				if(trim($_POST[sharingSideBar][top])) $this->_options['sharingSideBar']['top'] = sanitize_text_field($_POST[sharingSideBar][top]); else $this->_options['sharingSideBar']['top'] = '';
+				if(trim($_POST[sharingSideBar][side])) $this->_options['sharingSideBar']['side'] = sanitize_text_field($_POST[sharingSideBar][side]); else $this->_options['sharingSideBar']['side'] = '';
 				if(trim($_POST[sharingSideBar][mobile_title])) $this->_options['sharingSideBar']['mobile_title'] = sanitize_text_field($_POST[sharingSideBar][mobile_title]); else $this->_options['sharingSideBar']['position'] = '';
 				if($_POST[sharingSideBar][socnet_with_pos]){
 					unset($this->_options['sharingSideBar']['socnet']);//for old version
@@ -465,6 +588,7 @@ class ProfitQuerySmartWidgetsClass
 					if(trim($_POST[sharingSideBar][galleryOption][button_color])) $this->_options['sharingSideBar']['galleryOption']['button_color'] = sanitize_text_field($_POST[sharingSideBar][galleryOption][button_color]); else $this->_options['sharingSideBar']['galleryOption']['button_color'] = '';
 					if(trim($_POST[sharingSideBar][galleryOption][buttonTitle])) $this->_options['sharingSideBar']['galleryOption']['buttonTitle'] = sanitize_text_field($_POST[sharingSideBar][galleryOption][buttonTitle]); else $this->_options['sharingSideBar']['galleryOption']['buttonTitle'] = '';
 					if(trim($_POST[sharingSideBar][galleryOption][minWidth])) $this->_options['sharingSideBar']['galleryOption']['minWidth'] = sanitize_text_field($_POST[sharingSideBar][galleryOption][minWidth]); else $this->_options['sharingSideBar']['galleryOption']['minWidth'] = '';
+					if(trim($_POST[sharingSideBar][galleryOption][background_color])) $this->_options['sharingSideBar']['galleryOption']['background_color'] = sanitize_text_field($_POST[sharingSideBar][galleryOption][background_color]); else $this->_options['sharingSideBar']['galleryOption']['background_color'] = '';
 				}
 				
 				if(trim($_POST[sharingSideBar][design][color])) $this->_options['sharingSideBar']['design']['color'] = sanitize_text_field($_POST[sharingSideBar][design][color]); else $this->_options['sharingSideBar']['design']['color'] = 'c4';
@@ -472,10 +596,10 @@ class ProfitQuerySmartWidgetsClass
 				if(trim($_POST[sharingSideBar][design][size])) $this->_options['sharingSideBar']['design']['size'] = sanitize_text_field($_POST[sharingSideBar][design][size]); else $this->_options['sharingSideBar']['design']['size'] = 'x30';
 				
 				if($_POST[sharingSideBar][afterProceed]){
-					if($_POST[sharingSideBar][afterProceed][follow] == 'on'){
+					if($_POST[sharingSideBar][afterProceed][follow] == '1'){
 						$this->_options['sharingSideBar']['afterProceed']['follow'] = 1;
 						$this->_options['sharingSideBar']['afterProceed']['thank'] = 0;
-					} elseif($_POST[sharingSideBar][afterProceed][thank] == 'on'){
+					} elseif($_POST[sharingSideBar][afterProceed][thank] == '1'){
 						$this->_options['sharingSideBar']['afterProceed']['follow'] = 0;
 						$this->_options['sharingSideBar']['afterProceed']['thank'] = 1;
 					} else {
@@ -505,6 +629,8 @@ class ProfitQuerySmartWidgetsClass
                     if($_POST[imageSharer][socnet][VK] == 'on') $this->_options[imageSharer][socnet][VK] = 1; else $this->_options[imageSharer][socnet][VK] = 0;
                     if($_POST[imageSharer][socnet][OD] == 'on') $this->_options[imageSharer][socnet][OD] = 1; else $this->_options[imageSharer][socnet][OD] = 0;
                     if($_POST[imageSharer][socnet][LJ] == 'on') $this->_options[imageSharer][socnet][LJ] = 1; else $this->_options[imageSharer][socnet][LJ] = 0;                    
+                    if($_POST[imageSharer][socnet][WU] == 'on') $this->_options[imageSharer][socnet][WU] = 1; else $this->_options[imageSharer][socnet][WU] = 0;                    
+                    if($_POST[imageSharer][socnet][Mail] == 'on') $this->_options[imageSharer][socnet][Mail] = 1; else $this->_options[imageSharer][socnet][Mail] = 0;                    
 				}
 				
 				if($_POST[imageSharer][socnetOption]){
@@ -525,10 +651,10 @@ class ProfitQuerySmartWidgetsClass
 				if(intval($_POST[imageSharer][minWidth]) >= 0) $this->_options['imageSharer']['minWidth'] = intval($_POST[imageSharer][minWidth]);								
 				
 				if($_POST[imageSharer][afterProceed]){
-					if($_POST[imageSharer][afterProceed][follow] == 'on'){
+					if($_POST[imageSharer][afterProceed][follow] == '1'){
 						$this->_options['imageSharer']['afterProceed']['follow'] = 1;
 						$this->_options['imageSharer']['afterProceed']['thank'] = 0;
-					} elseif($_POST[imageSharer][afterProceed][thank] == 'on'){
+					} elseif($_POST[imageSharer][afterProceed][thank] == '1'){
 						$this->_options['imageSharer']['afterProceed']['follow'] = 0;
 						$this->_options['imageSharer']['afterProceed']['thank'] = 1;
 					} else {
@@ -540,12 +666,6 @@ class ProfitQuerySmartWidgetsClass
 					$this->_options['imageSharer']['afterProceed']['thank'] = 0;
 				}
 			}
-						
-			if(trim($_POST[imageSharer][position])) $this->_options['imageSharer']['position'] = sanitize_text_field($_POST[imageSharer][position]); else $this->_options['imageSharer']['position'] = '';
-			
-			
-			//Subscribe Design Block
-			if(trim($_POST[subscribeDesign]) != '') $this->_options['subscribeDesign'] = sanitize_text_field($_POST[subscribeDesign]);												
 			
 			//subscribeBar
 			if($_POST[subscribeBar]){
@@ -563,10 +683,10 @@ class ProfitQuerySmartWidgetsClass
 				if(trim($_POST[subscribeBar][animation])) $this->_options['subscribeBar']['animation'] = sanitize_text_field($_POST[subscribeBar][animation]); else $this->_options['subscribeBar']['animation'] = '';
 				
 				if($_POST[subscribeBar][afterProceed]){
-					if($_POST[subscribeBar][afterProceed][follow] == 'on'){
+					if($_POST[subscribeBar][afterProceed][follow] == '1'){
 						$this->_options['subscribeBar']['afterProceed']['follow'] = 1;
 						$this->_options['subscribeBar']['afterProceed']['thank'] = 0;
-					} elseif($_POST[subscribeBar][afterProceed][thank] == 'on'){
+					} elseif($_POST[subscribeBar][afterProceed][thank] == '1'){
 						$this->_options['subscribeBar']['afterProceed']['follow'] = 0;
 						$this->_options['subscribeBar']['afterProceed']['thank'] = 1;
 					} else {
@@ -596,10 +716,10 @@ class ProfitQuerySmartWidgetsClass
 				if(trim($_POST[subscribeExit][animation])) $this->_options['subscribeExit']['animation'] = sanitize_text_field($_POST[subscribeExit][animation]); else $this->_options['subscribeExit']['animation'] = '';				
 				if(trim($_POST[subscribeExit][overlay])) $this->_options['subscribeExit']['overlay'] = sanitize_text_field($_POST[subscribeExit][overlay]); else $this->_options['subscribeExit']['overlay'] = '';				
 				if($_POST[subscribeExit][afterProceed]){
-					if($_POST[subscribeExit][afterProceed][follow] == 'on'){
+					if($_POST[subscribeExit][afterProceed][follow] == '1'){
 						$this->_options['subscribeExit']['afterProceed']['follow'] = 1;
 						$this->_options['subscribeExit']['afterProceed']['thank'] = 0;
-					} elseif($_POST[subscribeExit][afterProceed][thank] == 'on'){
+					} elseif($_POST[subscribeExit][afterProceed][thank] == '1'){
 						$this->_options['subscribeExit']['afterProceed']['follow'] = 0;
 						$this->_options['subscribeExit']['afterProceed']['thank'] = 1;
 					} else {
@@ -612,19 +732,19 @@ class ProfitQuerySmartWidgetsClass
 				}
 			}
 			
-			
-			//contactUs Design Block
-			if(trim($_POST[contactsDesign]) != '') $this->_options['contactsDesign'] = sanitize_text_field($_POST[contactsDesign]);
-			if(trim($_POST[adminEmail]) != '') $this->_options['adminEmail'] = sanitize_text_field($_POST[adminEmail]);
-			
 			//contactUs
 			if($_POST[contactUs]){
 				if($_POST[contactUs][enabled] == 'on') $this->_options['contactUs']['disabled'] = 0; else $this->_options['contactUs']['disabled'] = 1;
-				if(trim($_POST[contactUs][position])) $this->_options['contactUs']['position'] = sanitize_text_field($_POST[contactUs][position]); else $this->_options['contactUs']['position'] = '';
+				if(trim($_POST[contactUs][top])) $this->_options['contactUs']['top'] = sanitize_text_field($_POST[contactUs][top]); else $this->_options['contactUs']['top'] = '';
+				if(trim($_POST[contactUs][side])) $this->_options['contactUs']['side'] = sanitize_text_field($_POST[contactUs][side]); else $this->_options['contactUs']['side'] = '';
 				if(trim($_POST[contactUs][typeWindow])) $this->_options['contactUs']['typeWindow'] = sanitize_text_field($_POST[contactUs][typeWindow]); else $this->_options['contactUs']['typeWindow'] = '';
 				if(trim($_POST[contactUs][title])) $this->_options['contactUs']['title'] = sanitize_text_field($_POST[contactUs][title]); else $this->_options['contactUs']['title'] = '';
 				if(trim($_POST[contactUs][sub_title])) $this->_options['contactUs']['sub_title'] = sanitize_text_field($_POST[contactUs][sub_title]); else $this->_options['contactUs']['sub_title'] = '';
 				if(trim($_POST[contactUs][buttonTitle])) $this->_options['contactUs']['buttonTitle'] = sanitize_text_field($_POST[contactUs][buttonTitle]); else $this->_options['contactUs']['buttonTitle'] = '';
+				if(trim($_POST[contactUs][enter_name_text])) $this->_options['contactUs']['enter_name_text'] = sanitize_text_field($_POST[contactUs][enter_name_text]); else $this->_options['contactUs']['enter_name_text'] = '';
+				if(trim($_POST[contactUs][enter_email_text])) $this->_options['contactUs']['enter_email_text'] = sanitize_text_field($_POST[contactUs][enter_email_text]); else $this->_options['contactUs']['enter_email_text'] = '';
+				if(trim($_POST[contactUs][enter_message_text])) $this->_options['contactUs']['enter_message_text'] = sanitize_text_field($_POST[contactUs][enter_message_text]); else $this->_options['contactUs']['enter_message_text'] = '';
+				if(trim($_POST[contactUs][loaderText])) $this->_options['contactUs']['loaderText'] = sanitize_text_field($_POST[contactUs][loaderText]); else $this->_options['contactUs']['loaderText'] = '';
 								
 				if(trim($_POST[contactUs][overlay])) $this->_options['contactUs']['overlay'] = sanitize_text_field($_POST[contactUs][overlay]); else $this->_options['contactUs']['overlay'] = '';
 				if(trim($_POST[contactUs][animation])) $this->_options['contactUs']['animation'] = sanitize_text_field($_POST[contactUs][animation]); else $this->_options['contactUs']['animation'] = '';
@@ -634,10 +754,10 @@ class ProfitQuerySmartWidgetsClass
 				if(trim($_POST[contactUs][img])) $this->_options['contactUs']['img'] = sanitize_text_field($_POST[contactUs][img]); else $this->_options['contactUs']['img'] = '';
 				if(trim($_POST[contactUs][imgUrl])) $this->_options['contactUs']['imgUrl'] = sanitize_text_field($_POST[contactUs][imgUrl]); else $this->_options['contactUs']['imgUrl'] = '';				
 				if($_POST[contactUs][afterProceed]){
-					if($_POST[contactUs][afterProceed][follow] == 'on'){
+					if($_POST[contactUs][afterProceed][follow] == '1'){
 						$this->_options['contactUs']['afterProceed']['follow'] = 1;
 						$this->_options['contactUs']['afterProceed']['thank'] = 0;
-					} elseif($_POST[contactUs][afterProceed][thank] == 'on'){
+					} elseif($_POST[contactUs][afterProceed][thank] == '1'){
 						$this->_options['contactUs']['afterProceed']['follow'] = 0;
 						$this->_options['contactUs']['afterProceed']['thank'] = 1;
 					} else {
@@ -650,14 +770,20 @@ class ProfitQuerySmartWidgetsClass
 				}
 			}
 			
+			
 			//callMe
 			if($_POST[callMe]){
 				if($_POST[callMe][enabled] == 'on') $this->_options['callMe']['disabled'] = 0; else $this->_options['callMe']['disabled'] = 1;
-				if(trim($_POST[callMe][position])) $this->_options['callMe']['position'] = sanitize_text_field($_POST[callMe][position]); else $this->_options['callMe']['position'] = '';
+				if(trim($_POST[callMe][top])) $this->_options['callMe']['top'] = sanitize_text_field($_POST[callMe][top]); else $this->_options['callMe']['top'] = '';
+				if(trim($_POST[callMe][side])) $this->_options['callMe']['side'] = sanitize_text_field($_POST[callMe][side]); else $this->_options['callMe']['side'] = '';
 				if(trim($_POST[callMe][typeWindow])) $this->_options['callMe']['typeWindow'] = sanitize_text_field($_POST[callMe][typeWindow]); else $this->_options['callMe']['typeWindow'] = '';
 				if(trim($_POST[callMe][title])) $this->_options['callMe']['title'] = sanitize_text_field($_POST[callMe][title]); else $this->_options['callMe']['title'] = '';
 				if(trim($_POST[callMe][sub_title])) $this->_options['callMe']['sub_title'] = sanitize_text_field($_POST[callMe][sub_title]); else $this->_options['callMe']['sub_title'] = '';				
 				if(trim($_POST[callMe][buttonTitle])) $this->_options['callMe']['buttonTitle'] = sanitize_text_field($_POST[callMe][buttonTitle]); else $this->_options['callMe']['buttonTitle'] = '';
+				
+				if(trim($_POST[callMe][enter_name_text])) $this->_options['callMe']['enter_name_text'] = sanitize_text_field($_POST[callMe][enter_name_text]); else $this->_options['callMe']['enter_name_text'] = '';
+				if(trim($_POST[callMe][enter_phone_text])) $this->_options['callMe']['enter_phone_text'] = sanitize_text_field($_POST[callMe][buttonTitle]); else $this->_options['callMe']['enter_phone_text'] = '';
+				if(trim($_POST[callMe][loaderText])) $this->_options['callMe']['loaderText'] = sanitize_text_field($_POST[callMe][loaderText]); else $this->_options['callMe']['loaderText'] = '';
 								
 				if(trim($_POST[callMe][overlay])) $this->_options['callMe']['overlay'] = sanitize_text_field($_POST[callMe][overlay]); else $this->_options['callMe']['overlay'] = '';
 				if(trim($_POST[callMe][animation])) $this->_options['callMe']['animation'] = sanitize_text_field($_POST[callMe][animation]); else $this->_options['callMe']['animation'] = '';
@@ -667,10 +793,10 @@ class ProfitQuerySmartWidgetsClass
 				if(trim($_POST[callMe][img])) $this->_options['callMe']['img'] = sanitize_text_field($_POST[callMe][img]); else $this->_options['callMe']['img'] = '';
 				if(trim($_POST[callMe][imgUrl])) $this->_options['callMe']['imgUrl'] = sanitize_text_field($_POST[callMe][imgUrl]); else $this->_options['callMe']['imgUrl'] = '';				
 				if($_POST[callMe][afterProceed]){
-					if($_POST[callMe][afterProceed][follow] == 'on'){
+					if($_POST[callMe][afterProceed][follow] == '1'){
 						$this->_options['callMe']['afterProceed']['follow'] = 1;
 						$this->_options['callMe']['afterProceed']['thank'] = 0;
-					} elseif($_POST[callMe][afterProceed][thank] == 'on'){
+					} elseif($_POST[callMe][afterProceed][thank] == '1'){
 						$this->_options['callMe']['afterProceed']['follow'] = 0;
 						$this->_options['callMe']['afterProceed']['thank'] = 1;
 					} else {
@@ -683,10 +809,209 @@ class ProfitQuerySmartWidgetsClass
 				}
 			}
 			
+			//printr($_POST);
+			//die();
+			if($_POST[proOptions]){
+				//if($_POST[proOptions][all] == 'on') $this->_options['callMe']['disabled'] = 0; else $this->_options['callMe']['disabled'] = 1;
+				//pro sharingSideBar
+				if($_POST[proOptions][sharingSideBar]){
+					if((int)$_POST[proOptions][sharingSideBar][disableMainPage] == 1) $this->_options['proOptions']['sharingSideBar']['disableMainPage'] = 1; else $this->_options['proOptions']['sharingSideBar']['disableMainPage'] = 0;
+					if((int)$_POST[proOptions][sharingSideBar][whitelabel] == 1) $this->_options['proOptions']['sharingSideBar']['whitelabel'] = 1; else $this->_options['proOptions']['sharingSideBar']['whitelabel'] = 0;
+					if(trim($_POST[proOptions][sharingSideBar][disableExeptPageMask][0])) $this->_options['proOptions']['sharingSideBar']['disableExeptPageMask'][0] = sanitize_text_field($_POST[proOptions][sharingSideBar][disableExeptPageMask][0]); else $this->_options['proOptions']['sharingSideBar']['disableExeptPageMask'][0] = '';
+					if(trim($_POST[proOptions][sharingSideBar][disableExeptPageMask][1])) $this->_options['proOptions']['sharingSideBar']['disableExeptPageMask'][1] = sanitize_text_field($_POST[proOptions][sharingSideBar][disableExeptPageMask][1]); else $this->_options['proOptions']['sharingSideBar']['disableExeptPageMask'][1] = '';
+					if(trim($_POST[proOptions][sharingSideBar][disableExeptPageMask][2])) $this->_options['proOptions']['sharingSideBar']['disableExeptPageMask'][2] = sanitize_text_field($_POST[proOptions][sharingSideBar][disableExeptPageMask][2]); else $this->_options['proOptions']['sharingSideBar']['disableExeptPageMask'][2] = '';
+					if(trim($_POST[proOptions][sharingSideBar][disableExeptPageMask][3])) $this->_options['proOptions']['sharingSideBar']['disableExeptPageMask'][3] = sanitize_text_field($_POST[proOptions][sharingSideBar][disableExeptPageMask][3]); else $this->_options['proOptions']['sharingSideBar']['disableExeptPageMask'][3] = '';
+					if(trim($_POST[proOptions][sharingSideBar][disableExeptPageMask][4])) $this->_options['proOptions']['sharingSideBar']['disableExeptPageMask'][4] = sanitize_text_field($_POST[proOptions][sharingSideBar][disableExeptPageMask][4]); else $this->_options['proOptions']['sharingSideBar']['disableExeptPageMask'][4] = '';
+					
+					if(trim($_POST[proOptions][sharingSideBar][animation])) $this->_options['proOptions']['sharingSideBar']['animation'] = sanitize_text_field($_POST[proOptions][sharingSideBar][animation]); else $this->_options['proOptions']['sharingSideBar']['animation'] = '';
+					if(trim($_POST[proOptions][sharingSideBar][hover_animation])) $this->_options['proOptions']['sharingSideBar']['hover_animation'] = sanitize_text_field($_POST[proOptions][sharingSideBar][hover_animation]); else $this->_options['proOptions']['sharingSideBar']['hover_animation'] = '';					
+				}
+				
+				//imageSharer
+				if($_POST[proOptions][imageSharer]){
+					if((int)$_POST[proOptions][imageSharer][disableMainPage] == 1) $this->_options['proOptions']['imageSharer']['disableMainPage'] = 1; else $this->_options['proOptions']['imageSharer']['disableMainPage'] = 0;					
+					if((int)$_POST[proOptions][imageSharer][minHeight]) $this->_options['proOptions']['imageSharer']['minHeight'] = (int)$_POST[proOptions][imageSharer][minHeight]; else $this->_options['proOptions']['imageSharer']['minHeight'] = 0;
+					
+					if(trim($_POST[proOptions][imageSharer][disableExeptPageMask][0])) $this->_options['proOptions']['imageSharer']['disableExeptPageMask'][0] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptPageMask][0]); else $this->_options['proOptions']['imageSharer']['disableExeptPageMask'][0] = '';
+					if(trim($_POST[proOptions][imageSharer][disableExeptPageMask][1])) $this->_options['proOptions']['imageSharer']['disableExeptPageMask'][1] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptPageMask][1]); else $this->_options['proOptions']['imageSharer']['disableExeptPageMask'][1] = '';
+					if(trim($_POST[proOptions][imageSharer][disableExeptPageMask][2])) $this->_options['proOptions']['imageSharer']['disableExeptPageMask'][2] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptPageMask][2]); else $this->_options['proOptions']['imageSharer']['disableExeptPageMask'][2] = '';
+					if(trim($_POST[proOptions][imageSharer][disableExeptPageMask][3])) $this->_options['proOptions']['imageSharer']['disableExeptPageMask'][3] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptPageMask][3]); else $this->_options['proOptions']['imageSharer']['disableExeptPageMask'][3] = '';
+					if(trim($_POST[proOptions][imageSharer][disableExeptPageMask][4])) $this->_options['proOptions']['imageSharer']['disableExeptPageMask'][4] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptPageMask][4]); else $this->_options['proOptions']['imageSharer']['disableExeptPageMask'][4] = '';
+					
+					if(trim($_POST[proOptions][imageSharer][disableExeptExtensions][0])) $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][0] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptExtensions][0]); else $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][0] = '';
+					if(trim($_POST[proOptions][imageSharer][disableExeptExtensions][1])) $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][1] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptExtensions][1]); else $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][1] = '';
+					if(trim($_POST[proOptions][imageSharer][disableExeptExtensions][2])) $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][2] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptExtensions][2]); else $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][2] = '';
+					if(trim($_POST[proOptions][imageSharer][disableExeptExtensions][3])) $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][3] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptExtensions][3]); else $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][3] = '';
+					if(trim($_POST[proOptions][imageSharer][disableExeptExtensions][4])) $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][4] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptExtensions][4]); else $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][4] = '';
+					
+					if(trim($_POST[proOptions][imageSharer][animation])) $this->_options['proOptions']['imageSharer']['animation'] = sanitize_text_field($_POST[proOptions][imageSharer][animation]); else $this->_options['proOptions']['imageSharer']['animation'] = '';
+					if(trim($_POST[proOptions][imageSharer][hover_animation])) $this->_options['proOptions']['imageSharer']['hover_animation'] = sanitize_text_field($_POST[proOptions][imageSharer][hover_animation]); else $this->_options['proOptions']['imageSharer']['hover_animation'] = '';					
+				}
+				
+				//subscribeBar
+				if($_POST[proOptions][subscribeBar]){
+					if((int)$_POST[proOptions][subscribeBar][disableMainPage] == 1) $this->_options['proOptions']['subscribeBar']['disableMainPage'] = 1; else $this->_options['proOptions']['subscribeBar']['disableMainPage'] = 0;
+					if((int)$_POST[proOptions][subscribeBar][whitelabel] == 1) $this->_options['proOptions']['subscribeBar']['whitelabel'] = 1; else $this->_options['proOptions']['subscribeBar']['whitelabel'] = 0;
+					if(trim($_POST[proOptions][subscribeBar][disableExeptPageMask][0])) $this->_options['proOptions']['subscribeBar']['disableExeptPageMask'][0] = sanitize_text_field($_POST[proOptions][subscribeBar][disableExeptPageMask][0]); else $this->_options['proOptions']['subscribeBar']['disableExeptPageMask'][0] = '';
+					if(trim($_POST[proOptions][subscribeBar][disableExeptPageMask][1])) $this->_options['proOptions']['subscribeBar']['disableExeptPageMask'][1] = sanitize_text_field($_POST[proOptions][subscribeBar][disableExeptPageMask][1]); else $this->_options['proOptions']['subscribeBar']['disableExeptPageMask'][1] = '';
+					if(trim($_POST[proOptions][subscribeBar][disableExeptPageMask][2])) $this->_options['proOptions']['subscribeBar']['disableExeptPageMask'][2] = sanitize_text_field($_POST[proOptions][subscribeBar][disableExeptPageMask][2]); else $this->_options['proOptions']['subscribeBar']['disableExeptPageMask'][2] = '';
+					if(trim($_POST[proOptions][subscribeBar][disableExeptPageMask][3])) $this->_options['proOptions']['subscribeBar']['disableExeptPageMask'][3] = sanitize_text_field($_POST[proOptions][subscribeBar][disableExeptPageMask][3]); else $this->_options['proOptions']['subscribeBar']['disableExeptPageMask'][3] = '';
+					if(trim($_POST[proOptions][subscribeBar][disableExeptPageMask][4])) $this->_options['proOptions']['subscribeBar']['disableExeptPageMask'][4] = sanitize_text_field($_POST[proOptions][subscribeBar][disableExeptPageMask][4]); else $this->_options['proOptions']['subscribeBar']['disableExeptPageMask'][4] = '';
+					
+					if(trim($_POST[proOptions][subscribeBar][animation])) $this->_options['proOptions']['subscribeBar']['animation'] = sanitize_text_field($_POST[proOptions][subscribeBar][animation]); else $this->_options['proOptions']['subscribeBar']['animation'] = '';
+					if(trim($_POST[proOptions][subscribeBar][hover_animation])) $this->_options['proOptions']['subscribeBar']['hover_animation'] = sanitize_text_field($_POST[proOptions][subscribeBar][hover_animation]); else $this->_options['proOptions']['subscribeBar']['hover_animation'] = '';					
+					
+					if(trim($_POST[proOptions][subscribeBar][font])) $this->_options['proOptions']['subscribeBar']['font'] = sanitize_text_field($_POST[proOptions][subscribeBar][font]); else $this->_options['proOptions']['subscribeBar']['font'] = '';
+					if(trim($_POST[proOptions][subscribeBar][shape])) $this->_options['proOptions']['subscribeBar']['shape'] = sanitize_text_field($_POST[proOptions][subscribeBar][shape]); else $this->_options['proOptions']['subscribeBar']['shape'] = '';
+					if(trim($_POST[proOptions][subscribeBar][b_c_color])) $this->_options['proOptions']['subscribeBar']['b_c_color'] = sanitize_text_field($_POST[proOptions][subscribeBar][b_c_color]); else $this->_options['proOptions']['subscribeBar']['b_c_color'] = '';
+				}
+				
+				//subscribeExit
+				if($_POST[proOptions][subscribeExit]){
+					if((int)$_POST[proOptions][subscribeExit][disableMainPage] == 1) $this->_options['proOptions']['subscribeExit']['disableMainPage'] = 1; else $this->_options['proOptions']['subscribeExit']['disableMainPage'] = 0;
+					if((int)$_POST[proOptions][subscribeExit][whitelabel] == 1) $this->_options['proOptions']['subscribeExit']['whitelabel'] = 1; else $this->_options['proOptions']['subscribeExit']['whitelabel'] = 0;
+					if(trim($_POST[proOptions][subscribeExit][disableExeptPageMask][0])) $this->_options['proOptions']['subscribeExit']['disableExeptPageMask'][0] = sanitize_text_field($_POST[proOptions][subscribeExit][disableExeptPageMask][0]); else $this->_options['proOptions']['subscribeExit']['disableExeptPageMask'][0] = '';
+					if(trim($_POST[proOptions][subscribeExit][disableExeptPageMask][1])) $this->_options['proOptions']['subscribeExit']['disableExeptPageMask'][1] = sanitize_text_field($_POST[proOptions][subscribeExit][disableExeptPageMask][1]); else $this->_options['proOptions']['subscribeExit']['disableExeptPageMask'][1] = '';
+					if(trim($_POST[proOptions][subscribeExit][disableExeptPageMask][2])) $this->_options['proOptions']['subscribeExit']['disableExeptPageMask'][2] = sanitize_text_field($_POST[proOptions][subscribeExit][disableExeptPageMask][2]); else $this->_options['proOptions']['subscribeExit']['disableExeptPageMask'][2] = '';
+					if(trim($_POST[proOptions][subscribeExit][disableExeptPageMask][3])) $this->_options['proOptions']['subscribeExit']['disableExeptPageMask'][3] = sanitize_text_field($_POST[proOptions][subscribeExit][disableExeptPageMask][3]); else $this->_options['proOptions']['subscribeExit']['disableExeptPageMask'][3] = '';
+					if(trim($_POST[proOptions][subscribeExit][disableExeptPageMask][4])) $this->_options['proOptions']['subscribeExit']['disableExeptPageMask'][4] = sanitize_text_field($_POST[proOptions][subscribeExit][disableExeptPageMask][4]); else $this->_options['proOptions']['subscribeExit']['disableExeptPageMask'][4] = '';
+					
+					if(trim($_POST[proOptions][subscribeExit][animation])) $this->_options['proOptions']['subscribeExit']['animation'] = sanitize_text_field($_POST[proOptions][subscribeExit][animation]); else $this->_options['proOptions']['subscribeExit']['animation'] = '';
+					if(trim($_POST[proOptions][subscribeExit][hover_animation])) $this->_options['proOptions']['subscribeExit']['hover_animation'] = sanitize_text_field($_POST[proOptions][subscribeExit][hover_animation]); else $this->_options['proOptions']['subscribeExit']['hover_animation'] = '';					
+					
+					if(trim($_POST[proOptions][subscribeExit][font])) $this->_options['proOptions']['subscribeExit']['font'] = sanitize_text_field($_POST[proOptions][subscribeExit][font]); else $this->_options['proOptions']['subscribeExit']['font'] = '';
+					if(trim($_POST[proOptions][subscribeExit][head_font])) $this->_options['proOptions']['subscribeExit']['head_font'] = sanitize_text_field($_POST[proOptions][subscribeExit][head_font]); else $this->_options['proOptions']['subscribeExit']['head_font'] = '';
+					if(trim($_POST[proOptions][subscribeExit][head_color])) $this->_options['proOptions']['subscribeExit']['head_color'] = sanitize_text_field($_POST[proOptions][subscribeExit][head_color]); else $this->_options['proOptions']['subscribeExit']['head_color'] = '';
+					if(trim($_POST[proOptions][subscribeExit][head_size])) $this->_options['proOptions']['subscribeExit']['head_size'] = sanitize_text_field($_POST[proOptions][subscribeExit][head_size]); else $this->_options['proOptions']['subscribeExit']['head_size'] = '';
+					if(trim($_POST[proOptions][subscribeExit][text_size])) $this->_options['proOptions']['subscribeExit']['text_size'] = sanitize_text_field($_POST[proOptions][subscribeExit][text_size]); else $this->_options['proOptions']['subscribeExit']['text_size'] = '';
+					if(trim($_POST[proOptions][subscribeExit][text_color])) $this->_options['proOptions']['subscribeExit']['text_color'] = sanitize_text_field($_POST[proOptions][subscribeExit][text_color]); else $this->_options['proOptions']['subscribeExit']['text_color'] = '';
+					if(trim($_POST[proOptions][subscribeExit][b_radius])) $this->_options['proOptions']['subscribeExit']['b_radius'] = sanitize_text_field($_POST[proOptions][subscribeExit][b_radius]); else $this->_options['proOptions']['subscribeExit']['b_radius'] = '';
+					if(trim($_POST[proOptions][subscribeExit][b_color])) $this->_options['proOptions']['subscribeExit']['b_color'] = sanitize_text_field($_POST[proOptions][subscribeExit][b_color]); else $this->_options['proOptions']['subscribeExit']['b_color'] = '';
+					if(trim($_POST[proOptions][subscribeExit][b_opacity])) $this->_options['proOptions']['subscribeExit']['b_opacity'] = sanitize_text_field($_POST[proOptions][subscribeExit][b_opacity]); else $this->_options['proOptions']['subscribeExit']['b_opacity'] = '';
+					if(trim($_POST[proOptions][subscribeExit][b_style])) $this->_options['proOptions']['subscribeExit']['b_style'] = sanitize_text_field($_POST[proOptions][subscribeExit][b_style]); else $this->_options['proOptions']['subscribeExit']['b_style'] = '';
+					if(trim($_POST[proOptions][subscribeExit][b_shadow])) $this->_options['proOptions']['subscribeExit']['b_shadow'] = sanitize_text_field($_POST[proOptions][subscribeExit][b_shadow]); else $this->_options['proOptions']['subscribeExit']['b_shadow'] = '';
+					if(trim($_POST[proOptions][subscribeExit][background_image])) $this->_options['proOptions']['subscribeExit']['background_image'] = sanitize_text_field($_POST[proOptions][subscribeExit][background_image]); else $this->_options['proOptions']['subscribeExit']['background_image'] = '';										
+					if(trim($_POST[proOptions][subscribeExit][b_width])) $this->_options['proOptions']['subscribeExit']['b_width'] = sanitize_text_field($_POST[proOptions][subscribeExit][b_width]); else $this->_options['proOptions']['subscribeExit']['b_width'] = '';
+					if(trim($_POST[proOptions][subscribeExit][b_c_color])) $this->_options['proOptions']['subscribeExit']['b_c_color'] = sanitize_text_field($_POST[proOptions][subscribeExit][b_c_color]); else $this->_options['proOptions']['subscribeExit']['b_c_color'] = '';
+				}
+				
+				//contactUs
+				if($_POST[proOptions][contactUs]){
+					if((int)$_POST[proOptions][contactUs][disableMainPage] == 1) $this->_options['proOptions']['contactUs']['disableMainPage'] = 1; else $this->_options['proOptions']['contactUs']['disableMainPage'] = 0;
+					if((int)$_POST[proOptions][contactUs][whitelabel] == 1) $this->_options['proOptions']['contactUs']['whitelabel'] = 1; else $this->_options['proOptions']['contactUs']['whitelabel'] = 0;
+					if(trim($_POST[proOptions][contactUs][disableExeptPageMask][0])) $this->_options['proOptions']['contactUs']['disableExeptPageMask'][0] = sanitize_text_field($_POST[proOptions][contactUs][disableExeptPageMask][0]); else $this->_options['proOptions']['contactUs']['disableExeptPageMask'][0] = '';
+					if(trim($_POST[proOptions][contactUs][disableExeptPageMask][1])) $this->_options['proOptions']['contactUs']['disableExeptPageMask'][1] = sanitize_text_field($_POST[proOptions][contactUs][disableExeptPageMask][1]); else $this->_options['proOptions']['contactUs']['disableExeptPageMask'][1] = '';
+					if(trim($_POST[proOptions][contactUs][disableExeptPageMask][2])) $this->_options['proOptions']['contactUs']['disableExeptPageMask'][2] = sanitize_text_field($_POST[proOptions][contactUs][disableExeptPageMask][2]); else $this->_options['proOptions']['contactUs']['disableExeptPageMask'][2] = '';
+					if(trim($_POST[proOptions][contactUs][disableExeptPageMask][3])) $this->_options['proOptions']['contactUs']['disableExeptPageMask'][3] = sanitize_text_field($_POST[proOptions][contactUs][disableExeptPageMask][3]); else $this->_options['proOptions']['contactUs']['disableExeptPageMask'][3] = '';
+					if(trim($_POST[proOptions][contactUs][disableExeptPageMask][4])) $this->_options['proOptions']['contactUs']['disableExeptPageMask'][4] = sanitize_text_field($_POST[proOptions][contactUs][disableExeptPageMask][4]); else $this->_options['proOptions']['contactUs']['disableExeptPageMask'][4] = '';
+					
+					if(trim($_POST[proOptions][contactUs][animation])) $this->_options['proOptions']['contactUs']['animation'] = sanitize_text_field($_POST[proOptions][contactUs][animation]); else $this->_options['proOptions']['contactUs']['animation'] = '';
+					if(trim($_POST[proOptions][contactUs][hover_animation])) $this->_options['proOptions']['contactUs']['hover_animation'] = sanitize_text_field($_POST[proOptions][contactUs][hover_animation]); else $this->_options['proOptions']['contactUs']['hover_animation'] = '';					
+					
+					if(trim($_POST[proOptions][contactUs][font])) $this->_options['proOptions']['contactUs']['font'] = sanitize_text_field($_POST[proOptions][contactUs][font]); else $this->_options['proOptions']['contactUs']['font'] = '';
+					if(trim($_POST[proOptions][contactUs][head_font])) $this->_options['proOptions']['contactUs']['head_font'] = sanitize_text_field($_POST[proOptions][contactUs][head_font]); else $this->_options['proOptions']['contactUs']['head_font'] = '';
+					if(trim($_POST[proOptions][contactUs][head_color])) $this->_options['proOptions']['contactUs']['head_color'] = sanitize_text_field($_POST[proOptions][contactUs][head_color]); else $this->_options['proOptions']['contactUs']['head_color'] = '';
+					if(trim($_POST[proOptions][contactUs][head_size])) $this->_options['proOptions']['contactUs']['head_size'] = sanitize_text_field($_POST[proOptions][contactUs][head_size]); else $this->_options['proOptions']['contactUs']['head_size'] = '';
+					if(trim($_POST[proOptions][contactUs][text_size])) $this->_options['proOptions']['contactUs']['text_size'] = sanitize_text_field($_POST[proOptions][contactUs][text_size]); else $this->_options['proOptions']['contactUs']['text_size'] = '';					
+					if(trim($_POST[proOptions][contactUs][text_color])) $this->_options['proOptions']['contactUs']['text_color'] = sanitize_text_field($_POST[proOptions][contactUs][text_color]); else $this->_options['proOptions']['contactUs']['text_color'] = '';
+					if(trim($_POST[proOptions][contactUs][b_radius])) $this->_options['proOptions']['contactUs']['b_radius'] = sanitize_text_field($_POST[proOptions][contactUs][b_radius]); else $this->_options['proOptions']['contactUs']['b_radius'] = '';
+					if(trim($_POST[proOptions][contactUs][b_color])) $this->_options['proOptions']['contactUs']['b_color'] = sanitize_text_field($_POST[proOptions][contactUs][b_color]); else $this->_options['proOptions']['contactUs']['b_color'] = '';
+					if(trim($_POST[proOptions][contactUs][b_opacity])) $this->_options['proOptions']['contactUs']['b_opacity'] = sanitize_text_field($_POST[proOptions][contactUs][b_opacity]); else $this->_options['proOptions']['contactUs']['b_opacity'] = '';
+					if(trim($_POST[proOptions][contactUs][b_style])) $this->_options['proOptions']['contactUs']['b_style'] = sanitize_text_field($_POST[proOptions][contactUs][b_style]); else $this->_options['proOptions']['contactUs']['b_style'] = '';
+					if(trim($_POST[proOptions][contactUs][b_shadow])) $this->_options['proOptions']['contactUs']['b_shadow'] = sanitize_text_field($_POST[proOptions][contactUs][b_shadow]); else $this->_options['proOptions']['contactUs']['b_shadow'] = '';
+					if(trim($_POST[proOptions][contactUs][background_image])) $this->_options['proOptions']['contactUs']['background_image'] = sanitize_text_field($_POST[proOptions][contactUs][background_image]); else $this->_options['proOptions']['contactUs']['background_image'] = '';					
+					if(trim($_POST[proOptions][contactUs][b_width])) $this->_options['proOptions']['contactUs']['b_width'] = sanitize_text_field($_POST[proOptions][contactUs][b_width]); else $this->_options['proOptions']['contactUs']['b_width'] = '';
+					if(trim($_POST[proOptions][contactUs][b_c_color])) $this->_options['proOptions']['contactUs']['b_c_color'] = sanitize_text_field($_POST[proOptions][contactUs][b_c_color]); else $this->_options['proOptions']['contactUs']['b_c_color'] = '';
+				}
+				
+				//callMe
+				if($_POST[proOptions][callMe]){
+					if((int)$_POST[proOptions][callMe][disableMainPage] == 1) $this->_options['proOptions']['callMe']['disableMainPage'] = 1; else $this->_options['proOptions']['callMe']['disableMainPage'] = 0;
+					if((int)$_POST[proOptions][callMe][whitelabel] == 1) $this->_options['proOptions']['callMe']['whitelabel'] = 1; else $this->_options['proOptions']['callMe']['whitelabel'] = 0;
+					if(trim($_POST[proOptions][callMe][disableExeptPageMask][0])) $this->_options['proOptions']['callMe']['disableExeptPageMask'][0] = sanitize_text_field($_POST[proOptions][callMe][disableExeptPageMask][0]); else $this->_options['proOptions']['callMe']['disableExeptPageMask'][0] = '';
+					if(trim($_POST[proOptions][callMe][disableExeptPageMask][1])) $this->_options['proOptions']['callMe']['disableExeptPageMask'][1] = sanitize_text_field($_POST[proOptions][callMe][disableExeptPageMask][1]); else $this->_options['proOptions']['callMe']['disableExeptPageMask'][1] = '';
+					if(trim($_POST[proOptions][callMe][disableExeptPageMask][2])) $this->_options['proOptions']['callMe']['disableExeptPageMask'][2] = sanitize_text_field($_POST[proOptions][callMe][disableExeptPageMask][2]); else $this->_options['proOptions']['callMe']['disableExeptPageMask'][2] = '';
+					if(trim($_POST[proOptions][callMe][disableExeptPageMask][3])) $this->_options['proOptions']['callMe']['disableExeptPageMask'][3] = sanitize_text_field($_POST[proOptions][callMe][disableExeptPageMask][3]); else $this->_options['proOptions']['callMe']['disableExeptPageMask'][3] = '';
+					if(trim($_POST[proOptions][callMe][disableExeptPageMask][4])) $this->_options['proOptions']['callMe']['disableExeptPageMask'][4] = sanitize_text_field($_POST[proOptions][callMe][disableExeptPageMask][4]); else $this->_options['proOptions']['callMe']['disableExeptPageMask'][4] = '';
+					
+					if(trim($_POST[proOptions][callMe][animation])) $this->_options['proOptions']['callMe']['animation'] = sanitize_text_field($_POST[proOptions][callMe][animation]); else $this->_options['proOptions']['callMe']['animation'] = '';
+					if(trim($_POST[proOptions][callMe][hover_animation])) $this->_options['proOptions']['callMe']['hover_animation'] = sanitize_text_field($_POST[proOptions][callMe][hover_animation]); else $this->_options['proOptions']['callMe']['hover_animation'] = '';					
+					
+					if(trim($_POST[proOptions][callMe][font])) $this->_options['proOptions']['callMe']['font'] = sanitize_text_field($_POST[proOptions][callMe][font]); else $this->_options['proOptions']['callMe']['font'] = '';
+					if(trim($_POST[proOptions][callMe][head_font])) $this->_options['proOptions']['callMe']['head_font'] = sanitize_text_field($_POST[proOptions][callMe][head_font]); else $this->_options['proOptions']['callMe']['head_font'] = '';
+					if(trim($_POST[proOptions][callMe][head_color])) $this->_options['proOptions']['callMe']['head_color'] = sanitize_text_field($_POST[proOptions][callMe][head_color]); else $this->_options['proOptions']['callMe']['head_color'] = '';
+					if(trim($_POST[proOptions][callMe][head_size])) $this->_options['proOptions']['callMe']['head_size'] = sanitize_text_field($_POST[proOptions][callMe][head_size]); else $this->_options['proOptions']['callMe']['head_size'] = '';
+					if(trim($_POST[proOptions][callMe][text_size])) $this->_options['proOptions']['callMe']['text_size'] = sanitize_text_field($_POST[proOptions][callMe][text_size]); else $this->_options['proOptions']['callMe']['text_size'] = '';					
+					if(trim($_POST[proOptions][callMe][text_color])) $this->_options['proOptions']['callMe']['text_color'] = sanitize_text_field($_POST[proOptions][callMe][text_color]); else $this->_options['proOptions']['callMe']['text_color'] = '';
+					if(trim($_POST[proOptions][callMe][b_radius])) $this->_options['proOptions']['callMe']['b_radius'] = sanitize_text_field($_POST[proOptions][callMe][b_radius]); else $this->_options['proOptions']['callMe']['b_radius'] = '';
+					if(trim($_POST[proOptions][callMe][b_color])) $this->_options['proOptions']['callMe']['b_color'] = sanitize_text_field($_POST[proOptions][callMe][b_color]); else $this->_options['proOptions']['callMe']['b_color'] = '';
+					if(trim($_POST[proOptions][callMe][b_opacity])) $this->_options['proOptions']['callMe']['b_opacity'] = sanitize_text_field($_POST[proOptions][callMe][b_opacity]); else $this->_options['proOptions']['callMe']['b_opacity'] = '';
+					if(trim($_POST[proOptions][callMe][b_style])) $this->_options['proOptions']['callMe']['b_style'] = sanitize_text_field($_POST[proOptions][callMe][b_style]); else $this->_options['proOptions']['callMe']['b_style'] = '';
+					if(trim($_POST[proOptions][callMe][b_shadow])) $this->_options['proOptions']['callMe']['b_shadow'] = sanitize_text_field($_POST[proOptions][callMe][b_shadow]); else $this->_options['proOptions']['callMe']['b_shadow'] = '';
+					if(trim($_POST[proOptions][callMe][background_image])) $this->_options['proOptions']['callMe']['background_image'] = sanitize_text_field($_POST[proOptions][callMe][background_image]); else $this->_options['proOptions']['callMe']['background_image'] = '';										
+					if(trim($_POST[proOptions][callMe][b_width])) $this->_options['proOptions']['callMe']['b_width'] = sanitize_text_field($_POST[proOptions][callMe][b_width]); else $this->_options['proOptions']['callMe']['b_width'] = '';
+					if(trim($_POST[proOptions][callMe][b_c_color])) $this->_options['proOptions']['callMe']['b_c_color'] = sanitize_text_field($_POST[proOptions][callMe][b_c_color]); else $this->_options['proOptions']['callMe']['b_c_color'] = '';
+				}
+				
+				//thankPopup
+				if($_POST[proOptions][thankPopup]){
+					if((int)$_POST[proOptions][thankPopup][disableMainPage] == 1) $this->_options['proOptions']['thankPopup']['disableMainPage'] = 1; else $this->_options['proOptions']['thankPopup']['disableMainPage'] = 0;
+					if((int)$_POST[proOptions][thankPopup][whitelabel] == 1) $this->_options['proOptions']['thankPopup']['whitelabel'] = 1; else $this->_options['proOptions']['thankPopup']['whitelabel'] = 0;					
+					
+					if(trim($_POST[proOptions][thankPopup][animation])) $this->_options['proOptions']['thankPopup']['animation'] = sanitize_text_field($_POST[proOptions][thankPopup][animation]); else $this->_options['proOptions']['thankPopup']['animation'] = '';
+					if(trim($_POST[proOptions][thankPopup][hover_animation])) $this->_options['proOptions']['thankPopup']['hover_animation'] = sanitize_text_field($_POST[proOptions][thankPopup][hover_animation]); else $this->_options['proOptions']['thankPopup']['hover_animation'] = '';					
+					
+					if(trim($_POST[proOptions][thankPopup][font])) $this->_options['proOptions']['thankPopup']['font'] = sanitize_text_field($_POST[proOptions][thankPopup][font]); else $this->_options['proOptions']['thankPopup']['font'] = '';
+					if(trim($_POST[proOptions][thankPopup][head_font])) $this->_options['proOptions']['thankPopup']['head_font'] = sanitize_text_field($_POST[proOptions][thankPopup][head_font]); else $this->_options['proOptions']['thankPopup']['head_font'] = '';
+					if(trim($_POST[proOptions][thankPopup][head_color])) $this->_options['proOptions']['thankPopup']['head_color'] = sanitize_text_field($_POST[proOptions][thankPopup][head_color]); else $this->_options['proOptions']['thankPopup']['head_color'] = '';
+					if(trim($_POST[proOptions][thankPopup][head_size])) $this->_options['proOptions']['thankPopup']['head_size'] = sanitize_text_field($_POST[proOptions][thankPopup][head_size]); else $this->_options['proOptions']['thankPopup']['head_size'] = '';
+					if(trim($_POST[proOptions][thankPopup][text_size])) $this->_options['proOptions']['thankPopup']['text_size'] = sanitize_text_field($_POST[proOptions][thankPopup][text_size]); else $this->_options['proOptions']['thankPopup']['text_size'] = '';					
+					if(trim($_POST[proOptions][thankPopup][text_color])) $this->_options['proOptions']['thankPopup']['text_color'] = sanitize_text_field($_POST[proOptions][thankPopup][text_color]); else $this->_options['proOptions']['thankPopup']['text_color'] = '';
+					if(trim($_POST[proOptions][thankPopup][b_radius])) $this->_options['proOptions']['thankPopup']['b_radius'] = sanitize_text_field($_POST[proOptions][thankPopup][b_radius]); else $this->_options['proOptions']['thankPopup']['b_radius'] = '';
+					if(trim($_POST[proOptions][thankPopup][b_color])) $this->_options['proOptions']['thankPopup']['b_color'] = sanitize_text_field($_POST[proOptions][thankPopup][b_color]); else $this->_options['proOptions']['thankPopup']['b_color'] = '';
+					if(trim($_POST[proOptions][thankPopup][b_opacity])) $this->_options['proOptions']['thankPopup']['b_opacity'] = sanitize_text_field($_POST[proOptions][thankPopup][b_opacity]); else $this->_options['proOptions']['thankPopup']['b_opacity'] = '';
+					if(trim($_POST[proOptions][thankPopup][b_style])) $this->_options['proOptions']['thankPopup']['b_style'] = sanitize_text_field($_POST[proOptions][thankPopup][b_style]); else $this->_options['proOptions']['thankPopup']['b_style'] = '';
+					if(trim($_POST[proOptions][thankPopup][b_shadow])) $this->_options['proOptions']['thankPopup']['b_shadow'] = sanitize_text_field($_POST[proOptions][thankPopup][b_shadow]); else $this->_options['proOptions']['thankPopup']['b_shadow'] = '';
+					if(trim($_POST[proOptions][thankPopup][background_image])) $this->_options['proOptions']['thankPopup']['background_image'] = sanitize_text_field($_POST[proOptions][thankPopup][background_image]); else $this->_options['proOptions']['thankPopup']['background_image'] = '';										
+					if(trim($_POST[proOptions][thankPopup][b_width])) $this->_options['proOptions']['thankPopup']['b_width'] = sanitize_text_field($_POST[proOptions][thankPopup][b_width]); else $this->_options['proOptions']['thankPopup']['b_width'] = '';
+					if(trim($_POST[proOptions][thankPopup][b_c_color])) $this->_options['proOptions']['thankPopup']['b_c_color'] = sanitize_text_field($_POST[proOptions][thankPopup][b_c_color]); else $this->_options['proOptions']['thankPopup']['b_c_color'] = '';
+				}
+				
+				//follow
+				if($_POST[proOptions][follow]){
+					if((int)$_POST[proOptions][follow][disableMainPage] == 1) $this->_options['proOptions']['follow']['disableMainPage'] = 1; else $this->_options['proOptions']['follow']['disableMainPage'] = 0;
+					if((int)$_POST[proOptions][follow][whitelabel] == 1) $this->_options['proOptions']['follow']['whitelabel'] = 1; else $this->_options['proOptions']['follow']['whitelabel'] = 0;
+					if(trim($_POST[proOptions][follow][disableExeptPageMask][0])) $this->_options['proOptions']['follow']['disableExeptPageMask'][0] = sanitize_text_field($_POST[proOptions][follow][disableExeptPageMask][0]); else $this->_options['proOptions']['follow']['disableExeptPageMask'][0] = '';
+					if(trim($_POST[proOptions][follow][disableExeptPageMask][1])) $this->_options['proOptions']['follow']['disableExeptPageMask'][1] = sanitize_text_field($_POST[proOptions][follow][disableExeptPageMask][1]); else $this->_options['proOptions']['follow']['disableExeptPageMask'][1] = '';
+					if(trim($_POST[proOptions][follow][disableExeptPageMask][2])) $this->_options['proOptions']['follow']['disableExeptPageMask'][2] = sanitize_text_field($_POST[proOptions][follow][disableExeptPageMask][2]); else $this->_options['proOptions']['follow']['disableExeptPageMask'][2] = '';
+					if(trim($_POST[proOptions][follow][disableExeptPageMask][3])) $this->_options['proOptions']['follow']['disableExeptPageMask'][3] = sanitize_text_field($_POST[proOptions][follow][disableExeptPageMask][3]); else $this->_options['proOptions']['follow']['disableExeptPageMask'][3] = '';
+					if(trim($_POST[proOptions][follow][disableExeptPageMask][4])) $this->_options['proOptions']['follow']['disableExeptPageMask'][4] = sanitize_text_field($_POST[proOptions][follow][disableExeptPageMask][4]); else $this->_options['proOptions']['follow']['disableExeptPageMask'][4] = '';
+					
+					if(trim($_POST[proOptions][follow][animation])) $this->_options['proOptions']['follow']['animation'] = sanitize_text_field($_POST[proOptions][follow][animation]); else $this->_options['proOptions']['follow']['animation'] = '';
+					if(trim($_POST[proOptions][follow][hover_animation])) $this->_options['proOptions']['follow']['hover_animation'] = sanitize_text_field($_POST[proOptions][follow][hover_animation]); else $this->_options['proOptions']['follow']['hover_animation'] = '';					
+					
+					if(trim($_POST[proOptions][follow][font])) $this->_options['proOptions']['follow']['font'] = sanitize_text_field($_POST[proOptions][follow][font]); else $this->_options['proOptions']['follow']['font'] = '';
+					if(trim($_POST[proOptions][follow][head_font])) $this->_options['proOptions']['follow']['head_font'] = sanitize_text_field($_POST[proOptions][follow][head_font]); else $this->_options['proOptions']['follow']['head_font'] = '';
+					if(trim($_POST[proOptions][follow][head_color])) $this->_options['proOptions']['follow']['head_color'] = sanitize_text_field($_POST[proOptions][follow][head_color]); else $this->_options['proOptions']['follow']['head_color'] = '';
+					if(trim($_POST[proOptions][follow][head_size])) $this->_options['proOptions']['follow']['head_size'] = sanitize_text_field($_POST[proOptions][follow][head_size]); else $this->_options['proOptions']['follow']['head_size'] = '';
+					if(trim($_POST[proOptions][follow][text_size])) $this->_options['proOptions']['follow']['text_size'] = sanitize_text_field($_POST[proOptions][follow][text_size]); else $this->_options['proOptions']['follow']['text_size'] = '';					
+					if(trim($_POST[proOptions][follow][text_color])) $this->_options['proOptions']['follow']['text_color'] = sanitize_text_field($_POST[proOptions][follow][text_color]); else $this->_options['proOptions']['follow']['text_color'] = '';
+					if(trim($_POST[proOptions][follow][b_radius])) $this->_options['proOptions']['follow']['b_radius'] = sanitize_text_field($_POST[proOptions][follow][b_radius]); else $this->_options['proOptions']['follow']['b_radius'] = '';
+					if(trim($_POST[proOptions][follow][b_color])) $this->_options['proOptions']['follow']['b_color'] = sanitize_text_field($_POST[proOptions][follow][b_color]); else $this->_options['proOptions']['follow']['b_color'] = '';
+					if(trim($_POST[proOptions][follow][b_opacity])) $this->_options['proOptions']['follow']['b_opacity'] = sanitize_text_field($_POST[proOptions][follow][b_opacity]); else $this->_options['proOptions']['follow']['b_opacity'] = '';
+					if(trim($_POST[proOptions][follow][b_style])) $this->_options['proOptions']['follow']['b_style'] = sanitize_text_field($_POST[proOptions][follow][b_style]); else $this->_options['proOptions']['follow']['b_style'] = '';
+					if(trim($_POST[proOptions][follow][b_shadow])) $this->_options['proOptions']['follow']['b_shadow'] = sanitize_text_field($_POST[proOptions][follow][b_shadow]); else $this->_options['proOptions']['follow']['b_shadow'] = '';
+					if(trim($_POST[proOptions][follow][background_image])) $this->_options['proOptions']['follow']['background_image'] = sanitize_text_field($_POST[proOptions][follow][background_image]); else $this->_options['proOptions']['follow']['background_image'] = '';					
+					if(trim($_POST[proOptions][follow][b_width])) $this->_options['proOptions']['follow']['b_width'] = sanitize_text_field($_POST[proOptions][follow][b_width]); else $this->_options['proOptions']['follow']['b_width'] = '';
+					if(trim($_POST[proOptions][follow][b_c_color])) $this->_options['proOptions']['follow']['b_c_color'] = sanitize_text_field($_POST[proOptions][follow][b_c_color]); else $this->_options['proOptions']['follow']['b_c_color'] = '';
+				}
+			}
+			
 			update_option('profitquery', $this->_options);
+			
 			echo '
-			<div id="successPQBlock" style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(151, 255, 0, 0.5); text-align: center;">
-					<p style="color: rgb(104, 174, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">Data changed!</p>
+			<div id="successPQBlock" style="display: block;width: auto; margin: 0 15px 0 5px; text-align: center; z-index: 500000;  position: fixed;  background-color: rgb(72, 232, 143);  right: 0;  width: 20%;  bottom: 12px;">
+					<p style="color: white; font-size: 16px; font-family: arial; padding: 0px; margin: 0px;">Data successfully changed</p>
 			</div>
 			<script>
 				setTimeout(function(){document.getElementById("successPQBlock").style.display="none";}, 5000);
@@ -694,7 +1019,8 @@ class ProfitQuerySmartWidgetsClass
 			';
 		}
 		
-		
+		/*Check Pro Version Options*/
+		$getProCategoryArray = $this->checkProOptions();
 		
 		/*Check for dublicate sharingSideBar socnet_with_pos*/
 		if(isset($this->_options['sharingSideBar']['socnet_with_pos'])){
@@ -714,276 +1040,207 @@ class ProfitQuerySmartWidgetsClass
 			}
 			if($socnet_with_pos_error){
 				echo '
-						<div style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(242, 20, 67, 0.5); text-align: center;">
-						 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">Sharing Sidebar. Dublicate social networks detected.</p>
-						</div>						
+					<div id="dublicateErrorPQBlock" style="display: block;width: auto; margin: 0 15px 0 5px; text-align: center; z-index: 500000;  position: fixed;  background-color: rgb(255, 107, 107);  right: 0;  width: 20%;  bottom: 12px;">
+						<p style="color: white; font-size: 15px; font-family: arial; padding: 5px 25px;margin: 0px;">Sharing Sidebar. Provider dublicate detected<a href="javascript:void(0)" onclick="document.getElementById(\'dublicateErrorPQBlock\').style.display=\'none\';">[X]</a></p>
+					</div>
 					';
 			}			
 			if($flagAllEmpty && (int)$this->_options['sharingSideBar'][disabled] == 0){
 				echo '
-						<div style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(242, 20, 67, 0.5); text-align: center;">
-						 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">Sharing Sidebar enable, but no one social network selected.</p>
-						</div>						
+					<div id="SharingSidebarNoProviderPQBlock" style="display: block;width: auto; margin: 0 15px 0 5px; text-align: center; z-index: 500000;  position: fixed;  background-color: rgb(255, 107, 107);  right: 0;  width: 20%;  bottom: 12px;">
+						<p style="color: white; font-size: 15px; font-family: arial; padding: 5px 25px; margin: 0px;">Sharing Sidebar enable, but no one social network selected.<a href="javascript:void(0)" onclick="document.getElementById(\'SharingSidebarNoProviderPQBlock\').style.display=\'none\';">[X]</a></p>
+					</div>
 					';					
 			}			
-		}		
-		
-		
-		
-		//save api key
-		if(trim($_POST[apiKey]) != '' || trim($_GET[apiKey]) != ''){						
-			if(!trim($this->_options['apiKey'])){									
-				$this ->setDefaultProductData();
-			}			
-			if(trim($_POST[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_POST[apiKey]);
-			if(trim($_GET[apiKey]) != '') $this->_options['apiKey'] = sanitize_text_field($_GET[apiKey]);			
-			$this->_options['errorApiKey'] = 0;				
-			update_option('profitquery', $this->_options);
-			echo '			
-				<div id="successPQBlock" style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(151, 255, 0, 0.5); text-align: center;">
-					<p style="color: rgb(104, 174, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">API Key Was Saved!</p>
-				</div>
-				<script>
-				setTimeout(function(){document.getElementById("successPQBlock").style.display="none";}, 5000);
-				</script>
-			';			
-		} else {
-			echo '			
-				<div style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(151, 255, 0, 0.5); text-align: center;">
-					<p style="color: rgb(104, 174, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;"><a href="'.$this->getSettingsPageUrl().'&action=changeApiKey">Edit Api Key</a></p>
-				</div>				
-			';	
 		}
 		
-		//save api key
-		if(!trim($this->_options['apiKey']) || $_GET[action] == 'changeApiKey' || (int)$this->_options['errorApiKey'] == 1){
-			$redirect_url = str_replace(".", "%2E", urlencode($this->getSettingsPageUrl().'&action=changeApiKey'));
-			if((int)$_GET[is_error] == 1){
-				$this->_options['errorApiKey'] = 1;
-				update_option('profitquery', $this->_options);
+		if(profitquery_is_subscribe_enabled($this->_options)){			
+			if(trim($this->_options[subscribeProvider]) == '' || (int)$this->_options['subscribeProviderOption'][$this->_options['subscribeProvider']][is_error] == 1){
 				echo '
-					<div id="errorPQBlock" style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(242, 20, 67, 0.5); text-align: center;">
-					 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">Wrong Lite Profitquery API Key. <a href="http://litelib.profitquery.com/cms-sign-in/?domain='.$this->getDomain().'&cms=wp&ae='.get_settings('admin_email').'&redirect='.
-                     str_replace(".", "%2E", urlencode($this->getSettingsPageUrl())).'" style="text-decoration: none;" target="_getLitePQApiKey">Get API Key</a></p>
-					</div>					
-					<script>
-					setTimeout(function(){document.getElementById("errorPQBlock").style.display="none";}, 10000);
-					</script>
-				';
-			} elseif((int)$this->_options['errorApiKey'] == 1){
-				echo '
-						<div style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(242, 20, 67, 0.5); text-align: center;">
-						 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">Wrong Lite Profitquery API Key.</p>
-						</div>						
-					';
-			}					
-			echo '			
-			<div style="text-align: center; margin: 0 auto;">			
-			<section style="margin: 20px auto 100px; width: 60%; ">
-			<div style="overflow: hidden; margin: 0 0 40px;">
-			  <h1 class="pq" style="font-family: pt sans narrow; font-size: 30px; color: #7A7A7A; font-weight: normal; display: inline-block; float: left; margin: 0; line-height: 40px;">Start to use AIO Widgets by Profitquery</h1>
-			  <p style="font-family: arial; font-size: 16px; color: #929292; display: inline-block; float: right; margin: 0; height: 40px; padding: 10px 0 0; box-sizing: border-box;">Need help? <a style="color: #222222; text-decoration: none;" href="http://profitquery.com/aio_widgets.html" target="_pq_image_sharer_wordpress">Check instructions <img src="'.plugins_url('images/icon.png', __FILE__).'" style="margin: 0 0 -5px;" /></a></p>
-			 </div>				
-				<p style="font-family: arial; font-size: 16px; color: #A9A9A9; margin: 16px 0 50px;">To start using the AIO Widgets By Profitquery, we first need your Profitquery Lite API Key.</p>
-				<img src="'.plugins_url('images/logo.png', __FILE__).'" style="display: block; margin: 0px auto;" />
-				<form action="'.$this->getSettingsPageUrl().'" method="post" onsubmit="checkApiKey();return true;">
-					<label><p style="font-family: arial; font-size: 16px; color: #A9A9A9; margin: 30px 0 5px;">Lite Profitquery API Key</p>
-						<input type="text" name="apiKey" id="lPQApiKeyInput" value="'.$this->_options['apiKey'].'"  style="display: block; margin: 0 auto; padding:7px 15px; width: 70%; min-width: 200px;">
-					</label>
-					<a style="color: rgb(242, 20, 67); font-family: arial; font-size: 16px; display: block;margin: 10px; text-decoration: none;" href="http://litelib.profitquery.com/cms-sign-in/?domain='.$this->getDomain().'&cms=wp&ae='.get_settings('admin_email').'&redirect='.
-                     str_replace(".", "%2E", urlencode($this->getSettingsPageUrl())).'" target="_getLitePQApiKey">Get API Key</a>
-					<input type="submit" value="Confirm and save" style="font-family: pt sans narrow; color: white; background: #F21443; border: none; font-size: 20px; padding: 10px 40px; margin: 20px auto 0; border-radius: 3px; ">	
-					 
-				</form>
-				<script>
-					function checkApiKey(){						
-						var	winParamString = "menubar=0,toolbar=0,resizable=1,scrollbars=1,width=400,height=200";											
-						var clonWinParamString = winParamString;
-						try {
-							var e = winParamString.split("width=")[1].split(",")[0],
-								f = winParamString.split("height=")[1].split(",")[0],
-								g = (screen.width - e) / 2,
-								h = (screen.height - f) / 2;
-							g < 0 && (g = 0);
-							h < 0 && (h = 0);
-							clonWinParamString = clonWinParamString + (",top=" + h + ",left=" + g)
-						} catch (i) {}
-						try {							
-							wopen = window.open("http://litelib.profitquery.com/cms-check-key/?domain='.$this->getDomain().'&cms=wp&ae='.get_settings('admin_email').'&redirect='.$redirect_url.'&apiKey="+encodeURIComponent(document.getElementById("lPQApiKeyInput").value), "Lite_Profitquery_API_Key_Check", clonWinParamString);							
-						}catch(err){}						
-					}
-				</script>
-			</section>
-			</div>
-			';	
-		} else if((int)$this->_options['errorApiKey'] == 0) {
-			if(profitquery_is_subscribe_enabled($this->_options)){
-				if(trim($this->_options[subscribeProvider]) == '' || (int)$this->_options['subscribeProviderOption'][$this->_options['subscribeProvider']][is_error] == 1){
-					echo '
-						<div style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(242, 20, 67, 0.5); text-align: center;">
-						 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">For complete install Subscribe tools please copy/paste correct sign up form from selected provider <a href="'.$this->getSettingsPageUrl().'#setupFormAction" style="text-decoration: none;" >Complete setup</a></p>
-						</div>						
-					';
-				}
-			}
-			
-			if(profitquery_is_follow_enabled_and_not_setup($this->_options)){
-				echo '
-						<div style="display: block;width: auto; margin: 0 15px 0 5px; background: rgba(242, 20, 67, 0.5); text-align: center;">
-						 <p style="color: rgb(174, 0, 0); font-size: 16px; font-family: arial; padding: 5px; margin: 0px;">For complete install follow popup after proceed, please set up any follow address <a href="'.$this->getSettingsPageUrl().'#setupFollow" style="text-decoration: none;" >Complete setup</a></p>
-						</div>						
-					';
-			}
-			?>
-			<div style="width: 100%; overflow: hidden;">
-				<div class="pq-container-fluid" id="free_profitquery">
-				<script>
-					var photoPath = "<?php echo plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_IMG_PATH;?>";
-					var previewPath = "<?php echo plugins_url().'/'.PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME.'/'.PROFITQUERY_SMART_WIDGETS_ADMIN_IMG_PATH.PROFITQUERY_SMART_WIDGETS_ADMIN_IMG_PREVIEW_PATH;?>";
-					function chagnePopupImg(img, id, custom_photo_block_id){						
-						try{							
-							if(img == 'custom'){								
-								document.getElementById(id).style.display = 'none';
-								document.getElementById(custom_photo_block_id).style.display = 'block';
-							}else if(img != ''){								
-								document.getElementById(id).style.display = 'block';
-								document.getElementById(id).src = photoPath+img;
-								document.getElementById(custom_photo_block_id).style.display = 'none';
-							} else {
-								document.getElementById(id).style.display = 'none';
-								document.getElementById(custom_photo_block_id).style.display = 'none';
-							}
-						}catch(err){};
-					}
-				  </script>
-				  <div style="overflow: hidden; padding: 20px; margin: 10px 0 25px;">
-				
-					<h5>Thanks for your choose!</h5>
-					<p style="padding: 0px 45px"> Latest news and plans of our team. </p><br>
-					<div>
-						<p><strong>New in 2.1.9</strong></p>
-						<p><strong>1.</strong> Add new share provider Evernote, Pocket, Kindle, Flipboard. If you need a new share provider, just email us <a href="mailto:support@profitquery.com">support@profitquery.com.</a> <strong>2.</strong> Add wonderfull features. Now you can share image from sharing sidebar through (Tumblr, Pinterest, VK). All image profitquery collect from your page, if profitquery library not found any photo by click on Tumblr or Pinterest or VK start default sharing. <strong>3.</strong> Try to add Opera mini support (most of kind tools not displaying on this browser)</p><br>						
-						
-						
-						<p>For wordpress community we make a few plugin for demonstration a small part of Profitquery platform features. AIO widgets most popular.
-						Now we working for pro version wordpress plugin with new dashboard where you can generate any popup you want, ecom plugin (referral system etc.)
-						If you have any question or feedback or some ideas you can email us any time you want <a href="mailto:support@profitquery.com;">support@profitquery.com</a> or visit profitquery <a href="http://profitquery.com/community.html" target="_blank">community page</a></p><br>
-						<a href="http://profitquery.com/community.html" target="_blank"><input type="button" class="" value="Community"></a><br><br><br>
-						<img id="" src="<?php echo plugins_url('images/stars.png', __FILE__);?>" />
-						<p>We work hard 7 days of week for make a best ever growth tools. If you like our work, you can make our team happy, please, rate our plugin.</p>
-					</div><br>
-									
-					
-				<a href="https://wordpress.org/support/view/plugin-reviews/share-subscribe-contact-aio-widget" target="_blank"><input type="button" class="" value="Please Rate Plugin"></a>
-				
-				
-				</div>
-				  <div class="pq_block" id="v1">
-					<h4>Share Tools</h4>											
-					<div id="collapseOne" class="panel-collapse collapse in">
-					<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
-					<input type="hidden" name="action" value="edit">
-					  <div class="pq-panel-body">
-					  <p>Get more beautiful shares, referrals, virality, without any social app.</p>
-						
-						
-						<div class="pq-sm-6">
-							<img id="sharingSideBar_IMG" src="<?php echo plugins_url('images/sharing.png', __FILE__);?>" />
-							<h5>Sharing Sidebar</h5>
-							<div class="pq-sm-10">							
-								
-								<label>
-									<div id="sharingSideBarEnabledStyle">
-										<input type="checkbox" name="sharingSideBar[enabled]" id="sharingSideBarEnabledCheckbox" onclick="changeSharingSideBarEnabled();" <?php if((int)$this->_options[sharingSideBar][disabled] == 0) echo 'checked';?>>
-										<p id="sharingSideBarEnabledText"></p>
-									</div>
-									<script>
-										function changeSharingSideBarEnabled(){											
-											if(document.getElementById('sharingSideBarEnabledCheckbox').checked){
-												document.getElementById('sharingSideBarEnabledStyle').className = 'pq-switch-bg pq-on';
-												document.getElementById('sharingSideBarEnabledText').innerHTML = 'On';
-											} else {
-												document.getElementById('sharingSideBarEnabledStyle').className = 'pq-switch-bg pq-off';
-												document.getElementById('sharingSideBarEnabledText').innerHTML = 'Off';
-											}
-										}
-										changeSharingSideBarEnabled();
-									</script>									
-								</label>
-								
-								<label>
-									<select id="sharingSideBar_position" onchange="changeShareBlockImg();" name="sharingSideBar[position]">
-										<option value="pq_left pq_middle" <?php if($this->_options[sharingSideBar][position] == 'pq_left pq_middle') echo 'selected';?> >Left side</option>
-										<option value="pq_right pq_middle" <?php if($this->_options[sharingSideBar][position] == 'pq_right pq_middle') echo 'selected';?> >Right side</option>
-									</select>
-								</label>
-								<script>
-									function changeShareBlockImg(){
-										if(document.getElementById('sharingSideBar_position').value == 'pq_left pq_middle'){
-											document.getElementById('sharingSideBar_IMG').src = previewPath+'sharing_left.png';
-										}
-										if(document.getElementById('sharingSideBar_position').value == 'pq_right pq_middle'){
-											document.getElementById('sharingSideBar_IMG').src = previewPath+'sharing_right.png';
-										}
-									}
-									changeShareBlockImg();
-								</script>
-								<a href="#Sharing_Sidebar" onclick="document.getElementById('Sharing_Sidebar').style.display='block';"><button type="button" class="pq-btn-link btn-bg">More Option</button></a>							
-							</div>
-						</div>
-						<div class="pq-sm-6">
-							<img id="imageSharer_IMG" src="<?php echo plugins_url('images/image_sharer.png', __FILE__);?>" />
-							<h5>Image Sharer</h5>
-							<div class="pq-sm-10">							
-								<label>									
-									<div id="imageSharerEnabledStyle">
-										<input type="checkbox" name="imageSharer[enabled]" id="imageSharerEnabledCheckbox" onclick="changeImageSharerEnabled();" <?php if((int)$this->_options[imageSharer][disabled] == 0) echo 'checked';?>>
-										<p id="imageSharerEnabledText"></p>
-									</div>
-									<script>
-										function changeImageSharerEnabled(){											
-											if(document.getElementById('imageSharerEnabledCheckbox').checked){
-												document.getElementById('imageSharerEnabledStyle').className = 'pq-switch-bg pq-on';
-												document.getElementById('imageSharerEnabledText').innerHTML = 'On';
-											} else {
-												document.getElementById('imageSharerEnabledStyle').className = 'pq-switch-bg pq-off';
-												document.getElementById('imageSharerEnabledText').innerHTML = 'Off';
-											}
-										}
-										changeImageSharerEnabled();
-									</script>
-									
-								</label>
-								<label>	
-									<select id="imageSharer_design_position" onchange="changeImageSharerBlockImg();" name="imageSharer[position]">
-										<option value="" <?php if($this->_options[imageSharer][position] == '') echo 'selected';?>>Vertically</option>
-										<option value="inline" <?php if($this->_options[imageSharer][position] == 'inline') echo 'selected';?>>Horizontally</option>
-									</select>
-									<script>
-									function changeImageSharerBlockImg(){
-										if(document.getElementById('imageSharer_design_position').value == ''){
-											document.getElementById('imageSharer_IMG').src = previewPath+'on_hover_vert.png';
-										}
-										if(document.getElementById('imageSharer_design_position').value == 'inline'){
-											document.getElementById('imageSharer_IMG').src = previewPath+'on_hover_horiz.png';
-										}
-									}
-									changeImageSharerBlockImg();
-								</script>
-								</label>	
-									<a href="#Image_Sharer" onclick="imageSharerPreview();document.getElementById('Image_Sharer').style.display='block';"><button type="button" class="pq-btn-link btn-bg">More Option</button></a>							
-							</div>
-						</div>						
-										
+					<div id="subscribeProviderError" style="display: block;width: auto; margin: 0 15px 0 5px; text-align: center; z-index: 500000;  position: fixed;  background-color: rgb(255, 107, 107);  right: 0;  width: 20%;  bottom: 180px;">
+						<p style="color: white; font-size: 15px; font-family: arial; padding: 5px 25px; margin: 0px;">For complete install Subscribe tools please copy/paste correct sign up form from selected provider <a href="javascript:void(0)" onclick="document.getElementById(\'subscribeProviderError\').style.display=\'none\';">[X]</a></p>
 					</div>
-					<div class="pq-panel-body">
-						<a name="Sharing_Sidebar"></a>
-						<div class="pq-sm-10 pq_more" id="Sharing_Sidebar" style="display:none;">
-							<h5>More Options Sharing Sidebar</h5>
-							<div class="pq-sm-10">
-								<div class="pq_selects" style="overflow: hidden; padding: 20px 0 30px;" id="pq_input">
+				';
+			}
+		}
+			
+		if(profitquery_is_follow_enabled_and_not_setup($this->_options)){
+			echo '
+					<div id="FollowProviderError" style="display: block;width: auto; margin: 0 15px 0 5px; text-align: center; z-index: 500000;  position: fixed;  background-color: rgb(255, 107, 107);  right: 0;  width: 20%;  bottom: 102px;">
+						<p style="color: white; ffont-size: 15px; font-family: arial;  padding: 5px 25px; margin: 0px;">For complete install follow popup after proceed, please set up any follow address <a href="javascript:void(0)" onclick="document.getElementById(\'FollowProviderError\').style.display=\'none\';">[X]</a></p>
+					</div>
+				';
+		}
+		
+		?>
+<script>
+function changePopupImg(img, custom_photo_block_id){
+	try{							
+		if(img == 'custom'){												
+			document.getElementById(custom_photo_block_id).style.display = 'block';
+		} else {				
+			document.getElementById(custom_photo_block_id).style.display = 'none';
+		}
+	}catch(err){};		
+}
+</script>
+
+<div id="profitquery">
+	<div class="pq1">
+		<a href="http://profitquery.com/" target="_blank"> <img src="<?php echo plugins_url('i/profitquery.png', __FILE__);?>" /></a>				
+		<p class="pq_default selected">Select tools</p>
+		<p class="share">Sharing Sidebar</p>
+		<p class="imagesharer">Image Sharer</p>
+		<p class="marketing">Subscribe Bar</p>
+		<p class="exit">Exit Intent Popup</p>
+		<p class="collect">Floating Popup</p>
+		<p class="contact">Contact Form</p>
+		<p class="callme">Call Me Popup</p>
+		<p class="follow">Follow Popup</p>
+		<p class="thankyou">Thankyou Popup</p>
+		<a href="javascript:void(0)" onclick="document.getElementById('SProviderSettings').style.display='block';">Email settings</a>
+		<p class="pq_tooltip1">&larr; Subscribe Provider Settings Here</p>
+		<p class="pq_tooltip2">&larr; Send Mail To Settings Here</p>
+		<!--span style="position: absolute;top: 6px;right: 300px;" onclick="document.getElementById('SProviderSettings').style.display='block';">Subscribe Provider Stngs</span>
+		<span class="free">FREE</span-->
+		<a class="pq_adds" href="javascript:void(0)" onclick="document.getElementById('PQ_lang').style.display='block';">Languages</a>
+		<input class="pro" type="button" value="PRO SETUP" onclick="document.getElementById('Get_Pro').style.display='block';">
+		<!--span class="pro">PRO 23$</span-->
+	</div>
+
+	<div class="pq2">
+		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post" id="pq">
+		<input type="hidden" name="action" value="edit">
+						<label class="choise home">
+							<input type="radio" name="choise" class="choise1" checked="checked" value="1">
+							<div><img src="<?php echo plugins_url('i/32.png', __FILE__);?>" /></div>
+						</label><label class="choise set2">
+							<input type="radio" name="choise" class="choise2" value="2">
+							<div><img src="<?php echo plugins_url('i/33.png', __FILE__);?>" /></div>
+						</label><label class="choise set3">
+							<input type="radio" name="choise" class="choise3" value="3">
+							<div><img src="<?php echo plugins_url('i/34.png', __FILE__);?>" /></div>
+						</label><label class="choise set4">
+							<input type="radio" name="choise" class="choise4" value="4">
+							<div><img src="<?php echo plugins_url('i/35.png', __FILE__);?>" /></div>							
+						</label>
+						<div class="pq_clear"></div>
+					<div class="f_wrapper pq_li1 selected">
+					<div><h2>Main Page</h2></div>
+						<label>
+							<input type="radio" name="task" value="1" class="share_tools">
+							<input type="checkbox" name="sharingSideBar[enabled]" <?php if((int)$this->_options[sharingSideBar][disabled] == 0) echo 'checked';?> class="share_checked">
+							<div><img src="<?php echo plugins_url('i/2.png', __FILE__);?>" class="pq_card" /><p>Sharing Sidebar</p><input type="button" class="task activate share_tools_activate" value="Activate"><input type="button" class="task settings share_tools_activate" value="settings"><input type="button" class="task desabled share_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+						</label>
+						<label>
+							<input type="radio" name="task" value="6" class="imagesharer_tools">
+							<input type="checkbox" name="imageSharer[enabled]" <?php if((int)$this->_options[imageSharer][disabled] == 0) echo 'checked';?> class="imagesharer_checked">
+							<div><img src="<?php echo plugins_url('i/15.png', __FILE__);?>" class="pq_card" /><p>Image Sharer</p><input type="button" class="task activate imagesharer_tools_activate" value="Activate"><input type="button" class="task settings imagesharer_tools_activate" value="settings"><input type="button" class="task desabled imagesharer_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+						</label>
+						<label>
+							<input type="radio" name="task" value="12" class="marketing_tools">
+							<input type="checkbox" name="subscribeBar[enabled]" <?php if((int)$this->_options[subscribeBar][disabled] == 0) echo 'checked';?> class="marketing_checked">
+							<div><img src="<?php echo plugins_url('i/1.png', __FILE__);?>" class="pq_card" /><p>Subscribe Bar</p><input type="button" class="task activate marketing_tools_activate" value="Activate"><input type="button" class="task settings marketing_tools_activate" value="settings"><input type="button" class="task desabled marketing_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+						</label>
+						<label>
+							<input type="radio" name="task" value="6" class="exit_tools">
+							<input type="checkbox" name="subscribeExit[enabled]" <?php if((int)$this->_options[subscribeExit][disabled] == 0) echo 'checked';?> class="exit_checked">
+							<div><img src="<?php echo plugins_url('i/9.png', __FILE__);?>" class="pq_card" /><p>Exit Intent Popup</p><input type="button" class="task activate exit_tools_activate" value="Activate"><input type="button" class="task settings exit_tools_activate" value="settings"><input type="button" class="task desabled exit_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+						</label>
+						<!--label>
+							<input type="radio" name="task" value="1" class="collect_tools">
+							<input type="checkbox" name="imageSharer[enabled]" <?php if((int)$this->_options[imageSharer][disabled] == 0) echo 'checked';?> class="collect_checked">
+							<div><img src="<?php echo plugins_url('i/4.png', __FILE__);?>" class="pq_card" /><p>Floating Popup</p><input type="button" class="task activate collect_tools_activate" value="Activate"><input type="button" class="task settings collect_tools_activate" value="settings"><input type="button" class="task desabled collect_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+						</label-->
+						<label>
+							<input type="radio" name="task" value="7" class="contact_tools">
+							<input type="checkbox" name="contactUs[enabled]" <?php if((int)$this->_options[contactUs][disabled] == 0) echo 'checked';?> class="contact_checked">
+							<div><img src="<?php echo plugins_url('i/7.png', __FILE__);?>" class="pq_card" /><p>Contact Form</p><input type="button" class="task activate contact_tools_activate" value="Activate"><input type="button" class="task settings contact_tools_activate" value="settings"><input type="button" class="task desabled contact_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>							
+						</label>
+						<label>
+							<input type="radio" name="task" value="5" class="callme_tools">
+							<input type="checkbox" name="callMe[enabled]" <?php if((int)$this->_options[callMe][disabled] == 0) echo 'checked';?> class="callme_checked">
+							<div><img src="<?php echo plugins_url('i/8.png', __FILE__);?>" class="pq_card" /><p>Call Me Now</p><input type="button" class="task activate callme_tools_activate" value="Activate"><input type="button" class="task settings callme_tools_activate" value="settings"><input type="button" class="task desabled callme_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+						</label>
+						<label>
+							<input type="radio" name="task" value="2" class="follow_tools">
+							<input type="checkbox" name="follow[enabled]" checked class="follow_checked">
+							<div><img src="<?php echo plugins_url('i/3.png', __FILE__);?>" class="pq_card" /><p>Follow Popup</p><input type="button" class="task activate follow_tools_activate" value="Activate"><input type="button" class="task settings follow_tools_activate" value="settings"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+						</label>
+						
+						<label>
+							<input type="radio" name="task" value="13" class="thankyou_tools">
+							<input type="checkbox" name="thankPopup[enabled]" checked class="thankyou_checked">
+							<div><img src="<?php echo plugins_url('i/10.png', __FILE__);?>" class="pq_card" /><p>Thankyou Popup</p><input type="button" class="task activate thankyou_tools_activate" value="Activate"><input type="button" class="task settings thankyou_tools_activate" value="settings"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+						</label>
+						
+					</div>
+						
+					<a class="ganalytics" href="javascript:void(0)" onclick="document.getElementById('GA').style.display='block';">
+						<img src="<?php echo plugins_url('i/ga.png', __FILE__);?>" class="pq_card" />	
+					Google Analytics - <?php if((int)$this->_options[additionalOptions][enableGA] == 1) echo 'on'; else echo 'off';?></a>
+						
+					<div class="f_wrapper pq_li3">
+					<h2>Settings</h2>
 					
-									<label><p>1.</p><select name="sharingSideBar[socnet_with_pos][0]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][0]]) echo 'class="pq_error"';?>>
+						<div class="settings collect">
+							<div class="floating selected">
+								<h3>Text</h3>
+								<label>
+								<p>Heading</p>
+									<input class="text" type="text" name="" value="" placeholder="">
+									
+								</label>
+								<label>
+								<p>Text</p>
+									<input class="text" type="text" name="" value="" placeholder="">
+									
+								</label>
+								<label>
+								<p>Input Placeholder</p>
+									<input class="text" type="text" name="" value="" placeholder="">
+									
+								</label>
+								<label>
+								<p>Input Placeholder</p>
+									<input class="text" type="text" name="" value="" placeholder="">
+									
+								</label>
+								<label>
+								<p>Textarea Placeholder</p>
+									<input class="text" type="text" name="" value="" placeholder="">
+									
+								</label>
+								<h3>Button</h3>
+								<label>
+								<p>Button Title</p>
+									<input class="text" type="text" name="" value="" placeholder="">
+									
+								</label>
+								<label>
+									<select>
+										<option name="">Close</option>
+										<option name="">Send Email</option>
+										<option name="">Mailchimp</option>
+										<option name="1">Aweber</option>
+									</select>
+								</label>
+								<label><p>Paste code</p><a href="http://profitquery.com/mailchimp.html" target="_blank">How to get code</a>
+									<textarea rows="2"></textarea>
+								</label>
+								<label>
+								<p>Send Email to</p>
+									<input class="text" type="text" name="" value="" placeholder="">
+								</label>
+							</div>
+							
+						</div>
+						
+						<div class="settings share selected">
+							<div class="sidebar selected">
+							<h3>SHOW SERVICES</h3>
+								<label class="sm nn n01">							
+									<select name="sharingSideBar[socnet_with_pos][0]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][0]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1008,571 +1265,1125 @@ class ProfitQuerySmartWidgetsClass
 										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'AK') echo 'selected';?>>Kindle</option>
 										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'FL') echo 'selected';?>>Flipboard</option>
 										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'Print') echo 'selected';?>>Print</option>
-										<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'MailTo') echo 'selected';?>>Email</option>
-										</select>
-									</label>
-									<label><p>2.</p>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<label class="sm nn n02">							
 									<select name="sharingSideBar[socnet_with_pos][1]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][1]]) echo 'class="pq_error"';?>>
-									<option value="" selected>None</option>
-									<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'FB') echo 'selected';?> >Facebook</option>
-									<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'TW') echo 'selected';?>>Twitter</option>
-									<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'GP') echo 'selected';?>>Google plus</option>
-									<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'RD') echo 'selected';?>>Reddit</option>
-									<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'PI') echo 'selected';?>>Pinterest</option>
-									<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'VK') echo 'selected';?>>Vkontakte</option>
-									<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-									<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'LJ') echo 'selected';?>>Live Journal</option>
-									<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'TR') echo 'selected';?>>Tumblr</option>
-									<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'LI') echo 'selected';?>>LinkedIn</option>
-									<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'SU') echo 'selected';?>>StumbleUpon</option>
-									<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'DG') echo 'selected';?>>Digg</option>
-									<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'DL') echo 'selected';?>>Delicious</option>
-									<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'WU') echo 'selected';?>>WhatsApp</option>
-									<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'BR') echo 'selected';?>>Blogger</option>
-									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'RR') echo 'selected';?>>Renren</option>
-									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'WB') echo 'selected';?>>Weibo</option>
-									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'MW') echo 'selected';?>>My World</option>
-									<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'EN') echo 'selected';?>>Evernote</option>
-									<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'PO') echo 'selected';?>>Pocket</option>
-									<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'AK') echo 'selected';?>>Kindle</option>
-									<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'FL') echo 'selected';?>>Flipboard</option>
-									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'Print') echo 'selected';?>>Print</option>
-									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'MailTo') echo 'selected';?>>Email</option>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
-									</label>
-									<label><p>3.</p>
+								</label>
+								<label class="sm nn n03">							
 									<select name="sharingSideBar[socnet_with_pos][2]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][2]]) echo 'class="pq_error"';?>>
-									<option value="" selected>None</option>
-									<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'FB') echo 'selected';?> >Facebook</option>
-									<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'TW') echo 'selected';?>>Twitter</option>
-									<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'GP') echo 'selected';?>>Google plus</option>
-									<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'RD') echo 'selected';?>>Reddit</option>
-									<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'PI') echo 'selected';?>>Pinterest</option>
-									<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'VK') echo 'selected';?>>Vkontakte</option>
-									<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-									<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'LJ') echo 'selected';?>>Live Journal</option>
-									<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'TR') echo 'selected';?>>Tumblr</option>
-									<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'LI') echo 'selected';?>>LinkedIn</option>
-									<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'SU') echo 'selected';?>>StumbleUpon</option>
-									<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'DG') echo 'selected';?>>Digg</option>
-									<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'DL') echo 'selected';?>>Delicious</option>
-									<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'WU') echo 'selected';?>>WhatsApp</option>
-									<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'BR') echo 'selected';?>>Blogger</option>
-									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'RR') echo 'selected';?>>Renren</option>
-									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'WB') echo 'selected';?>>Weibo</option>
-									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'MW') echo 'selected';?>>My World</option>
-									<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'EN') echo 'selected';?>>Evernote</option>
-									<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'PO') echo 'selected';?>>Pocket</option>
-									<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'AK') echo 'selected';?>>Kindle</option>
-									<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'FL') echo 'selected';?>>Flipboard</option>
-									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'Print') echo 'selected';?>>Print</option>
-									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'MailTo') echo 'selected';?>>Email</option>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
-									</label>
-									<label><p>4.</p>
+								</label>
+								<label class="sm nn n04">							
 									<select name="sharingSideBar[socnet_with_pos][3]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][3]]) echo 'class="pq_error"';?>>
-									<option value="" selected>None</option>
-									<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'FB') echo 'selected';?> >Facebook</option>
-									<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'TW') echo 'selected';?>>Twitter</option>
-									<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'GP') echo 'selected';?>>Google plus</option>
-									<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'RD') echo 'selected';?>>Reddit</option>
-									<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'PI') echo 'selected';?>>Pinterest</option>
-									<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'VK') echo 'selected';?>>Vkontakte</option>
-									<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-									<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'LJ') echo 'selected';?>>Live Journal</option>
-									<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'TR') echo 'selected';?>>Tumblr</option>
-									<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'LI') echo 'selected';?>>LinkedIn</option>
-									<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'SU') echo 'selected';?>>StumbleUpon</option>
-									<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'DG') echo 'selected';?>>Digg</option>
-									<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'DL') echo 'selected';?>>Delicious</option>
-									<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'WU') echo 'selected';?>>WhatsApp</option>
-									<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'BR') echo 'selected';?>>Blogger</option>
-									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'RR') echo 'selected';?>>Renren</option>
-									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'WB') echo 'selected';?>>Weibo</option>
-									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'MW') echo 'selected';?>>My World</option>
-									<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'EN') echo 'selected';?>>Evernote</option>
-									<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'PO') echo 'selected';?>>Pocket</option>
-									<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'AK') echo 'selected';?>>Kindle</option>
-									<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'FL') echo 'selected';?>>Flipboard</option>
-									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'Print') echo 'selected';?>>Print</option>
-									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'MailTo') echo 'selected';?>>Email</option>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
-									</label>
-									<label><p>5.</p>
+								</label>
+								<label class="sm nn n05">							
 									<select name="sharingSideBar[socnet_with_pos][4]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][4]]) echo 'class="pq_error"';?>>
-									<option value="" selected>None</option>
-									<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'FB') echo 'selected';?> >Facebook</option>
-									<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'TW') echo 'selected';?>>Twitter</option>
-									<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'GP') echo 'selected';?>>Google plus</option>
-									<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'RD') echo 'selected';?>>Reddit</option>
-									<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'PI') echo 'selected';?>>Pinterest</option>
-									<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'VK') echo 'selected';?>>Vkontakte</option>
-									<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-									<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'LJ') echo 'selected';?>>Live Journal</option>
-									<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'TR') echo 'selected';?>>Tumblr</option>
-									<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'LI') echo 'selected';?>>LinkedIn</option>
-									<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'SU') echo 'selected';?>>StumbleUpon</option>
-									<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'DG') echo 'selected';?>>Digg</option>
-									<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'DL') echo 'selected';?>>Delicious</option>
-									<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'WU') echo 'selected';?>>WhatsApp</option>
-									<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'BR') echo 'selected';?>>Blogger</option>
-									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'RR') echo 'selected';?>>Renren</option>
-									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'WB') echo 'selected';?>>Weibo</option>
-									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'MW') echo 'selected';?>>My World</option>
-									<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'EN') echo 'selected';?>>Evernote</option>
-									<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'PO') echo 'selected';?>>Pocket</option>
-									<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'AK') echo 'selected';?>>Kindle</option>
-									<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'FL') echo 'selected';?>>Flipboard</option>
-									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'Print') echo 'selected';?>>Print</option>
-									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'MailTo') echo 'selected';?>>Email</option>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
-									</label>
-									<label><p>6.</p>
+								</label>
+								<label class="sm nn n06">							
 									<select name="sharingSideBar[socnet_with_pos][5]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][5]]) echo 'class="pq_error"';?>>
-									<option value="" selected>None</option>
-									<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'FB') echo 'selected';?> >Facebook</option>
-									<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'TW') echo 'selected';?>>Twitter</option>
-									<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'GP') echo 'selected';?>>Google plus</option>
-									<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'RD') echo 'selected';?>>Reddit</option>
-									<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'PI') echo 'selected';?>>Pinterest</option>
-									<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'VK') echo 'selected';?>>Vkontakte</option>
-									<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-									<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'LJ') echo 'selected';?>>Live Journal</option>
-									<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'TR') echo 'selected';?>>Tumblr</option>
-									<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'LI') echo 'selected';?>>LinkedIn</option>
-									<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'SU') echo 'selected';?>>StumbleUpon</option>
-									<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'DG') echo 'selected';?>>Digg</option>
-									<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'DL') echo 'selected';?>>Delicious</option>
-									<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'WU') echo 'selected';?>>WhatsApp</option>
-									<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'BR') echo 'selected';?>>Blogger</option>
-									<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'RR') echo 'selected';?>>Renren</option>
-									<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'WB') echo 'selected';?>>Weibo</option>
-									<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'MW') echo 'selected';?>>My World</option>
-									<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'EN') echo 'selected';?>>Evernote</option>
-									<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'PO') echo 'selected';?>>Pocket</option>
-									<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'AK') echo 'selected';?>>Kindle</option>
-									<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'FL') echo 'selected';?>>Flipboard</option>
-									<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'Print') echo 'selected';?>>Print</option>
-									<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'MailTo') echo 'selected';?>>Email</option>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
-									</label>
-										<div class="clear"></div>
-										<div id="collapseservices" style="display:none;">
-											<label><p>7.</p>
-											<select name="sharingSideBar[socnet_with_pos][6]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][6]]) echo 'class="pq_error"';?>>
-											<option value="" selected>None</option>
-											<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'FB') echo 'selected';?> >Facebook</option>
-											<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'TW') echo 'selected';?>>Twitter</option>
-											<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'GP') echo 'selected';?>>Google plus</option>
-											<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'RD') echo 'selected';?>>Reddit</option>
-											<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'PI') echo 'selected';?>>Pinterest</option>
-											<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'VK') echo 'selected';?>>Vkontakte</option>
-											<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-											<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'LJ') echo 'selected';?>>Live Journal</option>
-											<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'TR') echo 'selected';?>>Tumblr</option>
-											<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'LI') echo 'selected';?>>LinkedIn</option>
-											<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'SU') echo 'selected';?>>StumbleUpon</option>
-											<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'DG') echo 'selected';?>>Digg</option>
-											<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'DL') echo 'selected';?>>Delicious</option>
-											<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'WU') echo 'selected';?>>WhatsApp</option>
-											<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'BR') echo 'selected';?>>Blogger</option>
-											<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'RR') echo 'selected';?>>Renren</option>
-											<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'WB') echo 'selected';?>>Weibo</option>
-											<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'MW') echo 'selected';?>>My World</option>
-											<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'EN') echo 'selected';?>>Evernote</option>
-											<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'PO') echo 'selected';?>>Pocket</option>
-											<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'AK') echo 'selected';?>>Kindle</option>
-											<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'FL') echo 'selected';?>>Flipboard</option>
-											<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'Print') echo 'selected';?>>Print</option>
-											<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'MailTo') echo 'selected';?>>Email</option>
-											</select>
-											</label>
-											<label><p>8.</p>
-											<select name="sharingSideBar[socnet_with_pos][7]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][7]]) echo 'class="pq_error"';?>>
-											<option value="" selected>None</option>
-											<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'FB') echo 'selected';?> >Facebook</option>
-											<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'TW') echo 'selected';?>>Twitter</option>
-											<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'GP') echo 'selected';?>>Google plus</option>
-											<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'RD') echo 'selected';?>>Reddit</option>
-											<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'PI') echo 'selected';?>>Pinterest</option>
-											<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'VK') echo 'selected';?>>Vkontakte</option>
-											<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-											<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'LJ') echo 'selected';?>>Live Journal</option>
-											<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'TR') echo 'selected';?>>Tumblr</option>
-											<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'LI') echo 'selected';?>>LinkedIn</option>
-											<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'SU') echo 'selected';?>>StumbleUpon</option>
-											<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'DG') echo 'selected';?>>Digg</option>
-											<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'DL') echo 'selected';?>>Delicious</option>
-											<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'WU') echo 'selected';?>>WhatsApp</option>
-											<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'BR') echo 'selected';?>>Blogger</option>
-											<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'RR') echo 'selected';?>>Renren</option>
-											<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'WB') echo 'selected';?>>Weibo</option>
-											<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'MW') echo 'selected';?>>My World</option>
-											<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'EN') echo 'selected';?>>Evernote</option>
-											<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'PO') echo 'selected';?>>Pocket</option>
-											<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'AK') echo 'selected';?>>Kindle</option>
-											<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'FL') echo 'selected';?>>Flipboard</option>
-											<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'Print') echo 'selected';?>>Print</option>
-											<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'MailTo') echo 'selected';?>>Email</option>
-											</select>
-											</label>
-											<label><p>9.</p>
-											<select name="sharingSideBar[socnet_with_pos][8]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][8]]) echo 'class="pq_error"';?>>
-<option value="" selected>None</option>
-<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'FB') echo 'selected';?> >Facebook</option>
-<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'TW') echo 'selected';?>>Twitter</option>
-<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'GP') echo 'selected';?>>Google plus</option>
-<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'RD') echo 'selected';?>>Reddit</option>
-<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'PI') echo 'selected';?>>Pinterest</option>
-<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'VK') echo 'selected';?>>Vkontakte</option>
-<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'LJ') echo 'selected';?>>Live Journal</option>
-<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'TR') echo 'selected';?>>Tumblr</option>
-<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'LI') echo 'selected';?>>LinkedIn</option>
-<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'SU') echo 'selected';?>>StumbleUpon</option>
-<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'DG') echo 'selected';?>>Digg</option>
-<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'DL') echo 'selected';?>>Delicious</option>
-<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'WU') echo 'selected';?>>WhatsApp</option>
-<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'BR') echo 'selected';?>>Blogger</option>
-<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'RR') echo 'selected';?>>Renren</option>
-<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'WB') echo 'selected';?>>Weibo</option>
-<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'MW') echo 'selected';?>>My World</option>
-<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'EN') echo 'selected';?>>Evernote</option>
-<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'PO') echo 'selected';?>>Pocket</option>
-<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'AK') echo 'selected';?>>Kindle</option>
-<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'FL') echo 'selected';?>>Flipboard</option>
-<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'Print') echo 'selected';?>>Print</option>
-<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'MailTo') echo 'selected';?>>Email</option>
-</select>
-											</label>
-											<label><p>10.</p>
-											<select name="sharingSideBar[socnet_with_pos][9]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][9]]) echo 'class="pq_error"';?>>
-<option value="" selected>None</option>
-<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'FB') echo 'selected';?> >Facebook</option>
-<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'TW') echo 'selected';?>>Twitter</option>
-<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'GP') echo 'selected';?>>Google plus</option>
-<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'RD') echo 'selected';?>>Reddit</option>
-<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'PI') echo 'selected';?>>Pinterest</option>
-<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'VK') echo 'selected';?>>Vkontakte</option>
-<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'LJ') echo 'selected';?>>Live Journal</option>
-<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'TR') echo 'selected';?>>Tumblr</option>
-<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'LI') echo 'selected';?>>LinkedIn</option>
-<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'SU') echo 'selected';?>>StumbleUpon</option>
-<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'DG') echo 'selected';?>>Digg</option>
-<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'DL') echo 'selected';?>>Delicious</option>
-<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'WU') echo 'selected';?>>WhatsApp</option>
-<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'BR') echo 'selected';?>>Blogger</option>
-<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'RR') echo 'selected';?>>Renren</option>
-<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'WB') echo 'selected';?>>Weibo</option>
-<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'MW') echo 'selected';?>>My World</option>
-<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'EN') echo 'selected';?>>Evernote</option>
-<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'PO') echo 'selected';?>>Pocket</option>
-<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'AK') echo 'selected';?>>Kindle</option>
-<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'FL') echo 'selected';?>>Flipboard</option>
-<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'Print') echo 'selected';?>>Print</option>
-<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'MailTo') echo 'selected';?>>Email</option>
-</select>
-											</label>
-											<label><p>11.</p>
-											<select name="sharingSideBar[socnet_with_pos][10]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][10]]) echo 'class="pq_error"';?>>
-<option value="" selected>None</option>
-<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'FB') echo 'selected';?> >Facebook</option>
-<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'TW') echo 'selected';?>>Twitter</option>
-<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'GP') echo 'selected';?>>Google plus</option>
-<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'RD') echo 'selected';?>>Reddit</option>
-<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'PI') echo 'selected';?>>Pinterest</option>
-<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'VK') echo 'selected';?>>Vkontakte</option>
-<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'LJ') echo 'selected';?>>Live Journal</option>
-<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'TR') echo 'selected';?>>Tumblr</option>
-<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'LI') echo 'selected';?>>LinkedIn</option>
-<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'SU') echo 'selected';?>>StumbleUpon</option>
-<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'DG') echo 'selected';?>>Digg</option>
-<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'DL') echo 'selected';?>>Delicious</option>
-<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'WU') echo 'selected';?>>WhatsApp</option>
-<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'BR') echo 'selected';?>>Blogger</option>
-<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'RR') echo 'selected';?>>Renren</option>
-<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'WB') echo 'selected';?>>Weibo</option>
-<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'MW') echo 'selected';?>>My World</option>
-<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'EN') echo 'selected';?>>Evernote</option>
-<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'PO') echo 'selected';?>>Pocket</option>
-<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'AK') echo 'selected';?>>Kindle</option>
-<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'FL') echo 'selected';?>>Flipboard</option>
-<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'Print') echo 'selected';?>>Print</option>
-<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'MailTo') echo 'selected';?>>Email</option>
-</select>
-											</label>
-											<label><p>12.</p>
-											<select name="sharingSideBar[socnet_with_pos][11]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][11]]) echo 'class="pq_error"';?>>
-<option value="" selected>None</option>
-<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'FB') echo 'selected';?> >Facebook</option>
-<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'TW') echo 'selected';?>>Twitter</option>
-<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'GP') echo 'selected';?>>Google plus</option>
-<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'RD') echo 'selected';?>>Reddit</option>
-<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'PI') echo 'selected';?>>Pinterest</option>
-<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'VK') echo 'selected';?>>Vkontakte</option>
-<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'LJ') echo 'selected';?>>Live Journal</option>
-<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'TR') echo 'selected';?>>Tumblr</option>
-<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'LI') echo 'selected';?>>LinkedIn</option>
-<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'SU') echo 'selected';?>>StumbleUpon</option>
-<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'DG') echo 'selected';?>>Digg</option>
-<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'DL') echo 'selected';?>>Delicious</option>
-<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'WU') echo 'selected';?>>WhatsApp</option>
-<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'BR') echo 'selected';?>>Blogger</option>
-<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'RR') echo 'selected';?>>Renren</option>
-<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'WB') echo 'selected';?>>Weibo</option>
-<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'MW') echo 'selected';?>>My World</option>
-<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'EN') echo 'selected';?>>Evernote</option>
-<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'PO') echo 'selected';?>>Pocket</option>
-<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'AK') echo 'selected';?>>Kindle</option>
-<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'FL') echo 'selected';?>>Flipboard</option>
-<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'Print') echo 'selected';?>>Print</option>
-<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'MailTo') echo 'selected';?>>Email</option>
-</select>
-											</label>
-											<label><p>13.</p>
-											<select name="sharingSideBar[socnet_with_pos][12]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][12]]) echo 'class="pq_error"';?>>
-<option value="" selected>None</option>
-<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'FB') echo 'selected';?> >Facebook</option>
-<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'TW') echo 'selected';?>>Twitter</option>
-<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'GP') echo 'selected';?>>Google plus</option>
-<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'RD') echo 'selected';?>>Reddit</option>
-<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'PI') echo 'selected';?>>Pinterest</option>
-<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'VK') echo 'selected';?>>Vkontakte</option>
-<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'LJ') echo 'selected';?>>Live Journal</option>
-<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'TR') echo 'selected';?>>Tumblr</option>
-<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'LI') echo 'selected';?>>LinkedIn</option>
-<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'SU') echo 'selected';?>>StumbleUpon</option>
-<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'DG') echo 'selected';?>>Digg</option>
-<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'DL') echo 'selected';?>>Delicious</option>
-<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'WU') echo 'selected';?>>WhatsApp</option>
-<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'BR') echo 'selected';?>>Blogger</option>
-<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'RR') echo 'selected';?>>Renren</option>
-<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'WB') echo 'selected';?>>Weibo</option>
-<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'MW') echo 'selected';?>>My World</option>
-<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'EN') echo 'selected';?>>Evernote</option>
-<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'PO') echo 'selected';?>>Pocket</option>
-<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'AK') echo 'selected';?>>Kindle</option>
-<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'FL') echo 'selected';?>>Flipboard</option>
-<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'Print') echo 'selected';?>>Print</option>
-<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'MailTo') echo 'selected';?>>Email</option>
-</select>
-											</label>
-											<label><p>14.</p>
-											<select name="sharingSideBar[socnet_with_pos][13]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][13]]) echo 'class="pq_error"';?>>
-<option value="" selected>None</option>
-<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'FB') echo 'selected';?> >Facebook</option>
-<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'TW') echo 'selected';?>>Twitter</option>
-<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'GP') echo 'selected';?>>Google plus</option>
-<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'RD') echo 'selected';?>>Reddit</option>
-<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'PI') echo 'selected';?>>Pinterest</option>
-<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'VK') echo 'selected';?>>Vkontakte</option>
-<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'LJ') echo 'selected';?>>Live Journal</option>
-<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'TR') echo 'selected';?>>Tumblr</option>
-<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'LI') echo 'selected';?>>LinkedIn</option>
-<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'SU') echo 'selected';?>>StumbleUpon</option>
-<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'DG') echo 'selected';?>>Digg</option>
-<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'DL') echo 'selected';?>>Delicious</option>
-<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'WU') echo 'selected';?>>WhatsApp</option>
-<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'BR') echo 'selected';?>>Blogger</option>
-<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'RR') echo 'selected';?>>Renren</option>
-<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'WB') echo 'selected';?>>Weibo</option>
-<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'MW') echo 'selected';?>>My World</option>
-<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'EN') echo 'selected';?>>Evernote</option>
-<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'PO') echo 'selected';?>>Pocket</option>
-<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'AK') echo 'selected';?>>Kindle</option>
-<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'FL') echo 'selected';?>>Flipboard</option>
-<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'Print') echo 'selected';?>>Print</option>
-<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'MailTo') echo 'selected';?>>Email</option>
-</select>
-											</label>
-											<label><p>15.</p>
-											<select name="sharingSideBar[socnet_with_pos][14]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][14]]) echo 'class="pq_error"';?>>
-<option value="" selected>None</option>
-<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'FB') echo 'selected';?> >Facebook</option>
-<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'TW') echo 'selected';?>>Twitter</option>
-<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'GP') echo 'selected';?>>Google plus</option>
-<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'RD') echo 'selected';?>>Reddit</option>
-<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'PI') echo 'selected';?>>Pinterest</option>
-<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'VK') echo 'selected';?>>Vkontakte</option>
-<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'LJ') echo 'selected';?>>Live Journal</option>
-<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'TR') echo 'selected';?>>Tumblr</option>
-<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'LI') echo 'selected';?>>LinkedIn</option>
-<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'SU') echo 'selected';?>>StumbleUpon</option>
-<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'DG') echo 'selected';?>>Digg</option>
-<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'DL') echo 'selected';?>>Delicious</option>
-<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'WU') echo 'selected';?>>WhatsApp</option>
-<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'BR') echo 'selected';?>>Blogger</option>
-<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'RR') echo 'selected';?>>Renren</option>
-<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'WB') echo 'selected';?>>Weibo</option>
-<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'MW') echo 'selected';?>>My World</option>
-<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'EN') echo 'selected';?>>Evernote</option>
-<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'PO') echo 'selected';?>>Pocket</option>
-<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'AK') echo 'selected';?>>Kindle</option>
-<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'FL') echo 'selected';?>>Flipboard</option>
-<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'Print') echo 'selected';?>>Print</option>
-<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'MailTo') echo 'selected';?>>Email</option>
-</select>
-											</label>
-											<label><p>16.</p>
-											<select name="sharingSideBar[socnet_with_pos][15]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][15]]) echo 'class="pq_error"';?>>
-<option value="" selected>None</option>
-<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'FB') echo 'selected';?> >Facebook</option>
-<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'TW') echo 'selected';?>>Twitter</option>
-<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'GP') echo 'selected';?>>Google plus</option>
-<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'RD') echo 'selected';?>>Reddit</option>
-<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'PI') echo 'selected';?>>Pinterest</option>
-<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'VK') echo 'selected';?>>Vkontakte</option>
-<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'LJ') echo 'selected';?>>Live Journal</option>
-<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'TR') echo 'selected';?>>Tumblr</option>
-<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'LI') echo 'selected';?>>LinkedIn</option>
-<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'SU') echo 'selected';?>>StumbleUpon</option>
-<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'DG') echo 'selected';?>>Digg</option>
-<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'DL') echo 'selected';?>>Delicious</option>
-<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'WU') echo 'selected';?>>WhatsApp</option>
-<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'BR') echo 'selected';?>>Blogger</option>
-<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'RR') echo 'selected';?>>Renren</option>
-<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'WB') echo 'selected';?>>Weibo</option>
-<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'MW') echo 'selected';?>>My World</option>
-<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'EN') echo 'selected';?>>Evernote</option>
-<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'PO') echo 'selected';?>>Pocket</option>
-<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'AK') echo 'selected';?>>Kindle</option>
-<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'FL') echo 'selected';?>>Flipboard</option>
-<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'Print') echo 'selected';?>>Print</option>
-<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'MailTo') echo 'selected';?>>Email</option>
-</select>
-											</label>
-											<label><p>17.</p>
-											<select name="sharingSideBar[socnet_with_pos][16]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][16]]) echo 'class="pq_error"';?>>
-<option value="" selected>None</option>
-<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'FB') echo 'selected';?> >Facebook</option>
-<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'TW') echo 'selected';?>>Twitter</option>
-<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'GP') echo 'selected';?>>Google plus</option>
-<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'RD') echo 'selected';?>>Reddit</option>
-<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'PI') echo 'selected';?>>Pinterest</option>
-<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'VK') echo 'selected';?>>Vkontakte</option>
-<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'LJ') echo 'selected';?>>Live Journal</option>
-<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'TR') echo 'selected';?>>Tumblr</option>
-<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'LI') echo 'selected';?>>LinkedIn</option>
-<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'SU') echo 'selected';?>>StumbleUpon</option>
-<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'DG') echo 'selected';?>>Digg</option>
-<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'DL') echo 'selected';?>>Delicious</option>
-<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'WU') echo 'selected';?>>WhatsApp</option>
-<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'BR') echo 'selected';?>>Blogger</option>
-<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'RR') echo 'selected';?>>Renren</option>
-<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'WB') echo 'selected';?>>Weibo</option>
-<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'MW') echo 'selected';?>>My World</option>
-<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'EN') echo 'selected';?>>Evernote</option>
-<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'PO') echo 'selected';?>>Pocket</option>
-<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'AK') echo 'selected';?>>Kindle</option>
-<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'FL') echo 'selected';?>>Flipboard</option>
-<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'Print') echo 'selected';?>>Print</option>
-<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'MailTo') echo 'selected';?>>Email</option>
-</select>
-											</label>
-											<label><p>18.</p>
-											<select name="sharingSideBar[socnet_with_pos][17]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][17]]) echo 'class="pq_error"';?>>
-<option value="" selected>None</option>
-<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'FB') echo 'selected';?> >Facebook</option>
-<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'TW') echo 'selected';?>>Twitter</option>
-<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'GP') echo 'selected';?>>Google plus</option>
-<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'RD') echo 'selected';?>>Reddit</option>
-<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'PI') echo 'selected';?>>Pinterest</option>
-<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'VK') echo 'selected';?>>Vkontakte</option>
-<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'LJ') echo 'selected';?>>Live Journal</option>
-<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'TR') echo 'selected';?>>Tumblr</option>
-<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'LI') echo 'selected';?>>LinkedIn</option>
-<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'SU') echo 'selected';?>>StumbleUpon</option>
-<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'DG') echo 'selected';?>>Digg</option>
-<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'DL') echo 'selected';?>>Delicious</option>
-<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'WU') echo 'selected';?>>WhatsApp</option>
-<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'BR') echo 'selected';?>>Blogger</option>
-<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'RR') echo 'selected';?>>Renren</option>
-<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'WB') echo 'selected';?>>Weibo</option>
-<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'MW') echo 'selected';?>>My World</option>
-<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'EN') echo 'selected';?>>Evernote</option>
-<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'PO') echo 'selected';?>>Pocket</option>
-<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'AK') echo 'selected';?>>Kindle</option>
-<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'FL') echo 'selected';?>>Flipboard</option>
-<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'Print') echo 'selected';?>>Print</option>
-<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'MailTo') echo 'selected';?>>Email</option>
-</select>
-											</label>
-											<label><p>19.</p>
-											<select name="sharingSideBar[socnet_with_pos][18]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][18]]) echo 'class="pq_error"';?>>
-<option value="" selected>None</option>
-<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'FB') echo 'selected';?> >Facebook</option>
-<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'TW') echo 'selected';?>>Twitter</option>
-<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'GP') echo 'selected';?>>Google plus</option>
-<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'RD') echo 'selected';?>>Reddit</option>
-<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'PI') echo 'selected';?>>Pinterest</option>
-<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'VK') echo 'selected';?>>Vkontakte</option>
-<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'LJ') echo 'selected';?>>Live Journal</option>
-<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'TR') echo 'selected';?>>Tumblr</option>
-<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'LI') echo 'selected';?>>LinkedIn</option>
-<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'SU') echo 'selected';?>>StumbleUpon</option>
-<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'DG') echo 'selected';?>>Digg</option>
-<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'DL') echo 'selected';?>>Delicious</option>
-<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'WU') echo 'selected';?>>WhatsApp</option>
-<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'BR') echo 'selected';?>>Blogger</option>
-<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'RR') echo 'selected';?>>Renren</option>
-<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'WB') echo 'selected';?>>Weibo</option>
-<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'MW') echo 'selected';?>>My World</option>
-<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'EN') echo 'selected';?>>Evernote</option>
-<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'PO') echo 'selected';?>>Pocket</option>
-<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'AK') echo 'selected';?>>Kindle</option>
-<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'FL') echo 'selected';?>>Flipboard</option>
-<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'Print') echo 'selected';?>>Print</option>
-<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'MailTo') echo 'selected';?>>Email</option>
-</select>
-											</label>
-											<label><p>20.</p>
-											<select name="sharingSideBar[socnet_with_pos][19]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][19]]) echo 'class="pq_error"';?>>
-<option value="" selected>None</option>
-<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'FB') echo 'selected';?> >Facebook</option>
-<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'TW') echo 'selected';?>>Twitter</option>
-<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'GP') echo 'selected';?>>Google plus</option>
-<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'RD') echo 'selected';?>>Reddit</option>
-<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'PI') echo 'selected';?>>Pinterest</option>
-<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'VK') echo 'selected';?>>Vkontakte</option>
-<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'OD') echo 'selected';?>>Odnoklassniki</option>
-<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'LJ') echo 'selected';?>>Live Journal</option>
-<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'TR') echo 'selected';?>>Tumblr</option>
-<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'LI') echo 'selected';?>>LinkedIn</option>
-<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'SU') echo 'selected';?>>StumbleUpon</option>
-<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'DG') echo 'selected';?>>Digg</option>
-<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'DL') echo 'selected';?>>Delicious</option>
-<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'WU') echo 'selected';?>>WhatsApp</option>
-<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'BR') echo 'selected';?>>Blogger</option>
-<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'RR') echo 'selected';?>>Renren</option>
-<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'WB') echo 'selected';?>>Weibo</option>
-<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'MW') echo 'selected';?>>My World</option>
-<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'EN') echo 'selected';?>>Evernote</option>
-<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'PO') echo 'selected';?>>Pocket</option>
-<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'AK') echo 'selected';?>>Kindle</option>
-<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'FL') echo 'selected';?>>Flipboard</option>
-<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'Print') echo 'selected';?>>Print</option>
-<option value="MailTo" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'MailTo') echo 'selected';?>>Email</option>
-</select>
-											</label>
-									</div>
-									<button type="button" class="pq-btn-link btn-bg" onclick="document.getElementById('collapseservices').style.display='block';" >More Services</button>
-								</div>	
+								</label>
+								<input type="button" class="pq_li_button addservices7-12" value="more services">
+								<label class="sm nn n07">							
+									<select name="sharingSideBar[socnet_with_pos][6]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][6]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<label class="sm nn n08">							
+									<select name="sharingSideBar[socnet_with_pos][7]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][7]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<label class="sm nn n09">							
+									<select name="sharingSideBar[socnet_with_pos][8]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][8]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<label class="sm nn n10">							
+									<select name="sharingSideBar[socnet_with_pos][9]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][9]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<label class="sm nn n11">							
+									<select name="sharingSideBar[socnet_with_pos][10]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][10]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<label class="sm nn n12">							
+									<select name="sharingSideBar[socnet_with_pos][11]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][11]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<input type="button" class="pq_li_button addservices13-18" value="more services">
+								<label class="sm nn n13">							
+									<select name="sharingSideBar[socnet_with_pos][12]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][12]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<label class="sm nn n14">							
+									<select name="sharingSideBar[socnet_with_pos][13]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][13]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<label class="sm nn n15">							
+									<select name="sharingSideBar[socnet_with_pos][14]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][14]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<label class="sm nn n16">							
+									<select name="sharingSideBar[socnet_with_pos][15]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][15]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<label class="sm nn n17">							
+									<select name="sharingSideBar[socnet_with_pos][16]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][16]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<label class="sm nn n18">							
+									<select name="sharingSideBar[socnet_with_pos][17]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][17]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<input type="button" class="pq_li_button addservices19-20" value="more services">
+								<label class="sm nn n19">							
+									<select name="sharingSideBar[socnet_with_pos][18]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][18]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<label class="sm nn n20">							
+									<select name="sharingSideBar[socnet_with_pos][19]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][19]]) echo 'class="pq_error"';?>>
+										<option value="" selected>None</option>
+										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'FB') echo 'selected';?> >Facebook</option>
+										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'TW') echo 'selected';?>>Twitter</option>
+										<option value="GP" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'GP') echo 'selected';?>>Google plus</option>
+										<option value="RD" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'RD') echo 'selected';?>>Reddit</option>
+										<option value="PI" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'PI') echo 'selected';?>>Pinterest</option>
+										<option value="VK" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'VK') echo 'selected';?>>Vkontakte</option>
+										<option value="OD" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'OD') echo 'selected';?>>Odnoklassniki</option>
+										<option value="LJ" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'LJ') echo 'selected';?>>Live Journal</option>
+										<option value="TR" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'TR') echo 'selected';?>>Tumblr</option>
+										<option value="LI" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'LI') echo 'selected';?>>LinkedIn</option>
+										<option value="SU" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'SU') echo 'selected';?>>StumbleUpon</option>
+										<option value="DG" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'DG') echo 'selected';?>>Digg</option>
+										<option value="DL" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'DL') echo 'selected';?>>Delicious</option>
+										<option value="WU" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'WU') echo 'selected';?>>WhatsApp</option>
+										<option value="BR" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'BR') echo 'selected';?>>Blogger</option>
+										<option value="RR" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'RR') echo 'selected';?>>Renren</option>
+										<option value="WB" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'WB') echo 'selected';?>>Weibo</option>
+										<option value="MW" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'MW') echo 'selected';?>>My World</option>
+										<option value="EN" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'EN') echo 'selected';?>>Evernote</option>
+										<option value="PO" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'PO') echo 'selected';?>>Pocket</option>
+										<option value="AK" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'AK') echo 'selected';?>>Kindle</option>
+										<option value="FL" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'FL') echo 'selected';?>>Flipboard</option>
+										<option value="Print" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'Print') echo 'selected';?>>Print</option>
+										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'Mail') echo 'selected';?>>Email</option>
+									</select>
+								</label>
+								<h3>Sharing Image Window</h3>
+								<label>							
+									<select name="sharingSideBar[galleryOption][disable]" >
+										<option <?php if((int)$this->_options[sharingSideBar][galleryOption][disable] == 1) echo 'selected';?> value="1">Disabled</option>
+										<option <?php if((int)$this->_options[sharingSideBar][galleryOption][disable] == 0) echo 'selected';?> value="0">Enabled</option>
+									</select>
+								</label>
+								<label>
+								<p>Heading</p>
+									<input class="text" type="text" name="sharingSideBar[galleryOption][title]" value="<?php echo stripslashes($this->_options[sharingSideBar][galleryOption][title]);?>">
+									
+								</label>
+								<label>
+								<p>Button</p>
+									<input class="text" type="text" name="sharingSideBar[galleryOption][buttonTitle]" value="<?php echo stripslashes($this->_options[sharingSideBar][galleryOption][buttonTitle]);?>">
+									
+								</label>
+								<label>
+								<label><p>Share Image</p>						
+									<select name="sharingSideBar[galleryOption][minWidth]">
+										<option value="100" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '100' || $this->_options[sharingSideBar][galleryOption][minWidth] == '') echo 'selected';?>>100 px and more</option>
+										<option value="200" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '200') echo 'selected';?>>200 px and more</option>
+										<option value="300" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '300') echo 'selected';?>>300 px and more</option>
+										<option value="400" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '400') echo 'selected';?>>400 px and more</option>
+										<option value="500" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '500') echo 'selected';?>>500 px and more</option>
+										<option value="600" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '600') echo 'selected';?>>600 px and more</option>
+									</select>
+								</label>
+								<h3>FOR MOBILE</h3>
+								<p>Heading</p>
+									<input class="text" type="text" name="sharingSideBar[mobile_title]" value="<?php echo stripslashes($this->_options[sharingSideBar][mobile_title]);?>">
+									
+								</label>
+							</div>
+						</div>
+						<div class="settings follow">
+							<div class="popup selected">
+								<h3>Text</h3>
+								<label>
+								<p>Heading</p>
+									<input class="text" type="text" name="follow[title]" value="<?php echo stripslashes($this->_options[follow][title])?>">
+									
+								</label>
+								<label>
+								<p>Text</p>
+									<textarea rows="2" type="text" name="follow[sub_title]" ><?php echo stripslashes($this->_options[follow][sub_title])?></textarea>
+									
+								</label>
+								<label class="sm fb">
+									<p>facebook.com/</p>
+									<input type="text" name="follow[follow_socnet][FB]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][FB]);?>">
+								</label>
+								<label class="sm tw">							
+									<p>twitter.com/</p>
+									<input type="text" name="follow[follow_socnet][TW]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][TW]);?>">
+								</label>
+								<label class="sm gp">
+									<p>plus.google.com/</p>								
+									<input type="text" name="follow[follow_socnet][GP]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][GP]);?>">
+								</label>
+								<input type="button" class="pq_li_button addservices4-6" value="more services">
+								<label class="sm pi f04">							
+									<p>pinterest.com/</p>
+									<input type="text" name="follow[follow_socnet][PI]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][PI]);?>">
+								</label>
+								<label class="sm vk f05">							
+									<p>vk.com/</p>
+									<input type="text" name="follow[follow_socnet][VK]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][VK]);?>">
+								</label>
+								<label class="sm od f06">
+									<p>odnoklassniki.ru/</p>
+									<input type="text" name="follow[follow_socnet][OD]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][OD]);?>">
+								</label>
+								<input type="button" class="pq_li_button addservices7-8" value="more services">
+								<label class="sm ig f07">
+									<p>instagram.com/</p>
+									<input type="text" name="follow[follow_socnet][IG]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][IG]);?>">
+								</label>
+								<label class="sm rs f08">
+									<p>RSS feed</p>
+									<input type="text" name="follow[follow_socnet][RSS]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][RSS]);?>">
+								</label>																																
+							</div>
+						</div>
+						
+						<div class="settings marketing">
+							<div class="pq_bar selected">
+								<h3>Text</h3>
+								<label>
+								<p>Heading</p>
+									<input class="text" type="text" name="subscribeBar[title]" value="<?php echo stripslashes($this->_options[subscribeBar][title]);?>">
+									
+								</label>
 								
-								<label><p>Title for Sharing Image Window (for Pinterest, Tumblr and VK)</p><input type="text" name="sharingSideBar[galleryOption][title]" value="<?php echo stripslashes($this->_options[sharingSideBar][galleryOption][title]);?>"></label>	
+								<label>
+								<p>Input email text</p>
+									<input class="text" type="text" name="subscribeBar[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][inputEmailTitle]);?>">
+									
+								</label>
+								<label>
+								<p>Input name text (Aweber)</p>
+									<input class="text" type="text" name="subscribeBar[inputNameTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][inputNameTitle]);?>">
+									
+								</label>
+									
 								
-								<div class="pq-sm-6 icons" style="padding-left: 0; margin: 0;">
-									<label style="margin:0;"><p>Color</p><select id="sharingSideBar_button_color" onchange="sharingSideBarPreview();" name="sharingSideBar[galleryOption][button_color]">
-								    <option value="btn_lightblue" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
+								
+								<h3>For mobile</h3>
+								<label>
+								<p>Heading</p>
+									<input class="text" type="text" name="subscribeBar[mobile_title]" value="<?php echo stripslashes($this->_options[subscribeBar][mobile_title]);?>">
+									
+								</label>
+								<h3>Button</h3>
+								<label>
+								<p>Title</p>
+									<input class="text" type="text" name="subscribeBar[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][buttonTitle]);?>">
+									
+								</label>								
+							</div>
+						</div>
+						<div class="settings contact">
+							<div class="popup selected">
+								<h3>Text</h3>
+								<label>
+								<p>Heading</p>
+									<input type="text" name="contactUs[title]" value="<?php echo stripslashes($this->_options[contactUs][title]);?>">
+									
+								</label>
+								<label>
+								<p>Text</p>
+									<input type="text" name="contactUs[sub_title]" value="<?php echo stripslashes($this->_options[contactUs][sub_title]);?>">
+									
+								</label>
+								<label>
+								<p>Enter Name Text</p>
+									<input class="text" type="text" name="contactUs[enter_name_text]" value="<?php echo stripslashes($this->_options[contactUs][enter_name_text]);?>">
+									
+								</label>
+								<label>
+								<p>Enter Email Text</p>
+									<input class="text" type="text" name="contactUs[enter_email_text]" value="<?php echo stripslashes($this->_options[contactUs][enter_email_text]);?>">
+									
+								</label>
+								<label>
+									<p>Enter Message Text</p>
+										<input class="text" type="text" name="contactUs[enter_message_text]" value="<?php echo stripslashes($this->_options[contactUs][enter_message_text]);?>">
+								</label>
+								
+								<h3>Loader</h3>	
+								<!--label>
+									<select>
+										<option name="4">Descktop and Mobile</option>
+										<option name="4">Descktop</option>
+										<option name="4">Mobile</option>
+										<option name="4">Disabled</option>
+									</select>
+								</label-->
+								<label>
+									<p>Heading</p>
+									<input class="text" type="text" name="contactUs[loaderText]" value="<?php echo stripslashes($this->_options[contactUs][loaderText]);?>">
+								</label>
+								<h3>Button</h3>
+								<label>
+								<p>Button Title</p>
+									<input class="text" type="text" name="contactUs[buttonTitle]" value="<?php echo stripslashes($this->_options[contactUs][buttonTitle]);?>">
+								</label>
+							</div>
+						</div>
+						<div class="settings callme">
+							<div class="popup selected">
+								<h3>Text</h3>
+								<label>
+								<p>Heading</p>
+									<input class="text" type="text" name="callMe[title]" value="<?php echo stripslashes($this->_options[callMe][title])?>">
+									
+								</label>
+								<label>
+								<p>Text</p>
+									<textarea rows="2" type="text" name="callMe[sub_title]"><?php echo stripslashes($this->_options[callMe][sub_title])?></textarea>
+									
+								</label>
+								<label class="">
+								<p>Enter Name Text</p>
+									<input class="text" type="text" name="callMe[enter_name_text]" value="<?php echo stripslashes($this->_options[callMe][enter_name_text]);?>">
+									
+								</label>
+								<label class="">
+								<p>Enter Phone Text</p>
+									<input class="text" type="text" name="callMe[enter_phone_text]" value="<?php echo stripslashes($this->_options[callMe][enter_phone_text]);?>">									
+								</label>								
+								
+								<h3>Loader</h3>	
+								<!--label>
+									<select>
+										<option name="4">Descktop and Mobile</option>
+										<option name="4">Descktop</option>
+										<option name="4">Mobile</option>
+										<option name="4">Disabled</option>
+									</select>
+								</label-->
+								<label>
+									<p>Heading</p>
+									<input class="text" type="text" name="callMe[loaderText]" value="<?php echo stripslashes($this->_options[callMe][loaderText]);?>">
+								</label>
+								<h3>Button</h3>
+								<label>
+								<p>Button Title</p>
+									<input class="text" type="text" name="callMe[buttonTitle]" value="<?php echo stripslashes($this->_options[callMe][buttonTitle])?>">
+								</label>
+							</div>
+						</div>
+						<div class="settings exit">
+							<div class="popup selected">
+								
+								<h3>TEXT</h3>
+								<label>
+								<p>Heading</p>
+									<input class="text" type="text" name="subscribeExit[title]" value="<?php echo stripslashes($this->_options[subscribeExit][title]);?>">
+									
+								</label>
+								<label>
+								<p>Text</p>
+									<textarea rows="2" type="text" name="subscribeExit[sub_title]" ><?php echo stripslashes($this->_options[subscribeExit][sub_title]);?></textarea>
+								
+								</label>
+								<label>
+								<p>Input email text</p>
+									<input class="text" type="text" name="subscribeExit[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][inputEmailTitle]);?>">
+								</label>
+								<label>
+								<p>Input name text (Aweber)</p>
+									<input class="text" type="text" name="subscribeExit[inputNameTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][inputNameTitle]);?>">
+								</label>
+							
+								<label>
+								<p>Button Title</p>
+									<input class="text" type="text" name="subscribeExit[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][buttonTitle]);?>">									
+								</label>															
+							</div>
+							
+						</div>
+						<div class="settings imagesharer">
+							<div class="onmedia selected">
+								<h3>SHOW SERVICES </h3>
+								<label class="sm">							
+									<input type="checkbox" name="imageSharer[socnet][FB]" <?php if((int)$this->_options[imageSharer][socnet][FB] == 1) echo 'checked';?> />
+									<div class="fb pq_checkbox"></div>
+									<select name="imageSharer[socnetOption][FB][type]" class="sm">
+										<option value="app" <?php if($this->_options[imageSharer][socnetOption][FB][type] == 'app') echo 'selected';?>>Use Facebook App</option>
+										<option value="" <?php if($this->_options[imageSharer][socnetOption][FB][type] == '') echo 'selected';?>>Default Facebook Share</option>
+										<option value="pq" <?php if($this->_options[imageSharer][socnetOption][FB][type] == 'pq') echo 'selected';?>>Without Apps & OG Tags</option>
+										
+									</select>
+								</label>
+								
+								<label class="sm">
+									<a class="pq_question" href="http://profitquery.com/fb_app.html" target="_blank">?</a>								
+									<input type="text" name="imageSharer[socnetOption][FB][app_id]" value="<?php if(stripslashes($this->_options[imageSharer][socnetOption][FB][app_id]) != '') echo stripslashes($this->_options[imageSharer][socnetOption][FB][app_id]);?>" placeholder="FaceBook APP ID"/>
+								</label>
+								<label class="sm">
+									<input type="checkbox" name="imageSharer[socnet][TW]" <?php if((int)$this->_options[imageSharer][socnet][TW] == 1) echo 'checked';?> />
+									<div class="tw pq_checkbox"></div>									
+									<select name="imageSharer[socnetOption][TW][type]" class="sm">
+										<option value="" <?php if($this->_options[imageSharer][socnetOption][TW][type] == '') echo 'selected';?>>Default Twitter Share</option>
+										<option value="pq" <?php if($this->_options[imageSharer][socnetOption][TW][type] == 'pq') echo 'selected';?>>Without Apps & OG Tags</option>
+										
+									</select>
+								</label>
+								<label class="sm">
+									<input type="checkbox" />
+									<div class="gp pq_checkbox"></div>
+									<select class="sm" name="imageSharer[socnetOption][GP][type]" >
+										<option value="" <?php if($this->_options[imageSharer][socnetOption][GP][type] == '') echo 'selected';?>>Default Google+ Share</option>
+										<option value="pq" <?php if($this->_options[imageSharer][socnetOption][GP][type] == 'pq') echo 'selected';?>>Without Apps & OG Tags</option>
+										
+									</select>
+								</label>
+								<label class="sm">	
+									<input type="checkbox" name="imageSharer[socnet][PI]" <?php if((int)$this->_options[imageSharer][socnet][PI] == 1) echo 'checked';?> />
+									<div class="pi pq_checkbox"></div>
+									<select class="sm" name="imageSharer[socnetOption][PI][type]">
+										<option value="" <?php if($this->_options[imageSharer][socnetOption][PI][type] == '') echo 'selected';?> >Default Pinterest Share</option>
+										<option value="pq" <?php if($this->_options[imageSharer][socnetOption][PI][type] == 'pq') echo 'selected';?> >Without Apps & OG Tags</option>
+										
+									</select>
+								</label>
+								<label class="sm">	
+									<input type="checkbox" name="imageSharer[socnet][TR]" <?php if((int)$this->_options[imageSharer][socnet][TR] == 1) echo 'checked';?> />
+									<div class="tr pq_checkbox"></div>
+									<select class="sm" name="imageSharer[socnetOption][TR][type]" >
+										<option value="" <?php if($this->_options[imageSharer][socnetOption][TR][type] == '') echo 'selected';?>>Default Tumbrl Share</option>
+										<option value="pq" <?php if($this->_options[imageSharer][socnetOption][TR][type] == 'pq') echo 'selected';?> >Without Apps & OG Tags</option>
+										
+									</select>
+								</label>
+								<label class="sm">
+									<input type="checkbox" name="imageSharer[socnet][VK]" <?php if((int)$this->_options[imageSharer][socnet][VK] == 1) echo 'checked';?> />
+									<div class="vk pq_checkbox"></div>
+									<select class="sm" name="imageSharer[socnetOption][VK][type]" >
+										<option value="" <?php if($this->_options[imageSharer][socnetOption][VK][type] == '') echo 'selected';?> >Default VKontakte Share</option>
+										<option value="pq" <?php if($this->_options[imageSharer][socnetOption][VK][type] == 'pq') echo 'selected';?> >Without Apps & OG Tags</option>
+										
+									</select>
+								</label>
+								<label class="sm">	
+									<input type="checkbox" name="imageSharer[socnet][OD]" <?php if((int)$this->_options[imageSharer][socnet][OD] == 1) echo 'checked';?> />
+									<div class="od pq_checkbox"></div>									
+									<select class="sm" name="imageSharer[socnetOption][OD][type]" >
+										<option value="" <?php if($this->_options[imageSharer][socnetOption][OD][type] == '') echo 'selected';?> >Default Odnoklassniki Share</option>
+										<option value="pq" <?php if($this->_options[imageSharer][socnetOption][OD][type] == 'pq') echo 'selected';?> >Without Apps & OG Tags</option>
+										
+									</select>
+								</label>
+								<label class="sm">
+									<input type="checkbox" name="imageSharer[socnet][WU]" <?php if((int)$this->_options[imageSharer][socnet][WU] == 1) echo 'checked';?> />
+									<div class="wu pq_checkbox"></div>
+									<select class="sm" disabled="disabled"></select>									
+								</label>
+								<label class="sm">
+									<input type="checkbox" name="imageSharer[socnet][Mail]" <?php if((int)$this->_options[imageSharer][socnet][Mail] == 1) echo 'checked';?> />
+									<div class="em pq_checkbox"></div>
+									<select class="sm" disabled="disabled"></select>										
+								</label>									
+								<h3>SHARE IMAGE</h3>
+								<label>
+									<img class="picture" src="<?php echo plugins_url('i/capture.png', __FILE__);?>" />
+									<div><p>&larr;</p> 
+										<label>
+											<select name="imageSharer[minWidth]">
+												<option value="100" <?php if((int)$this->_options[imageSharer][minWidth] == 100 || (int)$this->_options[imageSharer][minWidth] == 0) echo 'selected';?>>100 px and more</option>
+												<option value="200" <?php if((int)$this->_options[imageSharer][minWidth] == 200) echo 'selected';?>>200 px and more</option>
+												<option value="300" <?php if((int)$this->_options[imageSharer][minWidth] == 300) echo 'selected';?>>300 px and more</option>
+												<option value="400" <?php if((int)$this->_options[imageSharer][minWidth] == 400) echo 'selected';?>>400 px and more</option>
+												<option value="500" <?php if((int)$this->_options[imageSharer][minWidth] == 500) echo 'selected';?>>500 px and more</option>
+												<option value="600" <?php if((int)$this->_options[imageSharer][minWidth] == 600) echo 'selected';?>>600 px and more</option>
+											</select>
+										</label>
+										<p>&rarr;</p></div>
+								</label>
+								<h3>AFTER CLIK IMAGE CLICK</h3>
+								<label>							
+									<select name="imageSharer[disableAfterClick]">
+										<option value="0" <?php if((int)$this->_options[imageSharer][disableAfterClick] == 0) echo 'selected';?>>Enable</option>
+										<option value="1" <?php if((int)$this->_options[imageSharer][disableAfterClick] == 1) echo 'selected';?>>Disabled</option>
+									</select>
+								</label>
+							</div>
+						</div>
+						<div class="settings thankyou">
+							<div class="popup selected">
+								<h3>Text</h3>
+								<label>
+								<p>Heading</p>
+									<input class="text" type="text" name="thankPopup[title]" value="<?php echo stripslashes($this->_options[thankPopup][title])?>">
+									
+								</label>
+								<label>
+								<p>Text</p>
+									<textarea rows="2" type="text" name="thankPopup[sub_title]" ><?php echo stripslashes($this->_options[thankPopup][sub_title])?></textarea>
+									
+								</label>
+											
+								<h3>Button</h3>
+								<label>
+								<p>Button Title</p>
+									<input class="text" type="text" name="thankPopup[buttonTitle]" value="<?php echo stripslashes($this->_options[thankPopup][buttonTitle])?>">
+									
+								</label>
+																								
+								
+							</div>
+						</div>
+						
+					</div>
+						<div class="pq_button_group button_group_li3">
+							<input type="button" value="prev" class="ToLi1">
+							<input type="button" value="Next" class="ToLi4">
+							<br><input type="submit" value="Save and Activate" class="share_submit">
+							<input type="submit" value="Save and Activate" class="follow_submit">
+							<input type="submit" value="Save and Activate" class="contact_submit">
+							<input type="submit" value="Save and Activate" class="callme_submit">
+							<input type="submit" value="Save and Activate" class="exit_submit">
+							<input type="submit" value="Save and Activate" class="imagesharer_submit">
+							<input type="submit" value="Save and Activate" class="thankyou_submit">
+							<input type="submit" value="Save and Activate" class="marketing_submit">
+							<input type="submit" value="Save and Activate" class="collect_submit">
+						</div>
+					<div class="f_wrapper pq_li4">
+					<h2>Design</h2>
+						<div class="settings collect">
+							
+							<div class="floating selected">
+							<h3>popup</h3>
+								<label>
+								<select>
+									<option value="bg_white">Background - White</option>
+									<option value="bg_iceblue">Background - Iceblue</option>
+									<option value="bg_beige">Background - Beige</option>
+									<option value="bg_lilac">Background - Lilac</option>
+									<option value="bg_wormwood">Background - Wormwood</option>
+									<option value="bg_yellow">Background - Yellow</option>
+									<option value="bg_grey">Background - Grey</option>
+									<option value="bg_red">Background - Red</option>
+									<option value="bg_skyblue">Background - Skyblue</option>
+									<option value="bg_blue">Background - Blue</option>
+									<option value="bg_green">Background - Green</option>
+									<option value="bg_black">Background - Black</option>
+								</select>
+								</label>
+								
+								<label>
+								<select>
+									<option value="btn_black">Button - Black</option>
+									<option value="btn_black invert">Button - Black Invert</option>
+									<option value="btn_orange">Button - Orange</option>
+									<option value="btn_orange invert">Button - Orange Invert</option>
+									<option value="btn_green">Button - Green</option>
+									<option value="btn_green invert">Button - Green Invert</option>
+									<option value="btn_lightblue">Button - Lightblue</option>
+									<option value="btn_lightblue invert">Button - Lightblue Invert</option>
+									<option value="btn_violet">Button - Violet</option>
+									<option value="btn_violet invert">Button - Violet Invert</option>
+									<option value="btn_blue">Button - Blue</option>
+									<option value="btn_blue invert">Button - Blue Invert</option>
+									<option value="btn_red">Button - Red</option>
+									<option value="btn_red invert">Button - Red Invert</option>
+									<option value="btn_lilac">Button - Lilac</option>
+									<option value="btn_lilac invert">Button - Lilac Invert</option>
+									<option value="btn_white">Button - White </option>
+									<option value="btn_white invert">Button - White Invert</option>
+								</select>
+								</label>
+								
+								<label>
+									<select name="vibor" class="vibor">										
+										<option value="" selected >No picture</option>
+										<option value="img_01.png">Question</option>
+										<option value="img_02.png">Attention</option>
+										<option value="img_03.png">Info</option>
+										<option value="img_04.png">Knowledge</option>
+										<option value="img_05.png">Idea</option>
+										<option value="img_06.png">Talk</option>
+										<option value="img_07.png">News</option>
+										<option value="img_08.png">Megaphone</option>
+										<option value="img_09.png">Gift</option>
+										<option value="img_10.png">Success</option>
+										<option name="7" class="custom_image">Custom image</option>
+									</select>
+								</label>
+								<label class="custom_i"><p>Link</p>
+									<input class="text" type="text" name="" value="" placeholder="">
+								</label>
+								<label>
+								<select>
+									<option value="pq_medium">Floating Size M</option>
+									<option value="pq_mini">Floating Size S</option>
+								</select>
+								</label>
+								<h3>Animation</h3>
+								<label>
+								<select>
+									<option name="1">None</option>
+									<option name="2">Bounce</option>
+									<option name="3">Fading</option>
+								</select>
+								</label>
+								<h3>Position</h3>
+								<label>
+								<select>
+									<option value="pq_top">Top</option>
+									<option value="pq_bottom">Bottom</option>
+								</select>
+								</label>
+								<label>
+									<select>
+									<option value="pq_left">Left</option>
+									<option value="pq_right">Right</option>
+									</select>
+								</label>
+							</div>
+							
+						</div>
+						<div class="settings share selected">
+							<div class="sidebar selected">
+							<h3>ICONS SERVICES</h3>
+								<label>
+								<select id="sharingSideBar_side" onchange="sharingSideBarPreview();" name="sharingSideBar[side]">
+									<option value="pq_left" <?php if($this->_options[sharingSideBar][side] == 'pq_left') echo 'selected';?>>Left</option>
+									<option value="pq_right" <?php if($this->_options[sharingSideBar][side] == 'pq_right') echo 'selected';?>>Right</option>
+								</select>
+								</label>
+								<label>
+								<select id="sharingSideBar_top" onchange="sharingSideBarPreview();" name="sharingSideBar[top]">
+									<option value="pq_top" <?php if($this->_options[sharingSideBar][top] == 'pq_top') echo 'selected';?>>Top</option>
+									<option value="pq_middle" <?php if($this->_options[sharingSideBar][top] == 'pq_middle') echo 'selected';?>>Middle</option>
+									<option value="pq_bottom" <?php if($this->_options[sharingSideBar][top] == 'pq_bottom') echo 'selected';?>>Bottom</option>
+								</select>
+								</label>
+								<label>
+								<select id="sharingSideBar_design_form" onchange="sharingSideBarPreview();" name="sharingSideBar[design][form]">
+									<option value="" <?php if($this->_options[sharingSideBar][design][form] == '') echo 'selected';?>>Shape - Square</option>
+									<option value="rounded" <?php if($this->_options[sharingSideBar][design][form] == 'rounded') echo 'selected';?>>Shape - Rounded</option>
+									<option value="circle" <?php if($this->_options[sharingSideBar][design][form] == 'circle') echo 'selected';?>>Shape - Circle</option>
+								</select>
+								</label>
+								<label>
+								<select id="sharingSideBar_design_size" onchange="sharingSideBarPreview();" name="sharingSideBar[design][size]">
+									<option value="x20" <?php if($this->_options[sharingSideBar][design][size] == 'x20') echo 'selected';?>>Size S</option>
+									<option value="x30" <?php if($this->_options[sharingSideBar][design][size] == 'x30') echo 'selected';?>>Size M</option>
+									<option value="x50" <?php if($this->_options[sharingSideBar][design][size] == 'x50') echo 'selected';?>>Size L</option>
+									<option value="x70" <?php if($this->_options[sharingSideBar][design][size] == 'x70') echo 'selected';?>>Size XL</option>
+								</select>
+								</label>
+								<label>
+								<select id="sharingSideBar_design_color" onchange="sharingSideBarPreview();" name="sharingSideBar[design][color]">
+									<option value="c4" <?php if($this->_options[sharingSideBar][design][color] == 'c4') echo 'selected';?>>Color</option>
+									<option value="c1" <?php if($this->_options[sharingSideBar][design][color] == 'c1') echo 'selected';?>>Color light</option>
+									<option value="c2" <?php if($this->_options[sharingSideBar][design][color] == 'c2') echo 'selected';?>>Color volume</option>
+									<option value="c3" <?php if($this->_options[sharingSideBar][design][color] == 'c3') echo 'selected';?>>Color dark</option>
+									<option value="c5" <?php if($this->_options[sharingSideBar][design][color] == 'c5') echo 'selected';?>>Black</option>
+									<option value="c6" <?php if($this->_options[sharingSideBar][design][color] == 'c6') echo 'selected';?>>Black volume</option>
+									<option value="c7" <?php if($this->_options[sharingSideBar][design][color] == 'c7') echo 'selected';?>>White volume</option>
+									<option value="c8" <?php if($this->_options[sharingSideBar][design][color] == 'c8') echo 'selected';?>>White</option>
+									<option value="c9" <?php if($this->_options[sharingSideBar][design][color] == 'c9') echo 'selected';?>>Bordered - color</option>
+									<option value="c10" <?php if($this->_options[sharingSideBar][design][color] == 'c10') echo 'selected';?>>Bordered - black</option>
+									<option value="c11" <?php if($this->_options[sharingSideBar][design][color] == 'c11') echo 'selected';?>>Lightest</option>
+								</select>
+								</label>
+								<h3>IMAGE POPUP BACKGROUND</h3>
+								<label>
+								<select id="sharingSideBar_popup_bg_color" onchange="sharingSideBarPreview();" name="sharingSideBar[galleryOption][background_color]">
+									<option value="bg_white" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_white') echo 'selected';?>>Background - White</option>
+									<option value="bg_white_lt" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_white_lt') echo 'selected';?>>Background - White Lite</option>
+									<option value="bg_iceblue" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_iceblue') echo 'selected';?>>Background - Iceblue</option>
+									<option value="bg_iceblue_lt" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_iceblue_lt') echo 'selected';?>>Background - Iceblue Lite</option>
+									<option value="bg_beige" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_beige') echo 'selected';?>>Background - Beige</option>
+									<option value="bg_beige_lt" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_beige_lt') echo 'selected';?>>Background - Beige Lite</option>
+									<option value="bg_lilac" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
+									<option value="bg_lilac_lt" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_lilac_lt') echo 'selected';?>>Background - Lilac Lite</option>
+									<option value="bg_wormwood" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_wormwood') echo 'selected';?>>Background - Wormwood</option>
+									<option value="bg_wormwood_lt" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_wormwood_lt') echo 'selected';?>>Background - Wormwood Lite</option>
+									<option value="bg_yellow" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
+									<option value="bg_yellow_lt" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_yellow_lt') echo 'selected';?>>Background - Yellow Lite</option>
+									<option value="bg_grey" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
+									<option value="bg_grey_lt" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_grey_lt') echo 'selected';?>>Background - Grey Lite</option>
+									<option value="bg_red" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_red') echo 'selected';?>>Background - Red</option>
+									<option value="bg_red_lt" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_red_lt') echo 'selected';?>>Background - Red Lite</option>
+									<option value="bg_skyblue" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
+									<option value="bg_skyblue_lt" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_skyblue_lt') echo 'selected';?>>Background - Skyblue Lite</option>
+									<option value="bg_blue" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_blue') echo 'selected';?>>Background - Blue</option>
+									<option value="bg_blue_lt" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_blue_lt') echo 'selected';?>>Background - Blue Lite</option>
+									<option value="bg_green" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_green') echo 'selected';?>>Background - Green</option>
+									<option value="bg_green_lt" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_green_lt') echo 'selected';?>>Background - Green Lite</option>
+									<option value="bg_black" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_black') echo 'selected';?>>Background - Black</option>
+									<option value="bg_black_lt" <?php if($this->_options[sharingSideBar][galleryOption][background_color] == 'bg_black_lt') echo 'selected';?>>Background - Black Lite</option>
+								</select>
+								</label>
+								<h3>IMAGE POPUP BUTTON COLOR</h3>
+								<label>
+									<select id="sharingSideBar_popup_button_color" onchange="sharingSideBarPreview();" name="sharingSideBar[galleryOption][button_color]">
+									<option value="btn_lightblue" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
 									<option value="btn_lightblue invert" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_lightblue invert' || $this->_options[sharingSideBar][galleryOption][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
 									<option value="btn_blue" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
 									<option value="btn_blue invert" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_blue invert') echo 'selected';?>>Button - Blue Transparent</option>
@@ -1588,1213 +2399,34 @@ class ProfitQuerySmartWidgetsClass
 									<option value="btn_red invert" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
 									<option value="btn_lilac" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
 									<option value="btn_lilac invert" <?php if($this->_options[sharingSideBar][galleryOption][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
-							</select></label>
-								</div>
-								<div class="pq-sm-6 icons" style="padding-right: 0; margin: 0;">
-									<label><p>Text in button</p><input type="text" name="sharingSideBar[galleryOption][buttonTitle]" value="<?php echo stripslashes($this->_options[sharingSideBar][galleryOption][buttonTitle]);?>"></label>
-									
-								</div>
-								<div style="clear: both;"></div>
-								<div class="pq-sm-12 icons" style="padding: 0; margin: 0 0 30px;">
-									<label><p>Image from width</p><select  name="sharingSideBar[galleryOption][minWidth]">
-										<option value="100" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '100' || $this->_options[sharingSideBar][galleryOption][minWidth] == '') echo 'selected';?>>100px and more</option>
-										<option value="200" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '200') echo 'selected';?>>200px and more</option>
-										<option value="300" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '300') echo 'selected';?>>300px and more</option>
-										<option value="400" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '400') echo 'selected';?>>400px and more</option>
-										<option value="500" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '500') echo 'selected';?>>500px and more</option>
-										<option value="600" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '600') echo 'selected';?>>600px and more</option>										
-									</select></label>
-								</div>
-								<div class="pq-sm-12 icons" style="padding: 0; margin: 0 0 30px;">
-									<label><input type="checkbox" name="sharingSideBar[galleryOption][disable]" <?php if((int)$this->_options[sharingSideBar][galleryOption][disable] == 1) echo 'checked';?> ><p style="text-align:center;">Disable image sharer window triggered on Pinterest, Tumblr, VK</p>
-									<p style="text-align:center; color:rgb(194, 194, 194);">This features work if page contains images width greater than or equal to "Image from width" option.</p></label>
-									
-								</div>
-								<div class="pq-sm-12 icons" style="padding: 0; margin: 0 0 30px;">
+									</select>
+								</label>
 								
-								<div style="clear: both;"></div>
-								<label><p>Heading for Mobile</p><input type="text" name="sharingSideBar[mobile_title]" value="<?php echo stripslashes($this->_options[sharingSideBar][mobile_title]);?>"></label>	
-								<div class="pq-sm-12 icons" style="padding: 0; margin: 20px 0 0;">
-									<label><select id="sharingSideBar_design_color" onchange="sharingSideBarPreview();" name="sharingSideBar[design][color]">
-										<option value="c4" <?php if($this->_options[sharingSideBar][design][color] == 'c4') echo 'selected';?>>Color</option>
-										<option value="c1" <?php if($this->_options[sharingSideBar][design][color] == 'c1') echo 'selected';?>>Color light</option>
-										<option value="c2" <?php if($this->_options[sharingSideBar][design][color] == 'c2') echo 'selected';?>>Color volume</option>
-										<option value="c3" <?php if($this->_options[sharingSideBar][design][color] == 'c3') echo 'selected';?>>Color dark</option>
-										<option value="c5" <?php if($this->_options[sharingSideBar][design][color] == 'c5') echo 'selected';?>>Black</option>
-										<option value="c6" <?php if($this->_options[sharingSideBar][design][color] == 'c6') echo 'selected';?>>Black volume</option>
-										<option value="c7" <?php if($this->_options[sharingSideBar][design][color] == 'c7') echo 'selected';?>>White volume</option>
-										<option value="c8" <?php if($this->_options[sharingSideBar][design][color] == 'c8') echo 'selected';?>>White</option>
-										<option value="c9" <?php if($this->_options[sharingSideBar][design][color] == 'c9') echo 'selected';?>>Bordered - color</option>
-										<option value="c10" <?php if($this->_options[sharingSideBar][design][color] == 'c10') echo 'selected';?>>Bordered - black</option>
-										<option value="c11" <?php if($this->_options[sharingSideBar][design][color] == 'c11') echo 'selected';?>>Lightest</option>
-									</select></label>
-								</div>
-								<div class="pq-sm-6 icons" style="padding-left: 0; margin: 10px 0;">
-									<label style="margin:0;"><select id="sharingSideBar_design_form" onchange="sharingSideBarPreview();" name="sharingSideBar[design][form]">
-										<option value="" <?php if($this->_options[sharingSideBar][design][form] == '') echo 'selected';?>>Square</option>
-										<option value="circle" <?php if($this->_options[sharingSideBar][design][form] == 'circle') echo 'selected';?>>Circle</option>
-										<option value="rounded" <?php if($this->_options[sharingSideBar][design][form] == 'rounded') echo 'selected';?>>Rounded</option>
-									</select></label>
-								</div>
-								<div class="pq-sm-6 icons" style="padding-right: 0; margin: 10px 0;">
-									<label><select id="sharingSideBar_design_size" onchange="sharingSideBarPreview();" name="sharingSideBar[design][size]">
-										<option value="x30" <?php if($this->_options[sharingSideBar][design][size] == 'x30') echo 'selected';?>>Size M</option>
-										<option value="x40" <?php if($this->_options[sharingSideBar][design][size] == 'x40') echo 'selected';?>>Size L</option>
-										<option value="x20" <?php if($this->_options[sharingSideBar][design][size] == 'x20') echo 'selected';?>>Size S</option>
-									</select></label>
-									
-								</div>
-								
-								<div style="clear: both;"></div>
+																
+								<!--h3>Animation</h3>
 								<label>
-								<div class="pq_box">
-								<p>Follow Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="sharingSideBar[afterProceed][follow]" <?php if((int)$this->_options[sharingSideBar][afterProceed][follow] == 1) echo 'checked';?>></div>
-								</div>
-								</label>
-								<label>
-								<div class="pq_box">
-								<p>Thank Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="sharingSideBar[afterProceed][thank]" <?php if((int)$this->_options[sharingSideBar][afterProceed][thank] == 1) echo 'checked';?>></div>
-								<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off"></div>
-								</div>
-								</label>
-															
-							<div class="clear"></div>
-							<p style="font-family: pt sans narrow; font-size: 19px; margin: 20px 0 10px;">Only Design Live Demo</p>
-							<img src="<?php echo plugins_url('images/browser.png', __FILE__);?>" style="width: 100%; margin-bottom: -6px;" />
-							<div style="transform-origin: 0 0; transform: scale(0.8); width: 125%; height: 300px; box-sizing: border-box; border: 1px solid lightgrey;">
-								<iframe scrolling="no" id="sharingSideBarLiveViewIframe" width="100%" height="300px" src="" style="background: white; margin: 0;"></iframe>
-							</div>
-							<script>
-								function sharingSideBarPreview(){									
-									var designIcons = 'pq-social-block '+document.getElementById('sharingSideBar_design_size').value+' pq_'+document.getElementById('sharingSideBar_design_form').value+' '+document.getElementById('sharingSideBar_design_color').value;
-									var position = 'pq_icons pq_left pq_middle';									
-									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v2.html?utm-campaign=wp_aio_widgets&p=sidebarShare&position='+position+'&typeBlock='+designIcons;									
-									document.getElementById('sharingSideBarLiveViewIframe').src = previewUrl;									
-									
-								}
-								sharingSideBarPreview();
-							</script>
-							
+								<select>
+									<option name="1">None</option>
+									<option name="2">1</option>
+									<option name="3">2</option>
+								</select>
+								</label-->
 							</div>
 						</div>
-						<a href="javascript:void(0)" onclick="document.getElementById('Sharing_Sidebar').style.display='none';"><div class="pq_close"></div></a>
-						</div>
-						
-						<a name="Image_Sharer"></a>
-						<div class="pq-sm-10 pq_more" id="Image_Sharer" style="display:none;">
-							<h5>More options Image Sharer</h5>
-						<div class="pq-md-10">
-						
-						<label>
-						<div style="position: relative; overflow: hidden; max-width: 403px; min-height: 200px; margin: 20px auto 10px;">
-							<img src="<?php echo plugins_url('images/capture.png', __FILE__);?>" style="position: absolute; top: 0; right: 0; width: 100%;" />
-							<input type="text" name="imageSharer[minWidth]" style="position: absolute; top: 86px; width: 80px; font-size: 16px; font-family: arial; color: #9A9A9A; box-sizing: border-box; text-align: center; margin-left: -40px;" value="<?php echo (int)$this->_options[imageSharer][minWidth];?>">
-							<p style="position: absolute; top: 88px; font-size: 16px; font-family: arial; color: #9A9A9A; width: 50%; right: 0; padding-left: 49px; box-sizing: border-box;">px</p>
-						</div>
-						</label>
-												
-						
-						</div><div class="clear"></div>
-							
-						<a href="javascript:void(0)" onclick="document.getElementById('Image_Sharer').style.display='none';"><div class="pq_close"></div></a>
-						<div class="pq-sm-12 x30" style="padding-top: 25px;">											
-							<div class="pq_str">
+						<div class="settings follow">
+							<div class="popup selected">
+							<h3>POPUP</h3>
 								<label>
-									<input type="checkbox" name="imageSharer[socnet][FB]" <?php if((int)$this->_options[imageSharer][socnet][FB] == 1) echo 'checked';?>>
-									<div class="pq_fb"></div>
+								<select id="follow_typeWindow" onchange="followPreview();"  name="follow[typeWindow]">
+									<option value="pq_large" <?php if($this->_options[follow][typeWindow] == 'pq_large' || $this->_options[follow][typeWindow] == '') echo 'selected';?>>Size L</option>
+									<option value="pq_medium" <?php if($this->_options[follow][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
+									<option value="pq_mini" <?php if($this->_options[follow][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
+								</select>
 								</label>
 								<label>
-									<input type="radio" name="imageSharer[socnetOption][FB][type]" value="" <?php if($this->_options[imageSharer][socnetOption][FB][type] == '') echo 'checked';?>>
-									<input type="text" name="imageSharer[socnetOption][FB][app_id]" value="<?php if(stripslashes($this->_options[imageSharer][socnetOption][FB][app_id]) != '') echo stripslashes($this->_options[imageSharer][socnetOption][FB][app_id]);?>" placeholder="FaceBook APP ID">
-									<a href="https://developers.facebook.com/apps" target="blank"><img src="<?php echo plugins_url('images/set.png', __FILE__);?>" style="width: 12px; height: 12px; vertical-align: middle;" /></a>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][FB][type]" value="pq" <?php if($this->_options[imageSharer][socnetOption][FB][type] == 'pq') echo 'checked';?>>
-									<p>Exact Image Without Apps & OG Tags</p>
-								</label>
-							</div>
-							<div class="pq_str">
-								<label>
-									<input type="checkbox" name="imageSharer[socnet][TW]" <?php if((int)$this->_options[imageSharer][socnet][TW] == 1) echo 'checked';?>>
-									<div class="pq_tw"></div>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][TW][type]" value="" <?php if($this->_options[imageSharer][socnetOption][TW][type] == '') echo 'checked';?>>
-									<p>Default Twitter Share</p>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][TW][type]" value="pq" <?php if($this->_options[imageSharer][socnetOption][TW][type] == 'pq') echo 'checked';?>>
-									<p>Exact Image Without Apps & OG Tags</p>
-								</label>
-							</div>
-							<div class="pq_str">
-								<label>
-									<input type="checkbox" name="imageSharer[socnet][GP]" <?php if((int)$this->_options[imageSharer][socnet][GP] == 1) echo 'checked';?>>
-									<div class="pq_gp"></div>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][GP][type]" value="" <?php if($this->_options[imageSharer][socnetOption][GP][type] == '') echo 'checked';?>>
-									<p>Default Google+ Share</p>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][GP][type]" value="pq" <?php if($this->_options[imageSharer][socnetOption][GP][type] == 'pq') echo 'checked';?>>
-									<p>Exact Image Without Apps & OG Tags</p>
-								</label>
-							</div>
-							<div class="pq_str">
-								<label>
-									<input type="checkbox" name="imageSharer[socnet][PI]" <?php if((int)$this->_options[imageSharer][socnet][PI] == 1) echo 'checked';?>>
-									<div class="pq_pi"></div>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][PI][type]" value="" <?php if($this->_options[imageSharer][socnetOption][PI][type] == '') echo 'checked';?>>
-									<p>Default Pinterest Share</p>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][PI][type]" value="pq" <?php if($this->_options[imageSharer][socnetOption][PI][type] == 'pq') echo 'checked';?>>
-									<p>Exact Image Without Apps & OG Tags</p>
-								</label>
-							</div>
-							<div class="pq_str">
-								<label>
-									<input type="checkbox" name="imageSharer[socnet][TR]" <?php if((int)$this->_options[imageSharer][socnet][TR] == 1) echo 'checked';?>>
-									<div class="pq_tr"></div>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][TR][type]" value="" <?php if($this->_options[imageSharer][socnetOption][TR][type] == '') echo 'checked';?>>
-									<p>Default Tumbrl Share</p>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][TR][type]" value="pq" <?php if($this->_options[imageSharer][socnetOption][TR][type] == 'pq') echo 'checked';?>>
-									<p>Exact Image Without Apps & OG Tags</p>
-								</label>
-							</div>
-							<div class="pq_str">
-								<label>
-									<input type="checkbox" name="imageSharer[socnet][VK]" <?php if((int)$this->_options[imageSharer][socnet][VK] == 1) echo 'checked';?>>
-									<div class="pq_vk"></div>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][VK][type]" value="" <?php if($this->_options[imageSharer][socnetOption][VK][type] == '') echo 'checked';?>>
-									<p>Default VK Share</p>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][VK][type]" value="pq" <?php if($this->_options[imageSharer][socnetOption][VK][type] == 'pq') echo 'checked';?>>
-									<p>Exact Image Without Apps & OG Tags</p>
-								</label>
-							</div>
-							<div class="pq_str">
-								<label>
-									<input type="checkbox" name="imageSharer[socnet][OD]" <?php if((int)$this->_options[imageSharer][socnet][OD] == 1) echo 'checked';?>>
-									<div class="pq_od"></div>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][OD][type]" value="" <?php if($this->_options[imageSharer][socnetOption][OD][type] == '') echo 'checked';?>>
-									<p>Default OK Share</p>
-								</label>
-								<label>
-									<input type="radio" name="imageSharer[socnetOption][OD][type]" value="pq" <?php if($this->_options[imageSharer][socnetOption][OD][type] == 'pq') echo 'checked';?>>
-									<p>Exact Image Without Apps & OG Tags</p>
-								</label>
-							</div>							
-						</div>
-						<div class="pq-md-10">
-						<div class="pq-sm-6 icons" style="padding-left: 0; margin: 20px 0;">
-							<label><select id="imageSharer_design_color" onchange="imageSharerPreview();" name="imageSharer[design][color]">
-								<option value="c4" <?php if($this->_options[imageSharer][design][color] == 'c4') echo 'selected';?>>Color</option>
-								<option value="c1" <?php if($this->_options[imageSharer][design][color] == 'c1') echo 'selected';?>>Color light</option>
-								<option value="c2" <?php if($this->_options[imageSharer][design][color] == 'c2') echo 'selected';?>>Color volume</option>
-								<option value="c3" <?php if($this->_options[imageSharer][design][color] == 'c3') echo 'selected';?>>Color dark</option>
-								<option value="c5" <?php if($this->_options[imageSharer][design][color] == 'c5') echo 'selected';?>>Black</option>
-								<option value="c6" <?php if($this->_options[imageSharer][design][color] == 'c6') echo 'selected';?>>Black volume</option>
-								<option value="c7" <?php if($this->_options[imageSharer][design][color] == 'c7') echo 'selected';?>>White volume</option>
-								<option value="c8" <?php if($this->_options[imageSharer][design][color] == 'c8') echo 'selected';?>>White</option>
-								<option value="c9" <?php if($this->_options[sharingSideBar][design][color] == 'c9') echo 'selected';?>>Bordered - color</option>
-								<option value="c10" <?php if($this->_options[sharingSideBar][design][color] == 'c10') echo 'selected';?>>Bordered - black</option>
-								<option value="c11" <?php if($this->_options[sharingSideBar][design][color] == 'c11') echo 'selected';?>>Lightest</option>
-							</select></label>
-							<label><select id="imageSharer_design_form" onchange="imageSharerPreview();" name="imageSharer[design][form]">
-								<option value="" <?php if($this->_options[imageSharer][design][form] == '') echo 'selected';?>>Square</option>
-								<option value="circle" <?php if($this->_options[imageSharer][design][form] == 'circle') echo 'selected';?>>Circle</option>
-								<option value="rounded" <?php if($this->_options[imageSharer][design][form] == 'rounded') echo 'selected';?>>Rounded</option>
-							</select></label>
-						</div>
-						<div class="pq-sm-6 icons" style="padding-right: 0; margin: 20px 0;">
-							<label><select id="imageSharer_design_size" onchange="imageSharerPreview();" name="imageSharer[design][size]">
-								<option value="x30" <?php if($this->_options[imageSharer][design][size] == 'x30') echo 'selected';?>>Size M</option>
-								<option value="x40" <?php if($this->_options[imageSharer][design][size] == 'x40') echo 'selected';?>>Size L</option>
-								<option value="x20" <?php if($this->_options[imageSharer][design][size] == 'x20') echo 'selected';?>>Size S</option>
-							</select></label>
-							<label><select id="imageSharer_design_shadow" onchange="imageSharerPreview();" name="imageSharer[design][shadow]">
-								<option value="sh1" <?php if($this->_options[imageSharer][design][shadow] == 'sh1') echo 'selected';?>>Shadow1</option>
-								<option value="sh2" <?php if($this->_options[imageSharer][design][shadow] == 'sh2') echo 'selected';?>>Shadow2</option>
-								<option value="sh3" <?php if($this->_options[imageSharer][design][shadow] == 'sh3') echo 'selected';?>>Shadow3</option>
-								<option value="sh4" <?php if($this->_options[imageSharer][design][shadow] == 'sh4') echo 'selected';?>>Shadow4</option>
-								<option value="sh5" <?php if($this->_options[imageSharer][design][shadow] == 'sh5') echo 'selected';?>>Shadow5</option>
-								<option value="sh6" <?php if($this->_options[imageSharer][design][shadow] == 'sh6') echo 'selected';?>>Shadow6</option>
-							</select></label>
-						</div>						
-						<p>Disable share box after click on image</p>
-						<input type="checkbox" name="imageSharer[disableAfterClick]" <?php if((int)$this->_options[imageSharer][disableAfterClick] == 1) echo 'checked';?> >
-						<p style="font-family: pt sans narrow; font-size: 19px; margin: 20px 0 10px;">Only Design Live Demo</p>
-							<img src="<?php echo plugins_url('images/browser.png', __FILE__);?>" style="width: 100%; margin-bottom: -6px;" />
-							<div style="transform-origin: 0 0; transform: scale(0.8); width: 125%; height: 300px; box-sizing: border-box; border: 1px solid lightgrey;">
-						<iframe scrolling="no" id="imageSharerLiveViewIframe" width="100%" height="300px" src="" style="background: white; margin: 0;"></iframe>
-							</div>
-						
-						<script>								
-								function imageSharerPreview(){									
-									var design = document.getElementById('imageSharer_design_size').value+' pq_'+document.getElementById('imageSharer_design_form').value+' '+document.getElementById('imageSharer_design_color').value+' '+document.getElementById('imageSharer_design_shadow').value+' inline';
-									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v2.html?utm-campaign=wp_aio_widgets&p=imageSharer&design='+design;									
-									document.getElementById('imageSharerLiveViewIframe').src = previewUrl;
-									
-								}								
-						</script>
-						
-						</div>
-						
-						</div>												
-						
-					</div>
-					<input type="submit" class="btn_m_red" value="Save changes">
-					<a href="mailto:support@profitquery.com" target="_blank" class="pq_help">Need help?</a>
-					</form> 
-					</div>
-				  </div>
-				  <a name="EmailBlock"></a>
-					<div class="pq_block" id="v2">
-					
-						<h4>Subscribe Tools</h4>
-						
-					<div id="collapseTwo" class="panel-collapse collapse in">
-					<form action="<?php echo $this->getSettingsPageUrl();?>#EmailBlock" method="post">
-					<input type="hidden" name="action" value="edit">
-					  <div class="pq-panel-body">
-					  <p>Get more subscribers, simply mailchimp, aweber integration.</p>						
-						
-						<div class="pq-sm-6">
-							<img id="subscribeBar_IMG" src="<?php echo plugins_url('images/bar.png', __FILE__);?>" />
-							<h5>Marketing Bar</h5>
-							<div class="pq-sm-10">							
-							
-							<label>								
-								<div id="subscribeBarEnabledStyle">
-									<input type="checkbox" name="subscribeBar[enabled]" id="subscribeBarEnabledCheckbox" onclick="changeSubscribeBarEnabled();" <?php if((int)$this->_options[subscribeBar][disabled] == 0) echo 'checked';?>>
-									<p id="subscribeBarEnabledText"></p>
-								</div>								
-							</label>
-							
-							<label>
-							<select id="subscribeBar_position" onchange="changeSubscribeBarBlockImg();" name="subscribeBar[position]">
-								<option value="pq_top"  <?php if($this->_options[subscribeBar][position] == 'pq_top' || $this->_options[subscribeBar][position] == '') echo 'selected';?>>Top</option>
-								<option value="pq_bottom" <?php if($this->_options[subscribeBar][position] == 'pq_bottom') echo 'selected';?>>Bottom</option>
-							</select>
-							<script>
-								function changeSubscribeBarBlockImg(){
-									if(document.getElementById('subscribeBar_position').value == 'pq_top'){
-										document.getElementById('subscribeBar_IMG').src = previewPath+'bar_top.png';
-									}
-									if(document.getElementById('subscribeBar_position').value == 'pq_bottom'){
-										document.getElementById('subscribeBar_IMG').src = previewPath+'bar_bottom.png';
-									}
-								}
-								changeSubscribeBarBlockImg();
-							</script>
-							</label>
-							<a href="#Marketing_Bar" onclick="document.getElementById('Marketing_Bar').style.display='block';"><button type="button" class="pq-btn-link btn-bg">More Option</button></a>							
-							</div>
-						</div>
-						<div class="pq-sm-6">
-							<img id="subscribeExit_IMG" src="<?php echo plugins_url('images/subscribe.png', __FILE__);?>" />
-							<h5>Exit Popup</h5>
-							<div class="pq-sm-10">							
-							<label>								
-								<div id="subscribeExitEnabledStyle">
-									<input type="checkbox" name="subscribeExit[enabled]" id="subscribeExitEnabledCheckbox" onclick="changeSubscribeExitEnabled();" <?php if((int)$this->_options[subscribeExit][disabled] == 0) echo 'checked';?>>
-									<p id="subscribeExitEnabledText"></p>
-								</div>
-								
-							</label>
-							
-							<label>
-							<select id="subscribeExit_typeWindow" onchange="changeSubscribeExitBlockImg();" name="subscribeExit[typeWindow]">
-								<option value="pq_large" <?php if($this->_options[subscribeExit][typeWindow] == 'pq_large' || $this->_options[subscribeExit][typeWindow] == '') echo 'selected';?>>Size L</option>
-								<option value="pq_medium" <?php if($this->_options[subscribeExit][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
-								<option value="pq_mini" <?php if($this->_options[subscribeExit][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
-							</select>
-							<script>
-								function changeSubscribeExitBlockImg(){
-									if(document.getElementById('subscribeExit_typeWindow').value == 'pq_large'){
-										document.getElementById('subscribeExit_IMG').src = previewPath+'mail_l.png';
-									}
-									if(document.getElementById('subscribeExit_typeWindow').value == 'pq_medium'){
-										document.getElementById('subscribeExit_IMG').src = previewPath+'mail_m.png';
-									}
-									if(document.getElementById('subscribeExit_typeWindow').value == 'pq_mini'){
-										document.getElementById('subscribeExit_IMG').src = previewPath+'mail_s.png';
-									}
-								}
-								changeSubscribeBarBlockImg();
-							</script>
-							</label>
-							<a href="#Exit_Popup" onclick="document.getElementById('Exit_Popup').style.display='block';"><button type="button" class="pq-btn-link btn-bg">More Option</button></a>							
-							</div>							
-						</div>																
-						</div>					
-					<div class="pq-panel-body">
-						<a name="Marketing_Bar"></a><div class="pq-sm-10 pq_more" id="Marketing_Bar" style="display:none;">
-							<h5>More options Marketing Bar</h5>
-							<div class="pq-sm-10" style="width: 83.333333%;">
-							
-							<label style="display: block;"><p>Heading</p><input type="text" name="subscribeBar[title]" value="<?php echo stripslashes($this->_options[subscribeBar][title]);?>"></label>	
-							<label style="display: block;"><p>Heading for Mobile</p><input type="text" name="subscribeBar[mobile_title]" value="<?php echo stripslashes($this->_options[subscribeBar][mobile_title]);?>"></label>	
-							<label style="display: block;"><p>Input email text</p><input type="text" name="subscribeBar[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][inputEmailTitle]);?>"></label>
-							<label style="display: block;"><p>Input name text (Aweber)</p><input type="text" name="subscribeBar[inputNameTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][inputNameTitle]);?>"></label>
-							<label style="display: block;"><p>Button</p><input type="text" name="subscribeBar[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][buttonTitle]);?>"></label>
-							
-							<div class="pq-sm-6 icons" style="padding-left: 0; margin: 27px 0 0;">
-							<label><select id="subscribeBar_background" onchange="subscribeBarPreview();" name="subscribeBar[background]">
-								    <option value="bg_grey" <?php if($this->_options[subscribeBar][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
-									<option value="" <?php if($this->_options[subscribeBar][background] == '') echo 'selected';?>>Background - White</option>
-									<option value="bg_yellow" <?php if($this->_options[subscribeBar][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
-									<option value="bg_wormwood" <?php if($this->_options[subscribeBar][background] == 'bg_wormwood') echo 'selected';?>>Background - Wormwood</option>
-									<option value="bg_blue" <?php if($this->_options[subscribeBar][background] == 'bg_blue') echo 'selected';?>>Background - Blue</option>
-									<option value="bg_green" <?php if($this->_options[subscribeBar][background] == 'bg_green') echo 'selected';?>>Background - Green</option>
-									<option value="bg_beige" <?php if($this->_options[subscribeBar][background] == 'bg_beige') echo 'selected';?>>Background - Beige</option>
-									<option value="bg_red" <?php if($this->_options[subscribeBar][background] == 'bg_red') echo 'selected';?>>Background - Red</option>
-									<option value="bg_iceblue" <?php if($this->_options[subscribeBar][background] == 'bg_iceblue') echo 'selected';?>>Background - Iceblue</option>
-									<option value="bg_black" <?php if($this->_options[subscribeBar][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
-									<option value="bg_skyblue" <?php if($this->_options[subscribeBar][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
-									<option value="bg_lilac" <?php if($this->_options[subscribeBar][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
-							</select></label>
-							</div>
-							<div class="pq-sm-6 icons down" style="padding-right: 0; margin: 27px 0 10px;">
-							<label><select id="subscribeBar_button_color" onchange="subscribeBarPreview();" name="subscribeBar[button_color]">
-								    <option value="btn_lightblue" <?php if($this->_options[subscribeBar][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
-									<option value="btn_lightblue invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_lightblue invert' || $this->_options[subscribeBar][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
-									<option value="btn_blue" <?php if($this->_options[subscribeBar][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
-									<option value="btn_blue invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_blue invert') echo 'selected';?>>Button - Blue Transparent</option>
-									<option value="btn_black" <?php if($this->_options[subscribeBar][button_color] == 'btn_black') echo 'selected';?>>Button - Black</option>
-									<option value="btn_black invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_black invert') echo 'selected';?>>Button - Black Transparent</option>
-									<option value="btn_green" <?php if($this->_options[subscribeBar][button_color] == 'btn_green') echo 'selected';?>>Button - Green</option>
-									<option value="btn_green invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_green invert') echo 'selected';?>>Button - Green Transparent</option>
-									<option value="btn_violet" <?php if($this->_options[subscribeBar][button_color] == 'btn_violet') echo 'selected';?>>Button - Violet</option>
-									<option value="btn_violet invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_violet invert') echo 'selected';?>>Button - Violet Transparent</option>
-									<option value="btn_orange" <?php if($this->_options[subscribeBar][button_color] == 'btn_orange') echo 'selected';?>>Button - Orange</option>
-									<option value="btn_orange invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_orange invert') echo 'selected';?>>Button - Orange Transparent</option>
-									<option value="btn_red" <?php if($this->_options[subscribeBar][button_color] == 'btn_red') echo 'selected';?>>Button - Red</option>
-									<option value="btn_red invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
-									<option value="btn_lilac" <?php if($this->_options[subscribeBar][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
-									<option value="btn_lilac invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
-							</select></label>
-							</div>
-							<div class="clear"></div>
-							<label>
-							<select id="subscribeBar_size" onchange="subscribeBarPreview();" name="subscribeBar[size]">
-								<option value="" <?php if($this->_options[subscribeBar][size] == '') echo 'selected';?>>Size M</option>
-								<option value="pq_small" <?php if($this->_options[subscribeBar][size] == 'pq_small') echo 'selected';?>>Size S</option>
-							</select>
-							</label>							
-							<div class="clear"></div>							
-							<label style="width: 49%; display: inline-block; margin: 5px 0 15px;">
-									<input type="radio" id="subscribeBar_animation_bounce" name="subscribeBar[animation]" onclick="subscribeBarPreview();" value="bounce" <?php if($this->_options[subscribeBar][animation] == 'bounce') echo 'checked';?> style="display: inline-block; float: left; margin: 3px 10px 3px 0;">
-									<p>Bounce animation</p>
-							</label>
-							<label style="width: 49%; display: inline-block; margin: 5px 0 15px;">
-									<input type="radio" id="subscribeBar_animation_fade" name="subscribeBar[animation]" onclick="subscribeBarPreview();" value="fade" <?php if($this->_options[subscribeBar][animation] == 'fade' || $this->_options[subscribeBar][animation] == '') echo 'checked';?> style="display: inline-block; float: left; margin: 3px 10px 3px 0;">
-									<p>Fading animation</p>
-							</label>
-							<div class="clear"></div>
-							<label>
-							<div class="pq_box">
-								<p>Follow Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="subscribeBar[afterProceed][follow]" <?php if((int)$this->_options[subscribeBar][afterProceed][follow] == 1) echo 'checked';?>></div>
-							</div>
-							</label>
-							<label>
-							<div class="pq_box">
-								<p>Thank Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="subscribeBar[afterProceed][thank]" <?php if((int)$this->_options[subscribeBar][afterProceed][thank] == 1) echo 'checked';?>></div>
-								<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off"></div>
-							</div>
-							</label>							
-							<div class="clear"></div>
-							<p style="font-family: pt sans narrow; font-size: 19px; margin: 20px 0 10px;">Only Design Live Demo</p>
-							<img src="<?php echo plugins_url('images/browser.png', __FILE__);?>" style="width: 100%; margin-bottom: -6px;" />
-							<div style="transform-origin: 0 0; transform: scale(0.55); width: 1024px; height: 400px; box-sizing: border-box; border: 1px solid lightgrey; margin-bottom: -150px;">
-							<iframe scrolling="no" id="subscribeBarLiveViewIframe" width="100%" height="400px" src="" style="background: white; margin: 0;"></iframe>
-							</div>
-							
-							<script>								
-								function subscribeBarPreview(){	
-									if(document.getElementById('subscribeBar_animation_bounce').checked) {
-										var animation = 'pq_animated bounce';
-									} else {
-										var animation = '';
-									}									
-									var design = document.getElementById('subscribeBar_size').value+' '+document.getElementById('subscribeBar_position').value+' '+document.getElementById('subscribeBar_background').value+' '+document.getElementById('subscribeBar_button_color').value+' '+animation;
-									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v2.html?utm-campaign=wp_aio_widgets&p=subscribeBar&design='+design;									
-									document.getElementById('subscribeBarLiveViewIframe').src = previewUrl;									
-									
-								}
-								subscribeBarPreview();
-							</script>
-							
-							</div>
-							
-						<a href="javascript:void(0)" onclick="document.getElementById('Marketing_Bar').style.display='none';"><div class="pq_close"></div></a>
-						</div>
-						<a name="Exit_Popup"></a><div class="pq-sm-10 pq_more" id="Exit_Popup" style="display:none;">
-							<h5>More options Exit Popup</h5>
-							<div class="pq-sm-10" style="width: 83.333333%;">
-							
-							<label type="text" style="display: block;"><p>Heading</p><input type="text" name="subscribeExit[title]" value="<?php echo stripslashes($this->_options[subscribeExit][title]);?>"></label>
-							<label style="display: block;"><p>Text</p><input type="text" name="subscribeExit[sub_title]" value="<?php echo stripslashes($this->_options[subscribeExit][sub_title]);?>"></label>
-							<label style="display: block;"><p>Button</p><input type="text" name="subscribeExit[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][buttonTitle]);?>"></label>
-							<label style="display: block;"><p>Input email text</p><input type="text" name="subscribeExit[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][inputEmailTitle]);?>"></label>
-							<label style="display: block;"><p>Input name text (Aweber)</p><input type="text" name="subscribeExit[inputNameTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][inputNameTitle]);?>"></label>
-							
-							<div class="pq-sm-6 icons" style="padding-left: 0; margin: 27px 0 0;">
-							<label>
-							<select id="subscribeExit_background" onchange="subscribeExitPreview();" name="subscribeExit[background]">
-								    <option value="bg_grey" <?php if($this->_options[subscribeExit][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
-									<option value="" <?php if($this->_options[subscribeExit][background] == '') echo 'selected';?>>Background - White</option>
-									<option value="bg_yellow" <?php if($this->_options[subscribeExit][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
-									<option value="bg_wormwood" <?php if($this->_options[subscribeExit][background] == 'bg_wormwood') echo 'selected';?>>Background - Wormwood</option>
-									<option value="bg_blue" <?php if($this->_options[subscribeExit][background] == 'bg_blue') echo 'selected';?>>Background - Blue</option>
-									<option value="bg_green" <?php if($this->_options[subscribeExit][background] == 'bg_green') echo 'selected';?>>Background - Green</option>
-									<option value="bg_beige" <?php if($this->_options[subscribeExit][background] == 'bg_beige') echo 'selected';?>>Background - Beige</option>
-									<option value="bg_red" <?php if($this->_options[subscribeExit][background] == 'bg_red') echo 'selected';?>>Background - Red</option>
-									<option value="bg_iceblue" <?php if($this->_options[subscribeExit][background] == 'bg_iceblue') echo 'selected';?>>Background - Iceblue</option>
-									<option value="bg_black" <?php if($this->_options[subscribeExit][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
-									<option value="bg_skyblue" <?php if($this->_options[subscribeExit][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
-									<option value="bg_lilac" <?php if($this->_options[subscribeExit][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
-							</select></label>
-							</div>
-							<div class="pq-sm-6 icons down" style="padding-right: 0; margin: 27px 0 10px;">
-							<label>
-							<select id="subscribeExit_button_color" onchange="subscribeExitPreview();" name="subscribeExit[button_color]">
-								    <option value="btn_lightblue" <?php if($this->_options[subscribeExit][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
-									<option value="btn_lightblue invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_lightblue invert' || $this->_options[subscribeExit][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
-									<option value="btn_blue" <?php if($this->_options[subscribeExit][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
-									<option value="btn_blue invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_blue invert') echo 'selected';?>>Button - Blue Transparent</option>
-									<option value="btn_black" <?php if($this->_options[subscribeExit][button_color] == 'btn_black') echo 'selected';?>>Button - Black</option>
-									<option value="btn_black invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_black invert') echo 'selected';?>>Button - Black Transparent</option>
-									<option value="btn_green" <?php if($this->_options[subscribeExit][button_color] == 'btn_green') echo 'selected';?>>Button - Green</option>
-									<option value="btn_green invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_green invert') echo 'selected';?>>Button - Green Transparent</option>
-									<option value="btn_violet" <?php if($this->_options[subscribeExit][button_color] == 'btn_violet') echo 'selected';?>>Button - Violet</option>
-									<option value="btn_violet invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_violet invert') echo 'selected';?>>Button - Violet Transparent</option>
-									<option value="btn_orange" <?php if($this->_options[subscribeExit][button_color] == 'btn_orange') echo 'selected';?>>Button - Orange</option>
-									<option value="btn_orange invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_orange invert') echo 'selected';?>>Button - Orange Transparent</option>
-									<option value="btn_red" <?php if($this->_options[subscribeExit][button_color] == 'btn_red') echo 'selected';?>>Button - Red</option>
-									<option value="btn_red invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
-									<option value="btn_lilac" <?php if($this->_options[subscribeExit][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
-									<option value="btn_lilac invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
-							</select></label>
-							</div>
-							<div class="clear"></div>
-							<label style="width: 49%; display: inline-block; margin: 0px 0 10px;">
-									<input type="radio" id="subscribeExit_animation_bounce" onclick="subscribeExitPreview()" name="subscribeExit[animation]" value="tada" <?php if($this->_options[subscribeExit][animation] == 'tada') echo 'checked';?> style="display: inline-block; float: left; margin: 3px 10px 3px 0;">
-									<p>Animation</p>
-							</label>
-							<label style="width: 49%; display: inline-block; margin: 0px 0 10px;">
-									<input type="radio" id="subscribeExit_animation_fade" onclick="subscribeExitPreview()" name="subscribeExit[animation]" value="fade" <?php if($this->_options[subscribeExit][animation] == 'fade' || $this->_options[subscribeExit][animation] == '') echo 'checked';?> style="display: inline-block; float: left; margin: 3px 10px 3px 0;">
-									<p>Fading animation</p>
-							</label>
-							<hr>
-							<div class="pq-sm-12 icons" style="padding-left: 0; margin: 27px 0 0;">
-							<label><select id="subscribeExit_overlay" onchange="subscribeExitPreview();" name="subscribeExit[overlay]">
-								    <option value="over_grey" <?php if($this->_options[subscribeExit][overlay] == 'over_grey') echo 'selected';?>>Color overlay - Grey</option>
-									<option value="over_white" <?php if($this->_options[subscribeExit][overlay] == 'over_white' || $this->_options[subscribeExit][overlay] == '') echo 'selected';?>>Color overlay - White</option>
-									<option value="over_yellow" <?php if($this->_options[subscribeExit][overlay] == 'over_yellow') echo 'selected';?>>Color overlay - Yellow</option>
-									<option value="over_wormwood" <?php if($this->_options[subscribeExit][overlay] == 'over_wormwood') echo 'selected';?>>Color overlay - Wormwood</option>
-									<option value="over_blue" <?php if($this->_options[subscribeExit][overlay] == 'over_blue') echo 'selected';?>>Color overlay - Blue</option>
-									<option value="over_green" <?php if($this->_options[subscribeExit][overlay] == 'over_green') echo 'selected';?>>Color overlay - Green</option>
-									<option value="over_beige" <?php if($this->_options[subscribeExit][overlay] == 'over_beige') echo 'selected';?>>Color overlay - Beige</option>
-									<option value="over_red" <?php if($this->_options[subscribeExit][overlay] == 'over_red') echo 'selected';?>>Color overlay - Red</option>
-									<option value="over_iceblue" <?php if($this->_options[subscribeExit][overlay] == 'over_iceblue') echo 'selected';?>>Color overlay - Iceblue</option>
-									<option value="over_black" <?php if($this->_options[subscribeExit][overlay] == 'over_black') echo 'selected';?>>Color overlay - Black</option>
-									<option value="over_skyblue" <?php if($this->_options[subscribeExit][overlay] == 'over_skyblue') echo 'selected';?>>Color overlay - Skyblue</option>
-									<option value="over_lilac" <?php if($this->_options[subscribeExit][overlay] == 'over_lilac') echo 'selected';?>>Color overlay - Lilac</option>
-									<option value="over_grey_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_grey_lt') echo 'selected';?>>Color overlay - Grey - Light</option>
-									<option value="over_white_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_white_lt') echo 'selected';?>>Color overlay - White - Light</option>
-									<option value="over_yellow_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_yellow_lt') echo 'selected';?>>Color overlay - Yellow - Light</option>
-									<option value="over_wormwood_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_wormwood_lt') echo 'selected';?>>Color overlay - Wormwood - Light</option>
-									<option value="over_blue_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_blue_lt') echo 'selected';?>>Color overlay - Blue - Light</option>
-									<option value="over_green_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_green_lt') echo 'selected';?>>Color overlay - Green - Light</option>
-									<option value="over_beige_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_beige_lt') echo 'selected';?>>Color overlay - Beige - Light</option>
-									<option value="over_red_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_red_lt') echo 'selected';?>>Color overlay - Red - Light</option>
-									<option value="over_iceblue_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_iceblue_lt') echo 'selected';?>>Color overlay - Iceblue - Light</option>
-									<option value="over_black_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_black_lt') echo 'selected';?>>Color overlay - Black - Light</option>
-									<option value="over_skyblue_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_skyblue_lt') echo 'selected';?>>Color overlay - Skyblue - Light</option>
-									<option value="over_lilac_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_lilac_lt') echo 'selected';?>>Color overlay - Lilac - Light</option>
-									<option value="over_grey_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_grey_solid') echo 'selected';?>>Color overlay - Grey - Solid</option>
-									<option value="over_white_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_white_solid') echo 'selected';?>>Color overlay - White - Solid</option>
-									<option value="over_yellow_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_yellow_solid') echo 'selected';?>>Color overlay - Yellow - Solid</option>
-									<option value="over_wormwood_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_wormwood_solid') echo 'selected';?>>Color overlay - Wormwood - Solid</option>
-									<option value="over_blue_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_blue_solid') echo 'selected';?>>Color overlay - Blue - Solid</option>
-									<option value="over_green_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_green_solid') echo 'selected';?>>Color overlay - Green - Solid</option>
-									<option value="over_beige_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_beige_solid') echo 'selected';?>>Color overlay - Beige - Solid</option>
-									<option value="over_red_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_red_solid') echo 'selected';?>>Color overlay - Red - Solid</option>
-									<option value="over_iceblue_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_iceblue_solid') echo 'selected';?>>Color overlay - Iceblue - Solid</option>
-									<option value="over_black_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_black_solid') echo 'selected';?>>Color overlay - Black - Solid</option>
-									<option value="over_skyblue_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_skyblue_solid') echo 'selected';?>>Color overlay - Skyblue - Solid</option>
-									<option value="over_lilac_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_lilac_solid') echo 'selected';?>>Color overlay - Lilac - Solid</option>
-							</select></label>
-							</div>
-							
-							<div class="clear"></div>
-							<label>
-							<select id="subscribeExit_img"  name="subscribeExit[img]" onchange="chagnePopupImg(this.value, 'subscribeExitFotoBlock', 'subscribeExitCustomFotoBlock');subscribeExitPreview();">
-								<option value="" selected >No picture</option>
-								<option value="img_01.png" <?php if($this->_options[subscribeExit][img] == 'img_01.png') echo 'selected';?>>Question</option>
-								<option value="img_02.png" <?php if($this->_options[subscribeExit][img] == 'img_02.png') echo 'selected';?>>Attention</option>
-								<option value="img_03.png" <?php if($this->_options[subscribeExit][img] == 'img_03.png') echo 'selected';?>>Info</option>
-								<option value="img_04.png" <?php if($this->_options[subscribeExit][img] == 'img_04.png') echo 'selected';?>>Knowledge</option>
-								<option value="img_05.png" <?php if($this->_options[subscribeExit][img] == 'img_05.png') echo 'selected';?>>Idea</option>
-								<option value="img_06.png" <?php if($this->_options[subscribeExit][img] == 'img_06.png') echo 'selected';?>>Talk</option>
-								<option value="img_07.png" <?php if($this->_options[subscribeExit][img] == 'img_07.png') echo 'selected';?>>News</option>
-								<option value="img_08.png" <?php if($this->_options[subscribeExit][img] == 'img_08.png') echo 'selected';?>>Megaphone</option>
-								<option value="img_09.png" <?php if($this->_options[subscribeExit][img] == 'img_09.png') echo 'selected';?>>Gift</option>
-								<option value="img_10.png" <?php if($this->_options[subscribeExit][img] == 'img_10.png') echo 'selected';?>>Success</option>
-								<option value="custom" <?php if($this->_options[subscribeExit][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
-							</select></label>
-							<label style="margin-top: 20px;"><div class="img"><img id="subscribeExitFotoBlock" />
-							<input type="text" name="subscribeExit[imgUrl]" onkeyup="subscribeExitPreview();"  style="display:none;" id="subscribeExitCustomFotoBlock" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[subscribeExit][imgUrl]);?>">
-							</div></label>							
-							<label><div class="pq_box">
-								<p>Follow Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="subscribeExit[afterProceed][follow]" <?php if((int)$this->_options[subscribeExit][afterProceed][follow] == 1) echo 'checked';?>></div>
-							</div></label>
-							<label><div class="pq_box">
-								<p>Thank Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="subscribeExit[afterProceed][thank]" <?php if((int)$this->_options[subscribeExit][afterProceed][thank] == 1) echo 'checked';?>></div>
-								<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off"></div>
-							</div></label>
-							<?php
-								echo "
-								<script>
-									chagnePopupImg('".$this->_options[subscribeExit][img]."', 'subscribeExitFotoBlock', 'subscribeExitCustomFotoBlock');
-								</script>
-								";
-							?>							
-							<div class="clear"></div>
-							<p style="font-family: pt sans narrow; font-size: 19px; margin: 20px 0 10px;">Only Design Live Demo</p>
-							<img src="<?php echo plugins_url('images/browser.png', __FILE__);?>" style="width: 100%; margin-bottom: -6px;" />
-							<div style="transform-origin: 0 0; transform: scale(0.8); width: 125%; height: 300px; box-sizing: border-box; border: 1px solid lightgrey;">
-							<iframe scrolling="no" id="subscribeExitLiveViewIframe" width="100%" height="300px" src="" style="background: white; margin: 0;"></iframe>
-							</div>
-							<script>
-								function subscribeExitPreview(){									
-									
-									var img = document.getElementById('subscribeExit_img').value;
-									var imgUrl = document.getElementById('subscribeExitCustomFotoBlock').value;	
-									if(document.getElementById('subscribeExit_animation_bounce').checked) {
-										var animation = 'pq_animated bounceInDown';
-									} else {
-										var animation = '';
-									}
-									var design = document.getElementById('subscribeExit_typeWindow').value+' pq_top '+document.getElementById('subscribeExit_background').value+' '+document.getElementById('subscribeExit_button_color').value+' '+animation;
-									var overlay = document.getElementById('subscribeExit_overlay').value;									
-									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v2.html?utm-campaign=wp_aio_widgets&p=subscribeExit&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl);									
-									document.getElementById('subscribeExitLiveViewIframe').src = previewUrl;									
-									
-								}
-								subscribeExitPreview();
-							</script>
-							</div>
-						
-						<a href="javascript:void(0)" onclick="document.getElementById('Exit_Popup').style.display='none';"><div class="pq_close"></div></a>
-						</div>
-					</div>
-					<input type="submit" class="btn_m_red" value="Save changes">
-					<a href="mailto:support@profitquery.com" target="_blank" class="pq_help">Need help?</a>
-					</form>
-					<a name="setupFormAction"></a>
-					<form action="<?php echo $this->getSettingsPageUrl();?>#setupFormAction" method="post">
-					<input type="hidden" name="action" value="subscribeProviderSetup">					
-					<div class="pq-panel-body">
-						<div class="pq-sm-10" id="mailchimpBlockID"  style="overflow: hidden; padding: 0 20px; margin: 0 auto 10px; background: #F3F3F3;display:none; ">						
-						<h5>Subscribe Provider Setup</h5>
-						<div class="pq-panel-body" style="background: #F3F3F3; padding: 20px 0 0px; margin: 0 15px;">
-							<div class="pq-sm-12">
-								<div class="pq-sm-10 icons" style="margin: 0 auto; float: none;">
-									<label><select onchange="changeSubscribeProviderHelpUrl(1);" id="subscribeProvider" name="subscribeProvider" style="width: 100%; box-sizing: border-box; padding: 4px; margin: 10px 0 0;">
-										<option value="mailchimp" <?php if($this->_options[subscribeProvider] == '' || $this->_options[subscribeProvider] == 'mailchimp') echo "selected";?>>MailChimp</option>
-										<option value="aweber" <?php if($this->_options[subscribeProvider] == 'aweber') echo "selected";?>>AWeber</option>										
-									</select></label>
-									<div class="pq_mch">									
-										<div id="subscribeProviderFormID" class="pq_ent <?php if($this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]]['is_error']) echo 'pq_error';?>" <?php if((int)$this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]]['is_error'] == 1 || !$this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]][formAction]) echo 'style="display:block;";'; else echo 'style="display:none;";';?> />
-											<a href="http://profitquery.com/mailchimp.html" id="subscribeProviderHelpUrl" target="_blank">How to get code</a>
-											<label><p>Paste your code here:</p>
-												<textarea name="subscribeProviderFormContent" rows="5"></textarea>												
-												<input type="submit" value="Save" />												
-											</label>
-										</div>									
-										<div id="subscribeProviderEditLinkID" class="pq_result" onclick="enableSubsribeForm();" <?php if($this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]]['is_error']) echo 'pq_error';?>" <?php if((int)$this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]]['is_error'] == 1 || !$this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]][formAction]) echo 'style="display:none;";'; else echo 'style="display:block;";';?> />
-											<img src="<?php echo plugins_url('images/ok.png', __FILE__);?>" />
-											<a href="javascript:void(0)" onclick="return false;">Change settings</a>
-										</div>
-										<script>
-											function changeSubscribeProviderHelpUrl(withCheckCurrent){
-												var currentSubscribeProvider = '<?php echo $this->_options[subscribeProvider];?>'
-												if(document.getElementById('subscribeProvider').value == 'mailchimp'){
-													document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/mailchimp.html';
-												}
-												if(document.getElementById('subscribeProvider').value == 'aweber'){
-													document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/aweber.html';
-												}
-												if(withCheckCurrent == '1'){
-													if(currentSubscribeProvider){
-														if(currentSubscribeProvider == document.getElementById('subscribeProvider').value){
-															document.getElementById('subscribeProviderFormID').style.display = 'none';												
-															document.getElementById('subscribeProviderEditLinkID').style.display = 'block';
-														} else {
-															document.getElementById('subscribeProviderFormID').style.display = 'block';												
-															document.getElementById('subscribeProviderEditLinkID').style.display = 'none';
-														}
-													}
-												}
-											}											
-											function enableSubsribeForm(){												
-												document.getElementById('subscribeProviderFormID').style.display = 'block';												
-												document.getElementById('subscribeProviderEditLinkID').style.display = 'none';												
-											}
-											
-											changeSubscribeProviderHelpUrl();
-										</script>
-									</div>									
-								</div>
-							</div>
-						</div>						
-						</div></div>						
-					</div>
-				  </div>
-				  </form>
-				  <a name="ContactBlock"></a>
-				 <div class="pq_block" id="v3">				
-						<h4>Contact Forms</h4>
-						
-					<div id="collapseFour" class="panel-collapse collapse in">
-					<form action="<?php echo $this->getSettingsPageUrl();?>#ContactBlock" method="post">
-					<input type="hidden" name="action" value="edit">
-					  <div class="pq-panel-body">
-					   <p>Get more contact information, visitors feedback.</p>
-												
-						<div class="pq-sm-6">
-							<img id="contactUs_IMG" src="<?php echo plugins_url('images/contact_us.png', __FILE__);?>" />
-							<h5>Contact Form</h5>
-							<div class="pq-sm-10">
-							<label>
-							<div id="contactUsEnabledStyle">
-								<input type="checkbox" name="contactUs[enabled]" id="contactUsEnabledCheckbox" onclick="changeContactUsEnabled();" <?php if((int)$this->_options[contactUs][disabled] == 0) echo 'checked';?>>
-								<p id="contactUsEnabledText"></p>
-							</div>
-							<script>
-								function changeContactUsEnabled(){											
-									if(document.getElementById('contactUsEnabledCheckbox').checked){
-										document.getElementById('contactUsEnabledStyle').className = 'pq-switch-bg pq-on';
-										document.getElementById('contactUsEnabledText').innerHTML = 'On';
-									} else {
-										document.getElementById('contactUsEnabledStyle').className = 'pq-switch-bg pq-off';
-										document.getElementById('contactUsEnabledText').innerHTML = 'Off';
-									}
-								}
-								changeContactUsEnabled();
-							</script>
-							</label>
-							
-							<label>
-							<select id="contactUs_position" onchange="changeContactUsBlockImg();" name="contactUs[position]">
-							    <option value="pq_right pq_bottom" <?php if($this->_options[contactUs][position] == 'pq_right pq_bottom' || $this->_options[contactUs][position] == '') echo 'selected';?>>Loader - Right/Bottom</option>
-								<option value="pq_right pq_top" <?php if($this->_options[contactUs][position] == 'pq_right pq_top') echo 'selected';?>>Loader - Right/Top</option>		
-								<option value="pq_left pq_bottom" <?php if($this->_options[contactUs][position] == 'pq_left pq_bottom') echo 'selected';?>>Loader - Left/Bottom</option>
-								<option value="pq_left pq_top" <?php if($this->_options[contactUs][position] == 'pq_left pq_top') echo 'selected';?>>Loader - Left/Top</option>
-							</select>
-							<script>
-								function changeContactUsBlockImg(){
-									if(document.getElementById('contactUs_position').value == 'pq_right pq_bottom'){
-										document.getElementById('contactUs_IMG').src = previewPath+'contact_right_bot.png';
-									}
-									if(document.getElementById('contactUs_position').value == 'pq_right pq_top'){
-										document.getElementById('contactUs_IMG').src = previewPath+'contact_right_top.png';
-									}
-									if(document.getElementById('contactUs_position').value == 'pq_left pq_bottom'){
-										document.getElementById('contactUs_IMG').src = previewPath+'contact_left_bot.png';
-									}
-									if(document.getElementById('contactUs_position').value == 'pq_left pq_top'){
-										document.getElementById('contactUs_IMG').src = previewPath+'contact_left_top.png';
-									}
-								}
-								changeContactUsBlockImg();
-							</script>
-							</label>
-							<a href="#Contact_Form" onclick="document.getElementById('Contact_Form').style.display='block';"><button type="button" class="pq-btn-link btn-bg">More Option</button></a>							
-							</div>
-						</div>
-						<div class="pq-sm-6">
-							<img id="callMe_IMG" src="<?php echo plugins_url('images/call_me_back.png', __FILE__);?>" />
-							<div class="clear"></div>
-							<div class="pq-sm-10">
-							<h5>Call Me Back</h5>														
-							<label>
-							<div id="callMeEnabledStyle">
-								<input type="checkbox" name="callMe[enabled]" id="callMeEnabledCheckbox" onclick="changeCallMeEnabled();" <?php if((int)$this->_options[callMe][disabled] == 0) echo 'checked';?>>
-								<p id="callMeEnabledText"></p>
-							</div>
-							<script>
-								function changeCallMeEnabled(){											
-									if(document.getElementById('callMeEnabledCheckbox').checked){
-										document.getElementById('callMeEnabledStyle').className = 'pq-switch-bg pq-on';
-										document.getElementById('callMeEnabledText').innerHTML = 'On';
-									} else {
-										document.getElementById('callMeEnabledStyle').className = 'pq-switch-bg pq-off';
-										document.getElementById('callMeEnabledText').innerHTML = 'Off';
-									}
-								}
-								changeCallMeEnabled();
-							</script>
-							</label>
-							<label>
-							<select id="callMe_position" onchange="changeCallMeBlockImg();" name="callMe[position]">
-							    <option value="pq_right pq_bottom" <?php if($this->_options[callMe][position] == 'pq_right pq_bottom' ) echo 'selected';?>>Loader - Right/Bottom</option>
-								<option value="pq_right pq_top" <?php if($this->_options[callMe][position] == 'pq_right pq_top') echo 'selected';?>>Loader - Right/Top</option>		
-								<option value="pq_left pq_bottom" <?php if($this->_options[callMe][position] == 'pq_left pq_bottom' || $this->_options[callMe][position] == '') echo 'selected';?>>Loader - Left/Bottom</option>
-								<option value="pq_left pq_top" <?php if($this->_options[callMe][position] == 'pq_left pq_top') echo 'selected';?>>Loader - Left/Top</option>
-							</select>
-							<script>
-								function changeCallMeBlockImg(){
-									if(document.getElementById('callMe_position').value == 'pq_right pq_bottom'){
-										document.getElementById('callMe_IMG').src = previewPath+'call_right_bot.png';
-									}
-									if(document.getElementById('callMe_position').value == 'pq_right pq_top'){
-										document.getElementById('callMe_IMG').src = previewPath+'call_right_top.png';
-									}
-									if(document.getElementById('callMe_position').value == 'pq_left pq_bottom'){
-										document.getElementById('callMe_IMG').src = previewPath+'call_left_bot.png';
-									}
-									if(document.getElementById('callMe_position').value == 'pq_left pq_top'){
-										document.getElementById('callMe_IMG').src = previewPath+'call_left_top.png';
-									}
-								}
-								changeCallMeBlockImg();
-							</script>
-							</label>
-							<a href="#Call_Me_Back" onclick="document.getElementById('Call_Me_Back').style.display='block';"><button type="button" class="pq-btn-link btn-bg">More Option</button></a>							
-							</div>
-							
-						</div>						
-					</div>
-					<div class="clear"></div>
-					
-					<div class="pq-panel-body">
-						<a name="Contact_Form"></a><div class="pq-sm-10 pq_more" id="Contact_Form" style="display:none">
-							<h5>More options Contact Form</h5>
-							<div class="pq-sm-10" style="width: 83.333333%;">
-							
-							<label style="display: block;"><p>Heading</p><input type="text" name="contactUs[title]" value="<?php echo stripslashes($this->_options[contactUs][title]);?>"></label>
-							<label style="display: block;"><p>Text</p><input type="text"name="contactUs[sub_title]" value="<?php echo stripslashes($this->_options[contactUs][sub_title]);?>"></label>							
-							<label style="display: block;"><p>Button Title</p><input type="text" name="contactUs[buttonTitle]" value="<?php echo stripslashes($this->_options[contactUs][buttonTitle]);?>"></label>							
-							
-							<label style="padding-left:0; margin: 37px 0 20px;">
-							<select id="contactUs_typeWindow" onchange="contactUsPreview();"  name="contactUs[typeWindow]">
-								<option value="pq_large" <?php if($this->_options[contactUs][typeWindow] == 'pq_large' || $this->_options[contactUs][typeWindow] == '') echo 'selected';?>>Size L</option>
-								<option value="pq_medium" <?php if($this->_options[contactUs][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
-								<option value="pq_mini" <?php if($this->_options[contactUs][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
-							</select>
-							</label>
-							<label><select id="contactUs_loader_background" onchange="contactUsPreview();" name="contactUs[loader_background]">
-								    <option value="bg_grey" <?php if($this->_options[contactUs][loader_background] == 'bg_grey') echo 'selected';?>>Loader - Background - Grey</option>
-									<option value="" <?php if($this->_options[contactUs][loader_background] == '') echo 'selected';?>>Loader - Background - White</option>
-									<option value="bg_yellow" <?php if($this->_options[contactUs][loader_background] == 'bg_yellow') echo 'selected';?>>Loader - Background - Yellow</option>
-									<option value="bg_wormwood" <?php if($this->_options[contactUs][loader_background] == 'bg_wormwood') echo 'selected';?>>Loader - Background - Wormwood</option>
-									<option value="bg_blue" <?php if($this->_options[contactUs][loader_background] == 'bg_blue') echo 'selected';?>>Loader - Background - Blue</option>
-									<option value="bg_green" <?php if($this->_options[contactUs][loader_background] == 'bg_green') echo 'selected';?>>Loader - Background - Green</option>
-									<option value="bg_beige" <?php if($this->_options[contactUs][loader_background] == 'bg_beige') echo 'selected';?>>Loader - Background - Beige</option>
-									<option value="bg_red" <?php if($this->_options[contactUs][loader_background] == 'bg_red') echo 'selected';?>>Loader - Background - Red</option>
-									<option value="bg_iceblue" <?php if($this->_options[contactUs][loader_background] == 'bg_iceblue') echo 'selected';?>>Loader - Background - Iceblue</option>
-									<option value="bg_black" <?php if($this->_options[contactUs][loader_background] == 'bg_black') echo 'selected';?>>Loader - Background - Black</option>
-									<option value="bg_skyblue" <?php if($this->_options[contactUs][loader_background] == 'bg_skyblue') echo 'selected';?>>Loader - Background - Skyblue</option>
-									<option value="bg_lilac" <?php if($this->_options[contactUs][loader_background] == 'bg_lilac') echo 'selected';?>>Loader - Background - Lilac</option>
-							</select></label>
-							<div class="clear"></div>	
-							<div class="pq-sm-6 icons down" style="padding-left:0; margin: 10px 0;">                          						
-							<label style="margin-bottom:0;">
-							<select id="contactUs_background" onchange="contactUsPreview();" name="contactUs[background]">
-								    <option value="bg_grey" <?php if($this->_options[contactUs][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
-									<option value="" <?php if($this->_options[contactUs][background] == '') echo 'selected';?>>Background - White</option>
-									<option value="bg_yellow" <?php if($this->_options[contactUs][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
-									<option value="bg_wormwood" <?php if($this->_options[contactUs][background] == 'bg_wormwood') echo 'selected';?>>Background - Wormwood</option>
-									<option value="bg_blue" <?php if($this->_options[contactUs][background] == 'bg_blue') echo 'selected';?>>Background - Blue</option>
-									<option value="bg_green" <?php if($this->_options[contactUs][background] == 'bg_green') echo 'selected';?>>Background - Green</option>
-									<option value="bg_beige" <?php if($this->_options[contactUs][background] == 'bg_beige') echo 'selected';?>>Background - Beige</option>
-									<option value="bg_red" <?php if($this->_options[contactUs][background] == 'bg_red') echo 'selected';?>>Background - Red</option>
-									<option value="bg_iceblue" <?php if($this->_options[contactUs][background] == 'bg_iceblue') echo 'selected';?>>Background - Iceblue</option>
-									<option value="bg_black" <?php if($this->_options[contactUs][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
-									<option value="bg_skyblue" <?php if($this->_options[contactUs][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
-									<option value="bg_lilac" <?php if($this->_options[contactUs][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
-							</select></label>
-							</div>
-							<div class="pq-sm-6 icons down" style="padding-right:0; margin: 10px 0;">
-							<label><select id="contactUs_button_color" onchange="contactUsPreview();" name="contactUs[button_color]">
-								    <option value="btn_lightblue" <?php if($this->_options[contactUs][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
-									<option value="btn_lightblue invert" <?php if($this->_options[contactUs][button_color] == 'btn_lightblue invert' || $this->_options[contactUs][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
-									<option value="btn_blue" <?php if($this->_options[contactUs][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
-									<option value="btn_blue invert" <?php if($this->_options[contactUs][button_color] == 'btn_blue invert') echo 'selected';?>>Button - Blue Transparent</option>
-									<option value="btn_black" <?php if($this->_options[contactUs][button_color] == 'btn_black') echo 'selected';?>>Button - Black</option>
-									<option value="btn_black invert" <?php if($this->_options[contactUs][button_color] == 'btn_black invert') echo 'selected';?>>Button - Black Transparent</option>
-									<option value="btn_green" <?php if($this->_options[contactUs][button_color] == 'btn_green') echo 'selected';?>>Button - Green</option>
-									<option value="btn_green invert" <?php if($this->_options[contactUs][button_color] == 'btn_green invert') echo 'selected';?>>Button - Green Transparent</option>
-									<option value="btn_violet" <?php if($this->_options[contactUs][button_color] == 'btn_violet') echo 'selected';?>>Button - Violet</option>
-									<option value="btn_violet invert" <?php if($this->_options[contactUs][button_color] == 'btn_violet invert') echo 'selected';?>>Button - Violet Transparent</option>
-									<option value="btn_orange" <?php if($this->_options[contactUs][button_color] == 'btn_orange') echo 'selected';?>>Button - Orange</option>
-									<option value="btn_orange invert" <?php if($this->_options[contactUs][button_color] == 'btn_orange invert') echo 'selected';?>>Button - Orange Transparent</option>
-									<option value="btn_red" <?php if($this->_options[contactUs][button_color] == 'btn_red') echo 'selected';?>>Button - Red</option>
-									<option value="btn_red invert" <?php if($this->_options[contactUs][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
-									<option value="btn_lilac" <?php if($this->_options[contactUs][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
-									<option value="btn_lilac invert" <?php if($this->_options[contactUs][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
-							</select></label>
-							</div>
-							<div class="clear"></div>
-							<label style="width: 49%; display: inline-block; margin: 5px 0 10px;">
-									<input type="radio" id="contactUs_animation_bounce" onclick="contactUsPreview()" name="contactUs[animation]" value="bounceInDown" <?php if($this->_options[contactUs][animation] == 'bounceInDown') echo 'checked';?> style="display: inline-block; float: left; margin: 3px 10px 3px 0;">
-									<p>Bounce animation</p>
-							</label>
-							<label style="width: 49%; display: inline-block; margin: 5px 0 10px;">
-									<input type="radio" id="contactUs_animation_fade" onclick="contactUsPreview()" name="contactUs[animation]" value="fade" <?php if($this->_options[contactUs][animation] == 'fade' || $this->_options[contactUs][animation] == '') echo 'checked';?> style="display: inline-block; float: left; margin: 3px 10px 3px 0;">
-									<p>Fading animation</p>
-							</label>
-							<hr>
-							<div class="pq-sm-12 icons" style="padding-left: 0; margin: 27px 0 0;">
-							<label><select id="contactUs_overlay" name="contactUs[overlay]" onchange="contactUsPreview();">
-								    <option value="over_grey" <?php if($this->_options[contactUs][overlay] == 'over_grey') echo 'selected';?>>Color overlay - Grey</option>
-									<option value="over_white" <?php if($this->_options[contactUs][overlay] == 'over_white' || $this->_options[contactUs][overlay] == '') echo 'selected';?>>Color overlay - White</option>
-									<option value="over_yellow" <?php if($this->_options[contactUs][overlay] == 'over_yellow') echo 'selected';?>>Color overlay - Yellow</option>
-									<option value="over_wormwood" <?php if($this->_options[contactUs][overlay] == 'over_wormwood') echo 'selected';?>>Color overlay - Wormwood</option>
-									<option value="over_blue" <?php if($this->_options[contactUs][overlay] == 'over_blue') echo 'selected';?>>Color overlay - Blue</option>
-									<option value="over_green" <?php if($this->_options[contactUs][overlay] == 'over_green') echo 'selected';?>>Color overlay - Green</option>
-									<option value="over_beige" <?php if($this->_options[contactUs][overlay] == 'over_beige') echo 'selected';?>>Color overlay - Beige</option>
-									<option value="over_red" <?php if($this->_options[contactUs][overlay] == 'over_red') echo 'selected';?>>Color overlay - Red</option>
-									<option value="over_iceblue" <?php if($this->_options[contactUs][overlay] == 'over_iceblue') echo 'selected';?>>Color overlay - Iceblue</option>
-									<option value="over_black" <?php if($this->_options[contactUs][overlay] == 'over_black') echo 'selected';?>>Color overlay - Black</option>
-									<option value="over_skyblue" <?php if($this->_options[contactUs][overlay] == 'over_skyblue') echo 'selected';?>>Color overlay - Skyblue</option>
-									<option value="over_lilac" <?php if($this->_options[contactUs][overlay] == 'over_lilac') echo 'selected';?>>Color overlay - Lilac</option>
-									<option value="over_grey_lt" <?php if($this->_options[contactUs][overlay] == 'over_grey_lt') echo 'selected';?>>Color overlay - Grey - Light</option>
-									<option value="over_white_lt" <?php if($this->_options[contactUs][overlay] == 'over_white_lt') echo 'selected';?>>Color overlay - White - Light</option>
-									<option value="over_yellow_lt" <?php if($this->_options[contactUs][overlay] == 'over_yellow_lt') echo 'selected';?>>Color overlay - Yellow - Light</option>
-									<option value="over_wormwood_lt" <?php if($this->_options[contactUs][overlay] == 'over_wormwood_lt') echo 'selected';?>>Color overlay - Wormwood - Light</option>
-									<option value="over_blue_lt" <?php if($this->_options[contactUs][overlay] == 'over_blue_lt') echo 'selected';?>>Color overlay - Blue - Light</option>
-									<option value="over_green_lt" <?php if($this->_options[contactUs][overlay] == 'over_green_lt') echo 'selected';?>>Color overlay - Green - Light</option>
-									<option value="over_beige_lt" <?php if($this->_options[contactUs][overlay] == 'over_beige_lt') echo 'selected';?>>Color overlay - Beige - Light</option>
-									<option value="over_red_lt" <?php if($this->_options[contactUs][overlay] == 'over_red_lt') echo 'selected';?>>Color overlay - Red - Light</option>
-									<option value="over_iceblue_lt" <?php if($this->_options[contactUs][overlay] == 'over_iceblue_lt') echo 'selected';?>>Color overlay - Iceblue - Light</option>
-									<option value="over_black_lt" <?php if($this->_options[contactUs][overlay] == 'over_black_lt') echo 'selected';?>>Color overlay - Black - Light</option>
-									<option value="over_skyblue_lt" <?php if($this->_options[contactUs][overlay] == 'over_skyblue_lt') echo 'selected';?>>Color overlay - Skyblue - Light</option>
-									<option value="over_lilac_lt" <?php if($this->_options[contactUs][overlay] == 'over_lilac_lt') echo 'selected';?>>Color overlay - Lilac - Light</option>
-									<option value="over_grey_solid" <?php if($this->_options[contactUs][overlay] == 'over_grey_solid') echo 'selected';?>>Color overlay - Grey - Solid</option>
-									<option value="over_white_solid" <?php if($this->_options[contactUs][overlay] == 'over_white_solid') echo 'selected';?>>Color overlay - White - Solid</option>
-									<option value="over_yellow_solid" <?php if($this->_options[contactUs][overlay] == 'over_yellow_solid') echo 'selected';?>>Color overlay - Yellow - Solid</option>
-									<option value="over_wormwood_solid" <?php if($this->_options[contactUs][overlay] == 'over_wormwood_solid') echo 'selected';?>>Color overlay - Wormwood - Solid</option>
-									<option value="over_blue_solid" <?php if($this->_options[contactUs][overlay] == 'over_blue_solid') echo 'selected';?>>Color overlay - Blue - Solid</option>
-									<option value="over_green_solid" <?php if($this->_options[contactUs][overlay] == 'over_green_solid') echo 'selected';?>>Color overlay - Green - Solid</option>
-									<option value="over_beige_solid" <?php if($this->_options[contactUs][overlay] == 'over_beige_solid') echo 'selected';?>>Color overlay - Beige - Solid</option>
-									<option value="over_red_solid" <?php if($this->_options[contactUs][overlay] == 'over_red_solid') echo 'selected';?>>Color overlay - Red - Solid</option>
-									<option value="over_iceblue_solid" <?php if($this->_options[contactUs][overlay] == 'over_iceblue_solid') echo 'selected';?>>Color overlay - Iceblue - Solid</option>
-									<option value="over_black_solid" <?php if($this->_options[contactUs][overlay] == 'over_black_solid') echo 'selected';?>>Color overlay - Black - Solid</option>
-									<option value="over_skyblue_solid" <?php if($this->_options[contactUs][overlay] == 'over_skyblue_solid') echo 'selected';?>>Color overlay - Skyblue - Solid</option>
-									<option value="over_lilac_solid" <?php if($this->_options[contactUs][overlay] == 'over_lilac_solid') echo 'selected';?>>Color overlay - Lilac - Solid</option>
-							</select></label>
-							</div>
-							
-							<div class="clear"></div>
-							<label><select id="contactUs_img" name="contactUs[img]" onchange="chagnePopupImg(this.value, 'contactUsFotoBlock', 'contactUsCustomFotoBlock');contactUsPreview();">
-								<option value="" selected >No picture</option>
-								<option value="img_01.png" <?php if($this->_options[contactUs][img] == 'img_01.png') echo 'selected';?>>Question</option>
-								<option value="img_02.png" <?php if($this->_options[contactUs][img] == 'img_02.png') echo 'selected';?>>Attention</option>
-								<option value="img_03.png" <?php if($this->_options[contactUs][img] == 'img_03.png') echo 'selected';?>>Info</option>
-								<option value="img_04.png" <?php if($this->_options[contactUs][img] == 'img_04.png') echo 'selected';?>>Knowledge</option>
-								<option value="img_05.png" <?php if($this->_options[contactUs][img] == 'img_05.png') echo 'selected';?>>Idea</option>
-								<option value="img_06.png" <?php if($this->_options[contactUs][img] == 'img_06.png') echo 'selected';?>>Talk</option>
-								<option value="img_07.png" <?php if($this->_options[contactUs][img] == 'img_07.png') echo 'selected';?>>News</option>
-								<option value="img_08.png" <?php if($this->_options[contactUs][img] == 'img_08.png') echo 'selected';?>>Megaphone</option>
-								<option value="img_09.png" <?php if($this->_options[contactUs][img] == 'img_09.png') echo 'selected';?>>Gift</option>
-								<option value="img_10.png" <?php if($this->_options[contactUs][img] == 'img_10.png') echo 'selected';?>>Success</option>
-								<option value="custom" <?php if($this->_options[contactUs][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
-							</select></label>
-							<label style="margin-top: 20px;"><div class="img"><img id="contactUsFotoBlock" src="" />
-							<input type="text" name="contactUs[imgUrl]" onkeyup="contactUsPreview();" style="display:none;" id="contactUsCustomFotoBlock" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[contactUs][imgUrl]);?>">
-							</div></label>
-							<label><div class="pq_box">
-								<p>Follow Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="contactUs[afterProceed][follow]" <?php if((int)$this->_options[contactUs][afterProceed][follow] == 1) echo 'checked';?>></div>
-							</div></label>
-							<label><div class="pq_box">
-								<p>Thank Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="contactUs[afterProceed][thank]" <?php if((int)$this->_options[contactUs][afterProceed][thank] == 1) echo 'checked';?>></div>
-								<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off"></div>
-							</div></label>
-							<?php
-								echo "
-								<script>
-									chagnePopupImg('".$this->_options[contactUs][img]."', 'contactUsFotoBlock', 'contactUsCustomFotoBlock');
-								</script>
-								";
-							?>							
-							
-							<div class="clear"></div>
-							<div style="margin: 15px 0 20px;">								
-							</div>
-							<p style="font-family: pt sans narrow; font-size: 19px; margin: 20px 0 10px;">Only Design Live Demo</p>
-							<img src="<?php echo plugins_url('images/browser.png', __FILE__);?>" style="width: 100%; margin-bottom: -6px;" />
-							<div style="transform-origin: 0 0; transform: scale(0.8); width: 125%; height: 450px; box-sizing: border-box; border: 1px solid lightgrey;">
-							<iframe scrolling="no" id="contactUsLiveViewIframe" width="100%" height="450px" src="" style="background: white; margin: 0;"></iframe>							
-							</div>
-							
-							<script>
-								function contactUsPreview(){
-									if(document.getElementById('contactUs_animation_bounce').checked) {
-										var animation = 'pq_animated bounceInDown';
-									} else {
-										var animation = '';
-									}
-									var design = document.getElementById('contactUs_typeWindow').value+' pq_top '+document.getElementById('contactUs_background').value+' '+document.getElementById('contactUs_button_color').value+' '+animation;
-									var img = document.getElementById('contactUs_img').value;
-									var imgUrl = document.getElementById('contactUsCustomFotoBlock').value;
-									var loaderBackground = document.getElementById('contactUs_loader_background').value;									
-									var position = 'pq_left pq_top';
-									var overlay = document.getElementById('contactUs_overlay').value;
-									
-									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v2.html?utm-campaign=wp_aio_widgets&p=contactUs&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position;
-									document.getElementById('contactUsLiveViewIframe').src = previewUrl;									
-									
-								}
-								contactUsPreview()
-							</script>
-							</div>
-							
-						<a href="javascript:void(0)" onclick="document.getElementById('Contact_Form').style.display='none';"><div class="pq_close"></div></a>
-						</div>
-						<a name="Call_Me_Back"></a><div class="pq-sm-10 pq_more" id="Call_Me_Back" style="display:none;">
-							<h5>More options Call Me Back</h5>
-							<div class="pq-sm-10" style="width: 83.333333%;">
-							
-							<label style="display: block;"><p>Heading</p><input type="text" name="callMe[title]" value="<?php echo stripslashes($this->_options[callMe][title])?>"></label>
-							<label style="display: block;"><p>Text</p><input type="text" name="callMe[sub_title]" value="<?php echo stripslashes($this->_options[callMe][sub_title])?>"></label>
-							<label style="display: block;"><p>Button</p><input type="text" name="callMe[buttonTitle]" value="<?php echo stripslashes($this->_options[callMe][buttonTitle])?>"></label>
-						    
-                            <label style="padding-left:0; margin: 37px 0 20px;">
-							<select id="callMe_typeWindow" onchange="callMePreview();" name="callMe[typeWindow]">
-								<option value="pq_large" <?php if($this->_options[callMe][typeWindow] == 'pq_large' ) echo 'selected';?>>Size L</option>
-								<option value="pq_medium" <?php if($this->_options[callMe][typeWindow] == 'pq_medium' || $this->_options[callMe][typeWindow] == '') echo 'selected';?>>Size M</option>								
-								<option value="pq_mini" <?php if($this->_options[callMe][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
-							</select>
-							</label>
-							<label><select id="callMe_loader_background" onchange="callMePreview();" name="callMe[loader_background]">
-								    <option value="bg_grey" <?php if($this->_options[callMe][loader_background] == 'bg_grey') echo 'selected';?>>Loader - Background - Grey</option>
-									<option value="" <?php if($this->_options[callMe][loader_background] == '') echo 'selected';?>>Loader - Background - White</option>
-									<option value="bg_yellow" <?php if($this->_options[callMe][loader_background] == 'bg_yellow') echo 'selected';?>>Loader - Background - Yellow</option>
-									<option value="bg_wormwood" <?php if($this->_options[callMe][loader_background] == 'bg_wormwood') echo 'selected';?>>Loader - Background - Wormwood</option>
-									<option value="bg_blue" <?php if($this->_options[callMe][loader_background] == 'bg_blue') echo 'selected';?>>Loader - Background - Blue</option>
-									<option value="bg_green" <?php if($this->_options[callMe][loader_background] == 'bg_green') echo 'selected';?>>Loader - Background - Green</option>
-									<option value="bg_beige" <?php if($this->_options[callMe][loader_background] == 'bg_beige') echo 'selected';?>>Loader - Background - Beige</option>
-									<option value="bg_red" <?php if($this->_options[callMe][loader_background] == 'bg_red') echo 'selected';?>>Loader - Background - Red</option>
-									<option value="bg_iceblue" <?php if($this->_options[callMe][loader_background] == 'bg_iceblue') echo 'selected';?>>Loader - Background - Iceblue</option>
-									<option value="bg_black" <?php if($this->_options[callMe][loader_background] == 'bg_black') echo 'selected';?>>Loader - Background - Black</option>
-									<option value="bg_skyblue" <?php if($this->_options[callMe][loader_background] == 'bg_skyblue') echo 'selected';?>>Loader - Background - Skyblue</option>
-									<option value="bg_lilac" <?php if($this->_options[callMe][loader_background] == 'bg_lilac') echo 'selected';?>>Loader - Background - Lilac</option>
-							</select></label>
-							
-							<div class="clear"></div>
-							<div class="pq-sm-6 icons down" style="padding-left:0; margin-top: 10px;">
-							<label><select id="callMe_background" onchange="callMePreview();" name="callMe[background]">
-								    <option value="bg_grey" <?php if($this->_options[callMe][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
-									<option value="" <?php if($this->_options[callMe][background] == '') echo 'selected';?>>Background - White</option>
-									<option value="bg_yellow" <?php if($this->_options[callMe][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
-									<option value="bg_wormwood" <?php if($this->_options[callMe][background] == 'bg_wormwood') echo 'selected';?>>Background - Wormwood</option>
-									<option value="bg_blue" <?php if($this->_options[callMe][background] == 'bg_blue') echo 'selected';?>>Background - Blue</option>
-									<option value="bg_green" <?php if($this->_options[callMe][background] == 'bg_green') echo 'selected';?>>Background - Green</option>
-									<option value="bg_beige" <?php if($this->_options[callMe][background] == 'bg_beige') echo 'selected';?>>Background - Beige</option>
-									<option value="bg_red" <?php if($this->_options[callMe][background] == 'bg_red') echo 'selected';?>>Background - Red</option>
-									<option value="bg_iceblue" <?php if($this->_options[callMe][background] == 'bg_iceblue') echo 'selected';?>>Background - Iceblue</option>
-									<option value="bg_black" <?php if($this->_options[callMe][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
-									<option value="bg_skyblue" <?php if($this->_options[callMe][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
-									<option value="bg_lilac" <?php if($this->_options[callMe][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
-							</select></label>
-							</div>
-							<div class="pq-sm-6 icons down" style="padding-right:0; margin: 10px 0;">
-							<label><select id="callMe_button_color" onchange="callMePreview();" name="callMe[button_color]">
-								    <option value="btn_lightblue" <?php if($this->_options[callMe][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
-									<option value="btn_lightblue invert" <?php if($this->_options[callMe][button_color] == 'btn_lightblue invert' || $this->_options[callMe][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
-									<option value="btn_blue" <?php if($this->_options[callMe][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
-									<option value="btn_blue invert" <?php if($this->_options[callMe][button_color] == 'btn_blue invert') echo 'selected';?>>Button - Blue Transparent</option>
-									<option value="btn_black" <?php if($this->_options[callMe][button_color] == 'btn_black') echo 'selected';?>>Button - Black</option>
-									<option value="btn_black invert" <?php if($this->_options[callMe][button_color] == 'btn_black invert') echo 'selected';?>>Button - Black Transparent</option>
-									<option value="btn_green" <?php if($this->_options[callMe][button_color] == 'btn_green') echo 'selected';?>>Button - Green</option>
-									<option value="btn_green invert" <?php if($this->_options[callMe][button_color] == 'btn_green invert') echo 'selected';?>>Button - Green Transparent</option>
-									<option value="btn_violet" <?php if($this->_options[callMe][button_color] == 'btn_violet') echo 'selected';?>>Button - Violet</option>
-									<option value="btn_violet invert" <?php if($this->_options[callMe][button_color] == 'btn_violet invert') echo 'selected';?>>Button - Violet Transparent</option>
-									<option value="btn_orange" <?php if($this->_options[callMe][button_color] == 'btn_orange') echo 'selected';?>>Button - Orange</option>
-									<option value="btn_orange invert" <?php if($this->_options[callMe][button_color] == 'btn_orange invert') echo 'selected';?>>Button - Orange Transparent</option>
-									<option value="btn_red" <?php if($this->_options[callMe][button_color] == 'btn_red') echo 'selected';?>>Button - Red</option>
-									<option value="btn_red invert" <?php if($this->_options[callMe][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
-									<option value="btn_lilac" <?php if($this->_options[callMe][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
-									<option value="btn_lilac invert" <?php if($this->_options[callMe][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
-							</select></label>
-							</div>
-							<div class="clear"></div>
-							<label style="width: 49%; display: inline-block; margin: 5px 0 10px;">
-									<input type="radio" id="callMe_animation_bounce" onclick="callMePreview()" name="callMe[animation]" value="bounceInDown" <?php if($this->_options[callMe][animation] == 'bounceInDown') echo 'checked';?> style="display: inline-block; float: left; margin: 3px 10px 3px 0;">
-									<p>Bounce animation</p>
-							</label>
-							<label style="width: 49%; display: inline-block; margin: 5px 0 10px;">
-									<input type="radio" id="callMe_animation_fade" onclick="callMePreview()" name="callMe[animation]" value="fade" <?php if($this->_options[callMe][animation] == 'fade' || $this->_options[callMe][animation] == '') echo 'checked';?> style="display: inline-block; float: left; margin: 3px 10px 3px 0;">
-									<p>Fading animation</p>
-							</label>
-							<hr>
-							<div class="pq-sm-12 icons" style="padding-left: 0; margin: 27px 0 0;">
-							<label><select id="callMe_overlay" name="callMe[overlay]" onchange="callMePreview();">
-								    <option value="over_grey" <?php if($this->_options[callMe][overlay] == 'over_grey') echo 'selected';?>>Color overlay - Grey</option>
-									<option value="over_white" <?php if($this->_options[callMe][overlay] == 'over_white' || $this->_options[callMe][overlay] == '') echo 'selected';?>>Color overlay - White</option>
-									<option value="over_yellow" <?php if($this->_options[callMe][overlay] == 'over_yellow') echo 'selected';?>>Color overlay - Yellow</option>
-									<option value="over_wormwood" <?php if($this->_options[callMe][overlay] == 'over_wormwood') echo 'selected';?>>Color overlay - Wormwood</option>
-									<option value="over_blue" <?php if($this->_options[callMe][overlay] == 'over_blue') echo 'selected';?>>Color overlay - Blue</option>
-									<option value="over_green" <?php if($this->_options[callMe][overlay] == 'over_green') echo 'selected';?>>Color overlay - Green</option>
-									<option value="over_beige" <?php if($this->_options[callMe][overlay] == 'over_beige') echo 'selected';?>>Color overlay - Beige</option>
-									<option value="over_red" <?php if($this->_options[callMe][overlay] == 'over_red') echo 'selected';?>>Color overlay - Red</option>
-									<option value="over_iceblue" <?php if($this->_options[callMe][overlay] == 'over_iceblue') echo 'selected';?>>Color overlay - Iceblue</option>
-									<option value="over_black" <?php if($this->_options[callMe][overlay] == 'over_black') echo 'selected';?>>Color overlay - Black</option>
-									<option value="over_skyblue" <?php if($this->_options[callMe][overlay] == 'over_skyblue') echo 'selected';?>>Color overlay - Skyblue</option>
-									<option value="over_lilac" <?php if($this->_options[callMe][overlay] == 'over_lilac') echo 'selected';?>>Color overlay - Lilac</option>
-									<option value="over_grey_lt" <?php if($this->_options[callMe][overlay] == 'over_grey_lt') echo 'selected';?>>Color overlay - Grey - Light</option>
-									<option value="over_white_lt" <?php if($this->_options[callMe][overlay] == 'over_white_lt') echo 'selected';?>>Color overlay - White - Light</option>
-									<option value="over_yellow_lt" <?php if($this->_options[callMe][overlay] == 'over_yellow_lt') echo 'selected';?>>Color overlay - Yellow - Light</option>
-									<option value="over_wormwood_lt" <?php if($this->_options[callMe][overlay] == 'over_wormwood_lt') echo 'selected';?>>Color overlay - Wormwood - Light</option>
-									<option value="over_blue_lt" <?php if($this->_options[callMe][overlay] == 'over_blue_lt') echo 'selected';?>>Color overlay - Blue - Light</option>
-									<option value="over_green_lt" <?php if($this->_options[callMe][overlay] == 'over_green_lt') echo 'selected';?>>Color overlay - Green - Light</option>
-									<option value="over_beige_lt" <?php if($this->_options[callMe][overlay] == 'over_beige_lt') echo 'selected';?>>Color overlay - Beige - Light</option>
-									<option value="over_red_lt" <?php if($this->_options[callMe][overlay] == 'over_red_lt') echo 'selected';?>>Color overlay - Red - Light</option>
-									<option value="over_iceblue_lt" <?php if($this->_options[callMe][overlay] == 'over_iceblue_lt') echo 'selected';?>>Color overlay - Iceblue - Light</option>
-									<option value="over_black_lt" <?php if($this->_options[callMe][overlay] == 'over_black_lt') echo 'selected';?>>Color overlay - Black - Light</option>
-									<option value="over_skyblue_lt" <?php if($this->_options[callMe][overlay] == 'over_skyblue_lt') echo 'selected';?>>Color overlay - Skyblue - Light</option>
-									<option value="over_lilac_lt" <?php if($this->_options[callMe][overlay] == 'over_lilac_lt') echo 'selected';?>>Color overlay - Lilac - Light</option>
-									<option value="over_grey_solid" <?php if($this->_options[callMe][overlay] == 'over_grey_solid') echo 'selected';?>>Color overlay - Grey - Solid</option>
-									<option value="over_white_solid" <?php if($this->_options[callMe][overlay] == 'over_white_solid') echo 'selected';?>>Color overlay - White - Solid</option>
-									<option value="over_yellow_solid" <?php if($this->_options[callMe][overlay] == 'over_yellow_solid') echo 'selected';?>>Color overlay - Yellow - Solid</option>
-									<option value="over_wormwood_solid" <?php if($this->_options[callMe][overlay] == 'over_wormwood_solid') echo 'selected';?>>Color overlay - Wormwood - Solid</option>
-									<option value="over_blue_solid" <?php if($this->_options[callMe][overlay] == 'over_blue_solid') echo 'selected';?>>Color overlay - Blue - Solid</option>
-									<option value="over_green_solid" <?php if($this->_options[callMe][overlay] == 'over_green_solid') echo 'selected';?>>Color overlay - Green - Solid</option>
-									<option value="over_beige_solid" <?php if($this->_options[callMe][overlay] == 'over_beige_solid') echo 'selected';?>>Color overlay - Beige - Solid</option>
-									<option value="over_red_solid" <?php if($this->_options[callMe][overlay] == 'over_red_solid') echo 'selected';?>>Color overlay - Red - Solid</option>
-									<option value="over_iceblue_solid" <?php if($this->_options[callMe][overlay] == 'over_iceblue_solid') echo 'selected';?>>Color overlay - Iceblue - Solid</option>
-									<option value="over_black_solid" <?php if($this->_options[callMe][overlay] == 'over_black_solid') echo 'selected';?>>Color overlay - Black - Solid</option>
-									<option value="over_skyblue_solid" <?php if($this->_options[callMe][overlay] == 'over_skyblue_solid') echo 'selected';?>>Color overlay - Skyblue - Solid</option>
-									<option value="over_lilac_solid" <?php if($this->_options[callMe][overlay] == 'over_lilac_solid') echo 'selected';?>>Color overlay - Lilac - Solid</option>
-							</select></label>
-							</div>
-							
-							<div class="clear"></div>
-							<label><select id="callMe_img" name="callMe[img]" onchange="chagnePopupImg(this.value, 'callMeFotoBlock', 'callMeCustomFotoBlock');callMePreview();">
-								<option value="" selected >No picture</option>
-								<option value="img_01.png" <?php if($this->_options[callMe][img] == 'img_01.png') echo 'selected';?>>Question</option>
-								<option value="img_02.png" <?php if($this->_options[callMe][img] == 'img_02.png') echo 'selected';?>>Attention</option>
-								<option value="img_03.png" <?php if($this->_options[callMe][img] == 'img_03.png') echo 'selected';?>>Info</option>
-								<option value="img_04.png" <?php if($this->_options[callMe][img] == 'img_04.png') echo 'selected';?>>Knowledge</option>
-								<option value="img_05.png" <?php if($this->_options[callMe][img] == 'img_05.png') echo 'selected';?>>Idea</option>
-								<option value="img_06.png" <?php if($this->_options[callMe][img] == 'img_06.png') echo 'selected';?>>Talk</option>
-								<option value="img_07.png" <?php if($this->_options[callMe][img] == 'img_07.png') echo 'selected';?>>News</option>
-								<option value="img_08.png" <?php if($this->_options[callMe][img] == 'img_08.png') echo 'selected';?>>Megaphone</option>
-								<option value="img_09.png" <?php if($this->_options[callMe][img] == 'img_09.png') echo 'selected';?>>Gift</option>
-								<option value="img_10.png" <?php if($this->_options[callMe][img] == 'img_10.png') echo 'selected';?>>Success</option>
-								<option value="custom" <?php if($this->_options[callMe][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
-							</select></label>
-							<label style="margin-top: 20px;"><div class="img"><img id="callMeFotoBlock" src="" />
-							<input type="text" name="callMe[imgUrl]" onkeyup="callMePreview();" style="display:none;" id="callMeCustomFotoBlock" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[callMe][imgUrl])?>">
-							</div></label>
-							<label><div class="pq_box">
-								<p>Follow Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="callMe[afterProceed][follow]" <?php if((int)$this->_options[callMe][afterProceed][follow] == 1) echo 'checked';?>></div>
-							</div></label>
-							<label><div class="pq_box">
-								<p>Thank Popup After Success</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="callMe[afterProceed][thank]" <?php if((int)$this->_options[callMe][afterProceed][thank] == 1) echo 'checked';?>></div>
-								<div class="pq_tooltip" data-toggle="tooltip" data-placement="left" title="For enable Follow Popup must be Off"></div>
-							</div></label>
-							<?php
-								echo "
-								<script>
-									chagnePopupImg('".$this->_options[callMe][img]."', 'callMeFotoBlock', 'callMeCustomFotoBlock');
-								</script>
-								";
-							?>							
-							<div class="clear"></div>
-														
-							<p style="font-family: pt sans narrow; font-size: 19px; margin: 20px 0 10px;">Only Design Live Demo</p>
-							<img src="<?php echo plugins_url('images/browser.png', __FILE__);?>" style="width: 100%; margin-bottom: -6px;" />
-							<div style="transform-origin: 0 0; transform: scale(0.8); width: 125%; height: 450px; box-sizing: border-box; border: 1px solid lightgrey;">
-							<iframe scrolling="no" id="callMeLiveViewIframe" width="100%" height="450px" src="" style="background: white; margin: 0;"></iframe>
-							</div>
-							
-							<script>
-								function callMePreview(){
-									if(document.getElementById('callMe_animation_bounce').checked) {
-										var animation = 'pq_animated bounceInDown';
-									} else {
-										var animation = '';
-									}
-									var design = document.getElementById('callMe_typeWindow').value+' pq_top '+document.getElementById('callMe_background').value+' '+document.getElementById('callMe_button_color').value+' '+animation;
-									var img = document.getElementById('callMe_img').value;
-									var imgUrl = document.getElementById('callMeCustomFotoBlock').value;
-									var loaderBackground = document.getElementById('callMe_loader_background').value;
-									var overlay = document.getElementById('callMe_overlay').value;
-									var position = 'pq_left pq_top';
-																		
-									var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v2.html?utm-campaign=wp_aio_widgets&p=callMe&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position;
-																		
-									document.getElementById('callMeLiveViewIframe').src = previewUrl;
-									
-								}
-								callMePreview();
-							</script>
-							
-							</div>
-						
-						<a href="javascript:void(0)" onclick="document.getElementById('Call_Me_Back').style.display='none';"><div class="pq_close"></div></a>
-						</div>
-						<div class="pq-panel-body" style="background: #F3F3F3; padding: 20px 0 20px; margin: 0 15px;">
-							<div class="pq-sm-12">
-								<div class="pq-sm-10 icons" style="margin: 0 auto; float: none;">
-									<label><p style="text-align: center;">Send email to:</p>									
-										<input type="text" name="adminEmail" value="<?php echo stripslashes($this->_options[adminEmail])?>" style="text-align: center;">
-									</label>
-								</div>
-							</div>
-						</div>						
-					</div>
-						<input type="submit" class="btn_m_red" value="Save changes">
-						<a href="mailto:support@profitquery.com" target="_blank" class="pq_help">Need help?</a>
-						</form>
-					</div>					
-				</div>
-				<a name="AfterSuccessBlock"></a>
-				<div class="pq_block" id="v4">					
-						<h4>After Success</h4>
-						
-					<div id="collapseThree" class="panel-collapse collapse in">
-					<form action="<?php echo $this->getSettingsPageUrl();?>#AfterSuccessBlock" method="post">
-					<input type="hidden" name="action" value="editAdditionalData">
-					  <div class="pq-panel-body">
-					   <p>Get more social network follower's as after proceed bonus.</p>
-						
-						
-						<div class="pq-sm-6">
-							<img id="follow_IMG" src="<?php echo plugins_url('images/follow.png', __FILE__);?>" />
-							<div class="pq-sm-10">
-							<h5>Follow Popup</h5>							
-							<label><select id="follow_background" onchange="changeFollowBlockImg()" name="follow[background]">
-								    <option value="bg_grey" <?php if($this->_options[follow][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
+								<select id="follow_background" onchange="followPreview();"  name="follow[background]">
 									<option value="" <?php if($this->_options[follow][background] == '') echo 'selected';?>>Background - White</option>
+								    <option value="bg_grey" <?php if($this->_options[follow][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>									
 									<option value="bg_yellow" <?php if($this->_options[follow][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
 									<option value="bg_wormwood" <?php if($this->_options[follow][background] == 'bg_wormwood') echo 'selected';?>>Background - Wormwood</option>
 									<option value="bg_blue" <?php if($this->_options[follow][background] == 'bg_blue') echo 'selected';?>>Background - Blue</option>
@@ -2805,179 +2437,20 @@ class ProfitQuerySmartWidgetsClass
 									<option value="bg_black" <?php if($this->_options[follow][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
 									<option value="bg_skyblue" <?php if($this->_options[follow][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
 									<option value="bg_lilac" <?php if($this->_options[follow][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
-							</select></label>
-							<script>
-								function changeFollowBlockImg(){
-									if(document.getElementById('follow_background').value == 'bg_grey'){
-										document.getElementById('follow_IMG').src = previewPath+'follow_7_m.png';
-									}
-									if(document.getElementById('follow_background').value == ''){
-										document.getElementById('follow_IMG').src = previewPath+'follow_1_m.png';
-									}
-									if(document.getElementById('follow_background').value == 'bg_yellow'){
-										document.getElementById('follow_IMG').src = previewPath+'follow_6_m.png';
-									}									
-									if(document.getElementById('follow_background').value == 'bg_wormwood'){
-										document.getElementById('follow_IMG').src = previewPath+'follow_5_m.png';
-									}
-									if(document.getElementById('follow_background').value == 'bg_blue'){
-										document.getElementById('follow_IMG').src = previewPath+'follow_10_m.png';
-									}
-									if(document.getElementById('follow_background').value == 'bg_green'){
-										document.getElementById('follow_IMG').src = previewPath+'follow_11_m.png';
-									}
-									if(document.getElementById('follow_background').value == 'bg_beige'){
-										document.getElementById('follow_IMG').src = previewPath+'follow_3_m.png';
-									}
-									if(document.getElementById('follow_background').value == 'bg_red'){
-										document.getElementById('follow_IMG').src = previewPath+'follow_8_m.png';
-									}
-									if(document.getElementById('follow_background').value == 'bg_iceblue'){
-										document.getElementById('follow_IMG').src = previewPath+'follow_2_m.png';
-									}
-									if(document.getElementById('follow_background').value == 'bg_black'){
-										document.getElementById('follow_IMG').src = previewPath+'follow_12_m.png';
-									}
-									if(document.getElementById('follow_background').value == 'bg_skyblue'){
-										document.getElementById('follow_IMG').src = previewPath+'follow_9_m.png';
-									}
-									if(document.getElementById('follow_background').value == 'bg_lilac'){
-										document.getElementById('follow_IMG').src = previewPath+'follow_4_m.png';
-									}
-								}
-								changeFollowBlockImg();
-							</script>
-							<a href="#After_Sharing" onclick="document.getElementById('After_Sharing').style.display='block';"><button type="button" class="pq-btn-link btn-bg">More Option</button></a>							
-							</div>
-						</div>
-						<div class="pq-sm-6">
-							<img id="thank_IMG" src="<?php echo plugins_url('images/thank.png', __FILE__);?>" />
-							<div class="pq-sm-10">
-							<h5>Thankyou Popup</h5>							
-							
-							<label><select id="thankPopup_background" onchange="changeThankBlockImg();" name="thankPopup[background]">
-								    <option value="bg_grey" <?php if($this->_options[thankPopup][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
-									<option value="" <?php if($this->_options[thankPopup][background] == '') echo 'selected';?>>Background - White</option>
-									<option value="bg_yellow" <?php if($this->_options[thankPopup][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
-									<option value="bg_wormwood" <?php if($this->_options[thankPopup][background] == 'bg_wormwood') echo 'selected';?>>Background - Wormwood</option>
-									<option value="bg_blue" <?php if($this->_options[thankPopup][background] == 'bg_blue') echo 'selected';?>>Background - Blue</option>
-									<option value="bg_green" <?php if($this->_options[thankPopup][background] == 'bg_green') echo 'selected';?>>Background - Green</option>
-									<option value="bg_beige" <?php if($this->_options[thankPopup][background] == 'bg_beige') echo 'selected';?>>Background - Beige</option>
-									<option value="bg_red" <?php if($this->_options[thankPopup][background] == 'bg_red') echo 'selected';?>>Background - Red</option>
-									<option value="bg_iceblue" <?php if($this->_options[thankPopup][background] == 'bg_iceblue') echo 'selected';?>>Background - Iceblue</option>
-									<option value="bg_black" <?php if($this->_options[thankPopup][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
-									<option value="bg_skyblue" <?php if($this->_options[thankPopup][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
-									<option value="bg_lilac" <?php if($this->_options[thankPopup][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
-							</select></label>
-							<script>
-								function changeThankBlockImg(){
-									if(document.getElementById('thankPopup_background').value == 'bg_grey'){
-										document.getElementById('thank_IMG').src = previewPath+'thank_7_m.png';
-									}
-									if(document.getElementById('thankPopup_background').value == ''){
-										document.getElementById('thank_IMG').src = previewPath+'thank_1_m.png';
-									}
-									if(document.getElementById('thankPopup_background').value == 'bg_yellow'){
-										document.getElementById('thank_IMG').src = previewPath+'thank_6_m.png';
-									}									
-									if(document.getElementById('thankPopup_background').value == 'bg_wormwood'){
-										document.getElementById('thank_IMG').src = previewPath+'thank_5_m.png';
-									}
-									if(document.getElementById('thankPopup_background').value == 'bg_blue'){
-										document.getElementById('thank_IMG').src = previewPath+'thank_10_m.png';
-									}
-									if(document.getElementById('thankPopup_background').value == 'bg_green'){
-										document.getElementById('thank_IMG').src = previewPath+'thank_11_m.png';
-									}
-									if(document.getElementById('thankPopup_background').value == 'bg_beige'){
-										document.getElementById('thank_IMG').src = previewPath+'thank_3_m.png';
-									}
-									if(document.getElementById('thankPopup_background').value == 'bg_red'){
-										document.getElementById('thank_IMG').src = previewPath+'thank_8_m.png';
-									}
-									if(document.getElementById('thankPopup_background').value == 'bg_iceblue'){
-										document.getElementById('thank_IMG').src = previewPath+'thank_2_m.png';
-									}
-									if(document.getElementById('thankPopup_background').value == 'bg_black'){
-										document.getElementById('thank_IMG').src = previewPath+'thank_12_m.png';
-									}
-									if(document.getElementById('thankPopup_background').value == 'bg_skyblue'){
-										document.getElementById('thank_IMG').src = previewPath+'thank_9_m.png';
-									}
-									if(document.getElementById('thankPopup_background').value == 'bg_lilac'){
-										document.getElementById('thank_IMG').src = previewPath+'thank_4_m.png';
-									}
-								}
-								changeThankBlockImg();
-							</script>							
-							
-							<a href="#Thankyou_Popup" onclick="document.getElementById('Thankyou_Popup').style.display='block';"><button type="button" class="pq-btn-link btn-bg">More Option</button></a>							
-							</div>							
-						</div>						
-					</div>
-					
-					
-					
-					<div class="pq-panel-body">
-						<a name="After_Sharing"></a><div class="pq-sm-10 pq_more" id="After_Sharing" style="display:none;">
-							<h5>More options Follow Us After Sharing</h5>
-							<div class="pq-sm-10" style="width: 83.333333%;">
-							
-							<label style="display: block;"><p>Heading</p><input type="text" name="follow[title]" value="<?php echo stripslashes($this->_options[follow][title])?>"></label>					
-							<label style="display: block;"><p>Text</p><input type="text" name="follow[sub_title]" value="<?php echo stripslashes($this->_options[follow][sub_title])?>"></label>					
-							<div class="pq_services" style="overflow: hidden; padding: 20px 0 10px;" id="pq_input">							
-							<label style="display: block;"><div class="x30">
-								<div class="pq_fb"></div>
-									<p>facebook.com/</p><input type="text" name="follow[follow_socnet][FB]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][FB]);?>">
-							</div></label>
-							<label style="display: block;"><div class="x30">
-								<div class="pq_tw"></div>
-									<p>twitter.com/</p><input type="text" name="follow[follow_socnet][TW]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][TW]);?>">
-										
-							</div></label>
-							<div id="MoreFollowSocialNetworks" style="display:none;">
-							<label style="display: block;"><div class="x30">
-								<div class="pq_gp"></div>
-									<p>plus.google.com/</p><input type="text" name="follow[follow_socnet][GP]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][GP]);?>">
-										
-							</div></label>
-							<label style="display: block;"><div class="x30">
-								<div class="pq_pi"></div>
-									<p>pinterest.com/</p><input type="text" name="follow[follow_socnet][PI]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][PI]);?>">
-										
-							</div></label>
-							<label style="display: block;"><div class="x30">
-								<div class="pq_vk"></div>
-									<p>vk.com/</p><input type="text" name="follow[follow_socnet][VK]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][VK]);?>">
-										
-							</div></label>
-							<label style="display: block;"><div class="x30">
-								<div class="pq_od"></div>
-									<p>ok.ru/</p><input type="text" name="follow[follow_socnet][OD]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][OD]);?>">
-							</div></label>
-							<label style="display: block;"><div class="x30">
-								<div class="pq_ig"></div>
-									<p>instagram.com/</p><input type="text" name="follow[follow_socnet][IG]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][IG]);?>">
-							</div></label>
-							<label style="display: block;"><div class="x30">
-								<div class="pq_rs"></div>
-									<p>RSS Url Address</p><input type="text" name="follow[follow_socnet][RSS]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][RSS]);?>">
-							</div></label>
-							</div>
-							<button type="button" class="pq-btn-link btn-bg" onclick="document.getElementById('MoreFollowSocialNetworks').style.display='block';" >More Services</button>
-						</div>
-						<div class="clear"></div>
-							<label style="width: 49%; display: inline-block; margin: 5px 0 0px;">
-									<input type="radio" name="follow[animation]" value="bounceInDown" <?php if($this->_options[follow][animation] == 'bounceInDown') echo 'checked';?>  style="display: inline-block; float: left; margin: 3px 10px 3px 0;">
-									<p>Bounce animation</p>
-							</label>
-							<label style="width: 49%; display: inline-block; margin: 5px 0 0px;">
-									<input type="radio" name="follow[animation]" value="fade" <?php if($this->_options[follow][animation] == 'fade' || $this->_options[follow][animation] == '') echo 'checked';?>  style="display: inline-block; float: left; margin: 3px 10px 3px 0;">
-									<p>Fading animation</p>
-							</label>
-						<hr>
-							<div class="pq-sm-12 icons" style="padding-left: 0; margin: 27px 0 0;">
-							<label><select id="follow_overlay" name="follow[overlay]">
+								</select>
+								</label>																
+																
+								<h3>Animation</h3>
+								<label>
+								<select name="follow[animation]" id="follow_animation" onchange="followPreview();"  >									
+									<option value="bounceInDown" <?php if($this->_options[follow][animation] == 'bounceInDown') echo 'selected';?>>Bounce</option>
+									<option value="fade" <?php if($this->_options[follow][animation] == 'fade' || $this->_options[follow][animation] == '') echo 'selected';?>>Fade In</option>
+								</select>
+								</label>
+								
+								<h3>Overlay</h3>
+								<label>
+								<select id="follow_overlay" onchange="followPreview();" name="follow[overlay]">
 								    <option value="over_grey" <?php if($this->_options[follow][overlay] == 'over_grey') echo 'selected';?>>Color overlay - Grey</option>
 									<option value="over_white" <?php if($this->_options[follow][overlay] == 'over_white' || $this->_options[follow][overlay] == '') echo 'selected';?>>Color overlay - White</option>
 									<option value="over_yellow" <?php if($this->_options[follow][overlay] == 'over_yellow') echo 'selected';?>>Color overlay - Yellow</option>
@@ -3014,276 +2487,3504 @@ class ProfitQuerySmartWidgetsClass
 									<option value="over_black_solid" <?php if($this->_options[follow][overlay] == 'over_black_solid') echo 'selected';?>>Color overlay - Black - Solid</option>
 									<option value="over_skyblue_solid" <?php if($this->_options[follow][overlay] == 'over_skyblue_solid') echo 'selected';?>>Color overlay - Skyblue - Solid</option>
 									<option value="over_lilac_solid" <?php if($this->_options[follow][overlay] == 'over_lilac_solid') echo 'selected';?>>Color overlay - Lilac - Solid</option>
-							</select></label>
+								</select>
+								</label>
+								<h3>Icons SERVICES</h3>
+								<label>
+								<select name="follow[design][form]" id="follow_design_form" onchange="followPreview();">
+									<option value="" <?php if($this->_options[follow][design][form] == '') echo 'selected';?>>Shape - Square</option>
+									<option value="rounded" <?php if($this->_options[follow][design][form] == 'rounded') echo 'selected';?>>Shape - Rounded</option>
+									<option value="circle" <?php if($this->_options[follow][design][form] == 'circle') echo 'selected';?>>Shape - Circle</option>
+								</select>
+								</label>
+								<label>
+								<select name="follow[design][size]" id="follow_design_size" onchange="followPreview();">
+									<option value="x20" <?php if($this->_options[follow][design][size] == 'x20') echo 'selected';?>>Size S</option>
+									<option value="x30" <?php if($this->_options[follow][design][size] == 'x30') echo 'selected';?>>Size M</option>
+									<option value="x50" <?php if($this->_options[follow][design][size] == 'x50') echo 'selected';?>>Size L</option>
+									<option value="x70" <?php if($this->_options[follow][design][size] == 'x70') echo 'selected';?>>Size XL</option>
+								</select>
+								</label>
+								<label>
+								<select name="follow[design][color]" id="follow_design_color" onchange="followPreview();">
+									<option value="c4" <?php if($this->_options[follow][design][color] == 'c4') echo 'selected';?>>Color</option>
+									<option value="c1" <?php if($this->_options[follow][design][color] == 'c1') echo 'selected';?>>Color light</option>
+									<option value="c2" <?php if($this->_options[follow][design][color] == 'c2') echo 'selected';?>>Color volume</option>
+									<option value="c3" <?php if($this->_options[follow][design][color] == 'c3') echo 'selected';?>>Color dark</option>
+									<option value="c5" <?php if($this->_options[follow][design][color] == 'c5') echo 'selected';?>>Black</option>
+									<option value="c6" <?php if($this->_options[follow][design][color] == 'c6') echo 'selected';?>>Black volume</option>
+									<option value="c7" <?php if($this->_options[follow][design][color] == 'c7') echo 'selected';?>>White volume</option>
+									<option value="c8" <?php if($this->_options[follow][design][color] == 'c8') echo 'selected';?>>White</option>
+									<option value="c9" <?php if($this->_options[follow][design][color] == 'c9') echo 'selected';?>>Bordered - color</option>
+									<option value="c10" <?php if($this->_options[follow][design][color] == 'c10') echo 'selected';?>>Bordered - black</option>
+									<option value="c11" <?php if($this->_options[follow][design][color] == 'c11') echo 'selected';?>>Lightest</option>
+								</select>
+								</label>
+								<h3>Shadow</h3>
+								<label>
+									<select id="follow_design_shadow" onchange="followPreview();" name="follow[design][shadow]">
+										<option value="sh1" <?php if($this->_options[follow][design][shadow] == 'sh1') echo 'selected';?>>Shadow1</option>
+										<option value="sh2" <?php if($this->_options[follow][design][shadow] == 'sh2') echo 'selected';?>>Shadow2</option>
+										<option value="sh3" <?php if($this->_options[follow][design][shadow] == 'sh3') echo 'selected';?>>Shadow3</option>
+										<option value="sh4" <?php if($this->_options[follow][design][shadow] == 'sh4') echo 'selected';?>>Shadow4</option>
+										<option value="sh5" <?php if($this->_options[follow][design][shadow] == 'sh5') echo 'selected';?>>Shadow5</option>
+										<option value="sh6" <?php if($this->_options[follow][design][shadow] == 'sh6') echo 'selected';?>>Shadow6</option>
+									</select>
+								</label>
 							</div>
-							
-							<div class="clear"></div>
-							<div class="pq-sm-6 icons" style="padding-left: 0; margin: 20px 0;">
-							<label><div class="pq_box">
-								<p>After Sharing Sidebar</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="sharingSideBar[afterProceed][follow]" <?php if((int)$this->_options[sharingSideBar][afterProceed][follow] == 1) echo 'checked';?>></div>
-							</div></label>
-							<label><div class="pq_box">
-								<p>After Image Sharer</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="imageSharer[afterProceed][follow]" <?php if((int)$this->_options[imageSharer][afterProceed][follow] == 1) echo 'checked';?>></div>
-							</div></label>
-							<label><div class="pq_box">
-								<p>After Marketing Bar</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="subscribeBar[afterProceed][follow]" <?php if((int)$this->_options[subscribeBar][afterProceed][follow] == 1) echo 'checked';?>></div>
-							</div></label>
-							</div>
-							<div class="pq-sm-6 icons" style="padding-right: 0; margin: 20px 0;">
-							<label><div class="pq_box">
-								<p>After Exit Popup</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="subscribeExit[afterProceed][follow]" <?php if((int)$this->_options[subscribeExit][afterProceed][follow] == 1) echo 'checked';?>></div>
-							</div></label>
-							<label><div class="pq_box">
-								<p>After Contact Form</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="contactUs[afterProceed][follow]" <?php if((int)$this->_options[contactUs][afterProceed][follow] == 1) echo 'checked';?>></div>
-							</div></label>
-							<label><div class="pq_box">
-								<p>After Call Me Back</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="callMe[afterProceed][follow]" <?php if((int)$this->_options[callMe][afterProceed][follow] == 1) echo 'checked';?>></div>
-							</div><label>
-							</div>							
-							<div style="clear: both;"></div>
-																				
-							</div>
-						<a href="javascript:void(0)" onclick="document.getElementById('After_Sharing').style.display='none';"><div class="pq_close"></div></a>
+								
 						</div>
-						<a name="Thankyou_Popup"></a><div class="pq-sm-10 pq_more" id="Thankyou_Popup" style="display:none;">
-							<h5>More options Thankyou Popup</h5>
-							<div class="pq-sm-10" style="width: 83.333333%;">
-							<label style="display: block;"><p>Heading</p><input type="text" name="thankPopup[title]" value="<?php echo stripslashes($this->_options[thankPopup][title])?>"></label>
-							<label style="display: block;"><p>Text</p><input type="text" name="thankPopup[sub_title]" value="<?php echo stripslashes($this->_options[thankPopup][sub_title])?>"></label>							
-							<label style="display: block;"><p>Button Title</p><input type="text" name="thankPopup[buttonTitle]" value="<?php echo stripslashes($this->_options[thankPopup][buttonTitle])?>"></label>							
-							<div class="clear"></div>							
-							<label style="margin: 10px 0;">
-							<select id="thankPopup_img" name="thankPopup[img]" onchange="chagnePopupImg(this.value, 'thankPopupFotoBlock', 'thankPopupCustomFotoBlock');">
-								<option value="img_01.png" <?php if($this->_options[thankPopup][img] == 'img_01.png') echo 'selected';?>>Question</option>
-								<option value="img_02.png" <?php if($this->_options[thankPopup][img] == 'img_02.png') echo 'selected';?>>Attention</option>
-								<option value="img_03.png" <?php if($this->_options[thankPopup][img] == 'img_03.png') echo 'selected';?>>Info</option>
-								<option value="img_04.png" <?php if($this->_options[thankPopup][img] == 'img_04.png') echo 'selected';?>>Knowledge</option>
-								<option value="img_05.png" <?php if($this->_options[thankPopup][img] == 'img_05.png') echo 'selected';?>>Idea</option>
-								<option value="img_06.png" <?php if($this->_options[thankPopup][img] == 'img_06.png') echo 'selected';?>>Talk</option>
-								<option value="img_07.png" <?php if($this->_options[thankPopup][img] == 'img_07.png') echo 'selected';?>>News</option>
-								<option value="img_08.png" <?php if($this->_options[thankPopup][img] == 'img_08.png') echo 'selected';?>>Megaphone</option>
-								<option value="img_09.png" <?php if($this->_options[thankPopup][img] == 'img_09.png') echo 'selected';?>>Gift</option>
-								<option value="img_10.png" <?php if($this->_options[thankPopup][img] == 'img_10.png') echo 'selected';?>>Success</option>
-								<option value="custom" <?php if($this->_options[thankPopup][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
-							</select>
-							</label>
-							<label style="margin: 10px 0;">
-							<div class="img">
-								<img id="thankPopupFotoBlock" src="" />
-							<input type="text" name="thankPopup[imgUrl]" style="display:none; margin-top: 10px;" id="thankPopupCustomFotoBlock" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[thankPopup][imgUrl])?>">
-							</div></label>
-							<?php
-								echo "
+						<div class="settings marketing">
+							<div class="pq_bar selected">
+							<h3>Colors</h3>
+								<label>
+								<select id="subscribeBar_background" onchange="subscribeBarPreview();" name="subscribeBar[background]">
+								    <option value="bg_grey" <?php if($this->_options[subscribeBar][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
+									<option value="" <?php if($this->_options[subscribeBar][background] == '') echo 'selected';?>>Background - White</option>
+									<option value="bg_yellow" <?php if($this->_options[subscribeBar][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
+									<option value="bg_wormwood" <?php if($this->_options[subscribeBar][background] == 'bg_wormwood') echo 'selected';?>>Background - Wormwood</option>
+									<option value="bg_blue" <?php if($this->_options[subscribeBar][background] == 'bg_blue') echo 'selected';?>>Background - Blue</option>
+									<option value="bg_green" <?php if($this->_options[subscribeBar][background] == 'bg_green') echo 'selected';?>>Background - Green</option>
+									<option value="bg_beige" <?php if($this->_options[subscribeBar][background] == 'bg_beige') echo 'selected';?>>Background - Beige</option>
+									<option value="bg_red" <?php if($this->_options[subscribeBar][background] == 'bg_red') echo 'selected';?>>Background - Red</option>
+									<option value="bg_iceblue" <?php if($this->_options[subscribeBar][background] == 'bg_iceblue') echo 'selected';?>>Background - Iceblue</option>
+									<option value="bg_black" <?php if($this->_options[subscribeBar][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
+									<option value="bg_skyblue" <?php if($this->_options[subscribeBar][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
+									<option value="bg_lilac" <?php if($this->_options[subscribeBar][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
+								</select>
+								</label>
+								<label>
+								<select id="subscribeBar_button_color" onchange="subscribeBarPreview();" name="subscribeBar[button_color]">
+								    <option value="btn_lightblue" <?php if($this->_options[subscribeBar][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
+									<option value="btn_lightblue invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_lightblue invert' || $this->_options[subscribeBar][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
+									<option value="btn_blue" <?php if($this->_options[subscribeBar][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
+									<option value="btn_blue invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_blue invert') echo 'selected';?>>Button - Blue Transparent</option>
+									<option value="btn_black" <?php if($this->_options[subscribeBar][button_color] == 'btn_black') echo 'selected';?>>Button - Black</option>
+									<option value="btn_black invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_black invert') echo 'selected';?>>Button - Black Transparent</option>
+									<option value="btn_green" <?php if($this->_options[subscribeBar][button_color] == 'btn_green') echo 'selected';?>>Button - Green</option>
+									<option value="btn_green invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_green invert') echo 'selected';?>>Button - Green Transparent</option>
+									<option value="btn_violet" <?php if($this->_options[subscribeBar][button_color] == 'btn_violet') echo 'selected';?>>Button - Violet</option>
+									<option value="btn_violet invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_violet invert') echo 'selected';?>>Button - Violet Transparent</option>
+									<option value="btn_orange" <?php if($this->_options[subscribeBar][button_color] == 'btn_orange') echo 'selected';?>>Button - Orange</option>
+									<option value="btn_orange invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_orange invert') echo 'selected';?>>Button - Orange Transparent</option>
+									<option value="btn_red" <?php if($this->_options[subscribeBar][button_color] == 'btn_red') echo 'selected';?>>Button - Red</option>
+									<option value="btn_red invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
+									<option value="btn_lilac" <?php if($this->_options[subscribeBar][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
+									<option value="btn_lilac invert" <?php if($this->_options[subscribeBar][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
+								</select>
+								</label>
+								<label>
+								<select id="subscribeBar_size" onchange="subscribeBarPreview();" name="subscribeBar[typeWindow]">
+									<option value="" <?php if($this->_options[subscribeBar][typeWindow] == '') echo 'selected';?>>Size L</option>
+									<option value="pq_small" <?php if($this->_options[subscribeBar][typeWindow] == 'pq_medium') echo 'selected';?>>Size S</o4ption>																	
+								</select>
+								</label>
+								
+								<h3>Position</h3>
+								<label>
+								<select id="subscribeBar_position" onchange="subscribeBarPreview();" name="subscribeBar[position]">
+									<option value="pq_top"  <?php if($this->_options[subscribeBar][position] == 'pq_top' || $this->_options[subscribeBar][position] == '') echo 'selected';?>>Top</option>
+									<option value="pq_bottom" <?php if($this->_options[subscribeBar][position] == 'pq_bottom') echo 'selected';?>>Bottom</option>
+								</select>
+								</label>
+								<h3>Animation</h3>
+								<label>
+								<select name="subscribeBar[animation]" id="subscribeBar_animation" onchange="subscribeBarPreview();">									
+									<option value="bounceInDown" <?php if($this->_options[subscribeBar][animation] == 'bounceInDown') echo 'selected';?>>Bounce</option>
+									<option value="fade" <?php if($this->_options[subscribeBar][animation] == 'fade' || $this->_options[subscribeBar][animation] == '') echo 'selected';?>>Fade In</option>
+								</select>
+								</label>
+								
+							</div>
+						</div>
+						<div class="settings contact">
+							<div class="popup selected">
+							<h3>POPUP</h3>
+								<label>
+								<select id="contactUs_background" onchange="contactUsPreview();" name="contactUs[background]">
+								    <option value="bg_grey" <?php if($this->_options[contactUs][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
+									<option value="" <?php if($this->_options[contactUs][background] == '') echo 'selected';?>>Background - White</option>
+									<option value="bg_yellow" <?php if($this->_options[contactUs][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
+									<option value="bg_wormwood" <?php if($this->_options[contactUs][background] == 'bg_wormwood') echo 'selected';?>>Background - Wormwood</option>
+									<option value="bg_blue" <?php if($this->_options[contactUs][background] == 'bg_blue') echo 'selected';?>>Background - Blue</option>
+									<option value="bg_green" <?php if($this->_options[contactUs][background] == 'bg_green') echo 'selected';?>>Background - Green</option>
+									<option value="bg_beige" <?php if($this->_options[contactUs][background] == 'bg_beige') echo 'selected';?>>Background - Beige</option>
+									<option value="bg_red" <?php if($this->_options[contactUs][background] == 'bg_red') echo 'selected';?>>Background - Red</option>
+									<option value="bg_iceblue" <?php if($this->_options[contactUs][background] == 'bg_iceblue') echo 'selected';?>>Background - Iceblue</option>
+									<option value="bg_black" <?php if($this->_options[contactUs][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
+									<option value="bg_skyblue" <?php if($this->_options[contactUs][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
+									<option value="bg_lilac" <?php if($this->_options[contactUs][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
+								</select>
+								</label>
+								<label>
+								<select id="contactUs_button_color" onchange="contactUsPreview();" name="contactUs[button_color]">
+								    <option value="btn_lightblue" <?php if($this->_options[contactUs][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
+									<option value="btn_lightblue invert" <?php if($this->_options[contactUs][button_color] == 'btn_lightblue invert' || $this->_options[contactUs][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
+									<option value="btn_blue" <?php if($this->_options[contactUs][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
+									<option value="btn_blue invert" <?php if($this->_options[contactUs][button_color] == 'btn_blue invert') echo 'selected';?>>Button - Blue Transparent</option>
+									<option value="btn_black" <?php if($this->_options[contactUs][button_color] == 'btn_black') echo 'selected';?>>Button - Black</option>
+									<option value="btn_black invert" <?php if($this->_options[contactUs][button_color] == 'btn_black invert') echo 'selected';?>>Button - Black Transparent</option>
+									<option value="btn_green" <?php if($this->_options[contactUs][button_color] == 'btn_green') echo 'selected';?>>Button - Green</option>
+									<option value="btn_green invert" <?php if($this->_options[contactUs][button_color] == 'btn_green invert') echo 'selected';?>>Button - Green Transparent</option>
+									<option value="btn_violet" <?php if($this->_options[contactUs][button_color] == 'btn_violet') echo 'selected';?>>Button - Violet</option>
+									<option value="btn_violet invert" <?php if($this->_options[contactUs][button_color] == 'btn_violet invert') echo 'selected';?>>Button - Violet Transparent</option>
+									<option value="btn_orange" <?php if($this->_options[contactUs][button_color] == 'btn_orange') echo 'selected';?>>Button - Orange</option>
+									<option value="btn_orange invert" <?php if($this->_options[contactUs][button_color] == 'btn_orange invert') echo 'selected';?>>Button - Orange Transparent</option>
+									<option value="btn_red" <?php if($this->_options[contactUs][button_color] == 'btn_red') echo 'selected';?>>Button - Red</option>
+									<option value="btn_red invert" <?php if($this->_options[contactUs][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
+									<option value="btn_lilac" <?php if($this->_options[contactUs][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
+									<option value="btn_lilac invert" <?php if($this->_options[contactUs][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
+								</select>
+								</label>
+								
+								<label>
+									<select id="contactUs_img" name="contactUs[img]" onchange="contactUsPreview();changePopupImg(this.value, 'contactUsCustomFotoBlock');">
+										<option value="" selected >No picture</option>
+										<option value="img_01.png" <?php if($this->_options[contactUs][img] == 'img_01.png') echo 'selected';?>>Question</option>
+										<option value="img_02.png" <?php if($this->_options[contactUs][img] == 'img_02.png') echo 'selected';?>>Attention</option>
+										<option value="img_03.png" <?php if($this->_options[contactUs][img] == 'img_03.png') echo 'selected';?>>Info</option>
+										<option value="img_04.png" <?php if($this->_options[contactUs][img] == 'img_04.png') echo 'selected';?>>Knowledge</option>
+										<option value="img_05.png" <?php if($this->_options[contactUs][img] == 'img_05.png') echo 'selected';?>>Idea</option>
+										<option value="img_06.png" <?php if($this->_options[contactUs][img] == 'img_06.png') echo 'selected';?>>Talk</option>
+										<option value="img_07.png" <?php if($this->_options[contactUs][img] == 'img_07.png') echo 'selected';?>>News</option>
+										<option value="img_08.png" <?php if($this->_options[contactUs][img] == 'img_08.png') echo 'selected';?>>Megaphone</option>
+										<option value="img_09.png" <?php if($this->_options[contactUs][img] == 'img_09.png') echo 'selected';?>>Gift</option>
+										<option value="img_10.png" <?php if($this->_options[contactUs][img] == 'img_10.png') echo 'selected';?>>Success</option>
+										<option value="custom" <?php if($this->_options[contactUs][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
+									</select>
+								</label>								
+								<label class="custom_i" id="contactUsCustomFotoBlock" style="display:none;"><p>Link</p>									
+									<input type="text" name="contactUs[imgUrl]" id="contactUsCustomFotoSrc" onkeyup="contactUsPreview();" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[contactUs][imgUrl]);?>">
+								</label>
 								<script>
-									chagnePopupImg('".$this->_options[thankPopup][img]."', 'thankPopupFotoBlock', 'thankPopupCustomFotoBlock');
+									changePopupImg('<?php echo $this->_options[contactUs][img];?>', 'contactUsCustomFotoBlock');
 								</script>
-								";
-							?>
-							<div class="clear"></div>
-							<label style="width: 49%; display: inline-block; margin: 5px 0 10px;">
-									<input type="radio" name="thankPopup[animation]" value="bounceInDown" <?php if($this->_options[thankPopup][animation] == 'bounceInDown') echo 'checked';?> style="display: inline-block; float: left; margin: 3px 10px 3px 0;">
-									<p>Bounce animation</p>
-							</label>
-							<label style="width: 49%; display: inline-block; margin: 5px 0 10px;">
-									<input type="radio" name="thankPopup[animation]" value="fade" <?php if($this->_options[thankPopup][animation] == 'fade' || $this->_options[thankPopup][animation] == '') echo 'checked';?> style="display: inline-block; float: left; margin: 3px 10px 3px 0;">
-									<p>Fading animation</p>
-							</label>
-							<hr>
-							<div class="pq-sm-12 icons" style="padding-left: 0; margin: 27px 0 0;">
-							<label><select id="subscribeBar_overlay" onchange="subscribeBarPreview();" name="subscribeBar[overlay]">
-								    <option value="over_grey" <?php if($this->_options[subscribeBar][overlay] == 'over_grey') echo 'selected';?>>Color overlay - Grey</option>
-									<option value="over_white" <?php if($this->_options[subscribeBar][overlay] == 'over_white' || $this->_options[subscribeBar][overlay] == '') echo 'selected';?>>Color overlay - White</option>
-									<option value="over_yellow" <?php if($this->_options[subscribeBar][overlay] == 'over_yellow') echo 'selected';?>>Color overlay - Yellow</option>
-									<option value="over_wormwood" <?php if($this->_options[subscribeBar][overlay] == 'over_wormwood') echo 'selected';?>>Color overlay - Wormwood</option>
-									<option value="over_blue" <?php if($this->_options[subscribeBar][overlay] == 'over_blue') echo 'selected';?>>Color overlay - Blue</option>
-									<option value="over_green" <?php if($this->_options[subscribeBar][overlay] == 'over_green') echo 'selected';?>>Color overlay - Green</option>
-									<option value="over_beige" <?php if($this->_options[subscribeBar][overlay] == 'over_beige') echo 'selected';?>>Color overlay - Beige</option>
-									<option value="over_red" <?php if($this->_options[subscribeBar][overlay] == 'over_red') echo 'selected';?>>Color overlay - Red</option>
-									<option value="over_iceblue" <?php if($this->_options[subscribeBar][overlay] == 'over_iceblue') echo 'selected';?>>Color overlay - Iceblue</option>
-									<option value="over_black" <?php if($this->_options[subscribeBar][overlay] == 'over_black') echo 'selected';?>>Color overlay - Black</option>
-									<option value="over_skyblue" <?php if($this->_options[subscribeBar][overlay] == 'over_skyblue') echo 'selected';?>>Color overlay - Skyblue</option>
-									<option value="over_lilac" <?php if($this->_options[subscribeBar][overlay] == 'over_lilac') echo 'selected';?>>Color overlay - Lilac</option>
-									<option value="over_grey_lt" <?php if($this->_options[subscribeBar][overlay] == 'over_grey_lt') echo 'selected';?>>Color overlay - Grey - Light</option>
-									<option value="over_white_lt" <?php if($this->_options[subscribeBar][overlay] == 'over_white_lt') echo 'selected';?>>Color overlay - White - Light</option>
-									<option value="over_yellow_lt" <?php if($this->_options[subscribeBar][overlay] == 'over_yellow_lt') echo 'selected';?>>Color overlay - Yellow - Light</option>
-									<option value="over_wormwood_lt" <?php if($this->_options[subscribeBar][overlay] == 'over_wormwood_lt') echo 'selected';?>>Color overlay - Wormwood - Light</option>
-									<option value="over_blue_lt" <?php if($this->_options[subscribeBar][overlay] == 'over_blue_lt') echo 'selected';?>>Color overlay - Blue - Light</option>
-									<option value="over_green_lt" <?php if($this->_options[subscribeBar][overlay] == 'over_green_lt') echo 'selected';?>>Color overlay - Green - Light</option>
-									<option value="over_beige_lt" <?php if($this->_options[subscribeBar][overlay] == 'over_beige_lt') echo 'selected';?>>Color overlay - Beige - Light</option>
-									<option value="over_red_lt" <?php if($this->_options[subscribeBar][overlay] == 'over_red_lt') echo 'selected';?>>Color overlay - Red - Light</option>
-									<option value="over_iceblue_lt" <?php if($this->_options[subscribeBar][overlay] == 'over_iceblue_lt') echo 'selected';?>>Color overlay - Iceblue - Light</option>
-									<option value="over_black_lt" <?php if($this->_options[subscribeBar][overlay] == 'over_black_lt') echo 'selected';?>>Color overlay - Black - Light</option>
-									<option value="over_skyblue_lt" <?php if($this->_options[subscribeBar][overlay] == 'over_skyblue_lt') echo 'selected';?>>Color overlay - Skyblue - Light</option>
-									<option value="over_lilac_lt" <?php if($this->_options[subscribeBar][overlay] == 'over_lilac_lt') echo 'selected';?>>Color overlay - Lilac - Light</option>
-									<option value="over_grey_solid" <?php if($this->_options[subscribeBar][overlay] == 'over_grey_solid') echo 'selected';?>>Color overlay - Grey - Solid</option>
-									<option value="over_white_solid" <?php if($this->_options[subscribeBar][overlay] == 'over_white_solid') echo 'selected';?>>Color overlay - White - Solid</option>
-									<option value="over_yellow_solid" <?php if($this->_options[subscribeBar][overlay] == 'over_yellow_solid') echo 'selected';?>>Color overlay - Yellow - Solid</option>
-									<option value="over_wormwood_solid" <?php if($this->_options[subscribeBar][overlay] == 'over_wormwood_solid') echo 'selected';?>>Color overlay - Wormwood - Solid</option>
-									<option value="over_blue_solid" <?php if($this->_options[subscribeBar][overlay] == 'over_blue_solid') echo 'selected';?>>Color overlay - Blue - Solid</option>
-									<option value="over_green_solid" <?php if($this->_options[subscribeBar][overlay] == 'over_green_solid') echo 'selected';?>>Color overlay - Green - Solid</option>
-									<option value="over_beige_solid" <?php if($this->_options[subscribeBar][overlay] == 'over_beige_solid') echo 'selected';?>>Color overlay - Beige - Solid</option>
-									<option value="over_red_solid" <?php if($this->_options[subscribeBar][overlay] == 'over_red_solid') echo 'selected';?>>Color overlay - Red - Solid</option>
-									<option value="over_iceblue_solid" <?php if($this->_options[subscribeBar][overlay] == 'over_iceblue_solid') echo 'selected';?>>Color overlay - Iceblue - Solid</option>
-									<option value="over_black_solid" <?php if($this->_options[subscribeBar][overlay] == 'over_black_solid') echo 'selected';?>>Color overlay - Black - Solid</option>
-									<option value="over_skyblue_solid" <?php if($this->_options[subscribeBar][overlay] == 'over_skyblue_solid') echo 'selected';?>>Color overlay - Skyblue - Solid</option>
-									<option value="over_lilac_solid" <?php if($this->_options[subscribeBar][overlay] == 'over_lilac_solid') echo 'selected';?>>Color overlay - Lilac - Solid</option>
-							</select></label>
-							</div>
+								<label>
+								<select id="contactUs_typeWindow" onchange="contactUsPreview();"  name="contactUs[typeWindow]">
+									<option value="pq_large" <?php if($this->_options[contactUs][typeWindow] == 'pq_large' || $this->_options[contactUs][typeWindow] == '') echo 'selected';?>>Size L</option>
+									<option value="pq_medium" <?php if($this->_options[contactUs][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
+									<option value="pq_mini" <?php if($this->_options[contactUs][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
+								</select>
+								</label>
+								<h3>Animation</h3>
+								<label>
+								<select name="contactUs[animation]" id="contactUs_animation" onchange="contactUsPreview();">									
+									<option value="bounceInDown" <?php if($this->_options[contactUs][animation] == 'bounceInDown') echo 'selected';?>>Bounce</option>
+									<option value="fade" <?php if($this->_options[contactUs][animation] == 'fade' || $this->_options[contactUs][animation] == '') echo 'selected';?>>Fade In</option>
+								</select>
+								</label>
+								
+								<h3>Overlay</h3>
+								<label>
+								<select id="contactUs_overlay" name="contactUs[overlay]" onchange="contactUsPreview();">
+								    <option value="over_grey" <?php if($this->_options[contactUs][overlay] == 'over_grey') echo 'selected';?>>Color overlay - Grey</option>
+									<option value="over_white" <?php if($this->_options[contactUs][overlay] == 'over_white' || $this->_options[contactUs][overlay] == '') echo 'selected';?>>Color overlay - White</option>
+									<option value="over_yellow" <?php if($this->_options[contactUs][overlay] == 'over_yellow') echo 'selected';?>>Color overlay - Yellow</option>
+									<option value="over_wormwood" <?php if($this->_options[contactUs][overlay] == 'over_wormwood') echo 'selected';?>>Color overlay - Wormwood</option>
+									<option value="over_blue" <?php if($this->_options[contactUs][overlay] == 'over_blue') echo 'selected';?>>Color overlay - Blue</option>
+									<option value="over_green" <?php if($this->_options[contactUs][overlay] == 'over_green') echo 'selected';?>>Color overlay - Green</option>
+									<option value="over_beige" <?php if($this->_options[contactUs][overlay] == 'over_beige') echo 'selected';?>>Color overlay - Beige</option>
+									<option value="over_red" <?php if($this->_options[contactUs][overlay] == 'over_red') echo 'selected';?>>Color overlay - Red</option>
+									<option value="over_iceblue" <?php if($this->_options[contactUs][overlay] == 'over_iceblue') echo 'selected';?>>Color overlay - Iceblue</option>
+									<option value="over_black" <?php if($this->_options[contactUs][overlay] == 'over_black') echo 'selected';?>>Color overlay - Black</option>
+									<option value="over_skyblue" <?php if($this->_options[contactUs][overlay] == 'over_skyblue') echo 'selected';?>>Color overlay - Skyblue</option>
+									<option value="over_lilac" <?php if($this->_options[contactUs][overlay] == 'over_lilac') echo 'selected';?>>Color overlay - Lilac</option>
+									<option value="over_grey_lt" <?php if($this->_options[contactUs][overlay] == 'over_grey_lt') echo 'selected';?>>Color overlay - Grey - Light</option>
+									<option value="over_white_lt" <?php if($this->_options[contactUs][overlay] == 'over_white_lt') echo 'selected';?>>Color overlay - White - Light</option>
+									<option value="over_yellow_lt" <?php if($this->_options[contactUs][overlay] == 'over_yellow_lt') echo 'selected';?>>Color overlay - Yellow - Light</option>
+									<option value="over_wormwood_lt" <?php if($this->_options[contactUs][overlay] == 'over_wormwood_lt') echo 'selected';?>>Color overlay - Wormwood - Light</option>
+									<option value="over_blue_lt" <?php if($this->_options[contactUs][overlay] == 'over_blue_lt') echo 'selected';?>>Color overlay - Blue - Light</option>
+									<option value="over_green_lt" <?php if($this->_options[contactUs][overlay] == 'over_green_lt') echo 'selected';?>>Color overlay - Green - Light</option>
+									<option value="over_beige_lt" <?php if($this->_options[contactUs][overlay] == 'over_beige_lt') echo 'selected';?>>Color overlay - Beige - Light</option>
+									<option value="over_red_lt" <?php if($this->_options[contactUs][overlay] == 'over_red_lt') echo 'selected';?>>Color overlay - Red - Light</option>
+									<option value="over_iceblue_lt" <?php if($this->_options[contactUs][overlay] == 'over_iceblue_lt') echo 'selected';?>>Color overlay - Iceblue - Light</option>
+									<option value="over_black_lt" <?php if($this->_options[contactUs][overlay] == 'over_black_lt') echo 'selected';?>>Color overlay - Black - Light</option>
+									<option value="over_skyblue_lt" <?php if($this->_options[contactUs][overlay] == 'over_skyblue_lt') echo 'selected';?>>Color overlay - Skyblue - Light</option>
+									<option value="over_lilac_lt" <?php if($this->_options[contactUs][overlay] == 'over_lilac_lt') echo 'selected';?>>Color overlay - Lilac - Light</option>
+									<option value="over_grey_solid" <?php if($this->_options[contactUs][overlay] == 'over_grey_solid') echo 'selected';?>>Color overlay - Grey - Solid</option>
+									<option value="over_white_solid" <?php if($this->_options[contactUs][overlay] == 'over_white_solid') echo 'selected';?>>Color overlay - White - Solid</option>
+									<option value="over_yellow_solid" <?php if($this->_options[contactUs][overlay] == 'over_yellow_solid') echo 'selected';?>>Color overlay - Yellow - Solid</option>
+									<option value="over_wormwood_solid" <?php if($this->_options[contactUs][overlay] == 'over_wormwood_solid') echo 'selected';?>>Color overlay - Wormwood - Solid</option>
+									<option value="over_blue_solid" <?php if($this->_options[contactUs][overlay] == 'over_blue_solid') echo 'selected';?>>Color overlay - Blue - Solid</option>
+									<option value="over_green_solid" <?php if($this->_options[contactUs][overlay] == 'over_green_solid') echo 'selected';?>>Color overlay - Green - Solid</option>
+									<option value="over_beige_solid" <?php if($this->_options[contactUs][overlay] == 'over_beige_solid') echo 'selected';?>>Color overlay - Beige - Solid</option>
+									<option value="over_red_solid" <?php if($this->_options[contactUs][overlay] == 'over_red_solid') echo 'selected';?>>Color overlay - Red - Solid</option>
+									<option value="over_iceblue_solid" <?php if($this->_options[contactUs][overlay] == 'over_iceblue_solid') echo 'selected';?>>Color overlay - Iceblue - Solid</option>
+									<option value="over_black_solid" <?php if($this->_options[contactUs][overlay] == 'over_black_solid') echo 'selected';?>>Color overlay - Black - Solid</option>
+									<option value="over_skyblue_solid" <?php if($this->_options[contactUs][overlay] == 'over_skyblue_solid') echo 'selected';?>>Color overlay - Skyblue - Solid</option>
+									<option value="over_lilac_solid" <?php if($this->_options[contactUs][overlay] == 'over_lilac_solid') echo 'selected';?>>Color overlay - Lilac - Solid</option>
+								</select>
+								</label>
+								<h3>Loader</h3>
+								<label>
+								<select id="contactUs_loader_background" onchange="contactUsPreview();" name="contactUs[loader_background]">
+										<option value="bg_grey" <?php if($this->_options[contactUs][loader_background] == 'bg_grey') echo 'selected';?>>Loader - Background - Grey</option>
+										<option value="" <?php if($this->_options[contactUs][loader_background] == '') echo 'selected';?>>Loader - Background - White</option>
+										<option value="bg_yellow" <?php if($this->_options[contactUs][loader_background] == 'bg_yellow') echo 'selected';?>>Loader - Background - Yellow</option>
+										<option value="bg_wormwood" <?php if($this->_options[contactUs][loader_background] == 'bg_wormwood') echo 'selected';?>>Loader - Background - Wormwood</option>
+										<option value="bg_blue" <?php if($this->_options[contactUs][loader_background] == 'bg_blue') echo 'selected';?>>Loader - Background - Blue</option>
+										<option value="bg_green" <?php if($this->_options[contactUs][loader_background] == 'bg_green') echo 'selected';?>>Loader - Background - Green</option>
+										<option value="bg_beige" <?php if($this->_options[contactUs][loader_background] == 'bg_beige') echo 'selected';?>>Loader - Background - Beige</option>
+										<option value="bg_red" <?php if($this->_options[contactUs][loader_background] == 'bg_red') echo 'selected';?>>Loader - Background - Red</option>
+										<option value="bg_iceblue" <?php if($this->_options[contactUs][loader_background] == 'bg_iceblue') echo 'selected';?>>Loader - Background - Iceblue</option>
+										<option value="bg_black" <?php if($this->_options[contactUs][loader_background] == 'bg_black') echo 'selected';?>>Loader - Background - Black</option>
+										<option value="bg_skyblue" <?php if($this->_options[contactUs][loader_background] == 'bg_skyblue') echo 'selected';?>>Loader - Background - Skyblue</option>
+										<option value="bg_lilac" <?php if($this->_options[contactUs][loader_background] == 'bg_lilac') echo 'selected';?>>Loader - Background - Lilac</option>
+								</select>
+								</label>
+								<label>
+								<select id="contactUs_top" onchange="contactUsPreview();" name="contactUs[top]">
+									<option value="pq_top" <?php if($this->_options[contactUs][top] == 'pq_top') echo 'selected';?>>Top</option>
+									<option value="pq_middle" <?php if($this->_options[contactUs][top] == 'pq_middle') echo 'selected';?>>Middle</option>
+									<option value="pq_bottom" <?php if($this->_options[contactUs][top] == 'pq_bottom') echo 'selected';?>>Bottom</option>
+								</select>
+								</label>
+								<label>
+									<select id="contactUs_side" onchange="contactUsPreview();" name="contactUs[side]">
+									<option value="pq_left" <?php if($this->_options[contactUs][side] == 'pq_left') echo 'selected';?>>Left</option>
+									<option value="pq_right" <?php if($this->_options[contactUs][side] == 'pq_right') echo 'selected';?>>Right</option>
+									</select>
+								</label>
+							</div>	
 							
-							<div class="clear"></div>
-							<div class="pq-sm-6 icons" style="padding-left: 0; margin: 20px 0;">
-							<label><div class="pq_box">
-								<p>After Sharing Sidebar</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="sharingSideBar[afterProceed][thank]" <?php if((int)$this->_options[sharingSideBar][afterProceed][thank] == 1) echo 'checked';?>></div>
-							</div></label>
-							<label><div class="pq_box">
-								<p>After Image Sharer</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="imageSharer[afterProceed][thank]" <?php if((int)$this->_options[imageSharer][afterProceed][thank] == 1) echo 'checked';?>></div>
-							</div></label>
-							<label><div class="pq_box">
-								<p>After Marketing Bar</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="subscribeBar[afterProceed][thank]" <?php if((int)$this->_options[subscribeBar][afterProceed][thank] == 1) echo 'checked';?>></div>
-							</div></label>
-							</div>
-							<div class="pq-sm-6 icons" style="padding-right: 0; margin: 20px 0;">
-							<label><div class="pq_box">
-								<p>After Exit Popup</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="subscribeExit[afterProceed][thank]" <?php if((int)$this->_options[subscribeExit][afterProceed][thank] == 1) echo 'checked';?>></div>
-							</div></label>
-							<label><div class="pq_box">
-								<p>After Contact Form</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="contactUs[afterProceed][thank]" <?php if((int)$this->_options[contactUs][afterProceed][thank] == 1) echo 'checked';?>></div>
-							</div></label>
-							<label><div class="pq_box">
-								<p>After Call Me Back</p><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-id-switch-size bootstrap-switch-animate bootstrap-switch-mini bootstrap-switch-success">
-								<input type="checkbox" name="callMe[afterProceed][thank]" <?php if((int)$this->_options[callMe][afterProceed][thank] == 1) echo 'checked';?>></div>
-							</div><label>
-							</div>							
-							<div class="clear"></div>							
-							</div>
-						<a href="javascript:void(0)" onclick="document.getElementById('Thankyou_Popup').style.display='none';"><div class="pq_close"></div></a>
 						</div>
-					</div>
-					
-					  <input type="submit" class="btn_m_red" value="Save changes">
-					  <a href="mailto:support@profitquery.com" target="_blank" class="pq_help">Need help?</a>
-					  
-					  </form>
-					</div>
-				  </div>	
-				<a name="AdditionalOptions">
-				<div class="pq_uga">
-					<h5>Additional Options</h5>
-					<form action="<?php echo $this->getSettingsPageUrl();?>#AdditionalOptions" method="post">
-					<input type="hidden" name="action" value="editAdditionalOptions">
-							<input type="checkbox" name="additionalOptions[enableGA]" <?php if((int)$this->_options[additionalOptions][enableGA] == 1) echo 'checked';?> ><p>Use google analytics</p>
-							<input type="submit" value="Save">
-					</form>
-				</div>				  
-			</div>
+						<div class="settings callme">
+							<div class="popup selected">
+							<h3>POPUP</h3>
+								<label>
+								<select id="callMe_background" onchange="callMePreview();" name="callMe[background]">
+								    <option value="bg_grey" <?php if($this->_options[callMe][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
+									<option value="" <?php if($this->_options[callMe][background] == '') echo 'selected';?>>Background - White</option>
+									<option value="bg_yellow" <?php if($this->_options[callMe][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
+									<option value="bg_wormwood" <?php if($this->_options[callMe][background] == 'bg_wormwood') echo 'selected';?>>Background - Wormwood</option>
+									<option value="bg_blue" <?php if($this->_options[callMe][background] == 'bg_blue') echo 'selected';?>>Background - Blue</option>
+									<option value="bg_green" <?php if($this->_options[callMe][background] == 'bg_green') echo 'selected';?>>Background - Green</option>
+									<option value="bg_beige" <?php if($this->_options[callMe][background] == 'bg_beige') echo 'selected';?>>Background - Beige</option>
+									<option value="bg_red" <?php if($this->_options[callMe][background] == 'bg_red') echo 'selected';?>>Background - Red</option>
+									<option value="bg_iceblue" <?php if($this->_options[callMe][background] == 'bg_iceblue') echo 'selected';?>>Background - Iceblue</option>
+									<option value="bg_black" <?php if($this->_options[callMe][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
+									<option value="bg_skyblue" <?php if($this->_options[callMe][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
+									<option value="bg_lilac" <?php if($this->_options[callMe][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
+								</select>
+								</label>
+								
+								<label>
+								<select id="callMe_button_color" onchange="callMePreview();" name="callMe[button_color]">
+								    <option value="btn_lightblue" <?php if($this->_options[callMe][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
+									<option value="btn_lightblue invert" <?php if($this->_options[callMe][button_color] == 'btn_lightblue invert' || $this->_options[callMe][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
+									<option value="btn_blue" <?php if($this->_options[callMe][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
+									<option value="btn_blue invert" <?php if($this->_options[callMe][button_color] == 'btn_blue invert') echo 'selected';?>>Button - Blue Transparent</option>
+									<option value="btn_black" <?php if($this->_options[callMe][button_color] == 'btn_black') echo 'selected';?>>Button - Black</option>
+									<option value="btn_black invert" <?php if($this->_options[callMe][button_color] == 'btn_black invert') echo 'selected';?>>Button - Black Transparent</option>
+									<option value="btn_green" <?php if($this->_options[callMe][button_color] == 'btn_green') echo 'selected';?>>Button - Green</option>
+									<option value="btn_green invert" <?php if($this->_options[callMe][button_color] == 'btn_green invert') echo 'selected';?>>Button - Green Transparent</option>
+									<option value="btn_violet" <?php if($this->_options[callMe][button_color] == 'btn_violet') echo 'selected';?>>Button - Violet</option>
+									<option value="btn_violet invert" <?php if($this->_options[callMe][button_color] == 'btn_violet invert') echo 'selected';?>>Button - Violet Transparent</option>
+									<option value="btn_orange" <?php if($this->_options[callMe][button_color] == 'btn_orange') echo 'selected';?>>Button - Orange</option>
+									<option value="btn_orange invert" <?php if($this->_options[callMe][button_color] == 'btn_orange invert') echo 'selected';?>>Button - Orange Transparent</option>
+									<option value="btn_red" <?php if($this->_options[callMe][button_color] == 'btn_red') echo 'selected';?>>Button - Red</option>
+									<option value="btn_red invert" <?php if($this->_options[callMe][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
+									<option value="btn_lilac" <?php if($this->_options[callMe][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
+									<option value="btn_lilac invert" <?php if($this->_options[callMe][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
+								</select>
+								</label>
+								
+								<label>
+									<select id="callMe_img" class="vibor" name="callMe[img]" onchange="callMePreview();changePopupImg(this.value, 'callMeCustomFotoBlock');">
+										<option value="" selected >No picture</option>
+										<option value="img_01.png" <?php if($this->_options[callMe][img] == 'img_01.png') echo 'selected';?>>Question</option>
+										<option value="img_02.png" <?php if($this->_options[callMe][img] == 'img_02.png') echo 'selected';?>>Attention</option>
+										<option value="img_03.png" <?php if($this->_options[callMe][img] == 'img_03.png') echo 'selected';?>>Info</option>
+										<option value="img_04.png" <?php if($this->_options[callMe][img] == 'img_04.png') echo 'selected';?>>Knowledge</option>
+										<option value="img_05.png" <?php if($this->_options[callMe][img] == 'img_05.png') echo 'selected';?>>Idea</option>
+										<option value="img_06.png" <?php if($this->_options[callMe][img] == 'img_06.png') echo 'selected';?>>Talk</option>
+										<option value="img_07.png" <?php if($this->_options[callMe][img] == 'img_07.png') echo 'selected';?>>News</option>
+										<option value="img_08.png" <?php if($this->_options[callMe][img] == 'img_08.png') echo 'selected';?>>Megaphone</option>
+										<option value="img_09.png" <?php if($this->_options[callMe][img] == 'img_09.png') echo 'selected';?>>Gift</option>
+										<option value="img_10.png" <?php if($this->_options[callMe][img] == 'img_10.png') echo 'selected';?>>Success</option>
+										<option value="custom" <?php if($this->_options[callMe][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
+									</select>
+								</label>
+								<label class="custom_i" id="callMeCustomFotoBlock"><p>Link</p>
+									<input type="text" name="callMe[imgUrl]" onkeyup="callMePreview();" id="callMeCustomFotoSrc" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[callMe][imgUrl])?>">
+								</label>
+								<label>
+								<script>
+									changePopupImg('<?php echo $this->_options[callMe][img];?>', 'callMeCustomFotoBlock');
+								</script>
+								<select id="callMe_typeWindow" onchange="callMePreview();" name="callMe[typeWindow]">
+									<option value="pq_large" <?php if($this->_options[callMe][typeWindow] == 'pq_large' || $this->_options[callMe][typeWindow] == '') echo 'selected';?>>Size L</option>
+									<option value="pq_medium" <?php if($this->_options[callMe][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
+									<option value="pq_mini" <?php if($this->_options[callMe][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
+								</select>
+								</label>
+								<h3>Animation</h3>
+								<label>
+								<select name="callMe[animation]" id="callMe_animation" onchange="callMePreview();">									
+									<option value="bounceInDown" <?php if($this->_options[callMe][animation] == 'bounceInDown') echo 'selected';?>>Bounce</option>
+									<option value="fade" <?php if($this->_options[callMe][animation] == 'fade' || $this->_options[callMe][animation] == '') echo 'selected';?>>Fade In</option>
+								</select>
+								</label>
+								
+								<h3>Overlay</h3>
+								<label>
+								<select id="callMe_overlay" name="callMe[overlay]" onchange="callMePreview();">
+								    <option value="over_grey" <?php if($this->_options[callMe][overlay] == 'over_grey') echo 'selected';?>>Color overlay - Grey</option>
+									<option value="over_white" <?php if($this->_options[callMe][overlay] == 'over_white' || $this->_options[callMe][overlay] == '') echo 'selected';?>>Color overlay - White</option>
+									<option value="over_yellow" <?php if($this->_options[callMe][overlay] == 'over_yellow') echo 'selected';?>>Color overlay - Yellow</option>
+									<option value="over_wormwood" <?php if($this->_options[callMe][overlay] == 'over_wormwood') echo 'selected';?>>Color overlay - Wormwood</option>
+									<option value="over_blue" <?php if($this->_options[callMe][overlay] == 'over_blue') echo 'selected';?>>Color overlay - Blue</option>
+									<option value="over_green" <?php if($this->_options[callMe][overlay] == 'over_green') echo 'selected';?>>Color overlay - Green</option>
+									<option value="over_beige" <?php if($this->_options[callMe][overlay] == 'over_beige') echo 'selected';?>>Color overlay - Beige</option>
+									<option value="over_red" <?php if($this->_options[callMe][overlay] == 'over_red') echo 'selected';?>>Color overlay - Red</option>
+									<option value="over_iceblue" <?php if($this->_options[callMe][overlay] == 'over_iceblue') echo 'selected';?>>Color overlay - Iceblue</option>
+									<option value="over_black" <?php if($this->_options[callMe][overlay] == 'over_black') echo 'selected';?>>Color overlay - Black</option>
+									<option value="over_skyblue" <?php if($this->_options[callMe][overlay] == 'over_skyblue') echo 'selected';?>>Color overlay - Skyblue</option>
+									<option value="over_lilac" <?php if($this->_options[callMe][overlay] == 'over_lilac') echo 'selected';?>>Color overlay - Lilac</option>
+									<option value="over_grey_lt" <?php if($this->_options[callMe][overlay] == 'over_grey_lt') echo 'selected';?>>Color overlay - Grey - Light</option>
+									<option value="over_white_lt" <?php if($this->_options[callMe][overlay] == 'over_white_lt') echo 'selected';?>>Color overlay - White - Light</option>
+									<option value="over_yellow_lt" <?php if($this->_options[callMe][overlay] == 'over_yellow_lt') echo 'selected';?>>Color overlay - Yellow - Light</option>
+									<option value="over_wormwood_lt" <?php if($this->_options[callMe][overlay] == 'over_wormwood_lt') echo 'selected';?>>Color overlay - Wormwood - Light</option>
+									<option value="over_blue_lt" <?php if($this->_options[callMe][overlay] == 'over_blue_lt') echo 'selected';?>>Color overlay - Blue - Light</option>
+									<option value="over_green_lt" <?php if($this->_options[callMe][overlay] == 'over_green_lt') echo 'selected';?>>Color overlay - Green - Light</option>
+									<option value="over_beige_lt" <?php if($this->_options[callMe][overlay] == 'over_beige_lt') echo 'selected';?>>Color overlay - Beige - Light</option>
+									<option value="over_red_lt" <?php if($this->_options[callMe][overlay] == 'over_red_lt') echo 'selected';?>>Color overlay - Red - Light</option>
+									<option value="over_iceblue_lt" <?php if($this->_options[callMe][overlay] == 'over_iceblue_lt') echo 'selected';?>>Color overlay - Iceblue - Light</option>
+									<option value="over_black_lt" <?php if($this->_options[callMe][overlay] == 'over_black_lt') echo 'selected';?>>Color overlay - Black - Light</option>
+									<option value="over_skyblue_lt" <?php if($this->_options[callMe][overlay] == 'over_skyblue_lt') echo 'selected';?>>Color overlay - Skyblue - Light</option>
+									<option value="over_lilac_lt" <?php if($this->_options[callMe][overlay] == 'over_lilac_lt') echo 'selected';?>>Color overlay - Lilac - Light</option>
+									<option value="over_grey_solid" <?php if($this->_options[callMe][overlay] == 'over_grey_solid') echo 'selected';?>>Color overlay - Grey - Solid</option>
+									<option value="over_white_solid" <?php if($this->_options[callMe][overlay] == 'over_white_solid') echo 'selected';?>>Color overlay - White - Solid</option>
+									<option value="over_yellow_solid" <?php if($this->_options[callMe][overlay] == 'over_yellow_solid') echo 'selected';?>>Color overlay - Yellow - Solid</option>
+									<option value="over_wormwood_solid" <?php if($this->_options[callMe][overlay] == 'over_wormwood_solid') echo 'selected';?>>Color overlay - Wormwood - Solid</option>
+									<option value="over_blue_solid" <?php if($this->_options[callMe][overlay] == 'over_blue_solid') echo 'selected';?>>Color overlay - Blue - Solid</option>
+									<option value="over_green_solid" <?php if($this->_options[callMe][overlay] == 'over_green_solid') echo 'selected';?>>Color overlay - Green - Solid</option>
+									<option value="over_beige_solid" <?php if($this->_options[callMe][overlay] == 'over_beige_solid') echo 'selected';?>>Color overlay - Beige - Solid</option>
+									<option value="over_red_solid" <?php if($this->_options[callMe][overlay] == 'over_red_solid') echo 'selected';?>>Color overlay - Red - Solid</option>
+									<option value="over_iceblue_solid" <?php if($this->_options[callMe][overlay] == 'over_iceblue_solid') echo 'selected';?>>Color overlay - Iceblue - Solid</option>
+									<option value="over_black_solid" <?php if($this->_options[callMe][overlay] == 'over_black_solid') echo 'selected';?>>Color overlay - Black - Solid</option>
+									<option value="over_skyblue_solid" <?php if($this->_options[callMe][overlay] == 'over_skyblue_solid') echo 'selected';?>>Color overlay - Skyblue - Solid</option>
+									<option value="over_lilac_solid" <?php if($this->_options[callMe][overlay] == 'over_lilac_solid') echo 'selected';?>>Color overlay - Lilac - Solid</option>
+								</select>
+								</label>
+								<h3>Loader</h3>
+								<label>
+								<select id="callMe_loader_background" onchange="callMePreview();" name="callMe[loader_background]">
+								    <option value="bg_white" <?php if($this->_options[callMe][loader_background] == 'bg_white') echo 'selected';?>>Loader - Background - White</option>
+									<option value="bg_white_lt" <?php if($this->_options[callMe][loader_background] == 'bg_white_lt') echo 'selected';?>>Loader - Background - White Lite</option>
+									<option value="bg_iceblue" <?php if($this->_options[callMe][loader_background] == 'bg_iceblue') echo 'selected';?>>Loader - Background - Iceblue</option>
+									<option value="bg_iceblue_lt" <?php if($this->_options[callMe][loader_background] == 'bg_iceblue_lt') echo 'selected';?>>Loader - Background - Iceblue Lite</option>
+									<option value="bg_beige" <?php if($this->_options[callMe][loader_background] == 'bg_beige') echo 'selected';?>>Loader - Background - Beige</option>
+									<option value="bg_beige_lt" <?php if($this->_options[callMe][loader_background] == 'bg_beige_lt') echo 'selected';?>>Loader - Background - Beige Lite</option>
+									<option value="bg_lilac" <?php if($this->_options[callMe][loader_background] == 'bg_lilac') echo 'selected';?>>Loader - Background - Lilac</option>
+									<option value="bg_lilac_lt" <?php if($this->_options[callMe][loader_background] == 'bg_lilac_lt') echo 'selected';?>>Loader - Background - Lilac Lite</option>
+									<option value="bg_wormwood" <?php if($this->_options[callMe][loader_background] == 'bg_wormwood') echo 'selected';?>>Loader - Background - Wormwood</option>
+									<option value="bg_wormwood_lt" <?php if($this->_options[callMe][loader_background] == 'bg_wormwood_lt') echo 'selected';?>>Loader - Background - Wormwood Lite</option>
+									<option value="bg_yellow" <?php if($this->_options[callMe][loader_background] == 'bg_yellow') echo 'selected';?>>Loader - Background - Yellow</option>
+									<option value="bg_yellow_lt" <?php if($this->_options[callMe][loader_background] == 'bg_yellow_lt') echo 'selected';?>>Loader - Background - Yellow Lite</option>
+									<option value="bg_grey" <?php if($this->_options[callMe][loader_background] == 'bg_grey') echo 'selected';?>>Loader - Background - Grey</option>
+									<option value="bg_grey_lt" <?php if($this->_options[callMe][loader_background] == 'bg_grey_lt') echo 'selected';?>>Loader - Background - Grey Lite</option>
+									<option value="bg_red" <?php if($this->_options[callMe][loader_background] == 'bg_red') echo 'selected';?>>Loader - Background - Red</option>
+									<option value="bg_red_lt" <?php if($this->_options[callMe][loader_background] == 'bg_red_lt') echo 'selected';?>>Loader - Background - Red Lite</option>
+									<option value="bg_skyblue" <?php if($this->_options[callMe][loader_background] == 'bg_skyblue') echo 'selected';?>>Loader - Background - Skyblue</option>
+									<option value="bg_skyblue_lt" <?php if($this->_options[callMe][loader_background] == 'bg_skyblue_lt') echo 'selected';?>>Loader - Background - Skyblue Lite</option>
+									<option value="bg_blue" <?php if($this->_options[callMe][loader_background] == 'bg_blue') echo 'selected';?>>Loader - Background - Blue</option>
+									<option value="bg_blue_lt" <?php if($this->_options[callMe][loader_background] == 'bg_blue_lt') echo 'selected';?>>Loader - Background - Blue Lite</option>
+									<option value="bg_green" <?php if($this->_options[callMe][loader_background] == 'bg_green') echo 'selected';?>>Loader - Background - Green</option>
+									<option value="bg_green_lt" <?php if($this->_options[callMe][loader_background] == 'bg_green_lt') echo 'selected';?>>Loader - Background - Green Lite</option>
+									<option value="bg_black" <?php if($this->_options[callMe][loader_background] == 'bg_black') echo 'selected';?>>Loader - Background - Black</option>
+									<option value="bg_black_lt" <?php if($this->_options[callMe][loader_background] == 'bg_black_lt') echo 'selected';?>>Loader - Background - Black Lite</option>
+								</select>
+								</label>
+								<label>
+								<select id="callMe_top" onchange="callMePreview();" name="callMe[top]">
+									<option value="pq_top" <?php if($this->_options[callMe][top] == 'pq_top') echo 'selected';?>>Top</option>
+									<option value="pq_middle" <?php if($this->_options[callMe][top] == 'pq_middle') echo 'selected';?>>Middle</option>
+									<option value="pq_bottom" <?php if($this->_options[callMe][top] == 'pq_bottom') echo 'selected';?>>Bottom</option>
+								</select>
+								</label>
+								<label>
+									<select id="callMe_side" onchange="callMePreview();" name="callMe[side]">
+									<option value="pq_left" <?php if($this->_options[callMe][side] == 'pq_left') echo 'selected';?>>Left</option>
+									<option value="pq_right" <?php if($this->_options[callMe][side] == 'pq_right') echo 'selected';?>>Right</option>
+									</select>
+								</label>
+							</div>	
+							
+						</div>
+						<div class="settings exit">
+							<div class="popup selected">
+							<h3>POPUP</h3>
+								<label>
+								<select id="subscribeExit_background" onchange="subscribeExitPreview();" name="subscribeExit[background]">
+								    <option value="bg_white" <?php if($this->_options[subscribeExit][background] == 'bg_white') echo 'selected';?>>Background - White</option>
+									<option value="bg_white_lt" <?php if($this->_options[subscribeExit][background] == 'bg_white_lt') echo 'selected';?>>Background - White Lite</option>
+									<option value="bg_iceblue" <?php if($this->_options[subscribeExit][background] == 'bg_iceblue') echo 'selected';?>>Background - Iceblue</option>
+									<option value="bg_iceblue_lt" <?php if($this->_options[subscribeExit][background] == 'bg_iceblue_lt') echo 'selected';?>>Background - Iceblue Lite</option>
+									<option value="bg_beige" <?php if($this->_options[subscribeExit][background] == 'bg_beige') echo 'selected';?>>Background - Beige</option>
+									<option value="bg_beige_lt" <?php if($this->_options[subscribeExit][background] == 'bg_beige_lt') echo 'selected';?>>Background - Beige Lite</option>
+									<option value="bg_lilac" <?php if($this->_options[subscribeExit][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
+									<option value="bg_lilac_lt" <?php if($this->_options[subscribeExit][background] == 'bg_lilac_lt') echo 'selected';?>>Background - Lilac Lite</option>
+									<option value="bg_wormwood" <?php if($this->_options[subscribeExit][background] == 'bg_wormwood') echo 'selected';?>>Background - Wormwood</option>
+									<option value="bg_wormwood_lt" <?php if($this->_options[subscribeExit][background] == 'bg_wormwood_lt') echo 'selected';?>>Background - Wormwood Lite</option>
+									<option value="bg_yellow" <?php if($this->_options[subscribeExit][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
+									<option value="bg_yellow_lt" <?php if($this->_options[subscribeExit][background] == 'bg_yellow_lt') echo 'selected';?>>Background - Yellow Lite</option>
+									<option value="bg_grey" <?php if($this->_options[subscribeExit][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
+									<option value="bg_grey_lt" <?php if($this->_options[subscribeExit][background] == 'bg_grey_lt') echo 'selected';?>>Background - Grey Lite</option>
+									<option value="bg_red" <?php if($this->_options[subscribeExit][background] == 'bg_red') echo 'selected';?>>Background - Red</option>
+									<option value="bg_red_lt" <?php if($this->_options[subscribeExit][background] == 'bg_red_lt') echo 'selected';?>>Background - Red Lite</option>
+									<option value="bg_skyblue" <?php if($this->_options[subscribeExit][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
+									<option value="bg_skyblue_lt" <?php if($this->_options[subscribeExit][background] == 'bg_skyblue_lt') echo 'selected';?>>Background - Skyblue Lite</option>
+									<option value="bg_blue" <?php if($this->_options[subscribeExit][background] == 'bg_blue') echo 'selected';?>>Background - Blue</option>
+									<option value="bg_blue_lt" <?php if($this->_options[subscribeExit][background] == 'bg_blue_lt') echo 'selected';?>>Background - Blue Lite</option>
+									<option value="bg_green" <?php if($this->_options[subscribeExit][background] == 'bg_green') echo 'selected';?>>Background - Green</option>
+									<option value="bg_green_lt" <?php if($this->_options[subscribeExit][background] == 'bg_green_lt') echo 'selected';?>>Background - Green Lite</option>
+									<option value="bg_black" <?php if($this->_options[subscribeExit][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
+									<option value="bg_black_lt" <?php if($this->_options[subscribeExit][background] == 'bg_black_lt') echo 'selected';?>>Background - Black Lite</option>
+								</select>
+								</label>
+								
+								<label>
+								<select id="subscribeExit_button_color" onchange="subscribeExitPreview();" name="subscribeExit[button_color]">
+								    <option value="btn_lightblue" <?php if($this->_options[subscribeExit][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
+									<option value="btn_lightblue invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_lightblue invert' || $this->_options[subscribeExit][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
+									<option value="btn_blue" <?php if($this->_options[subscribeExit][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
+									<option value="btn_blue invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_blue invert') echo 'selected';?>>Button - Blue Transparent</option>
+									<option value="btn_black" <?php if($this->_options[subscribeExit][button_color] == 'btn_black') echo 'selected';?>>Button - Black</option>
+									<option value="btn_black invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_black invert') echo 'selected';?>>Button - Black Transparent</option>
+									<option value="btn_green" <?php if($this->_options[subscribeExit][button_color] == 'btn_green') echo 'selected';?>>Button - Green</option>
+									<option value="btn_green invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_green invert') echo 'selected';?>>Button - Green Transparent</option>
+									<option value="btn_violet" <?php if($this->_options[subscribeExit][button_color] == 'btn_violet') echo 'selected';?>>Button - Violet</option>
+									<option value="btn_violet invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_violet invert') echo 'selected';?>>Button - Violet Transparent</option>
+									<option value="btn_orange" <?php if($this->_options[subscribeExit][button_color] == 'btn_orange') echo 'selected';?>>Button - Orange</option>
+									<option value="btn_orange invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_orange invert') echo 'selected';?>>Button - Orange Transparent</option>
+									<option value="btn_red" <?php if($this->_options[subscribeExit][button_color] == 'btn_red') echo 'selected';?>>Button - Red</option>
+									<option value="btn_red invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
+									<option value="btn_lilac" <?php if($this->_options[subscribeExit][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
+									<option value="btn_lilac invert" <?php if($this->_options[subscribeExit][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
+								</select>
+								</label>
+								
+								<label>
+									<select id="subscribeExit_img" class="vibor"  name="subscribeExit[img]" onchange="subscribeExitPreview();changePopupImg(this.value, 'subscribeExitCustomFotoBlock');">
+										<option value="" selected >No picture</option>
+										<option value="img_01.png" <?php if($this->_options[subscribeExit][img] == 'img_01.png') echo 'selected';?>>Question</option>
+										<option value="img_02.png" <?php if($this->_options[subscribeExit][img] == 'img_02.png') echo 'selected';?>>Attention</option>
+										<option value="img_03.png" <?php if($this->_options[subscribeExit][img] == 'img_03.png') echo 'selected';?>>Info</option>
+										<option value="img_04.png" <?php if($this->_options[subscribeExit][img] == 'img_04.png') echo 'selected';?>>Knowledge</option>
+										<option value="img_05.png" <?php if($this->_options[subscribeExit][img] == 'img_05.png') echo 'selected';?>>Idea</option>
+										<option value="img_06.png" <?php if($this->_options[subscribeExit][img] == 'img_06.png') echo 'selected';?>>Talk</option>
+										<option value="img_07.png" <?php if($this->_options[subscribeExit][img] == 'img_07.png') echo 'selected';?>>News</option>
+										<option value="img_08.png" <?php if($this->_options[subscribeExit][img] == 'img_08.png') echo 'selected';?>>Megaphone</option>
+										<option value="img_09.png" <?php if($this->_options[subscribeExit][img] == 'img_09.png') echo 'selected';?>>Gift</option>
+										<option value="img_10.png" <?php if($this->_options[subscribeExit][img] == 'img_10.png') echo 'selected';?>>Success</option>
+										<option value="custom" <?php if($this->_options[subscribeExit][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
+									</select>
+								</label>
+								<label class="custom_i" id="subscribeExitCustomFotoBlock"><p>Link</p>
+									<input type="text" name="subscribeExit[imgUrl]" onkeyup="subscribeExitPreview();"  id="subscribeExitCustomFotoSrc" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[subscribeExit][imgUrl]);?>">
+								</label>
+								<script>
+									changePopupImg('<?php echo $this->_options[subscribeExit][img];?>', 'subscribeExitCustomFotoBlock');
+								</script>
+								<label>
+								<select id="subscribeExit_typeWindow" onchange="subscribeExitPreview();" name="subscribeExit[typeWindow]">
+									<option value="pq_large" <?php if($this->_options[subscribeExit][typeWindow] == 'pq_large' || $this->_options[subscribeExit][typeWindow] == '') echo 'selected';?>>Size L</option>
+									<option value="pq_medium" <?php if($this->_options[subscribeExit][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
+									<option value="pq_mini" <?php if($this->_options[subscribeExit][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
+								</select>
+								</label>
+								<h3>Animation</h3>
+								<label>
+								<select name="subscribeExit[animation]" id="subscribeExit_animation" onchange="subscribeExitPreview();">									
+									<option value="bounceInDown" <?php if($this->_options[subscribeExit][animation] == 'bounceInDown') echo 'selected';?>>Bounce</option>
+									<option value="fade" <?php if($this->_options[subscribeExit][animation] == 'fade' || $this->_options[subscribeExit][animation] == '') echo 'selected';?>>Fade In</option>
+								</select>
+								</label>
+								
+								<h3>Overlay</h3>
+								<label>
+								<select id="subscribeExit_overlay" onchange="subscribeExitPreview();" name="subscribeExit[overlay]">
+								    <option value="over_grey" <?php if($this->_options[subscribeExit][overlay] == 'over_grey') echo 'selected';?>>Color overlay - Grey</option>
+									<option value="over_white" <?php if($this->_options[subscribeExit][overlay] == 'over_white' || $this->_options[subscribeExit][overlay] == '') echo 'selected';?>>Color overlay - White</option>
+									<option value="over_yellow" <?php if($this->_options[subscribeExit][overlay] == 'over_yellow') echo 'selected';?>>Color overlay - Yellow</option>
+									<option value="over_wormwood" <?php if($this->_options[subscribeExit][overlay] == 'over_wormwood') echo 'selected';?>>Color overlay - Wormwood</option>
+									<option value="over_blue" <?php if($this->_options[subscribeExit][overlay] == 'over_blue') echo 'selected';?>>Color overlay - Blue</option>
+									<option value="over_green" <?php if($this->_options[subscribeExit][overlay] == 'over_green') echo 'selected';?>>Color overlay - Green</option>
+									<option value="over_beige" <?php if($this->_options[subscribeExit][overlay] == 'over_beige') echo 'selected';?>>Color overlay - Beige</option>
+									<option value="over_red" <?php if($this->_options[subscribeExit][overlay] == 'over_red') echo 'selected';?>>Color overlay - Red</option>
+									<option value="over_iceblue" <?php if($this->_options[subscribeExit][overlay] == 'over_iceblue') echo 'selected';?>>Color overlay - Iceblue</option>
+									<option value="over_black" <?php if($this->_options[subscribeExit][overlay] == 'over_black') echo 'selected';?>>Color overlay - Black</option>
+									<option value="over_skyblue" <?php if($this->_options[subscribeExit][overlay] == 'over_skyblue') echo 'selected';?>>Color overlay - Skyblue</option>
+									<option value="over_lilac" <?php if($this->_options[subscribeExit][overlay] == 'over_lilac') echo 'selected';?>>Color overlay - Lilac</option>
+									<option value="over_grey_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_grey_lt') echo 'selected';?>>Color overlay - Grey - Light</option>
+									<option value="over_white_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_white_lt') echo 'selected';?>>Color overlay - White - Light</option>
+									<option value="over_yellow_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_yellow_lt') echo 'selected';?>>Color overlay - Yellow - Light</option>
+									<option value="over_wormwood_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_wormwood_lt') echo 'selected';?>>Color overlay - Wormwood - Light</option>
+									<option value="over_blue_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_blue_lt') echo 'selected';?>>Color overlay - Blue - Light</option>
+									<option value="over_green_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_green_lt') echo 'selected';?>>Color overlay - Green - Light</option>
+									<option value="over_beige_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_beige_lt') echo 'selected';?>>Color overlay - Beige - Light</option>
+									<option value="over_red_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_red_lt') echo 'selected';?>>Color overlay - Red - Light</option>
+									<option value="over_iceblue_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_iceblue_lt') echo 'selected';?>>Color overlay - Iceblue - Light</option>
+									<option value="over_black_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_black_lt') echo 'selected';?>>Color overlay - Black - Light</option>
+									<option value="over_skyblue_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_skyblue_lt') echo 'selected';?>>Color overlay - Skyblue - Light</option>
+									<option value="over_lilac_lt" <?php if($this->_options[subscribeExit][overlay] == 'over_lilac_lt') echo 'selected';?>>Color overlay - Lilac - Light</option>
+									<option value="over_grey_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_grey_solid') echo 'selected';?>>Color overlay - Grey - Solid</option>
+									<option value="over_white_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_white_solid') echo 'selected';?>>Color overlay - White - Solid</option>
+									<option value="over_yellow_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_yellow_solid') echo 'selected';?>>Color overlay - Yellow - Solid</option>
+									<option value="over_wormwood_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_wormwood_solid') echo 'selected';?>>Color overlay - Wormwood - Solid</option>
+									<option value="over_blue_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_blue_solid') echo 'selected';?>>Color overlay - Blue - Solid</option>
+									<option value="over_green_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_green_solid') echo 'selected';?>>Color overlay - Green - Solid</option>
+									<option value="over_beige_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_beige_solid') echo 'selected';?>>Color overlay - Beige - Solid</option>
+									<option value="over_red_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_red_solid') echo 'selected';?>>Color overlay - Red - Solid</option>
+									<option value="over_iceblue_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_iceblue_solid') echo 'selected';?>>Color overlay - Iceblue - Solid</option>
+									<option value="over_black_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_black_solid') echo 'selected';?>>Color overlay - Black - Solid</option>
+									<option value="over_skyblue_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_skyblue_solid') echo 'selected';?>>Color overlay - Skyblue - Solid</option>
+									<option value="over_lilac_solid" <?php if($this->_options[subscribeExit][overlay] == 'over_lilac_solid') echo 'selected';?>>Color overlay - Lilac - Solid</option>
+								</select>
+								</label>		
+							</div>
+						</div>
+						<div class="settings imagesharer">
+							<div class="onmedia selected">
+							<h3>ICONS SERVICES</h3>
+								<label>
+								<select id="imageSharer_position" onchange="imageSharerPreview();" name="imageSharer[position]">
+									<option value="inline" <?php if($this->_options[imageSharer][position] == 'inline') echo 'selected';?>>Horizontally</option>
+									<option name="" <?php if($this->_options[imageSharer][position] == '') echo 'selected';?>>Vertically</option>
+								</select>
+								</label>
+								<label>
+								<select id="imageSharer_design_form" onchange="imageSharerPreview();" name="imageSharer[design][form]">
+									<option value="" <?php if($this->_options[imageSharer][design][form] == '') echo 'selected';?>>Square</option>
+									<option value="circle" <?php if($this->_options[imageSharer][design][form] == 'circle') echo 'selected';?>>Circle</option>
+									<option value="rounded" <?php if($this->_options[imageSharer][design][form] == 'rounded') echo 'selected';?>>Rounded</option>
+								</select>
+								</label>
+								<label>
+								<select id="imageSharer_design_size" onchange="imageSharerPreview();" name="imageSharer[design][size]">
+									<option value="x20" <?php if($this->_options[imageSharer][design][size] == 'x20') echo 'selected';?>>Size S</option>
+									<option value="x30" <?php if($this->_options[imageSharer][design][size] == 'x30') echo 'selected';?>>Size M</option>
+									<option value="x50" <?php if($this->_options[imageSharer][design][size] == 'x50') echo 'selected';?>>Size L</option>
+									<option value="x70" <?php if($this->_options[imageSharer][design][size] == 'x70') echo 'selected';?>>Size XL</option>
+								</select>
+								</label>
+								<label>
+								<select id="imageSharer_design_color" onchange="imageSharerPreview();" name="imageSharer[design][color]">
+									<option value="c4" <?php if($this->_options[imageSharer][design][color] == 'c4') echo 'selected';?>>Color</option>
+									<option value="c1" <?php if($this->_options[imageSharer][design][color] == 'c1') echo 'selected';?>>Color light</option>
+									<option value="c2" <?php if($this->_options[imageSharer][design][color] == 'c2') echo 'selected';?>>Color volume</option>
+									<option value="c3" <?php if($this->_options[imageSharer][design][color] == 'c3') echo 'selected';?>>Color dark</option>
+									<option value="c5" <?php if($this->_options[imageSharer][design][color] == 'c5') echo 'selected';?>>Black</option>
+									<option value="c6" <?php if($this->_options[imageSharer][design][color] == 'c6') echo 'selected';?>>Black volume</option>
+									<option value="c7" <?php if($this->_options[imageSharer][design][color] == 'c7') echo 'selected';?>>White volume</option>
+									<option value="c8" <?php if($this->_options[imageSharer][design][color] == 'c8') echo 'selected';?>>White</option>
+									<option value="c9" <?php if($this->_options[sharingSideBar][design][color] == 'c9') echo 'selected';?>>Bordered - color</option>
+									<option value="c10" <?php if($this->_options[sharingSideBar][design][color] == 'c10') echo 'selected';?>>Bordered - black</option>
+									<option value="c11" <?php if($this->_options[sharingSideBar][design][color] == 'c11') echo 'selected';?>>Lightest</option>
+								</select>
+								</label>
+								<h3>Shadow</h3>
+								<label>
+								<select id="imageSharer_design_shadow" onchange="imageSharerPreview();" name="imageSharer[design][shadow]">
+								<option value="sh1" <?php if($this->_options[imageSharer][design][shadow] == 'sh1') echo 'selected';?>>Shadow1</option>
+								<option value="sh2" <?php if($this->_options[imageSharer][design][shadow] == 'sh2') echo 'selected';?>>Shadow2</option>
+								<option value="sh3" <?php if($this->_options[imageSharer][design][shadow] == 'sh3') echo 'selected';?>>Shadow3</option>
+								<option value="sh4" <?php if($this->_options[imageSharer][design][shadow] == 'sh4') echo 'selected';?>>Shadow4</option>
+								<option value="sh5" <?php if($this->_options[imageSharer][design][shadow] == 'sh5') echo 'selected';?>>Shadow5</option>
+								<option value="sh6" <?php if($this->_options[imageSharer][design][shadow] == 'sh6') echo 'selected';?>>Shadow6</option>
+							</select>
+								</label>
+								
+							</div>
+						</div>
+						<div class="settings thankyou">
+							<div class="popup selected">
+								<h3>POPUP</h3>
+								<label>
+								<select id="thankPopup_background" onchange="thankPopupPreview();" name="thankPopup[background]">
+									<option value="bg_white" <?php if($this->_options[thankPopup][background] == 'bg_white') echo 'selected';?>>Background - White</option>
+									<option value="bg_white_lt" <?php if($this->_options[thankPopup][background] == 'bg_white_lt') echo 'selected';?>>Background - White Lite</option>
+									<option value="bg_iceblue" <?php if($this->_options[thankPopup][background] == 'bg_iceblue') echo 'selected';?>>Background - Iceblue</option>
+									<option value="bg_iceblue_lt" <?php if($this->_options[thankPopup][background] == 'bg_iceblue_lt') echo 'selected';?>>Background - Iceblue Lite</option>
+									<option value="bg_beige" <?php if($this->_options[thankPopup][background] == 'bg_beige') echo 'selected';?>>Background - Beige</option>
+									<option value="bg_beige_lt" <?php if($this->_options[thankPopup][background] == 'bg_beige_lt') echo 'selected';?>>Background - Beige Lite</option>
+									<option value="bg_lilac" <?php if($this->_options[thankPopup][background] == 'bg_lilac') echo 'selected';?>>Background - Lilac</option>
+									<option value="bg_lilac_lt" <?php if($this->_options[thankPopup][background] == 'bg_lilac_lt') echo 'selected';?>>Background - Lilac Lite</option>
+									<option value="bg_wormwood" <?php if($this->_options[thankPopup][background] == 'bg_wormwood') echo 'selected';?>>Background - Wormwood</option>
+									<option value="bg_wormwood_lt" <?php if($this->_options[thankPopup][background] == 'bg_wormwood_lt') echo 'selected';?>>Background - Wormwood Lite</option>
+									<option value="bg_yellow" <?php if($this->_options[thankPopup][background] == 'bg_yellow') echo 'selected';?>>Background - Yellow</option>
+									<option value="bg_yellow_lt" <?php if($this->_options[thankPopup][background] == 'bg_yellow_lt') echo 'selected';?>>Background - Yellow Lite</option>
+									<option value="bg_grey" <?php if($this->_options[thankPopup][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
+									<option value="bg_grey_lt" <?php if($this->_options[thankPopup][background] == 'bg_grey_lt') echo 'selected';?>>Background - Grey Lite</option>
+									<option value="bg_red" <?php if($this->_options[thankPopup][background] == 'bg_red') echo 'selected';?>>Background - Red</option>
+									<option value="bg_red_lt" <?php if($this->_options[thankPopup][background] == 'bg_red_lt') echo 'selected';?>>Background - Red Lite</option>
+									<option value="bg_skyblue" <?php if($this->_options[thankPopup][background] == 'bg_skyblue') echo 'selected';?>>Background - Skyblue</option>
+									<option value="bg_skyblue_lt" <?php if($this->_options[thankPopup][background] == 'bg_skyblue_lt') echo 'selected';?>>Background - Skyblue Lite</option>
+									<option value="bg_blue" <?php if($this->_options[thankPopup][background] == 'bg_blue') echo 'selected';?>>Background - Blue</option>
+									<option value="bg_blue_lt" <?php if($this->_options[thankPopup][background] == 'bg_blue_lt') echo 'selected';?>>Background - Blue Lite</option>
+									<option value="bg_green" <?php if($this->_options[thankPopup][background] == 'bg_green') echo 'selected';?>>Background - Green</option>
+									<option value="bg_green_lt" <?php if($this->_options[thankPopup][background] == 'bg_green_lt') echo 'selected';?>>Background - Green Lite</option>
+									<option value="bg_black" <?php if($this->_options[thankPopup][background] == 'bg_black') echo 'selected';?>>Background - Black</option>
+									<option value="bg_black_lt" <?php if($this->_options[thankPopup][background] == 'bg_black_lt') echo 'selected';?>>Background - Black Lite</option>
+								</select>
+								</label>
+								
+								<label>
+								<select id="thankPopup_button_color" onchange="thankPopupPreview();" name="thankPopup[button_color]">
+								    <option value="btn_lightblue" <?php if($this->_options[thankPopup][button_color] == 'btn_lightblue') echo 'selected';?>>Button - Lightblue</option>
+									<option value="btn_lightblue invert" <?php if($this->_options[thankPopup][button_color] == 'btn_lightblue invert' || $this->_options[thankPopup][button_color] == '') echo 'selected';?>>Button - Lightblue Transparent</option>
+									<option value="btn_blue" <?php if($this->_options[thankPopup][button_color] == 'btn_blue') echo 'selected';?>>Button - Blue</option>
+									<option value="btn_blue invert" <?php if($this->_options[thankPopup][button_color] == 'btn_blue invert') echo 'selected';?>>Button - Blue Transparent</option>
+									<option value="btn_black" <?php if($this->_options[thankPopup][button_color] == 'btn_black') echo 'selected';?>>Button - Black</option>
+									<option value="btn_black invert" <?php if($this->_options[thankPopup][button_color] == 'btn_black invert') echo 'selected';?>>Button - Black Transparent</option>
+									<option value="btn_green" <?php if($this->_options[thankPopup][button_color] == 'btn_green') echo 'selected';?>>Button - Green</option>
+									<option value="btn_green invert" <?php if($this->_options[thankPopup][button_color] == 'btn_green invert') echo 'selected';?>>Button - Green Transparent</option>
+									<option value="btn_violet" <?php if($this->_options[thankPopup][button_color] == 'btn_violet') echo 'selected';?>>Button - Violet</option>
+									<option value="btn_violet invert" <?php if($this->_options[thankPopup][button_color] == 'btn_violet invert') echo 'selected';?>>Button - Violet Transparent</option>
+									<option value="btn_orange" <?php if($this->_options[thankPopup][button_color] == 'btn_orange') echo 'selected';?>>Button - Orange</option>
+									<option value="btn_orange invert" <?php if($this->_options[thankPopup][button_color] == 'btn_orange invert') echo 'selected';?>>Button - Orange Transparent</option>
+									<option value="btn_red" <?php if($this->_options[thankPopup][button_color] == 'btn_red') echo 'selected';?>>Button - Red</option>
+									<option value="btn_red invert" <?php if($this->_options[thankPopup][button_color] == 'btn_red invert') echo 'selected';?>>Button - Red Transparent</option>
+									<option value="btn_lilac" <?php if($this->_options[thankPopup][button_color] == 'btn_lilac') echo 'selected';?>>Button - Lilac</option>
+									<option value="btn_lilac invert" <?php if($this->_options[thankPopup][button_color] == 'btn_lilac invert') echo 'selected';?>>Button - Lilac Transparent</option>
+								</select>
+								</label>
+								
+								<label>
+									<select id="thankPopup_img" class="vibor" name="thankPopup[img]" onchange="thankPopupPreview();changePopupImg(this.value, 'thankPopupCustomFotoBlock');">
+										<option value="img_01.png" <?php if($this->_options[thankPopup][img] == 'img_01.png') echo 'selected';?>>Question</option>
+										<option value="img_02.png" <?php if($this->_options[thankPopup][img] == 'img_02.png') echo 'selected';?>>Attention</option>
+										<option value="img_03.png" <?php if($this->_options[thankPopup][img] == 'img_03.png') echo 'selected';?>>Info</option>
+										<option value="img_04.png" <?php if($this->_options[thankPopup][img] == 'img_04.png') echo 'selected';?>>Knowledge</option>
+										<option value="img_05.png" <?php if($this->_options[thankPopup][img] == 'img_05.png') echo 'selected';?>>Idea</option>
+										<option value="img_06.png" <?php if($this->_options[thankPopup][img] == 'img_06.png') echo 'selected';?>>Talk</option>
+										<option value="img_07.png" <?php if($this->_options[thankPopup][img] == 'img_07.png') echo 'selected';?>>News</option>
+										<option value="img_08.png" <?php if($this->_options[thankPopup][img] == 'img_08.png') echo 'selected';?>>Megaphone</option>
+										<option value="img_09.png" <?php if($this->_options[thankPopup][img] == 'img_09.png') echo 'selected';?>>Gift</option>
+										<option value="img_10.png" <?php if($this->_options[thankPopup][img] == 'img_10.png') echo 'selected';?>>Success</option>
+										<option value="custom" <?php if($this->_options[thankPopup][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
+									</select>
+								</label>
+								<label class="custom_i" id="thankPopupCustomFotoBlock"><p>Link</p>
+									<input type="text" name="thankPopup[imgUrl]" onchange="thankPopupPreview();" style="margin-top: 10px;" id="thankPopupCustomFotoSrc" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[thankPopup][imgUrl])?>">
+								</label>
+								<script>
+									changePopupImg('<?php echo $this->_options[thankPopup][img];?>', 'thankPopupCustomFotoBlock');
+								</script>
+								<label>
+								<select name="thankPopup[typeWindow]" id="thankPopup_typeWindow" onchange="thankPopupPreview();">
+									<option value="pq_large" <?php if($this->_options[thankPopup][typeWindow] == 'pq_large' || $this->_options[thankPopup][typeWindow] == '') echo 'selected';?>>Size L</option>
+									<option value="pq_medium" <?php if($this->_options[thankPopup][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
+									<option value="pq_mini" <?php if($this->_options[thankPopup][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
+								</select>
+								</label>
+								<h3>Animation</h3>
+								<label>
+								<select name="thankPopup[animation]" id="thankPopup_animation" onchange="thankPopupPreview();">
+									<option value="bounceInDown" <?php if($this->_options[thankPopup][animation] == 'bounceInDown') echo 'selected';?>>Bounce</option>
+									<option value="fade" <?php if($this->_options[thankPopup][animation] == 'fade' || $this->_options[thankPopup][animation] == '') echo 'selected';?>>Fade In</option>
+								</select>
+								</label>
+								
+								<h3>Overlay</h3>
+								<label>
+								<select name="thankPopup[overlay]" id="thankPopup_overlay" onchange="thankPopupPreview();">
+								    <option value="over_grey" <?php if($this->_options[thankPopup][overlay] == 'over_grey') echo 'selected';?>>Color overlay - Grey</option>
+									<option value="over_white" <?php if($this->_options[thankPopup][overlay] == 'over_white' || $this->_options[thankPopup][overlay] == '') echo 'selected';?>>Color overlay - White</option>
+									<option value="over_yellow" <?php if($this->_options[thankPopup][overlay] == 'over_yellow') echo 'selected';?>>Color overlay - Yellow</option>
+									<option value="over_wormwood" <?php if($this->_options[thankPopup][overlay] == 'over_wormwood') echo 'selected';?>>Color overlay - Wormwood</option>
+									<option value="over_blue" <?php if($this->_options[thankPopup][overlay] == 'over_blue') echo 'selected';?>>Color overlay - Blue</option>
+									<option value="over_green" <?php if($this->_options[thankPopup][overlay] == 'over_green') echo 'selected';?>>Color overlay - Green</option>
+									<option value="over_beige" <?php if($this->_options[thankPopup][overlay] == 'over_beige') echo 'selected';?>>Color overlay - Beige</option>
+									<option value="over_red" <?php if($this->_options[thankPopup][overlay] == 'over_red') echo 'selected';?>>Color overlay - Red</option>
+									<option value="over_iceblue" <?php if($this->_options[thankPopup][overlay] == 'over_iceblue') echo 'selected';?>>Color overlay - Iceblue</option>
+									<option value="over_black" <?php if($this->_options[thankPopup][overlay] == 'over_black') echo 'selected';?>>Color overlay - Black</option>
+									<option value="over_skyblue" <?php if($this->_options[thankPopup][overlay] == 'over_skyblue') echo 'selected';?>>Color overlay - Skyblue</option>
+									<option value="over_lilac" <?php if($this->_options[thankPopup][overlay] == 'over_lilac') echo 'selected';?>>Color overlay - Lilac</option>
+									<option value="over_grey_lt" <?php if($this->_options[thankPopup][overlay] == 'over_grey_lt') echo 'selected';?>>Color overlay - Grey - Light</option>
+									<option value="over_white_lt" <?php if($this->_options[thankPopup][overlay] == 'over_white_lt') echo 'selected';?>>Color overlay - White - Light</option>
+									<option value="over_yellow_lt" <?php if($this->_options[thankPopup][overlay] == 'over_yellow_lt') echo 'selected';?>>Color overlay - Yellow - Light</option>
+									<option value="over_wormwood_lt" <?php if($this->_options[thankPopup][overlay] == 'over_wormwood_lt') echo 'selected';?>>Color overlay - Wormwood - Light</option>
+									<option value="over_blue_lt" <?php if($this->_options[thankPopup][overlay] == 'over_blue_lt') echo 'selected';?>>Color overlay - Blue - Light</option>
+									<option value="over_green_lt" <?php if($this->_options[thankPopup][overlay] == 'over_green_lt') echo 'selected';?>>Color overlay - Green - Light</option>
+									<option value="over_beige_lt" <?php if($this->_options[thankPopup][overlay] == 'over_beige_lt') echo 'selected';?>>Color overlay - Beige - Light</option>
+									<option value="over_red_lt" <?php if($this->_options[thankPopup][overlay] == 'over_red_lt') echo 'selected';?>>Color overlay - Red - Light</option>
+									<option value="over_iceblue_lt" <?php if($this->_options[thankPopup][overlay] == 'over_iceblue_lt') echo 'selected';?>>Color overlay - Iceblue - Light</option>
+									<option value="over_black_lt" <?php if($this->_options[thankPopup][overlay] == 'over_black_lt') echo 'selected';?>>Color overlay - Black - Light</option>
+									<option value="over_skyblue_lt" <?php if($this->_options[thankPopup][overlay] == 'over_skyblue_lt') echo 'selected';?>>Color overlay - Skyblue - Light</option>
+									<option value="over_lilac_lt" <?php if($this->_options[thankPopup][overlay] == 'over_lilac_lt') echo 'selected';?>>Color overlay - Lilac - Light</option>
+									<option value="over_grey_solid" <?php if($this->_options[thankPopup][overlay] == 'over_grey_solid') echo 'selected';?>>Color overlay - Grey - Solid</option>
+									<option value="over_white_solid" <?php if($this->_options[thankPopup][overlay] == 'over_white_solid') echo 'selected';?>>Color overlay - White - Solid</option>
+									<option value="over_yellow_solid" <?php if($this->_options[thankPopup][overlay] == 'over_yellow_solid') echo 'selected';?>>Color overlay - Yellow - Solid</option>
+									<option value="over_wormwood_solid" <?php if($this->_options[thankPopup][overlay] == 'over_wormwood_solid') echo 'selected';?>>Color overlay - Wormwood - Solid</option>
+									<option value="over_blue_solid" <?php if($this->_options[thankPopup][overlay] == 'over_blue_solid') echo 'selected';?>>Color overlay - Blue - Solid</option>
+									<option value="over_green_solid" <?php if($this->_options[thankPopup][overlay] == 'over_green_solid') echo 'selected';?>>Color overlay - Green - Solid</option>
+									<option value="over_beige_solid" <?php if($this->_options[thankPopup][overlay] == 'over_beige_solid') echo 'selected';?>>Color overlay - Beige - Solid</option>
+									<option value="over_red_solid" <?php if($this->_options[thankPopup][overlay] == 'over_red_solid') echo 'selected';?>>Color overlay - Red - Solid</option>
+									<option value="over_iceblue_solid" <?php if($this->_options[thankPopup][overlay] == 'over_iceblue_solid') echo 'selected';?>>Color overlay - Iceblue - Solid</option>
+									<option value="over_black_solid" <?php if($this->_options[thankPopup][overlay] == 'over_black_solid') echo 'selected';?>>Color overlay - Black - Solid</option>
+									<option value="over_skyblue_solid" <?php if($this->_options[thankPopup][overlay] == 'over_skyblue_solid') echo 'selected';?>>Color overlay - Skyblue - Solid</option>
+									<option value="over_lilac_solid" <?php if($this->_options[thankPopup][overlay] == 'over_lilac_solid') echo 'selected';?>>Color overlay - Lilac - Solid</option>
+							</select>
+								</label>
+								</div>
+						</div>
 						
-			
-<div class="pq-container-fluid" id="free_profitquery" style="padding: 90px 0; margin-top: 10px;">
-		<div class="pq-sm-10" style="overflow: hidden; padding: 20px; margin: 30px 0 155px; background: white;">
-		<h5>For developer</h5>
-			<p>You can bind any enabled profitquery popup for any event on your website.This is wonderfull opportunity to make your website smarter. You can use Thank popup , Share popup, Follow us even Subscribe popup anywhere you want</p>
-		<a href="http://profitquery.com/developer.html" target="_blank"><input type="button" class="btn_m_white" value="Learn More"></a>
-		</div>
-
-
-	<div class="pq-sm-12">
-		<h4>More Tools from Profitquery</h4>
-		<div class="pq-sm-12 pq-items">
-		<div style="overflow: hidden; width: 100%; max-width: 740px; margin: 0 auto;">
-			<a href="http://profitquery.com/referral_system.html" target="_blank"><div class="pq-sm-6">
-					<img src="<?php echo plugins_url('images/referral_system.png', __FILE__);?>" />
-					<h5>Refferal System</h3>
-					<a href="http://profitquery.com/referral_system.html" target="_blank"><input type="button" class="btn_m_red" style="width: initial; margin: 12px auto 8px;" value="Learn more"></a>
-			</div></a>
-			<a href="http://profitquery.com/social_login.html" target="_blank"><div class="pq-sm-6" id="odd">
-					<img src="<?php echo plugins_url('images/social_login.png', __FILE__);?>" />
-					<h5>Social Login</h5>
-					<a href="http://profitquery.com/social_login.html" target="_blank"><input type="button" class="btn_m_red" style="width: initial; margin: 12px auto 8px;" value="Learn more"></a>
-			</div></a>
-			<a href="http://profitquery.com/trigger_mail.html" target="_blank"><div class="pq-sm-6">
-					<img src="<?php echo plugins_url('images/trigger_mail.png', __FILE__);?>" />
-					<h5>Trigger Mail</h3>
-					<a href="http://profitquery.com/trigger_mail.html" target="_blank"><input type="button" class="btn_m_red" style="width: initial; margin: 12px auto 8px;" value="Learn more"></a>
-			</div></a>
-			<a href="http://profitquery.com/product_discount.html" target="_blank"><div class="pq-sm-6" id="odd">
-					<img src="<?php echo plugins_url('images/product_discount.png', __FILE__);?>" />
-					<h5>Product Discount</h5>
-					<a href="http://profitquery.com/product_discount.html" target="_blank"><input type="button" class="btn_m_red" style="width: initial; margin: 12px auto 8px;" value="Learn more"></a>
-			</div></a>
-		</div>	
-		</div>
-		<!--div class="pq-sm-10" style="overflow: hidden; padding: 20px; margin: 30px 0 25px; background: white;">
-			<img src="<?php echo plugins_url('images/ecom.png', __FILE__);?>" />
-			
-			<h5>Free Profitquery Widgets for Ecommerce</h5>
-			<a href="http://profitquery.com/ecom.html" target="_blank"><input type="button" class="btn_m_white" value="Learn more"></a>
-		</div-->
-		<!--div class="pq-sm-10" style="overflow: hidden; padding: 20px; margin: 70px 0 20px; background: #f8dde3;">
-			<h5 style="color: white; background: #008AFF; width: 100px; margin: 0 auto; line-height: 35px; font-size: 26px;">PRO</h5>
-			<h5>Get Profitquery Pro version</h5>
-			<a href="http://profitquery.com/promo.html" target="_blank"><input type="button" class="btn_m_red" style="width: initial; margin: 20px auto 8px;" value="Learn more"></a>
-		</div-->
-		
-		
-		<div class="pq-sm-10" style="overflow: hidden; padding: 20px; margin: 30px 0 25px; background: white;">
-				
-			<h5>Write your article. Promote your blog.</h5>
-			<p>Write your article. Promote your blog.You can write any article about Profitquery for your customers, friends and <a href="http://profitquery.com/blog.html#send" target="_blank">send </a> for us your link or content. We paste your work on our <a href="http://profitquery.com/blog.html" target="_blank">blog</a>. Use your native language.</p>
-		<a href="http://profitquery.com/blog.html#send" target="_blank"><input type="button" class="btn_m_white" value="Send your article"></a>
-		
-		
-		</div>
-		
+						
+					</div>
+						<div class="pq_button_group button_group_li4">
+							<input type="button" value="prev" class="ToLi3">
+							<input type="button" value="Next" class="ToLi5">
+							<br><input type="submit" value="Save and Activate" class="share_submit">
+							<input type="submit" value="Save and Activate" class="follow_submit">
+							<input type="submit" value="Save and Activate" class="contact_submit">
+							<input type="submit" value="Save and Activate" class="callme_submit">
+							<input type="submit" value="Save and Activate" class="exit_submit">
+							<input type="submit" value="Save and Activate" class="imagesharer_submit">
+							<input type="submit" value="Save and Activate" class="thankyou_submit">
+							<input type="submit" value="Save and Activate" class="marketing_submit">
+							<input type="submit" value="Save and Activate" class="collect_submit">
+						</div>
+					<div class="f_wrapper pq_li5">
+					
+						<div class="settings share selected">
+							<div class="sidebar selected">
+								
+								
+								<h2 class="pro_h1">PRO options</h2>
+								<h3>DISPLAY RULES</h3>
+								<label><p>Disable Main Page</p>
+									<select name="proOptions[sharingSideBar][disableMainPage]">
+										<option value="1" <?php if((int)$this->_options[proOptions][sharingSideBar][disableMainPage] == 1) echo 'selected';?>>Yes</option>
+										<option value="0" <?php if((int)$this->_options[proOptions][sharingSideBar][disableMainPage] == 0) echo 'selected';?>>No</option>
+									</select>
+								</label>								
+								<label><p>Disable Exept Url Mask</p>
+								<input type="text" name="proOptions[sharingSideBar][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][sharingSideBar][disableExeptPageMask][0]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[sharingSideBar][disableExeptPageMask][1]" value="<?php echo stripslashes($this->_options[proOptions][sharingSideBar][disableExeptPageMask][1]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[sharingSideBar][disableExeptPageMask][2]" value="<?php echo stripslashes($this->_options[proOptions][sharingSideBar][disableExeptPageMask][2]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[sharingSideBar][disableExeptPageMask][3]" value="<?php echo stripslashes($this->_options[proOptions][sharingSideBar][disableExeptPageMask][3]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[sharingSideBar][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][sharingSideBar][disableExeptPageMask][4]);?>">
+								</label>								
+								<h3>ANIMATION</h3>
+								<label>
+								<select name="proOptions[sharingSideBar][animation]" id="sharingSideBar_animation" onchange="sharingSideBarPreview();">
+									<option value="" <?php if($this->_options[proOptions][sharingSideBar][animation] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_a_bounceInLeft" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_bounceInLeft') echo 'selected';?>>Bounceinleft</option>
+									<option value="pq_pro_a_bounceInRight" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_bounceInRight') echo 'selected';?>>Bounceinright</option>
+									<option value="pq_pro_a_bounceInUp" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_bounceInUp') echo 'selected';?>>Bounceinup</option>									
+									<option value="pq_pro_a_fadeIn" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_fadeIn') echo 'selected';?>>Fadein</option>
+									<option value="pq_pro_a_fadeInDown" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_fadeInDown') echo 'selected';?>>Fadeindown</option>
+									<option value="pq_pro_a_fadeInDownBig" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_fadeInDownBig') echo 'selected';?>>Fadeindownbig</option>
+									<option value="pq_pro_a_fadeInLeft" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_fadeInLeft') echo 'selected';?>>Fadeinleft</option>
+									<option value="pq_pro_a_fadeInLeftBig" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_fadeInLeftBig') echo 'selected';?>>Fadeinleftbig</option>
+									<option value="pq_pro_a_fadeInRight" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_fadeInRight') echo 'selected';?>>Fadeinright</option>
+									<option value="pq_pro_a_fadeInRightBig" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_fadeInRightBig') echo 'selected';?>>Fadeinrightbig</option>
+									<option value="pq_pro_a_fadeInUp" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_fadeInUp') echo 'selected';?>>Fadeinup</option>
+									<option value="pq_pro_a_fadeInUpBig" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_fadeInUpBig') echo 'selected';?>>Fadeinupbig</option>
+									<option value="pq_pro_a_flip" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_flip') echo 'selected';?>>Flip</option>
+									<option value="pq_pro_a_flipInX" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_flipInX') echo 'selected';?>>Flipinx</option>
+									<option value="pq_pro_a_flipInY" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_flipInY') echo 'selected';?>>Flipiny</option>									
+									<option value="pq_pro_a_lightSpeedIn" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_lightSpeedIn') echo 'selected';?>>Lightspeedin</option>									
+									<option value="pq_pro_a_rotateIn" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_rotateIn') echo 'selected';?>>Rotatein</option>
+									<option value="pq_pro_a_rotateInDownLeft" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_rotateInDownLeft') echo 'selected';?>>Rotateindownleft</option>
+									<option value="pq_pro_a_rotateInDownRight" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_rotateInDownRight') echo 'selected';?>>Rotateindownright</option>
+									<option value="pq_pro_a_rotateInUpLeft" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_rotateInUpLeft') echo 'selected';?>>Rotateinupleft</option>
+									<option value="pq_pro_a_rotateInUpRight" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_rotateInUpRight') echo 'selected';?>>Rotateinupright</option>
+									<option value="pq_pro_a_rollIn" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_rollIn') echo 'selected';?>>Rollin</option>									
+									<option value="pq_pro_a_zoomIn" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_zoomIn') echo 'selected';?>>Zoomin</option>
+									<option value="pq_pro_a_zoomInDown" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_zoomInDown') echo 'selected';?>>Zoomindown</option>
+									<option value="pq_pro_a_zoomInLeft" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_zoomInLeft') echo 'selected';?>>Zoominleft</option>
+									<option value="pq_pro_a_zoomInRight" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_zoomInRight') echo 'selected';?>>Zoominright</option>
+									<option value="pq_pro_a_zoomInUp" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_zoomInUp') echo 'selected';?>>Zoominup</option>
+									<option value="pq_pro_a_slideInDown" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_slideInDown') echo 'selected';?>>Slideindown</option>
+									<option value="pq_pro_a_slideInLeft" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_slideInLeft') echo 'selected';?>>Slideinleft</option>
+									<option value="pq_pro_a_slideInRight" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_slideInRight') echo 'selected';?>>Slideinright</option>
+									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
+								</select>
+								</label>
+								<label><p>Hover</p>
+								<select name="proOptions[sharingSideBar][hover_animation]" id="sharingSideBar_hover_animation" onchange="sharingSideBarPreview();">
+									<option value="" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_ha_hvr_grow" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_grow') echo 'selected';?>>Grow</option>
+									<option value="pq_pro_ha_hvr_shrink" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_shrink') echo 'selected';?>>Shrink</option>
+									<option value="pq_pro_ha_hvr_pulse" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_pulse') echo 'selected';?>>Pulse</option>
+									<option value="pq_pro_ha_hvr_pulse_grow" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_pulse_grow') echo 'selected';?>>Pulse Grow</option>
+									<option value="pq_pro_ha_hvr_push" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_push') echo 'selected';?>>Push</option>
+									<option value="pq_pro_ha_hvr_pop" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_pop') echo 'selected';?>>Pop</option>
+									<option value="pq_pro_ha_hvr_bounce_in" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_bounce_in') echo 'selected';?>>Bounce In</option>
+									<option value="pq_pro_ha_hvr_bounce_out" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_bounce_out') echo 'selected';?>>Bounce Out</option>
+									<option value="pq_pro_ha_hvr_rotate" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_rotate') echo 'selected';?>>Rotate</option>
+									<option value="pq_pro_ha_hvr_grow_rotate" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_grow_rotate') echo 'selected';?>>Grow Rotate</option>
+									<option value="pq_pro_ha_hvr_sink" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_sink') echo 'selected';?>>Sink</option>
+									<option value="pq_pro_ha_hvr_bob" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_bob') echo 'selected';?>>Bob</option>
+									<option value="pq_pro_ha_hvr_hang" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_hang') echo 'selected';?>>Hang</option>
+									<option value="pq_pro_ha_hvr_skew" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_skew') echo 'selected';?>>Skew</option>
+									<option value="pq_pro_ha_hvr_skew_forward" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_skew_forward') echo 'selected';?>>Skew Forward</option>
+									<option value="pq_pro_ha_hvr_skew_backward" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_skew_backward') echo 'selected';?>>Skew Backward</option>
+									<option value="pq_pro_ha_hvr_wobble_vertical" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_wobble_vertical') echo 'selected';?>>Wobble Vertical</option>
+									<option value="pq_pro_ha_hvr_wobble_horizontal" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_wobble_horizontal') echo 'selected';?>>Wobble Horizontal</option>
+									<option value="pq_pro_ha_hvr_wobble_to_bottom_right" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_wobble_to_bottom_right') echo 'selected';?>>Wobble B&amp;R</option>
+									<option value="pq_pro_ha_hvr_wobble_top" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_wobble_top') echo 'selected';?>>Wobble Top</option>
+									<option value="pq_pro_ha_hvr_wobble_bottom" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_wobble_bottom') echo 'selected';?>>Wobble Bottom</option>
+									<option value="pq_pro_ha_hvr_wobble_skew" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_wobble_skew') echo 'selected';?>>Wobble Skew</option>
+									<option value="pq_pro_ha_hvr_buzz" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_buzz') echo 'selected';?>>Buzz</option>
+									<option value="pq_pro_ha_hvr_buzz_out" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_buzz_out') echo 'selected';?>>Buzz Out</option>
+									<option value="pq_pro_ha_hvr_border_fade" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_border_fade') echo 'selected';?>>Bdr Fade</option>
+									<option value="pq_pro_ha_hvr_hollow" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_hollow') echo 'selected';?>>Hollow</option>
+									<option value="pq_pro_ha_hvr_trim" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_trim') echo 'selected';?>>Trim</option>
+									<option value="pq_pro_ha_hvr_ripple_out" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_ripple_out') echo 'selected';?>>Ripple Out</option>
+									<option value="pq_pro_ha_hvr_ripple_in" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_ripple_in') echo 'selected';?>>Ripple In</option>
+									<option value="pq_pro_ha_hvr_glow" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_glow') echo 'selected';?>>Glow</option>
+									<option value="pq_pro_ha_hvr_shadow" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_shadow') echo 'selected';?>>Shadow</option>
+									<option value="pq_pro_ha_hvr_grow_shadow" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_grow_shadow') echo 'selected';?>>Grow Shadow</option>
+									<option value="pq_pro_ha_hvr_float_shadow" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_float_shadow') echo 'selected';?>>Float Shadow</option>
+								</select>
+								</label>
+								<!--h3>WHITELABEL</h3>
+								<label>
+								<select name="proOptions[sharingSideBar][whitelabel]">
+									<option value="1" <?php if((int)$this->_options[proOptions][sharingSideBar][whitelabel] == 1) echo 'selected';?>>Enable</option>
+									<option value="0" <?php if((int)$this->_options[proOptions][sharingSideBar][whitelabel] == 0) echo 'selected';?>>Disabled</option>
+								</select>
+								</label-->
+							</div>
+						</div>
+						<div class="settings imagesharer">
+							<div class="onmedia selected">
+								
+								
+								<h2 class="pro_h1">PRO options</h2>
+								<h3>DISPLAY RULES</h3>
+								<label><p>Disable Main Page</p>
+									<select name="proOptions[imageSharer][disableMainPage]">
+										<option value="1" <?php if((int)$this->_options[proOptions][imageSharer][disableMainPage] == 1) echo 'selected';?>>Yes</option>
+										<option value="0" <?php if((int)$this->_options[proOptions][imageSharer][disableMainPage] == 0) echo 'selected';?>>No</option>
+									</select>
+								</label>								
+								<label><p>Disable Exept Url Mask</p>
+								<input type="text" name="proOptions[imageSharer][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptPageMask][0]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[imageSharer][disableExeptPageMask][1]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptPageMask][1]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[imageSharer][disableExeptPageMask][2]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptPageMask][2]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[imageSharer][disableExeptPageMask][3]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptPageMask][3]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[imageSharer][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptPageMask][4]);?>">
+								</label>								
+								<h3>SHARE IMAGE</h3>
+								<label>
+									<img class="picture" src="<?php echo plugins_url('i/capture.png', __FILE__);?>" />
+									<div><p>&#8597;</p> 
+										<label>
+											<select name="proOptions[imageSharer][minHeight]" >
+												<option value="0" selected>0 px and more</option>
+												<option value="100" <?php if((int)$this->_options[proOptions][imageSharer][minHeight] == 100) echo 'selected';?>>100 px and more</option>
+												<option value="200" <?php if((int)$this->_options[proOptions][imageSharer][minHeight] == 200) echo 'selected';?>>200 px and more</option>
+												<option value="300" <?php if((int)$this->_options[proOptions][imageSharer][minHeight] == 300) echo 'selected';?>>300 px and more</option>
+												<option value="400" <?php if((int)$this->_options[proOptions][imageSharer][minHeight] == 400) echo 'selected';?>>400 px and more</option>
+												<option value="500" <?php if((int)$this->_options[proOptions][imageSharer][minHeight] == 500) echo 'selected';?>>500 px and more</option>
+												<option value="600" <?php if((int)$this->_options[proOptions][imageSharer][minHeight] == 600) echo 'selected';?>>600 px and more</option>
+											</select>
+										</label>
+										<p>&#8597;</p></div>
+								</label>
+								<label><p>Disable All Exept Image Extensions</p>
+									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][0]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][0]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][1]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][1]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][2]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][2]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][3]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][3]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][4]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][4]);?>">
+								</label>
+								<h3>ANIMATION</h3>								
+								<label><p>Hover</p>
+								<select name="proOptions[imageSharer][hover_animation]" id="imageSharer_hover_animation" onchange="imageSharerPreview()">
+									<option value="" <?php if($this->_options[proOptions][imageSharer][hover_animation] == '') echo 'selected';?>>Default</option-->
+									<option value="pq_pro_ha_hvr_grow" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_grow') echo 'selected';?>>Grow</option>
+									<option value="pq_pro_ha_hvr_shrink" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_shrink') echo 'selected';?>>Shrink</option>
+									<option value="pq_pro_ha_hvr_pulse" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_pulse') echo 'selected';?>>Pulse</option>
+									<option value="pq_pro_ha_hvr_pulse_grow" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_pulse_grow') echo 'selected';?>>Pulse Grow</option>
+									<option value="pq_pro_ha_hvr_push" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_push') echo 'selected';?>>Push</option>
+									<option value="pq_pro_ha_hvr_pop" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_pop') echo 'selected';?>>Pop</option>
+									<option value="pq_pro_ha_hvr_bounce_in" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_bounce_in') echo 'selected';?>>Bounce In</option>
+									<option value="pq_pro_ha_hvr_bounce_out" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_bounce_out') echo 'selected';?>>Bounce Out</option>
+									<option value="pq_pro_ha_hvr_rotate" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_rotate') echo 'selected';?>>Rotate</option>
+									<option value="pq_pro_ha_hvr_grow_rotate" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_grow_rotate') echo 'selected';?>>Grow Rotate</option>
+									<option value="pq_pro_ha_hvr_sink" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_sink') echo 'selected';?>>Sink</option>
+									<option value="pq_pro_ha_hvr_bob" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_bob') echo 'selected';?>>Bob</option>
+									<option value="pq_pro_ha_hvr_hang" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_hang') echo 'selected';?>>Hang</option>
+									<option value="pq_pro_ha_hvr_skew" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_skew') echo 'selected';?>>Skew</option>
+									<option value="pq_pro_ha_hvr_skew_forward" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_skew_forward') echo 'selected';?>>Skew Forward</option>
+									<option value="pq_pro_ha_hvr_skew_backward" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_skew_backward') echo 'selected';?>>Skew Backward</option>
+									<option value="pq_pro_ha_hvr_wobble_vertical" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_wobble_vertical') echo 'selected';?>>Wobble Vertical</option>
+									<option value="pq_pro_ha_hvr_wobble_horizontal" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_wobble_horizontal') echo 'selected';?>>Wobble Horizontal</option>
+									<option value="pq_pro_ha_hvr_wobble_to_bottom_right" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_wobble_to_bottom_right') echo 'selected';?>>Wobble B&amp;R</option>
+									<option value="pq_pro_ha_hvr_wobble_top" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_wobble_top') echo 'selected';?>>Wobble Top</option>
+									<option value="pq_pro_ha_hvr_wobble_bottom" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_wobble_bottom') echo 'selected';?>>Wobble Bottom</option>
+									<option value="pq_pro_ha_hvr_wobble_skew" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_wobble_skew') echo 'selected';?>>Wobble Skew</option>
+									<option value="pq_pro_ha_hvr_buzz" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_buzz') echo 'selected';?>>Buzz</option>
+									<option value="pq_pro_ha_hvr_buzz_out" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_buzz_out') echo 'selected';?>>Buzz Out</option>
+									<option value="pq_pro_ha_hvr_border_fade" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_border_fade') echo 'selected';?>>Bdr Fade</option>
+									<option value="pq_pro_ha_hvr_hollow" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_hollow') echo 'selected';?>>Hollow</option>
+									<option value="pq_pro_ha_hvr_trim" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_trim') echo 'selected';?>>Trim</option>
+									<option value="pq_pro_ha_hvr_ripple_out" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_ripple_out') echo 'selected';?>>Ripple Out</option>
+									<option value="pq_pro_ha_hvr_ripple_in" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_ripple_in') echo 'selected';?>>Ripple In</option>
+									<option value="pq_pro_ha_hvr_glow" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_glow') echo 'selected';?>>Glow</option>
+									<option value="pq_pro_ha_hvr_shadow" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_shadow') echo 'selected';?>>Shadow</option>
+									<option value="pq_pro_ha_hvr_grow_shadow" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_grow_shadow') echo 'selected';?>>Grow Shadow</option>
+									<option value="pq_pro_ha_hvr_float_shadow" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_float_shadow') echo 'selected';?>>Float Shadow</option-->
+								</select>
+								</label>
+								
+							</div>
+						</div>
+						<div class="settings marketing">
+							<div class="pq_bar selected">
+								
+								
+								<h2 class="pro_h1">PRO options</h2>
+								<h3>DISPLAY RULES</h3>
+								<label><p>Disable Main Page</p>
+									<select name="proOptions[subscribeBar][disableMainPage]">
+										<option value="1" <?php if((int)$this->_options[proOptions][subscribeBar][disableMainPage] == 1) echo 'selected';?>>Yes</option>
+										<option value="0" <?php if((int)$this->_options[proOptions][subscribeBar][disableMainPage] == 0) echo 'selected';?>>No</option>
+									</select>
+								</label>
+								<label><p>Disable Exept Url Mask</p>
+								<input type="text" name="proOptions[subscribeBar][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][subscribeBar][disableExeptPageMask][0]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[subscribeBar][disableExeptPageMask][1]" value="<?php echo stripslashes($this->_options[proOptions][subscribeBar][disableExeptPageMask][1]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[subscribeBar][disableExeptPageMask][2]" value="<?php echo stripslashes($this->_options[proOptions][subscribeBar][disableExeptPageMask][2]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[subscribeBar][disableExeptPageMask][3]" value="<?php echo stripslashes($this->_options[proOptions][subscribeBar][disableExeptPageMask][3]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[subscribeBar][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][subscribeBar][disableExeptPageMask][4]);?>">
+								</label>
+								<h3>Design</h3>
+								<label>
+								<select id="subscribeBar_pro_1" onchange="subscribeBarPreview();" name="proOptions[subscribeBar][font]">
+									<option value="pq_pro_arial" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
+									<option value="pq_pro_georgia" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_georgia') echo 'selected';?>>Text - Georgia</option>
+									<option value="pq_pro_helvetica" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_helvetica') echo 'selected';?>>Text - Helvetica</option>
+									<option value="pq_pro_courier" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_courier') echo 'selected';?>>Text - Courier New</option>
+									<option value="pq_pro_times" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_times') echo 'selected';?>>Text - Times New Roman</option>
+									<option value="pq_pro_verdana" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_verdana') echo 'selected';?>>Text - Verdana</option>
+									<option value="pq_pro_arial_black" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_arial_black') echo 'selected';?>>Text - Arial Black</option>
+									<option value="pq_pro_comic" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_comic') echo 'selected';?>>Text - Comic Sans MS</option>
+									<option value="pq_pro_impact" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_impact') echo 'selected';?>>Text - Impact</option>
+									<option value="pq_pro_trebuchet" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_trebuchet') echo 'selected';?>>Text - Trebuchet MS</option>
+								</select>
+								</label>
+								<label>
+								<select id="subscribeBar_pro_2" onchange="subscribeBarPreview();" name="proOptions[subscribeBar][shape]">
+									<option value="" <?php if($this->_options[proOptions][subscribeBar][shape] == '') echo 'selected';?>>Button Shape - Default</option>
+									<option value="pq_pro_br_sq" <?php if($this->_options[proOptions][subscribeBar][shape] == 'pq_pro_br_sq') echo 'selected';?>>Button Shape - Square</option>
+									<option value="pq_pro_br_cr" <?php if($this->_options[proOptions][subscribeBar][shape] == 'pq_pro_br_cr') echo 'selected';?>>Button Shape - Rounded</option>
+								</select>
+								</label>
+								
+								<label>
+									<select id="subscribeBar_pro_3" onchange="subscribeBarPreview();" name="proOptions[subscribeBar][b_c_color]">
+										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Cross color - White</option>
+										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Cross color - Iceblue</option>
+										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Cross color - Beige</option>
+										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Cross color - Lilac</option>
+										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Cross color - Wormwood</option>
+										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Cross color - Yellow</option>
+										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Cross color - Grey</option>
+										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Cross color - Red</option>
+										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Cross color - Skyblue</option>
+										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Cross color - Blue</option>
+										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Cross color - Green</option>
+										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
+									</select>
+								</label>
+								<h3>ANIMATION</h3>
+								<label>
+								<select id="subscribeBar_pro_animation" onchange="subscribeBarPreview();" name="proOptions[subscribeBar][animation]">
+									<option value="" <?php if($this->_options[proOptions][subscribeBar][animation] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_a_bounceInLeft" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_bounceInLeft') echo 'selected';?>>Bounceinleft</option>
+									<option value="pq_pro_a_bounceInRight" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_bounceInRight') echo 'selected';?>>Bounceinright</option>
+									<option value="pq_pro_a_bounceInUp" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_bounceInUp') echo 'selected';?>>Bounceinup</option>									
+									<option value="pq_pro_a_fadeIn" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_fadeIn') echo 'selected';?>>Fadein</option>
+									<option value="pq_pro_a_fadeInDown" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_fadeInDown') echo 'selected';?>>Fadeindown</option>
+									<option value="pq_pro_a_fadeInDownBig" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_fadeInDownBig') echo 'selected';?>>Fadeindownbig</option>
+									<option value="pq_pro_a_fadeInLeft" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_fadeInLeft') echo 'selected';?>>Fadeinleft</option>
+									<option value="pq_pro_a_fadeInLeftBig" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_fadeInLeftBig') echo 'selected';?>>Fadeinleftbig</option>
+									<option value="pq_pro_a_fadeInRight" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_fadeInRight') echo 'selected';?>>Fadeinright</option>
+									<option value="pq_pro_a_fadeInRightBig" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_fadeInRightBig') echo 'selected';?>>Fadeinrightbig</option>
+									<option value="pq_pro_a_fadeInUp" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_fadeInUp') echo 'selected';?>>Fadeinup</option>
+									<option value="pq_pro_a_fadeInUpBig" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_fadeInUpBig') echo 'selected';?>>Fadeinupbig</option>
+									<option value="pq_pro_a_flip" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_flip') echo 'selected';?>>Flip</option>
+									<option value="pq_pro_a_flipInX" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_flipInX') echo 'selected';?>>Flipinx</option>
+									<option value="pq_pro_a_flipInY" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_flipInY') echo 'selected';?>>Flipiny</option>									
+									<option value="pq_pro_a_lightSpeedIn" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_lightSpeedIn') echo 'selected';?>>Lightspeedin</option>									
+									<option value="pq_pro_a_rotateIn" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_rotateIn') echo 'selected';?>>Rotatein</option>
+									<option value="pq_pro_a_rotateInDownLeft" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_rotateInDownLeft') echo 'selected';?>>Rotateindownleft</option>
+									<option value="pq_pro_a_rotateInDownRight" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_rotateInDownRight') echo 'selected';?>>Rotateindownright</option>
+									<option value="pq_pro_a_rotateInUpLeft" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_rotateInUpLeft') echo 'selected';?>>Rotateinupleft</option>
+									<option value="pq_pro_a_rotateInUpRight" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_rotateInUpRight') echo 'selected';?>>Rotateinupright</option>
+									<option value="pq_pro_a_rollIn" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_rollIn') echo 'selected';?>>Rollin</option>									
+									<option value="pq_pro_a_zoomIn" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_zoomIn') echo 'selected';?>>Zoomin</option>
+									<option value="pq_pro_a_zoomInDown" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_zoomInDown') echo 'selected';?>>Zoomindown</option>
+									<option value="pq_pro_a_zoomInLeft" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_zoomInLeft') echo 'selected';?>>Zoominleft</option>
+									<option value="pq_pro_a_zoomInRight" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_zoomInRight') echo 'selected';?>>Zoominright</option>
+									<option value="pq_pro_a_zoomInUp" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_zoomInUp') echo 'selected';?>>Zoominup</option>
+									<option value="pq_pro_a_slideInDown" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_slideInDown') echo 'selected';?>>Slideindown</option>
+									<option value="pq_pro_a_slideInLeft" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_slideInLeft') echo 'selected';?>>Slideinleft</option>
+									<option value="pq_pro_a_slideInRight" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_slideInRight') echo 'selected';?>>Slideinright</option>
+									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][subscribeBar][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
+								</select>
+								</label>
+								
+								<!--h3>WHITELABEL</h3>
+								<label>
+								<select name="proOptions[subscribeBar][whitelabel]">
+									<option value="1" <?php if((int)$this->_options[proOptions][subscribeBar][whitelabel] == 1) echo 'selected';?>>Enable</option>
+									<option value="0" <?php if((int)$this->_options[proOptions][subscribeBar][whitelabel] == 0) echo 'selected';?>>Disabled</option>
+								</select>
+								</label-->
+							</div>
+						</div>
+						
+						<div class="settings exit">
+							<div class="popup selected">
+								
+								
+								<h2 class="pro_h1">PRO options</h2>
+								<h3>DISPLAY RULES</h3>
+								<label><p>Disable Main Page</p>
+									<select name="proOptions[subscribeExit][disableMainPage]">
+										<option value="1" <?php if((int)$this->_options[proOptions][subscribeExit][disableMainPage] == 1) echo 'selected';?>>Yes</option>
+										<option value="0" <?php if((int)$this->_options[proOptions][subscribeExit][disableMainPage] == 0) echo 'selected';?>>No</option>
+									</select>
+								</label>
+								<label><p>Disable Exept Url Mask</p>
+								<input type="text" name="proOptions[subscribeExit][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][subscribeExit][disableExeptPageMask][0]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[subscribeExit][disableExeptPageMask][1]" value="<?php echo stripslashes($this->_options[proOptions][subscribeExit][disableExeptPageMask][1]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[subscribeExit][disableExeptPageMask][2]" value="<?php echo stripslashes($this->_options[proOptions][subscribeExit][disableExeptPageMask][2]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[subscribeExit][disableExeptPageMask][3]" value="<?php echo stripslashes($this->_options[proOptions][subscribeExit][disableExeptPageMask][3]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[subscribeExit][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][subscribeExit][disableExeptPageMask][4]);?>">
+								</label>
+								<h3>Design</h3>
+								<label>
+								<select id="subscribeExit_pro_1" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][head_font]">
+									<option value="" <?php if($this->_options[proOptions][subscribeExit][head_font] == '') echo 'selected';?>>Heading and Button - PT Sans Narrow</option>
+									<option value="pq_pro_h_georgia" <?php if($this->_options[proOptions][subscribeExit][head_font] == 'pq_pro_h_georgia') echo 'selected';?>>Heading and Button - Georgia</option>
+									<option value="pq_pro_h_helvetica" <?php if($this->_options[proOptions][subscribeExit][head_font] == 'pq_pro_h_helvetica') echo 'selected';?>>Heading and Button - Helvetica</option>
+									<option value="pq_pro_h_courier" <?php if($this->_options[proOptions][subscribeExit][head_font] == 'pq_pro_h_courier') echo 'selected';?>>Heading and Button - Courier New</option>
+									<option value="pq_pro_h_times" <?php if($this->_options[proOptions][subscribeExit][head_font] == 'pq_pro_h_times') echo 'selected';?>>Heading and Button - Times New Roman</option>
+									<option value="pq_pro_h_verdana" <?php if($this->_options[proOptions][subscribeExit][head_font] == 'pq_pro_h_verdana') echo 'selected';?>>Heading and Button - Verdana</option>
+									<option value="pq_pro_h_arial_black" <?php if($this->_options[proOptions][subscribeExit][head_font] == 'pq_pro_h_arial_black') echo 'selected';?>>Heading and Button - Arial Black</option>
+									<option value="pq_pro_h_comic" <?php if($this->_options[proOptions][subscribeExit][head_font] == 'pq_pro_h_comic') echo 'selected';?>>Heading and Button - Comic Sans MS</option>
+									<option value="pq_pro_h_impact" <?php if($this->_options[proOptions][subscribeExit][head_font] == 'pq_pro_h_impact') echo 'selected';?>>Heading and Button - Impact</option>
+									<option value="pq_pro_h_trebuchet" <?php if($this->_options[proOptions][subscribeExit][head_font] == 'pq_pro_h_trebuchet') echo 'selected';?>>Heading and Button - Trebuchet MS</option>
+								</select>
+								</label>
+								<label>
+								<select id="subscribeExit_pro_2" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][head_size]">
+									<option value="" <?php if($this->_options[proOptions][subscribeExit][head_size] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_head_size16" <?php if($this->_options[proOptions][subscribeExit][head_size] == 'pq_pro_head_size16') echo 'selected';?>>Heading Size - 16</option>
+									<option value="pq_pro_head_size20" <?php if($this->_options[proOptions][subscribeExit][head_size] == 'pq_pro_head_size20') echo 'selected';?>>Heading Size - 20</option>
+									<option value="pq_pro_head_size24" <?php if($this->_options[proOptions][subscribeExit][head_size] == 'pq_pro_head_size24') echo 'selected';?>>Heading Size - 24</option>
+									<option value="pq_pro_head_size28" <?php if($this->_options[proOptions][subscribeExit][head_size] == 'pq_pro_head_size28') echo 'selected';?>>Heading Size - 28</option>
+									<option value="pq_pro_head_size36" <?php if($this->_options[proOptions][subscribeExit][head_size] == 'pq_pro_head_size36') echo 'selected';?>>Heading Size - 36</option>
+									<option value="pq_pro_head_size48" <?php if($this->_options[proOptions][subscribeExit][head_size] == 'pq_pro_head_size48') echo 'selected';?>>Heading Size - 48</option>
+								</select>
+								</label>
+								<label>
+									<select id="subscribeExit_pro_3" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][head_color]">
+										<option value="pq_pro_head_color_white" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_white') echo 'selected';?>>Heading color - White</option>
+										<option value="pq_pro_head_color_iceblue" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_iceblue') echo 'selected';?>>Heading color - Iceblue</option>
+										<option value="pq_pro_head_color_beige" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_beige') echo 'selected';?>>Heading color - Beige</option>
+										<option value="pq_pro_head_color_lilac" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_lilac') echo 'selected';?>>Heading color - Lilac</option>
+										<option value="pq_pro_head_color_wormwood" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_wormwood') echo 'selected';?>>Heading color - Wormwood</option>
+										<option value="pq_pro_head_color_yellow" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_yellow') echo 'selected';?>>Heading color - Yellow</option>
+										<option value="pq_pro_head_color_grey" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_grey') echo 'selected';?>>Heading color - Grey</option>
+										<option value="pq_pro_head_color_red" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_red') echo 'selected';?>>Heading color - Red</option>
+										<option value="pq_pro_head_color_skyblue" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_skyblue') echo 'selected';?>>Heading color - Skyblue</option>
+										<option value="pq_pro_head_color_blue" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_blue') echo 'selected';?>>Heading color - Blue</option>
+										<option value="pq_pro_head_color_green" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_green') echo 'selected';?>>Heading color - Green</option>
+										<option value="pq_pro_head_color_black" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_black') echo 'selected';?>>Heading color - Black</option>
+									</select>
+								</label>
+								<label>
+								<select id="subscribeExit_pro_4" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][font]">
+									<option value="pq_pro_arial" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
+									<option value="pq_pro_georgia" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_georgia') echo 'selected';?>>Text - Georgia</option>
+									<option value="pq_pro_helvetica" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_helvetica') echo 'selected';?>>Text - Helvetica</option>
+									<option value="pq_pro_courier" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_courier') echo 'selected';?>>Text - Courier New</option>
+									<option value="pq_pro_times" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_times') echo 'selected';?>>Text - Times New Roman</option>
+									<option value="pq_pro_verdana" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_verdana') echo 'selected';?>>Text - Verdana</option>
+									<option value="pq_pro_arial_black" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_arial_black') echo 'selected';?>>Text - Arial Black</option>
+									<option value="pq_pro_comic" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_comic') echo 'selected';?>>Text - Comic Sans MS</option>
+									<option value="pq_pro_impact" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_impact') echo 'selected';?>>Text - Impact</option>
+									<option value="pq_pro_trebuchet" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_trebuchet') echo 'selected';?>>Text - Trebuchet MS</option>
+								</select>
+								</label>
+								<label>
+								<select id="subscribeExit_pro_5" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][text_size]">
+									<option value="" <?php if($this->_options[proOptions][subscribeExit][text_size] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_text_size12" <?php if($this->_options[proOptions][subscribeExit][text_size] == 'pq_pro_text_size12') echo 'selected';?>>Text Size - 12</option>
+									<option value="pq_pro_text_size16" <?php if($this->_options[proOptions][subscribeExit][text_size] == 'pq_pro_text_size16') echo 'selected';?>>Text Size - 16</option>
+									<option value="pq_pro_text_size20" <?php if($this->_options[proOptions][subscribeExit][text_size] == 'pq_pro_text_size20') echo 'selected';?>>Text Size - 20</option>
+									<option value="pq_pro_text_size24" <?php if($this->_options[proOptions][subscribeExit][text_size] == 'pq_pro_text_size24') echo 'selected';?>>Text Size - 24</option>
+									<option value="pq_pro_text_size28" <?php if($this->_options[proOptions][subscribeExit][text_size] == 'pq_pro_text_size28') echo 'selected';?>>Text Size - 28</option>
+									<option value="pq_pro_text_size36" <?php if($this->_options[proOptions][subscribeExit][text_size] == 'pq_pro_text_size36') echo 'selected';?>>Text Size - 36</option>	
+								</select>
+								</label>
+								<label>
+									<select id="subscribeExit_pro_6" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][text_color]">
+										<option value="pq_pro_text_color_white" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_white') echo 'selected';?>>Text color - White</option>
+										<option value="pq_pro_text_color_iceblue" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_iceblue') echo 'selected';?>>Text color - Iceblue</option>
+										<option value="pq_pro_text_color_beige" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_beige') echo 'selected';?>>Text color - Beige</option>
+										<option value="pq_pro_text_color_lilac" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_lilac') echo 'selected';?>>Text color - Lilac</option>
+										<option value="pq_pro_text_color_wormwood" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_wormwood') echo 'selected';?>>Text color - Wormwood</option>
+										<option value="pq_pro_text_color_yellow" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_yellow') echo 'selected';?>>Text color - Yellow</option>
+										<option value="pq_pro_text_color_grey" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_grey') echo 'selected';?>>Text color - Grey</option>
+										<option value="pq_pro_text_color_red" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_red') echo 'selected';?>>Text color - Red</option>
+										<option value="pq_pro_text_color_skyblue" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_skyblue') echo 'selected';?>>Text color - Skyblue</option>
+										<option value="pq_pro_text_color_blue" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_blue') echo 'selected';?>>Text color - Blue</option>
+										<option value="pq_pro_text_color_green" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_green') echo 'selected';?>>Text color - Green</option>
+										<option value="pq_pro_text_color_black" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_black') echo 'selected';?>>Text color - Black</option>
+									</select>
+								</label>
+								<label>
+								<select id="subscribeExit_pro_7" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][b_radius]">
+									<option value="" <?php if($this->_options[proOptions][subscribeExit][b_radius] == '') echo 'selected';?>>Border and Button Radius - Default</option>
+									<option value="pq_pro_br_sq" <?php if($this->_options[proOptions][subscribeExit][b_radius] == 'pq_pro_br_sq') echo 'selected';?>>Border and Button Radius - Square</option>
+									<option value="pq_pro_br_cr" <?php if($this->_options[proOptions][subscribeExit][b_radius] == 'pq_pro_br_cr') echo 'selected';?>>Border and Button Radius - Rounded</option>
+								</select>
+								</label>
+								<label>
+								<select id="subscribeExit_pro_9" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][b_width]">
+									<option value="" <?php if($this->_options[proOptions][subscribeExit][b_width] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_bd1" <?php if($this->_options[proOptions][subscribeExit][b_width] == 'pq_pro_bd1') echo 'selected';?>>Border Width - 1px</option>
+									<option value="pq_pro_bd2" <?php if($this->_options[proOptions][subscribeExit][b_width] == 'pq_pro_bd2') echo 'selected';?>>Border Width - 2px</option>
+									<option value="pq_pro_bd3" <?php if($this->_options[proOptions][subscribeExit][b_width] == 'pq_pro_bd3') echo 'selected';?>>Border Width - 3px</option>
+									<option value="pq_pro_bd4" <?php if($this->_options[proOptions][subscribeExit][b_width] == 'pq_pro_bd4') echo 'selected';?>>Border Width - 4px</option>
+									<option value="pq_pro_bd5" <?php if($this->_options[proOptions][subscribeExit][b_width] == 'pq_pro_bd5') echo 'selected';?>>Border Width - 5px</option>
+									<option value="pq_pro_bd6" <?php if($this->_options[proOptions][subscribeExit][b_width] == 'pq_pro_bd6') echo 'selected';?>>Border Width - 6px</option>
+									<option value="pq_pro_bd7" <?php if($this->_options[proOptions][subscribeExit][b_width] == 'pq_pro_bd7') echo 'selected';?>>Border Width - 7px</option>
+									<option value="pq_pro_bd8" <?php if($this->_options[proOptions][subscribeExit][b_width] == 'pq_pro_bd8') echo 'selected';?>>Border Width - 8px</option>
+									<option value="pq_pro_bd9" <?php if($this->_options[proOptions][subscribeExit][b_width] == 'pq_pro_bd9') echo 'selected';?>>Border Width - 9px</option>
+									<option value="pq_pro_bd10" <?php if($this->_options[proOptions][subscribeExit][b_width] == 'pq_pro_bd10') echo 'selected';?>>Border Width - 10px</option>
+								</select>
+								</label>
+								<label>
+								<select id="subscribeExit_pro_8" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][b_color]">
+									<option value="" <?php if($this->_options[proOptions][subscribeExit][b_color] == '') echo 'selected';?>>Border Color - White</option>
+									<option value="pq_pro_bd_iceblue" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_iceblue') echo 'selected';?>>Border Color - Iceblue</option>
+									<option value="pq_pro_bd_iceblue_lt " <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_iceblue_lt ') echo 'selected';?>>Border Color - Iceblue LT</option>
+									<option value="pq_pro_bd_beige" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_beige') echo 'selected';?>>Border Color - Beige</option>
+									<option value="pq_pro_bd_beige_lt" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_beige_lt') echo 'selected';?>>Border Color - Beige  LT</option>
+									<option value="pq_pro_bd_lilac" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_lilac') echo 'selected';?>>Border Color - Lilac</option>
+									<option value="pq_pro_bd_lilac_lt" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_lilac_lt') echo 'selected';?>>Border Color - Lilac LT</option>
+									<option value="pq_pro_bd_wormwood" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_wormwood') echo 'selected';?>>Border Color - Wormwood</option>
+									<option value="pq_pro_bd_wormwood_lt" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_wormwood_lt') echo 'selected';?>>Border Color - Wormwood LT</option>
+									<option value="pq_pro_bd_yellow" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_yellow') echo 'selected';?>>Border Color - Yellow</option>
+									<option value="pq_pro_bd_yellow_lt" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_yellow_lt') echo 'selected';?>>Border Color - Yellow LT</option>
+									<option value="pq_pro_bd_grey" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_grey') echo 'selected';?>>Border Color - Grey</option>
+									<option value="pq_pro_bd_grey_lt" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_grey_lt') echo 'selected';?>>Border Color - Grey LT</option>
+									<option value="pq_pro_bd_red" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_red') echo 'selected';?>>Border Color - Red</option>
+									<option value="pq_pro_bd_red_lt" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_red_lt') echo 'selected';?>>Border Color - Red LT</option>
+									<option value="pq_pro_bd_skyblue" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_skyblue') echo 'selected';?>>Border Color - Skyblue</option>
+									<option value="pq_pro_bd_skyblue_lt" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_skyblue_lt') echo 'selected';?>>Border Color - Skyblue LT</option>
+									<option value="pq_pro_bd_blue" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_blue') echo 'selected';?>>Border Color - Blue</option>
+									<option value="pq_pro_bd_blue_lt" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_blue_lt') echo 'selected';?>>Border Color - Blue LT</option>
+									<option value="pq_pro_bd_green" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_green') echo 'selected';?>>Border Color - Green</option>
+									<option value="pq_pro_bd_green_lt" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_green_lt') echo 'selected';?>>Border Color - Green LT</option>
+									<option value="pq_pro_bd_black" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_black') echo 'selected';?>>Border Color - Black</option>
+									<option value="pq_pro_bd_black_lt" <?php if($this->_options[proOptions][subscribeExit][b_color] == 'pq_pro_bd_black_lt') echo 'selected';?>>Border Color - Black LT</option>
+								</select>
+								</label>
+																
+								<label>
+								<select id="subscribeExit_pro_11" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][b_style]">
+									<option value="" <?php if($this->_options[proOptions][subscribeExit][b_style] == '') echo 'selected';?>>Border Style - Solid</option>
+									<option value="pq_pro_bs_dotted" <?php if($this->_options[proOptions][subscribeExit][b_style] == 'pq_pro_bs_dotted') echo 'selected';?>>Border Style - Dotted</option>
+									<option value="pq_pro_bs_dashed" <?php if($this->_options[proOptions][subscribeExit][b_style] == 'pq_pro_bs_dashed') echo 'selected';?>>Border Style - Dashed</option>
+									<option value="pq_pro_bs_double" <?php if($this->_options[proOptions][subscribeExit][b_style] == 'pq_pro_bs_double') echo 'selected';?>>Border Style - Double</option>
+									<option value="pq_pro_bs_post" <?php if($this->_options[proOptions][subscribeExit][b_style] == 'pq_pro_bs_post') echo 'selected';?>>Border Style - Mail Post</option>
+								</select>
+								</label>
+								<label>
+								<select id="subscribeExit_pro_12" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][b_shadow]">
+								    <option value="" <?php if($this->_options[proOptions][subscribeExit][b_shadow] == '') echo 'selected';?>>No</option>
+								    <option value="pq_pro_sh0" <?php if($this->_options[proOptions][subscribeExit][b_shadow] == 'pq_pro_sh0') echo 'selected';?>>Shadow 0</option>
+									<option value="pq_pro_sh1" <?php if($this->_options[proOptions][subscribeExit][b_shadow] == 'pq_pro_sh1') echo 'selected';?>>Shadow 1</option>
+									<option value="pq_pro_sh2" <?php if($this->_options[proOptions][subscribeExit][b_shadow] == 'pq_pro_sh2') echo 'selected';?>>Shadow 2</option>
+									<option value="pq_pro_sh3" <?php if($this->_options[proOptions][subscribeExit][b_shadow] == 'pq_pro_sh3') echo 'selected';?>>Shadow 3</option>
+									<option value="pq_pro_sh4" <?php if($this->_options[proOptions][subscribeExit][b_shadow] == 'pq_pro_sh4') echo 'selected';?>>Shadow 4</option>
+									<option value="pq_pro_sh5" <?php if($this->_options[proOptions][subscribeExit][b_shadow] == 'pq_pro_sh5') echo 'selected';?>>Shadow 5</option>
+								</select>
+								</label>
+								<label>
+									<select id="subscribeExit_pro_13" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][b_c_color]">
+										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Cross color - White</option>
+										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Cross color - Iceblue</option>
+										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Cross color - Beige</option>
+										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Cross color - Lilac</option>
+										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Cross color - Wormwood</option>
+										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Cross color - Yellow</option>
+										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Cross color - Grey</option>
+										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Cross color - Red</option>
+										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Cross color - Skyblue</option>
+										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Cross color - Blue</option>
+										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Cross color - Green</option>
+										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
+									</select>
+								</label>
+								<label><p>Background-image URL</p>
+								<input type="text" id="subscribeExit_pro_background_image" onKeyUp="subscribeExitPreview();" name="proOptions[subscribeExit][background_image]" value="<?php echo stripslashes($this->_options[proOptions][subscribeExit][background_image]);?>">
+								</label>
+								<h3>ANIMATION</h3>
+								<label>
+								<select id="subscribeExit_pro_animation" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][animation]">
+									<option value="" <?php if($this->_options[proOptions][subscribeExit][animation] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_a_bounceInLeft" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_bounceInLeft') echo 'selected';?>>Bounceinleft</option>
+									<option value="pq_pro_a_bounceInRight" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_bounceInRight') echo 'selected';?>>Bounceinright</option>
+									<option value="pq_pro_a_bounceInUp" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_bounceInUp') echo 'selected';?>>Bounceinup</option>									
+									<option value="pq_pro_a_fadeIn" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_fadeIn') echo 'selected';?>>Fadein</option>
+									<option value="pq_pro_a_fadeInDown" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_fadeInDown') echo 'selected';?>>Fadeindown</option>
+									<option value="pq_pro_a_fadeInDownBig" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_fadeInDownBig') echo 'selected';?>>Fadeindownbig</option>
+									<option value="pq_pro_a_fadeInLeft" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_fadeInLeft') echo 'selected';?>>Fadeinleft</option>
+									<option value="pq_pro_a_fadeInLeftBig" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_fadeInLeftBig') echo 'selected';?>>Fadeinleftbig</option>
+									<option value="pq_pro_a_fadeInRight" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_fadeInRight') echo 'selected';?>>Fadeinright</option>
+									<option value="pq_pro_a_fadeInRightBig" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_fadeInRightBig') echo 'selected';?>>Fadeinrightbig</option>
+									<option value="pq_pro_a_fadeInUp" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_fadeInUp') echo 'selected';?>>Fadeinup</option>
+									<option value="pq_pro_a_fadeInUpBig" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_fadeInUpBig') echo 'selected';?>>Fadeinupbig</option>
+									<option value="pq_pro_a_flip" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_flip') echo 'selected';?>>Flip</option>
+									<option value="pq_pro_a_flipInX" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_flipInX') echo 'selected';?>>Flipinx</option>
+									<option value="pq_pro_a_flipInY" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_flipInY') echo 'selected';?>>Flipiny</option>									
+									<option value="pq_pro_a_lightSpeedIn" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_lightSpeedIn') echo 'selected';?>>Lightspeedin</option>									
+									<option value="pq_pro_a_rotateIn" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_rotateIn') echo 'selected';?>>Rotatein</option>
+									<option value="pq_pro_a_rotateInDownLeft" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_rotateInDownLeft') echo 'selected';?>>Rotateindownleft</option>
+									<option value="pq_pro_a_rotateInDownRight" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_rotateInDownRight') echo 'selected';?>>Rotateindownright</option>
+									<option value="pq_pro_a_rotateInUpLeft" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_rotateInUpLeft') echo 'selected';?>>Rotateinupleft</option>
+									<option value="pq_pro_a_rotateInUpRight" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_rotateInUpRight') echo 'selected';?>>Rotateinupright</option>
+									<option value="pq_pro_a_rollIn" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_rollIn') echo 'selected';?>>Rollin</option>									
+									<option value="pq_pro_a_zoomIn" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_zoomIn') echo 'selected';?>>Zoomin</option>
+									<option value="pq_pro_a_zoomInDown" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_zoomInDown') echo 'selected';?>>Zoomindown</option>
+									<option value="pq_pro_a_zoomInLeft" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_zoomInLeft') echo 'selected';?>>Zoominleft</option>
+									<option value="pq_pro_a_zoomInRight" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_zoomInRight') echo 'selected';?>>Zoominright</option>
+									<option value="pq_pro_a_zoomInUp" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_zoomInUp') echo 'selected';?>>Zoominup</option>
+									<option value="pq_pro_a_slideInDown" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_slideInDown') echo 'selected';?>>Slideindown</option>
+									<option value="pq_pro_a_slideInLeft" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_slideInLeft') echo 'selected';?>>Slideinleft</option>
+									<option value="pq_pro_a_slideInRight" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_slideInRight') echo 'selected';?>>Slideinright</option>
+									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
+								</select>
+								</label>																
+								<!--h3>WHITELABEL</h3>
+								<label>
+								<select name="proOptions[subscribeExit][whitelabel]">
+									<option value="1" <?php if((int)$this->_options[proOptions][subscribeExit][whitelabel] == 1) echo 'selected';?>>Enable</option>
+									<option value="0" <?php if((int)$this->_options[proOptions][subscribeExit][whitelabel] == 0) echo 'selected';?>>Disabled</option>
+								</select>
+								</label-->
+							</div>
+						</div>						
+						<div class="settings contact">
+							<div class="popup selected">
+								
+								
+								<h2 class="pro_h1">PRO options</h2>
+								<h3>DISPLAY RULES</h3>
+								<label><p>Disable Main Page</p>
+									<select name="proOptions[contactUs][disableMainPage]">
+										<option value="1" <?php if((int)$this->_options[proOptions][contactUs][disableMainPage] == 1) echo 'selected';?>>Yes</option>
+										<option value="0" <?php if((int)$this->_options[proOptions][contactUs][disableMainPage] == 0) echo 'selected';?>>No</option>
+									</select>
+								</label>
+								<label><p>Disable Exept Url Mask</p>
+								<input type="text" name="proOptions[contactUs][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][contactUs][disableExeptPageMask][0]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[contactUs][disableExeptPageMask][1]" value="<?php echo stripslashes($this->_options[proOptions][contactUs][disableExeptPageMask][1]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[contactUs][disableExeptPageMask][2]" value="<?php echo stripslashes($this->_options[proOptions][contactUs][disableExeptPageMask][2]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[contactUs][disableExeptPageMask][3]" value="<?php echo stripslashes($this->_options[proOptions][contactUs][disableExeptPageMask][3]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[contactUs][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][contactUs][disableExeptPageMask][4]);?>">
+								</label>								
+								<h3>Design</h3>
+								<label>
+								<select id="contactUs_pro_1" onchange="contactUsPreview();" name="proOptions[contactUs][head_font]">
+									<option value="" <?php if($this->_options[proOptions][contactUs][head_font] == '') echo 'selected';?>>Heading and Button - PT Sans Narrow</option>
+									<option value="pq_pro_h_georgia" <?php if($this->_options[proOptions][contactUs][head_font] == 'pq_pro_h_georgia') echo 'selected';?>>Heading and Button - Georgia</option>
+									<option value="pq_pro_h_helvetica" <?php if($this->_options[proOptions][contactUs][head_font] == 'pq_pro_h_helvetica') echo 'selected';?>>Heading and Button - Helvetica</option>
+									<option value="pq_pro_h_courier" <?php if($this->_options[proOptions][contactUs][head_font] == 'pq_pro_h_courier') echo 'selected';?>>Heading and Button - Courier New</option>
+									<option value="pq_pro_h_times" <?php if($this->_options[proOptions][contactUs][head_font] == 'pq_pro_h_times') echo 'selected';?>>Heading and Button - Times New Roman</option>
+									<option value="pq_pro_h_verdana" <?php if($this->_options[proOptions][contactUs][head_font] == 'pq_pro_h_verdana') echo 'selected';?>>Heading and Button - Verdana</option>
+									<option value="pq_pro_h_arial_black" <?php if($this->_options[proOptions][contactUs][head_font] == 'pq_pro_h_arial_black') echo 'selected';?>>Heading and Button - Arial Black</option>
+									<option value="pq_pro_h_comic" <?php if($this->_options[proOptions][contactUs][head_font] == 'pq_pro_h_comic') echo 'selected';?>>Heading and Button - Comic Sans MS</option>
+									<option value="pq_pro_h_impact" <?php if($this->_options[proOptions][contactUs][head_font] == 'pq_pro_h_impact') echo 'selected';?>>Heading and Button - Impact</option>
+									<option value="pq_pro_h_trebuchet" <?php if($this->_options[proOptions][contactUs][head_font] == 'pq_pro_h_trebuchet') echo 'selected';?>>Heading and Button - Trebuchet MS</option>
+								</select>
+								</label>
+								<label>
+								<select id="contactUs_pro_2" onchange="contactUsPreview();" name="proOptions[contactUs][head_size]">
+									<option value="" <?php if($this->_options[proOptions][contactUs][head_size] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_head_size16" <?php if($this->_options[proOptions][contactUs][head_size] == 'pq_pro_head_size16') echo 'selected';?>>Heading Size - 16</option>
+									<option value="pq_pro_head_size20" <?php if($this->_options[proOptions][contactUs][head_size] == 'pq_pro_head_size20') echo 'selected';?>>Heading Size - 20</option>
+									<option value="pq_pro_head_size24" <?php if($this->_options[proOptions][contactUs][head_size] == 'pq_pro_head_size24') echo 'selected';?>>Heading Size - 24</option>
+									<option value="pq_pro_head_size28" <?php if($this->_options[proOptions][contactUs][head_size] == 'pq_pro_head_size28') echo 'selected';?>>Heading Size - 28</option>
+									<option value="pq_pro_head_size36" <?php if($this->_options[proOptions][contactUs][head_size] == 'pq_pro_head_size36') echo 'selected';?>>Heading Size - 36</option>
+									<option value="pq_pro_head_size48" <?php if($this->_options[proOptions][contactUs][head_size] == 'pq_pro_head_size48') echo 'selected';?>>Heading Size - 48</option>
+								</select>
+								</label>
+								<label>
+									<select id="contactUs_pro_3" onchange="contactUsPreview();" name="proOptions[contactUs][head_color]">
+										<option value="pq_pro_head_color_white" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_white') echo 'selected';?>>Heading color - White</option>
+										<option value="pq_pro_head_color_iceblue" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_iceblue') echo 'selected';?>>Heading color - Iceblue</option>
+										<option value="pq_pro_head_color_beige" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_beige') echo 'selected';?>>Heading color - Beige</option>
+										<option value="pq_pro_head_color_lilac" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_lilac') echo 'selected';?>>Heading color - Lilac</option>
+										<option value="pq_pro_head_color_wormwood" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_wormwood') echo 'selected';?>>Heading color - Wormwood</option>
+										<option value="pq_pro_head_color_yellow" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_yellow') echo 'selected';?>>Heading color - Yellow</option>
+										<option value="pq_pro_head_color_grey" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_grey') echo 'selected';?>>Heading color - Grey</option>
+										<option value="pq_pro_head_color_red" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_red') echo 'selected';?>>Heading color - Red</option>
+										<option value="pq_pro_head_color_skyblue" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_skyblue') echo 'selected';?>>Heading color - Skyblue</option>
+										<option value="pq_pro_head_color_blue" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_blue') echo 'selected';?>>Heading color - Blue</option>
+										<option value="pq_pro_head_color_green" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_green') echo 'selected';?>>Heading color - Green</option>
+										<option value="pq_pro_head_color_black" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_black') echo 'selected';?>>Heading color - Black</option>
+									</select>
+								</label>
+								<label>
+								<select id="contactUs_pro_4" onchange="contactUsPreview();" name="proOptions[contactUs][font]">
+									<option value="pq_pro_arial" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
+									<option value="pq_pro_georgia" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_georgia') echo 'selected';?>>Text - Georgia</option>
+									<option value="pq_pro_helvetica" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_helvetica') echo 'selected';?>>Text - Helvetica</option>
+									<option value="pq_pro_courier" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_courier') echo 'selected';?>>Text - Courier New</option>
+									<option value="pq_pro_times" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_times') echo 'selected';?>>Text - Times New Roman</option>
+									<option value="pq_pro_verdana" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_verdana') echo 'selected';?>>Text - Verdana</option>
+									<option value="pq_pro_arial_black" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_arial_black') echo 'selected';?>>Text - Arial Black</option>
+									<option value="pq_pro_comic" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_comic') echo 'selected';?>>Text - Comic Sans MS</option>
+									<option value="pq_pro_impact" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_impact') echo 'selected';?>>Text - Impact</option>
+									<option value="pq_pro_trebuchet" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_trebuchet') echo 'selected';?>>Text - Trebuchet MS</option>
+								</select>
+								</label>
+								<label>
+								<select id="contactUs_pro_5" onchange="contactUsPreview();" name="proOptions[contactUs][text_size]">
+									<option value="" <?php if($this->_options[proOptions][contactUs][text_size] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_text_size12" <?php if($this->_options[proOptions][contactUs][text_size] == 'pq_pro_text_size12') echo 'selected';?>>Text Size - 12</option>
+									<option value="pq_pro_text_size16" <?php if($this->_options[proOptions][contactUs][text_size] == 'pq_pro_text_size16') echo 'selected';?>>Text Size - 16</option>
+									<option value="pq_pro_text_size20" <?php if($this->_options[proOptions][contactUs][text_size] == 'pq_pro_text_size20') echo 'selected';?>>Text Size - 20</option>
+									<option value="pq_pro_text_size24" <?php if($this->_options[proOptions][contactUs][text_size] == 'pq_pro_text_size24') echo 'selected';?>>Text Size - 24</option>
+									<option value="pq_pro_text_size28" <?php if($this->_options[proOptions][contactUs][text_size] == 'pq_pro_text_size28') echo 'selected';?>>Text Size - 28</option>
+									<option value="pq_pro_text_size36" <?php if($this->_options[proOptions][contactUs][text_size] == 'pq_pro_text_size36') echo 'selected';?>>Text Size - 36</option>	
+								</select>
+								</label>
+								<label>
+									<select id="contactUs_pro_6" onchange="contactUsPreview();" name="proOptions[contactUs][text_color]">
+										<option value="pq_pro_text_color_white" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_white') echo 'selected';?>>Text color - White</option>
+										<option value="pq_pro_text_color_iceblue" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_iceblue') echo 'selected';?>>Text color - Iceblue</option>
+										<option value="pq_pro_text_color_beige" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_beige') echo 'selected';?>>Text color - Beige</option>
+										<option value="pq_pro_text_color_lilac" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_lilac') echo 'selected';?>>Text color - Lilac</option>
+										<option value="pq_pro_text_color_wormwood" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_wormwood') echo 'selected';?>>Text color - Wormwood</option>
+										<option value="pq_pro_text_color_yellow" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_yellow') echo 'selected';?>>Text color - Yellow</option>
+										<option value="pq_pro_text_color_grey" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_grey') echo 'selected';?>>Text color - Grey</option>
+										<option value="pq_pro_text_color_red" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_red') echo 'selected';?>>Text color - Red</option>
+										<option value="pq_pro_text_color_skyblue" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_skyblue') echo 'selected';?>>Text color - Skyblue</option>
+										<option value="pq_pro_text_color_blue" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_blue') echo 'selected';?>>Text color - Blue</option>
+										<option value="pq_pro_text_color_green" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_green') echo 'selected';?>>Text color - Green</option>
+										<option value="pq_pro_text_color_black" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_black') echo 'selected';?>>Text color - Black</option>
+									</select>
+								</label>
+								<label>
+								<select id="contactUs_pro_7" onchange="contactUsPreview();" name="proOptions[contactUs][b_radius]">
+									<option value="" <?php if($this->_options[proOptions][contactUs][b_radius] == '') echo 'selected';?>>Border and Button Radius - Default</option>
+									<option value="pq_pro_br_sq" <?php if($this->_options[proOptions][contactUs][b_radius] == 'pq_pro_br_sq') echo 'selected';?>>Border and Button Radius - Square</option>
+									<option value="pq_pro_br_cr" <?php if($this->_options[proOptions][contactUs][b_radius] == 'pq_pro_br_cr') echo 'selected';?>>Border and Button Radius - Rounded</option>
+								</select>
+								</label>
+								<label>
+								<select id="contactUs_pro_9" onchange="contactUsPreview();" name="proOptions[contactUs][b_width]">
+									<option value="" <?php if($this->_options[proOptions][contactUs][b_width] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_bd1" <?php if($this->_options[proOptions][contactUs][b_width] == 'pq_pro_bd1') echo 'selected';?>>Border Width - 1px</option>
+									<option value="pq_pro_bd2" <?php if($this->_options[proOptions][contactUs][b_width] == 'pq_pro_bd2') echo 'selected';?>>Border Width - 2px</option>
+									<option value="pq_pro_bd3" <?php if($this->_options[proOptions][contactUs][b_width] == 'pq_pro_bd3') echo 'selected';?>>Border Width - 3px</option>
+									<option value="pq_pro_bd4" <?php if($this->_options[proOptions][contactUs][b_width] == 'pq_pro_bd4') echo 'selected';?>>Border Width - 4px</option>
+									<option value="pq_pro_bd5" <?php if($this->_options[proOptions][contactUs][b_width] == 'pq_pro_bd5') echo 'selected';?>>Border Width - 5px</option>
+									<option value="pq_pro_bd6" <?php if($this->_options[proOptions][contactUs][b_width] == 'pq_pro_bd6') echo 'selected';?>>Border Width - 6px</option>
+									<option value="pq_pro_bd7" <?php if($this->_options[proOptions][contactUs][b_width] == 'pq_pro_bd7') echo 'selected';?>>Border Width - 7px</option>
+									<option value="pq_pro_bd8" <?php if($this->_options[proOptions][contactUs][b_width] == 'pq_pro_bd8') echo 'selected';?>>Border Width - 8px</option>
+									<option value="pq_pro_bd9" <?php if($this->_options[proOptions][contactUs][b_width] == 'pq_pro_bd9') echo 'selected';?>>Border Width - 9px</option>
+									<option value="pq_pro_bd10" <?php if($this->_options[proOptions][contactUs][b_width] == 'pq_pro_bd10') echo 'selected';?>>Border Width - 10px</option>
+								</select>
+								</label>
+								<label>
+								<select id="contactUs_pro_8" onchange="contactUsPreview();" name="proOptions[contactUs][b_color]">
+									<option value="" <?php if($this->_options[proOptions][contactUs][b_color] == '') echo 'selected';?>>Border Color - White</option>
+									<option value="pq_pro_bd_iceblue" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_iceblue') echo 'selected';?>>Border Color - Iceblue</option>
+									<option value="pq_pro_bd_iceblue_lt " <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_iceblue_lt ') echo 'selected';?>>Border Color - Iceblue LT</option>
+									<option value="pq_pro_bd_beige" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_beige') echo 'selected';?>>Border Color - Beige</option>
+									<option value="pq_pro_bd_beige_lt" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_beige_lt') echo 'selected';?>>Border Color - Beige  LT</option>
+									<option value="pq_pro_bd_lilac" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_lilac') echo 'selected';?>>Border Color - Lilac</option>
+									<option value="pq_pro_bd_lilac_lt" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_lilac_lt') echo 'selected';?>>Border Color - Lilac LT</option>
+									<option value="pq_pro_bd_wormwood" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_wormwood') echo 'selected';?>>Border Color - Wormwood</option>
+									<option value="pq_pro_bd_wormwood_lt" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_wormwood_lt') echo 'selected';?>>Border Color - Wormwood LT</option>
+									<option value="pq_pro_bd_yellow" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_yellow') echo 'selected';?>>Border Color - Yellow</option>
+									<option value="pq_pro_bd_yellow_lt" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_yellow_lt') echo 'selected';?>>Border Color - Yellow LT</option>
+									<option value="pq_pro_bd_grey" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_grey') echo 'selected';?>>Border Color - Grey</option>
+									<option value="pq_pro_bd_grey_lt" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_grey_lt') echo 'selected';?>>Border Color - Grey LT</option>
+									<option value="pq_pro_bd_red" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_red') echo 'selected';?>>Border Color - Red</option>
+									<option value="pq_pro_bd_red_lt" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_red_lt') echo 'selected';?>>Border Color - Red LT</option>
+									<option value="pq_pro_bd_skyblue" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_skyblue') echo 'selected';?>>Border Color - Skyblue</option>
+									<option value="pq_pro_bd_skyblue_lt" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_skyblue_lt') echo 'selected';?>>Border Color - Skyblue LT</option>
+									<option value="pq_pro_bd_blue" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_blue') echo 'selected';?>>Border Color - Blue</option>
+									<option value="pq_pro_bd_blue_lt" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_blue_lt') echo 'selected';?>>Border Color - Blue LT</option>
+									<option value="pq_pro_bd_green" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_green') echo 'selected';?>>Border Color - Green</option>
+									<option value="pq_pro_bd_green_lt" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_green_lt') echo 'selected';?>>Border Color - Green LT</option>
+									<option value="pq_pro_bd_black" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_black') echo 'selected';?>>Border Color - Black</option>
+									<option value="pq_pro_bd_black_lt" <?php if($this->_options[proOptions][contactUs][b_color] == 'pq_pro_bd_black_lt') echo 'selected';?>>Border Color - Black LT</option>
+								</select>
+								</label>
+																
+								<label>
+								<select id="contactUs_pro_11" onchange="contactUsPreview();" name="proOptions[contactUs][b_style]">
+									<option value="" <?php if($this->_options[proOptions][contactUs][b_style] == '') echo 'selected';?>>Border Style - Solid</option>
+									<option value="pq_pro_bs_dotted" <?php if($this->_options[proOptions][contactUs][b_style] == 'pq_pro_bs_dotted') echo 'selected';?>>Border Style - Dotted</option>
+									<option value="pq_pro_bs_dashed" <?php if($this->_options[proOptions][contactUs][b_style] == 'pq_pro_bs_dashed') echo 'selected';?>>Border Style - Dashed</option>
+									<option value="pq_pro_bs_double" <?php if($this->_options[proOptions][contactUs][b_style] == 'pq_pro_bs_double') echo 'selected';?>>Border Style - Double</option>
+									<option value="pq_pro_bs_post" <?php if($this->_options[proOptions][contactUs][b_style] == 'pq_pro_bs_post') echo 'selected';?>>Border Style - Mail Post</option>
+								</select>
+								</label>
+								<label>
+								<select id="contactUs_pro_12" onchange="contactUsPreview();" name="proOptions[contactUs][b_shadow]">
+								    <option value="" <?php if($this->_options[proOptions][contactUs][b_shadow] == '') echo 'selected';?>>No</option>
+								    <option value="pq_pro_sh0" <?php if($this->_options[proOptions][contactUs][b_shadow] == 'pq_pro_sh0') echo 'selected';?>>Shadow 0</option>
+									<option value="pq_pro_sh1" <?php if($this->_options[proOptions][contactUs][b_shadow] == 'pq_pro_sh1') echo 'selected';?>>Shadow 1</option>
+									<option value="pq_pro_sh2" <?php if($this->_options[proOptions][contactUs][b_shadow] == 'pq_pro_sh2') echo 'selected';?>>Shadow 2</option>
+									<option value="pq_pro_sh3" <?php if($this->_options[proOptions][contactUs][b_shadow] == 'pq_pro_sh3') echo 'selected';?>>Shadow 3</option>
+									<option value="pq_pro_sh4" <?php if($this->_options[proOptions][contactUs][b_shadow] == 'pq_pro_sh4') echo 'selected';?>>Shadow 4</option>
+									<option value="pq_pro_sh5" <?php if($this->_options[proOptions][contactUs][b_shadow] == 'pq_pro_sh5') echo 'selected';?>>Shadow 5</option>
+								</select>
+								</label>
+								<label>
+									<select id="contactUs_pro_13" onchange="contactUsPreview();" name="proOptions[contactUs][b_c_color]">
+										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Cross color - White</option>
+										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Cross color - Iceblue</option>
+										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Cross color - Beige</option>
+										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Cross color - Lilac</option>
+										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Cross color - Wormwood</option>
+										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Cross color - Yellow</option>
+										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Cross color - Grey</option>
+										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Cross color - Red</option>
+										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Cross color - Skyblue</option>
+										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Cross color - Blue</option>
+										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Cross color - Green</option>
+										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
+									</select>								
+								</label>
+								<label><p>Background-image URL</p>
+								<input type="text" id="contactUs_pro_background_image" onkeyup="contactUsPreview();" name="proOptions[contactUs][background_image]" value="<?php echo stripslashes($this->_options[proOptions][contactUs][background_image]);?>">
+								</label>
+								<h3>ANIMATION</h3>
+								<label>
+								<select id="contactUs_pro_animation" onchange="contactUsPreview();" name="proOptions[contactUs][animation]">
+									<option value="" <?php if($this->_options[proOptions][contactUs][animation] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_a_bounceInLeft" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_bounceInLeft') echo 'selected';?>>Bounceinleft</option>
+									<option value="pq_pro_a_bounceInRight" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_bounceInRight') echo 'selected';?>>Bounceinright</option>
+									<option value="pq_pro_a_bounceInUp" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_bounceInUp') echo 'selected';?>>Bounceinup</option>									
+									<option value="pq_pro_a_fadeIn" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_fadeIn') echo 'selected';?>>Fadein</option>
+									<option value="pq_pro_a_fadeInDown" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_fadeInDown') echo 'selected';?>>Fadeindown</option>
+									<option value="pq_pro_a_fadeInDownBig" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_fadeInDownBig') echo 'selected';?>>Fadeindownbig</option>
+									<option value="pq_pro_a_fadeInLeft" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_fadeInLeft') echo 'selected';?>>Fadeinleft</option>
+									<option value="pq_pro_a_fadeInLeftBig" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_fadeInLeftBig') echo 'selected';?>>Fadeinleftbig</option>
+									<option value="pq_pro_a_fadeInRight" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_fadeInRight') echo 'selected';?>>Fadeinright</option>
+									<option value="pq_pro_a_fadeInRightBig" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_fadeInRightBig') echo 'selected';?>>Fadeinrightbig</option>
+									<option value="pq_pro_a_fadeInUp" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_fadeInUp') echo 'selected';?>>Fadeinup</option>
+									<option value="pq_pro_a_fadeInUpBig" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_fadeInUpBig') echo 'selected';?>>Fadeinupbig</option>
+									<option value="pq_pro_a_flip" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_flip') echo 'selected';?>>Flip</option>
+									<option value="pq_pro_a_flipInX" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_flipInX') echo 'selected';?>>Flipinx</option>
+									<option value="pq_pro_a_flipInY" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_flipInY') echo 'selected';?>>Flipiny</option>									
+									<option value="pq_pro_a_lightSpeedIn" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_lightSpeedIn') echo 'selected';?>>Lightspeedin</option>									
+									<option value="pq_pro_a_rotateIn" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_rotateIn') echo 'selected';?>>Rotatein</option>
+									<option value="pq_pro_a_rotateInDownLeft" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_rotateInDownLeft') echo 'selected';?>>Rotateindownleft</option>
+									<option value="pq_pro_a_rotateInDownRight" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_rotateInDownRight') echo 'selected';?>>Rotateindownright</option>
+									<option value="pq_pro_a_rotateInUpLeft" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_rotateInUpLeft') echo 'selected';?>>Rotateinupleft</option>
+									<option value="pq_pro_a_rotateInUpRight" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_rotateInUpRight') echo 'selected';?>>Rotateinupright</option>
+									<option value="pq_pro_a_rollIn" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_rollIn') echo 'selected';?>>Rollin</option>									
+									<option value="pq_pro_a_zoomIn" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_zoomIn') echo 'selected';?>>Zoomin</option>
+									<option value="pq_pro_a_zoomInDown" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_zoomInDown') echo 'selected';?>>Zoomindown</option>
+									<option value="pq_pro_a_zoomInLeft" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_zoomInLeft') echo 'selected';?>>Zoominleft</option>
+									<option value="pq_pro_a_zoomInRight" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_zoomInRight') echo 'selected';?>>Zoominright</option>
+									<option value="pq_pro_a_zoomInUp" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_zoomInUp') echo 'selected';?>>Zoominup</option>
+									<option value="pq_pro_a_slideInDown" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_slideInDown') echo 'selected';?>>Slideindown</option>
+									<option value="pq_pro_a_slideInLeft" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_slideInLeft') echo 'selected';?>>Slideinleft</option>
+									<option value="pq_pro_a_slideInRight" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_slideInRight') echo 'selected';?>>Slideinright</option>
+									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
+								</select>
+								</label>																
+								<!--h3>WHITELABEL</h3>
+								<label>
+								<select name="proOptions[contactUs][whitelabel]">
+									<option value="1" <?php if((int)$this->_options[proOptions][contactUs][whitelabel] == 1) echo 'selected';?>>Enable</option>
+									<option value="0" <?php if((int)$this->_options[proOptions][contactUs][whitelabel] == 0) echo 'selected';?>>Disabled</option>
+								</select>
+								</label-->
+							</div>
+						</div>
+						<div class="settings callme">
+							<div class="popup selected">
+								
+								
+								<h2 class="pro_h1">PRO options</h2>
+								<h3>DISPLAY RULES</h3>
+								<label><p>Disable Main Page</p>
+									<select name="proOptions[callMe][disableMainPage]">
+										<option value="1" <?php if((int)$this->_options[proOptions][callMe][disableMainPage] == 1) echo 'selected';?>>Yes</option>
+										<option value="0" <?php if((int)$this->_options[proOptions][callMe][disableMainPage] == 0) echo 'selected';?>>No</option>
+									</select>
+								</label>
+								<label><p>Disable Exept Url Mask</p>
+								<input type="text" name="proOptions[callMe][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][callMe][disableExeptPageMask][0]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[callMe][disableExeptPageMask][1]" value="<?php echo stripslashes($this->_options[proOptions][callMe][disableExeptPageMask][1]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[callMe][disableExeptPageMask][2]" value="<?php echo stripslashes($this->_options[proOptions][callMe][disableExeptPageMask][2]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[callMe][disableExeptPageMask][3]" value="<?php echo stripslashes($this->_options[proOptions][callMe][disableExeptPageMask][3]);?>">
+								</label>
+								<label>
+								<input type="text" name="proOptions[callMe][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][callMe][disableExeptPageMask][4]);?>">
+								</label>
+								
+								<h3>Design</h3>
+								<label>
+								<select id="callMe_pro_1" onchange="callMePreview();" name="proOptions[callMe][head_font]">
+									<option value="" <?php if($this->_options[proOptions][callMe][head_font] == '') echo 'selected';?>>Heading and Button - PT Sans Narrow</option>
+									<option value="pq_pro_h_georgia" <?php if($this->_options[proOptions][callMe][head_font] == 'pq_pro_h_georgia') echo 'selected';?>>Heading and Button - Georgia</option>
+									<option value="pq_pro_h_helvetica" <?php if($this->_options[proOptions][callMe][head_font] == 'pq_pro_h_helvetica') echo 'selected';?>>Heading and Button - Helvetica</option>
+									<option value="pq_pro_h_courier" <?php if($this->_options[proOptions][callMe][head_font] == 'pq_pro_h_courier') echo 'selected';?>>Heading and Button - Courier New</option>
+									<option value="pq_pro_h_times" <?php if($this->_options[proOptions][callMe][head_font] == 'pq_pro_h_times') echo 'selected';?>>Heading and Button - Times New Roman</option>
+									<option value="pq_pro_h_verdana" <?php if($this->_options[proOptions][callMe][head_font] == 'pq_pro_h_verdana') echo 'selected';?>>Heading and Button - Verdana</option>
+									<option value="pq_pro_h_arial_black" <?php if($this->_options[proOptions][callMe][head_font] == 'pq_pro_h_arial_black') echo 'selected';?>>Heading and Button - Arial Black</option>
+									<option value="pq_pro_h_comic" <?php if($this->_options[proOptions][callMe][head_font] == 'pq_pro_h_comic') echo 'selected';?>>Heading and Button - Comic Sans MS</option>
+									<option value="pq_pro_h_impact" <?php if($this->_options[proOptions][callMe][head_font] == 'pq_pro_h_impact') echo 'selected';?>>Heading and Button - Impact</option>
+									<option value="pq_pro_h_trebuchet" <?php if($this->_options[proOptions][callMe][head_font] == 'pq_pro_h_trebuchet') echo 'selected';?>>Heading and Button - Trebuchet MS</option>
+								</select>
+								</label>
+								<label>
+								<select id="callMe_pro_2" onchange="callMePreview();" name="proOptions[callMe][head_size]">
+									<option value="" <?php if($this->_options[proOptions][callMe][head_size] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_head_size16" <?php if($this->_options[proOptions][callMe][head_size] == 'pq_pro_head_size16') echo 'selected';?>>Heading Size - 16</option>
+									<option value="pq_pro_head_size20" <?php if($this->_options[proOptions][callMe][head_size] == 'pq_pro_head_size20') echo 'selected';?>>Heading Size - 20</option>
+									<option value="pq_pro_head_size24" <?php if($this->_options[proOptions][callMe][head_size] == 'pq_pro_head_size24') echo 'selected';?>>Heading Size - 24</option>
+									<option value="pq_pro_head_size28" <?php if($this->_options[proOptions][callMe][head_size] == 'pq_pro_head_size28') echo 'selected';?>>Heading Size - 28</option>
+									<option value="pq_pro_head_size36" <?php if($this->_options[proOptions][callMe][head_size] == 'pq_pro_head_size36') echo 'selected';?>>Heading Size - 36</option>
+									<option value="pq_pro_head_size48" <?php if($this->_options[proOptions][callMe][head_size] == 'pq_pro_head_size48') echo 'selected';?>>Heading Size - 48</option>
+								</select>
+								</label>
+								<label>
+									<select id="callMe_pro_3" onchange="callMePreview();" name="proOptions[callMe][head_color]">
+										<option value="pq_pro_head_color_white" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_white') echo 'selected';?>>Heading color - White</option>
+										<option value="pq_pro_head_color_iceblue" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_iceblue') echo 'selected';?>>Heading color - Iceblue</option>
+										<option value="pq_pro_head_color_beige" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_beige') echo 'selected';?>>Heading color - Beige</option>
+										<option value="pq_pro_head_color_lilac" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_lilac') echo 'selected';?>>Heading color - Lilac</option>
+										<option value="pq_pro_head_color_wormwood" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_wormwood') echo 'selected';?>>Heading color - Wormwood</option>
+										<option value="pq_pro_head_color_yellow" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_yellow') echo 'selected';?>>Heading color - Yellow</option>
+										<option value="pq_pro_head_color_grey" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_grey') echo 'selected';?>>Heading color - Grey</option>
+										<option value="pq_pro_head_color_red" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_red') echo 'selected';?>>Heading color - Red</option>
+										<option value="pq_pro_head_color_skyblue" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_skyblue') echo 'selected';?>>Heading color - Skyblue</option>
+										<option value="pq_pro_head_color_blue" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_blue') echo 'selected';?>>Heading color - Blue</option>
+										<option value="pq_pro_head_color_green" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_green') echo 'selected';?>>Heading color - Green</option>
+										<option value="pq_pro_head_color_black" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_black') echo 'selected';?>>Heading color - Black</option>
+									</select>
+								</label>
+								<label>
+								<select id="callMe_pro_4" onchange="callMePreview();" name="proOptions[callMe][font]">
+									<option value="pq_pro_arial" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
+									<option value="pq_pro_georgia" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_georgia') echo 'selected';?>>Text - Georgia</option>
+									<option value="pq_pro_helvetica" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_helvetica') echo 'selected';?>>Text - Helvetica</option>
+									<option value="pq_pro_courier" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_courier') echo 'selected';?>>Text - Courier New</option>
+									<option value="pq_pro_times" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_times') echo 'selected';?>>Text - Times New Roman</option>
+									<option value="pq_pro_verdana" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_verdana') echo 'selected';?>>Text - Verdana</option>
+									<option value="pq_pro_arial_black" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_arial_black') echo 'selected';?>>Text - Arial Black</option>
+									<option value="pq_pro_comic" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_comic') echo 'selected';?>>Text - Comic Sans MS</option>
+									<option value="pq_pro_impact" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_impact') echo 'selected';?>>Text - Impact</option>
+									<option value="pq_pro_trebuchet" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_trebuchet') echo 'selected';?>>Text - Trebuchet MS</option>
+								</select>
+								</label>
+								<label>
+								<select id="callMe_pro_5" onchange="callMePreview();" name="proOptions[callMe][text_size]">
+									<option value="" <?php if($this->_options[proOptions][callMe][text_size] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_text_size12" <?php if($this->_options[proOptions][callMe][text_size] == 'pq_pro_text_size12') echo 'selected';?>>Text Size - 12</option>
+									<option value="pq_pro_text_size16" <?php if($this->_options[proOptions][callMe][text_size] == 'pq_pro_text_size16') echo 'selected';?>>Text Size - 16</option>
+									<option value="pq_pro_text_size20" <?php if($this->_options[proOptions][callMe][text_size] == 'pq_pro_text_size20') echo 'selected';?>>Text Size - 20</option>
+									<option value="pq_pro_text_size24" <?php if($this->_options[proOptions][callMe][text_size] == 'pq_pro_text_size24') echo 'selected';?>>Text Size - 24</option>
+									<option value="pq_pro_text_size28" <?php if($this->_options[proOptions][callMe][text_size] == 'pq_pro_text_size28') echo 'selected';?>>Text Size - 28</option>
+									<option value="pq_pro_text_size36" <?php if($this->_options[proOptions][callMe][text_size] == 'pq_pro_text_size36') echo 'selected';?>>Text Size - 36</option>	
+								</select>
+								</label>
+								<label>
+									<select id="callMe_pro_6" onchange="callMePreview();" name="proOptions[callMe][text_color]">
+										<option value="pq_pro_text_color_white" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_white') echo 'selected';?>>Text color - White</option>
+										<option value="pq_pro_text_color_iceblue" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_iceblue') echo 'selected';?>>Text color - Iceblue</option>
+										<option value="pq_pro_text_color_beige" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_beige') echo 'selected';?>>Text color - Beige</option>
+										<option value="pq_pro_text_color_lilac" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_lilac') echo 'selected';?>>Text color - Lilac</option>
+										<option value="pq_pro_text_color_wormwood" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_wormwood') echo 'selected';?>>Text color - Wormwood</option>
+										<option value="pq_pro_text_color_yellow" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_yellow') echo 'selected';?>>Text color - Yellow</option>
+										<option value="pq_pro_text_color_grey" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_grey') echo 'selected';?>>Text color - Grey</option>
+										<option value="pq_pro_text_color_red" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_red') echo 'selected';?>>Text color - Red</option>
+										<option value="pq_pro_text_color_skyblue" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_skyblue') echo 'selected';?>>Text color - Skyblue</option>
+										<option value="pq_pro_text_color_blue" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_blue') echo 'selected';?>>Text color - Blue</option>
+										<option value="pq_pro_text_color_green" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_green') echo 'selected';?>>Text color - Green</option>
+										<option value="pq_pro_text_color_black" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_black') echo 'selected';?>>Text color - Black</option>
+									</select>
+								</label>
+								<label>
+								<select id="callMe_pro_7" onchange="callMePreview();" name="proOptions[callMe][b_radius]">
+									<option value="" <?php if($this->_options[proOptions][callMe][b_radius] == '') echo 'selected';?>>Border and Button Radius - Default</option>
+									<option value="pq_pro_br_sq" <?php if($this->_options[proOptions][callMe][b_radius] == 'pq_pro_br_sq') echo 'selected';?>>Border and Button Radius - Square</option>
+									<option value="pq_pro_br_cr" <?php if($this->_options[proOptions][callMe][b_radius] == 'pq_pro_br_cr') echo 'selected';?>>Border and Button Radius - Rounded</option>
+								</select>
+								</label>
+								<label>
+								<select id="callMe_pro_9" onchange="callMePreview();" name="proOptions[callMe][b_width]">
+									<option value="" <?php if($this->_options[proOptions][callMe][b_width] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_bd1" <?php if($this->_options[proOptions][callMe][b_width] == 'pq_pro_bd1') echo 'selected';?>>Border Width - 1px</option>
+									<option value="pq_pro_bd2" <?php if($this->_options[proOptions][callMe][b_width] == 'pq_pro_bd2') echo 'selected';?>>Border Width - 2px</option>
+									<option value="pq_pro_bd3" <?php if($this->_options[proOptions][callMe][b_width] == 'pq_pro_bd3') echo 'selected';?>>Border Width - 3px</option>
+									<option value="pq_pro_bd4" <?php if($this->_options[proOptions][callMe][b_width] == 'pq_pro_bd4') echo 'selected';?>>Border Width - 4px</option>
+									<option value="pq_pro_bd5" <?php if($this->_options[proOptions][callMe][b_width] == 'pq_pro_bd5') echo 'selected';?>>Border Width - 5px</option>
+									<option value="pq_pro_bd6" <?php if($this->_options[proOptions][callMe][b_width] == 'pq_pro_bd6') echo 'selected';?>>Border Width - 6px</option>
+									<option value="pq_pro_bd7" <?php if($this->_options[proOptions][callMe][b_width] == 'pq_pro_bd7') echo 'selected';?>>Border Width - 7px</option>
+									<option value="pq_pro_bd8" <?php if($this->_options[proOptions][callMe][b_width] == 'pq_pro_bd8') echo 'selected';?>>Border Width - 8px</option>
+									<option value="pq_pro_bd9" <?php if($this->_options[proOptions][callMe][b_width] == 'pq_pro_bd9') echo 'selected';?>>Border Width - 9px</option>
+									<option value="pq_pro_bd10" <?php if($this->_options[proOptions][callMe][b_width] == 'pq_pro_bd10') echo 'selected';?>>Border Width - 10px</option>
+								</select>
+								</label>
+								<label>
+								<select id="callMe_pro_8" onchange="callMePreview();" name="proOptions[callMe][b_color]">
+									<option value="" <?php if($this->_options[proOptions][callMe][b_color] == '') echo 'selected';?>>Border Color - White</option>
+									<option value="pq_pro_bd_iceblue" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_iceblue') echo 'selected';?>>Border Color - Iceblue</option>
+									<option value="pq_pro_bd_iceblue_lt " <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_iceblue_lt ') echo 'selected';?>>Border Color - Iceblue LT</option>
+									<option value="pq_pro_bd_beige" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_beige') echo 'selected';?>>Border Color - Beige</option>
+									<option value="pq_pro_bd_beige_lt" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_beige_lt') echo 'selected';?>>Border Color - Beige  LT</option>
+									<option value="pq_pro_bd_lilac" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_lilac') echo 'selected';?>>Border Color - Lilac</option>
+									<option value="pq_pro_bd_lilac_lt" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_lilac_lt') echo 'selected';?>>Border Color - Lilac LT</option>
+									<option value="pq_pro_bd_wormwood" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_wormwood') echo 'selected';?>>Border Color - Wormwood</option>
+									<option value="pq_pro_bd_wormwood_lt" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_wormwood_lt') echo 'selected';?>>Border Color - Wormwood LT</option>
+									<option value="pq_pro_bd_yellow" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_yellow') echo 'selected';?>>Border Color - Yellow</option>
+									<option value="pq_pro_bd_yellow_lt" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_yellow_lt') echo 'selected';?>>Border Color - Yellow LT</option>
+									<option value="pq_pro_bd_grey" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_grey') echo 'selected';?>>Border Color - Grey</option>
+									<option value="pq_pro_bd_grey_lt" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_grey_lt') echo 'selected';?>>Border Color - Grey LT</option>
+									<option value="pq_pro_bd_red" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_red') echo 'selected';?>>Border Color - Red</option>
+									<option value="pq_pro_bd_red_lt" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_red_lt') echo 'selected';?>>Border Color - Red LT</option>
+									<option value="pq_pro_bd_skyblue" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_skyblue') echo 'selected';?>>Border Color - Skyblue</option>
+									<option value="pq_pro_bd_skyblue_lt" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_skyblue_lt') echo 'selected';?>>Border Color - Skyblue LT</option>
+									<option value="pq_pro_bd_blue" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_blue') echo 'selected';?>>Border Color - Blue</option>
+									<option value="pq_pro_bd_blue_lt" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_blue_lt') echo 'selected';?>>Border Color - Blue LT</option>
+									<option value="pq_pro_bd_green" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_green') echo 'selected';?>>Border Color - Green</option>
+									<option value="pq_pro_bd_green_lt" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_green_lt') echo 'selected';?>>Border Color - Green LT</option>
+									<option value="pq_pro_bd_black" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_black') echo 'selected';?>>Border Color - Black</option>
+									<option value="pq_pro_bd_black_lt" <?php if($this->_options[proOptions][callMe][b_color] == 'pq_pro_bd_black_lt') echo 'selected';?>>Border Color - Black LT</option>
+								</select>
+								</label>
+																
+								<label>
+								<select id="callMe_pro_11" onchange="callMePreview();" name="proOptions[callMe][b_style]">
+									<option value="" <?php if($this->_options[proOptions][callMe][b_style] == '') echo 'selected';?>>Border Style - Solid</option>
+									<option value="pq_pro_bs_dotted" <?php if($this->_options[proOptions][callMe][b_style] == 'pq_pro_bs_dotted') echo 'selected';?>>Border Style - Dotted</option>
+									<option value="pq_pro_bs_dashed" <?php if($this->_options[proOptions][callMe][b_style] == 'pq_pro_bs_dashed') echo 'selected';?>>Border Style - Dashed</option>
+									<option value="pq_pro_bs_double" <?php if($this->_options[proOptions][callMe][b_style] == 'pq_pro_bs_double') echo 'selected';?>>Border Style - Double</option>
+									<option value="pq_pro_bs_post" <?php if($this->_options[proOptions][callMe][b_style] == 'pq_pro_bs_post') echo 'selected';?>>Border Style - Mail Post</option>
+								</select>
+								</label>
+								<label>
+								<select id="callMe_pro_12" onchange="callMePreview();" name="proOptions[callMe][b_shadow]">
+								    <option value="" <?php if($this->_options[proOptions][callMe][b_shadow] == '') echo 'selected';?>>No</option>
+								    <option value="pq_pro_sh0" <?php if($this->_options[proOptions][callMe][b_shadow] == 'pq_pro_sh0') echo 'selected';?>>Shadow 0</option>
+									<option value="pq_pro_sh1" <?php if($this->_options[proOptions][callMe][b_shadow] == 'pq_pro_sh1') echo 'selected';?>>Shadow 1</option>
+									<option value="pq_pro_sh2" <?php if($this->_options[proOptions][callMe][b_shadow] == 'pq_pro_sh2') echo 'selected';?>>Shadow 2</option>
+									<option value="pq_pro_sh3" <?php if($this->_options[proOptions][callMe][b_shadow] == 'pq_pro_sh3') echo 'selected';?>>Shadow 3</option>
+									<option value="pq_pro_sh4" <?php if($this->_options[proOptions][callMe][b_shadow] == 'pq_pro_sh4') echo 'selected';?>>Shadow 4</option>
+									<option value="pq_pro_sh5" <?php if($this->_options[proOptions][callMe][b_shadow] == 'pq_pro_sh5') echo 'selected';?>>Shadow 5</option>
+								</select>
+								</label>
+								<label>
+									<select id="callMe_pro_13" onchange="callMePreview();" name="proOptions[callMe][b_c_color]">
+										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Cross color - White</option>
+										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Cross color - Iceblue</option>
+										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Cross color - Beige</option>
+										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Cross color - Lilac</option>
+										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Cross color - Wormwood</option>
+										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Cross color - Yellow</option>
+										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Cross color - Grey</option>
+										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Cross color - Red</option>
+										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Cross color - Skyblue</option>
+										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Cross color - Blue</option>
+										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Cross color - Green</option>
+										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
+									</select>
+								</label>
+								<label><p>Background-image URL</p>
+								<input type="text" id="callMe_pro_background_image" onkeyUp="callMePreview();" name="proOptions[callMe][background_image]" value="<?php echo stripslashes($this->_options[proOptions][callMe][background_image]);?>">
+								</label>
+								<h3>ANIMATION</h3>
+								<label>
+								<select id="callMe_pro_animation" onchange="callMePreview();" name="proOptions[callMe][animation]">
+									<option value="" <?php if($this->_options[proOptions][callMe][animation] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_a_bounceInLeft" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_bounceInLeft') echo 'selected';?>>Bounceinleft</option>
+									<option value="pq_pro_a_bounceInRight" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_bounceInRight') echo 'selected';?>>Bounceinright</option>
+									<option value="pq_pro_a_bounceInUp" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_bounceInUp') echo 'selected';?>>Bounceinup</option>									
+									<option value="pq_pro_a_fadeIn" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_fadeIn') echo 'selected';?>>Fadein</option>
+									<option value="pq_pro_a_fadeInDown" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_fadeInDown') echo 'selected';?>>Fadeindown</option>
+									<option value="pq_pro_a_fadeInDownBig" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_fadeInDownBig') echo 'selected';?>>Fadeindownbig</option>
+									<option value="pq_pro_a_fadeInLeft" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_fadeInLeft') echo 'selected';?>>Fadeinleft</option>
+									<option value="pq_pro_a_fadeInLeftBig" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_fadeInLeftBig') echo 'selected';?>>Fadeinleftbig</option>
+									<option value="pq_pro_a_fadeInRight" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_fadeInRight') echo 'selected';?>>Fadeinright</option>
+									<option value="pq_pro_a_fadeInRightBig" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_fadeInRightBig') echo 'selected';?>>Fadeinrightbig</option>
+									<option value="pq_pro_a_fadeInUp" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_fadeInUp') echo 'selected';?>>Fadeinup</option>
+									<option value="pq_pro_a_fadeInUpBig" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_fadeInUpBig') echo 'selected';?>>Fadeinupbig</option>
+									<option value="pq_pro_a_flip" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_flip') echo 'selected';?>>Flip</option>
+									<option value="pq_pro_a_flipInX" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_flipInX') echo 'selected';?>>Flipinx</option>
+									<option value="pq_pro_a_flipInY" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_flipInY') echo 'selected';?>>Flipiny</option>									
+									<option value="pq_pro_a_lightSpeedIn" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_lightSpeedIn') echo 'selected';?>>Lightspeedin</option>									
+									<option value="pq_pro_a_rotateIn" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_rotateIn') echo 'selected';?>>Rotatein</option>
+									<option value="pq_pro_a_rotateInDownLeft" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_rotateInDownLeft') echo 'selected';?>>Rotateindownleft</option>
+									<option value="pq_pro_a_rotateInDownRight" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_rotateInDownRight') echo 'selected';?>>Rotateindownright</option>
+									<option value="pq_pro_a_rotateInUpLeft" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_rotateInUpLeft') echo 'selected';?>>Rotateinupleft</option>
+									<option value="pq_pro_a_rotateInUpRight" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_rotateInUpRight') echo 'selected';?>>Rotateinupright</option>
+									<option value="pq_pro_a_rollIn" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_rollIn') echo 'selected';?>>Rollin</option>									
+									<option value="pq_pro_a_zoomIn" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_zoomIn') echo 'selected';?>>Zoomin</option>
+									<option value="pq_pro_a_zoomInDown" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_zoomInDown') echo 'selected';?>>Zoomindown</option>
+									<option value="pq_pro_a_zoomInLeft" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_zoomInLeft') echo 'selected';?>>Zoominleft</option>
+									<option value="pq_pro_a_zoomInRight" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_zoomInRight') echo 'selected';?>>Zoominright</option>
+									<option value="pq_pro_a_zoomInUp" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_zoomInUp') echo 'selected';?>>Zoominup</option>
+									<option value="pq_pro_a_slideInDown" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_slideInDown') echo 'selected';?>>Slideindown</option>
+									<option value="pq_pro_a_slideInLeft" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_slideInLeft') echo 'selected';?>>Slideinleft</option>
+									<option value="pq_pro_a_slideInRight" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_slideInRight') echo 'selected';?>>Slideinright</option>
+									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
+								</select>
+								</label>																
+								<!--h3>WHITELABEL</h3>
+								<label>
+								<select name="proOptions[callMe][whitelabel]">
+									<option value="1" <?php if((int)$this->_options[proOptions][callMe][whitelabel] == 1) echo 'selected';?>>Enable</option>
+									<option value="0" <?php if((int)$this->_options[proOptions][callMe][whitelabel] == 0) echo 'selected';?>>Disabled</option>
+								</select>
+								</label-->
+							</div>
+						</div>
+						<div class="settings thankyou">
+						<h2>Additional</h2>
+							<div class="popup selected">
+								<h3>DISPLAY AFTER</h3>
+								<label><p>Sharing Sidebar</p>
+								<select  name="sharingSideBar[afterProceed][thank]">
+									<option value="1" <?php if((int)$this->_options[sharingSideBar][afterProceed][thank] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[sharingSideBar][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Image Sharer</p>
+								<select name="imageSharer[afterProceed][thank]">
+									<option value="1" <?php if((int)$this->_options[imageSharer][afterProceed][thank] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[imageSharer][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Subscribe Bar </p>
+								<select name="subscribeBar[afterProceed][thank]">
+									<option value="1" <?php if((int)$this->_options[subscribeBar][afterProceed][thank] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[subscribeBar][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Exit Intent Popup</p>
+								<select name="subscribeExit[afterProceed][thank]">
+									<option value="1" <?php if((int)$this->_options[subscribeExit][afterProceed][thank] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[subscribeExit][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>								
+								<label><p>Contact Form</p>
+								<select name="contactUs[afterProceed][thank]">
+									<option value="1" <?php if((int)$this->_options[contactUs][afterProceed][thank] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[contactUs][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Call Me Now</p>
+								<select name="callMe[afterProceed][thank]">
+									<option value="1" <?php if((int)$this->_options[callMe][afterProceed][thank] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[callMe][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<br>
+								<h2 class="pro_h1">PRO options</h2>
+								<h3>Design</h3>
+								<label>
+								<select id="thankPopup_pro_1" onchange="thankPopupPreview();" name="proOptions[thankPopup][head_font]">
+									<option value="" <?php if($this->_options[proOptions][thankPopup][head_font] == '') echo 'selected';?>>Heading and Button - PT Sans Narrow</option>
+									<option value="pq_pro_h_georgia" <?php if($this->_options[proOptions][thankPopup][head_font] == 'pq_pro_h_georgia') echo 'selected';?>>Heading and Button - Georgia</option>
+									<option value="pq_pro_h_helvetica" <?php if($this->_options[proOptions][thankPopup][head_font] == 'pq_pro_h_helvetica') echo 'selected';?>>Heading and Button - Helvetica</option>
+									<option value="pq_pro_h_courier" <?php if($this->_options[proOptions][thankPopup][head_font] == 'pq_pro_h_courier') echo 'selected';?>>Heading and Button - Courier New</option>
+									<option value="pq_pro_h_times" <?php if($this->_options[proOptions][thankPopup][head_font] == 'pq_pro_h_times') echo 'selected';?>>Heading and Button - Times New Roman</option>
+									<option value="pq_pro_h_verdana" <?php if($this->_options[proOptions][thankPopup][head_font] == 'pq_pro_h_verdana') echo 'selected';?>>Heading and Button - Verdana</option>
+									<option value="pq_pro_h_arial_black" <?php if($this->_options[proOptions][thankPopup][head_font] == 'pq_pro_h_arial_black') echo 'selected';?>>Heading and Button - Arial Black</option>
+									<option value="pq_pro_h_comic" <?php if($this->_options[proOptions][thankPopup][head_font] == 'pq_pro_h_comic') echo 'selected';?>>Heading and Button - Comic Sans MS</option>
+									<option value="pq_pro_h_impact" <?php if($this->_options[proOptions][thankPopup][head_font] == 'pq_pro_h_impact') echo 'selected';?>>Heading and Button - Impact</option>
+									<option value="pq_pro_h_trebuchet" <?php if($this->_options[proOptions][thankPopup][head_font] == 'pq_pro_h_trebuchet') echo 'selected';?>>Heading and Button - Trebuchet MS</option>
+								</select>
+								</label>
+								<label>
+								<select id="thankPopup_pro_2" onchange="thankPopupPreview();" name="proOptions[thankPopup][head_size]">
+									<option value="" <?php if($this->_options[proOptions][thankPopup][head_size] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_head_size16" <?php if($this->_options[proOptions][thankPopup][head_size] == 'pq_pro_head_size16') echo 'selected';?>>Heading Size - 16</option>
+									<option value="pq_pro_head_size20" <?php if($this->_options[proOptions][thankPopup][head_size] == 'pq_pro_head_size20') echo 'selected';?>>Heading Size - 20</option>
+									<option value="pq_pro_head_size24" <?php if($this->_options[proOptions][thankPopup][head_size] == 'pq_pro_head_size24') echo 'selected';?>>Heading Size - 24</option>
+									<option value="pq_pro_head_size28" <?php if($this->_options[proOptions][thankPopup][head_size] == 'pq_pro_head_size28') echo 'selected';?>>Heading Size - 28</option>
+									<option value="pq_pro_head_size36" <?php if($this->_options[proOptions][thankPopup][head_size] == 'pq_pro_head_size36') echo 'selected';?>>Heading Size - 36</option>
+									<option value="pq_pro_head_size48" <?php if($this->_options[proOptions][thankPopup][head_size] == 'pq_pro_head_size48') echo 'selected';?>>Heading Size - 48</option>
+								</select>
+								</label>
+								<label>
+									<select id="thankPopup_pro_3" onchange="thankPopupPreview();" name="proOptions[thankPopup][head_color]">
+										<option value="pq_pro_head_color_white" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_white') echo 'selected';?>>Heading color - White</option>
+										<option value="pq_pro_head_color_iceblue" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_iceblue') echo 'selected';?>>Heading color - Iceblue</option>
+										<option value="pq_pro_head_color_beige" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_beige') echo 'selected';?>>Heading color - Beige</option>
+										<option value="pq_pro_head_color_lilac" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_lilac') echo 'selected';?>>Heading color - Lilac</option>
+										<option value="pq_pro_head_color_wormwood" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_wormwood') echo 'selected';?>>Heading color - Wormwood</option>
+										<option value="pq_pro_head_color_yellow" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_yellow') echo 'selected';?>>Heading color - Yellow</option>
+										<option value="pq_pro_head_color_grey" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_grey') echo 'selected';?>>Heading color - Grey</option>
+										<option value="pq_pro_head_color_red" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_red') echo 'selected';?>>Heading color - Red</option>
+										<option value="pq_pro_head_color_skyblue" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_skyblue') echo 'selected';?>>Heading color - Skyblue</option>
+										<option value="pq_pro_head_color_blue" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_blue') echo 'selected';?>>Heading color - Blue</option>
+										<option value="pq_pro_head_color_green" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_green') echo 'selected';?>>Heading color - Green</option>
+										<option value="pq_pro_head_color_black" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_black') echo 'selected';?>>Heading color - Black</option>
+									</select>
+								</label>
+								<label>
+								<select id="thankPopup_pro_4" onchange="thankPopupPreview();" name="proOptions[thankPopup][font]">
+									<option value="pq_pro_arial" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
+									<option value="pq_pro_georgia" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_georgia') echo 'selected';?>>Text - Georgia</option>
+									<option value="pq_pro_helvetica" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_helvetica') echo 'selected';?>>Text - Helvetica</option>
+									<option value="pq_pro_courier" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_courier') echo 'selected';?>>Text - Courier New</option>
+									<option value="pq_pro_times" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_times') echo 'selected';?>>Text - Times New Roman</option>
+									<option value="pq_pro_verdana" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_verdana') echo 'selected';?>>Text - Verdana</option>
+									<option value="pq_pro_arial_black" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_arial_black') echo 'selected';?>>Text - Arial Black</option>
+									<option value="pq_pro_comic" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_comic') echo 'selected';?>>Text - Comic Sans MS</option>
+									<option value="pq_pro_impact" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_impact') echo 'selected';?>>Text - Impact</option>
+									<option value="pq_pro_trebuchet" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_trebuchet') echo 'selected';?>>Text - Trebuchet MS</option>
+								</select>
+								</label>
+								<label>
+								<select id="thankPopup_pro_5" onchange="thankPopupPreview();" name="proOptions[thankPopup][text_size]">
+									<option value="" <?php if($this->_options[proOptions][thankPopup][text_size] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_text_size12" <?php if($this->_options[proOptions][thankPopup][text_size] == 'pq_pro_text_size12') echo 'selected';?>>Text Size - 12</option>
+									<option value="pq_pro_text_size16" <?php if($this->_options[proOptions][thankPopup][text_size] == 'pq_pro_text_size16') echo 'selected';?>>Text Size - 16</option>
+									<option value="pq_pro_text_size20" <?php if($this->_options[proOptions][thankPopup][text_size] == 'pq_pro_text_size20') echo 'selected';?>>Text Size - 20</option>
+									<option value="pq_pro_text_size24" <?php if($this->_options[proOptions][thankPopup][text_size] == 'pq_pro_text_size24') echo 'selected';?>>Text Size - 24</option>
+									<option value="pq_pro_text_size28" <?php if($this->_options[proOptions][thankPopup][text_size] == 'pq_pro_text_size28') echo 'selected';?>>Text Size - 28</option>
+									<option value="pq_pro_text_size36" <?php if($this->_options[proOptions][thankPopup][text_size] == 'pq_pro_text_size36') echo 'selected';?>>Text Size - 36</option>	
+								</select>
+								</label>
+								<label>
+									<select id="thankPopup_pro_6" onchange="thankPopupPreview();" name="proOptions[thankPopup][text_color]">
+										<option value="pq_pro_text_color_white" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_white') echo 'selected';?>>Text color - White</option>
+										<option value="pq_pro_text_color_iceblue" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_iceblue') echo 'selected';?>>Text color - Iceblue</option>
+										<option value="pq_pro_text_color_beige" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_beige') echo 'selected';?>>Text color - Beige</option>
+										<option value="pq_pro_text_color_lilac" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_lilac') echo 'selected';?>>Text color - Lilac</option>
+										<option value="pq_pro_text_color_wormwood" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_wormwood') echo 'selected';?>>Text color - Wormwood</option>
+										<option value="pq_pro_text_color_yellow" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_yellow') echo 'selected';?>>Text color - Yellow</option>
+										<option value="pq_pro_text_color_grey" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_grey') echo 'selected';?>>Text color - Grey</option>
+										<option value="pq_pro_text_color_red" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_red') echo 'selected';?>>Text color - Red</option>
+										<option value="pq_pro_text_color_skyblue" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_skyblue') echo 'selected';?>>Text color - Skyblue</option>
+										<option value="pq_pro_text_color_blue" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_blue') echo 'selected';?>>Text color - Blue</option>
+										<option value="pq_pro_text_color_green" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_green') echo 'selected';?>>Text color - Green</option>
+										<option value="pq_pro_text_color_black" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_black') echo 'selected';?>>Text color - Black</option>
+									</select>
+								</label>
+								<label>
+								<select id="thankPopup_pro_7" onchange="thankPopupPreview();" name="proOptions[thankPopup][b_radius]">
+									<option value="" <?php if($this->_options[proOptions][thankPopup][b_radius] == '') echo 'selected';?>>Border and Button Radius - Default</option>
+									<option value="pq_pro_br_sq" <?php if($this->_options[proOptions][thankPopup][b_radius] == 'pq_pro_br_sq') echo 'selected';?>>Border and Button Radius - Square</option>
+									<option value="pq_pro_br_cr" <?php if($this->_options[proOptions][thankPopup][b_radius] == 'pq_pro_br_cr') echo 'selected';?>>Border and Button Radius - Rounded</option>
+								</select>
+								</label>
+								<label>
+								<select id="thankPopup_pro_9" onchange="thankPopupPreview();" name="proOptions[thankPopup][b_width]">
+									<option value="" <?php if($this->_options[proOptions][thankPopup][b_width] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_bd1" <?php if($this->_options[proOptions][thankPopup][b_width] == 'pq_pro_bd1') echo 'selected';?>>Border Width - 1px</option>
+									<option value="pq_pro_bd2" <?php if($this->_options[proOptions][thankPopup][b_width] == 'pq_pro_bd2') echo 'selected';?>>Border Width - 2px</option>
+									<option value="pq_pro_bd3" <?php if($this->_options[proOptions][thankPopup][b_width] == 'pq_pro_bd3') echo 'selected';?>>Border Width - 3px</option>
+									<option value="pq_pro_bd4" <?php if($this->_options[proOptions][thankPopup][b_width] == 'pq_pro_bd4') echo 'selected';?>>Border Width - 4px</option>
+									<option value="pq_pro_bd5" <?php if($this->_options[proOptions][thankPopup][b_width] == 'pq_pro_bd5') echo 'selected';?>>Border Width - 5px</option>
+									<option value="pq_pro_bd6" <?php if($this->_options[proOptions][thankPopup][b_width] == 'pq_pro_bd6') echo 'selected';?>>Border Width - 6px</option>
+									<option value="pq_pro_bd7" <?php if($this->_options[proOptions][thankPopup][b_width] == 'pq_pro_bd7') echo 'selected';?>>Border Width - 7px</option>
+									<option value="pq_pro_bd8" <?php if($this->_options[proOptions][thankPopup][b_width] == 'pq_pro_bd8') echo 'selected';?>>Border Width - 8px</option>
+									<option value="pq_pro_bd9" <?php if($this->_options[proOptions][thankPopup][b_width] == 'pq_pro_bd9') echo 'selected';?>>Border Width - 9px</option>
+									<option value="pq_pro_bd10" <?php if($this->_options[proOptions][thankPopup][b_width] == 'pq_pro_bd10') echo 'selected';?>>Border Width - 10px</option>
+								</select>
+								</label>
+								<label>
+								<select id="thankPopup_pro_8" onchange="thankPopupPreview();" name="proOptions[thankPopup][b_color]">
+									<option value="" <?php if($this->_options[proOptions][thankPopup][b_color] == '') echo 'selected';?>>Border Color - White</option>
+									<option value="pq_pro_bd_iceblue" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_iceblue') echo 'selected';?>>Border Color - Iceblue</option>
+									<option value="pq_pro_bd_iceblue_lt " <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_iceblue_lt ') echo 'selected';?>>Border Color - Iceblue LT</option>
+									<option value="pq_pro_bd_beige" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_beige') echo 'selected';?>>Border Color - Beige</option>
+									<option value="pq_pro_bd_beige_lt" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_beige_lt') echo 'selected';?>>Border Color - Beige  LT</option>
+									<option value="pq_pro_bd_lilac" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_lilac') echo 'selected';?>>Border Color - Lilac</option>
+									<option value="pq_pro_bd_lilac_lt" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_lilac_lt') echo 'selected';?>>Border Color - Lilac LT</option>
+									<option value="pq_pro_bd_wormwood" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_wormwood') echo 'selected';?>>Border Color - Wormwood</option>
+									<option value="pq_pro_bd_wormwood_lt" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_wormwood_lt') echo 'selected';?>>Border Color - Wormwood LT</option>
+									<option value="pq_pro_bd_yellow" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_yellow') echo 'selected';?>>Border Color - Yellow</option>
+									<option value="pq_pro_bd_yellow_lt" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_yellow_lt') echo 'selected';?>>Border Color - Yellow LT</option>
+									<option value="pq_pro_bd_grey" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_grey') echo 'selected';?>>Border Color - Grey</option>
+									<option value="pq_pro_bd_grey_lt" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_grey_lt') echo 'selected';?>>Border Color - Grey LT</option>
+									<option value="pq_pro_bd_red" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_red') echo 'selected';?>>Border Color - Red</option>
+									<option value="pq_pro_bd_red_lt" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_red_lt') echo 'selected';?>>Border Color - Red LT</option>
+									<option value="pq_pro_bd_skyblue" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_skyblue') echo 'selected';?>>Border Color - Skyblue</option>
+									<option value="pq_pro_bd_skyblue_lt" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_skyblue_lt') echo 'selected';?>>Border Color - Skyblue LT</option>
+									<option value="pq_pro_bd_blue" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_blue') echo 'selected';?>>Border Color - Blue</option>
+									<option value="pq_pro_bd_blue_lt" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_blue_lt') echo 'selected';?>>Border Color - Blue LT</option>
+									<option value="pq_pro_bd_green" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_green') echo 'selected';?>>Border Color - Green</option>
+									<option value="pq_pro_bd_green_lt" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_green_lt') echo 'selected';?>>Border Color - Green LT</option>
+									<option value="pq_pro_bd_black" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_black') echo 'selected';?>>Border Color - Black</option>
+									<option value="pq_pro_bd_black_lt" <?php if($this->_options[proOptions][thankPopup][b_color] == 'pq_pro_bd_black_lt') echo 'selected';?>>Border Color - Black LT</option>
+								</select>
+								</label>
+																
+								<label>
+								<select id="thankPopup_pro_11" onchange="thankPopupPreview();" name="proOptions[thankPopup][b_style]">
+									<option value="" <?php if($this->_options[proOptions][thankPopup][b_style] == '') echo 'selected';?>>Border Style - Solid</option>
+									<option value="pq_pro_bs_dotted" <?php if($this->_options[proOptions][thankPopup][b_style] == 'pq_pro_bs_dotted') echo 'selected';?>>Border Style - Dotted</option>
+									<option value="pq_pro_bs_dashed" <?php if($this->_options[proOptions][thankPopup][b_style] == 'pq_pro_bs_dashed') echo 'selected';?>>Border Style - Dashed</option>
+									<option value="pq_pro_bs_double" <?php if($this->_options[proOptions][thankPopup][b_style] == 'pq_pro_bs_double') echo 'selected';?>>Border Style - Double</option>
+									<option value="pq_pro_bs_post" <?php if($this->_options[proOptions][thankPopup][b_style] == 'pq_pro_bs_post') echo 'selected';?>>Border Style - Mail Post</option>
+								</select>
+								</label>
+								<label>
+								<select id="thankPopup_pro_12" onchange="thankPopupPreview();" name="proOptions[thankPopup][b_shadow]">
+								    <option value="" <?php if($this->_options[proOptions][thankPopup][b_shadow] == '') echo 'selected';?>>No</option>
+								    <option value="pq_pro_sh0" <?php if($this->_options[proOptions][thankPopup][b_shadow] == 'pq_pro_sh0') echo 'selected';?>>Shadow 0</option>
+									<option value="pq_pro_sh1" <?php if($this->_options[proOptions][thankPopup][b_shadow] == 'pq_pro_sh1') echo 'selected';?>>Shadow 1</option>
+									<option value="pq_pro_sh2" <?php if($this->_options[proOptions][thankPopup][b_shadow] == 'pq_pro_sh2') echo 'selected';?>>Shadow 2</option>
+									<option value="pq_pro_sh3" <?php if($this->_options[proOptions][thankPopup][b_shadow] == 'pq_pro_sh3') echo 'selected';?>>Shadow 3</option>
+									<option value="pq_pro_sh4" <?php if($this->_options[proOptions][thankPopup][b_shadow] == 'pq_pro_sh4') echo 'selected';?>>Shadow 4</option>
+									<option value="pq_pro_sh5" <?php if($this->_options[proOptions][thankPopup][b_shadow] == 'pq_pro_sh5') echo 'selected';?>>Shadow 5</option>
+								</select>
+								</label>
+								<label>
+									<select id="thankPopup_pro_13" onchange="thankPopupPreview();" name="proOptions[thankPopup][b_c_color]">
+										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Cross color - White</option>
+										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Cross color - Iceblue</option>
+										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Cross color - Beige</option>
+										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Cross color - Lilac</option>
+										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Cross color - Wormwood</option>
+										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Cross color - Yellow</option>
+										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Cross color - Grey</option>
+										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Cross color - Red</option>
+										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Cross color - Skyblue</option>
+										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Cross color - Blue</option>
+										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Cross color - Green</option>
+										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
+									</select>
+								</label>
+								<label><p>Background-image URL</p>
+								<input type="text" id="thankPopup_pro_background_image" onchange="thankPopupPreview();" name="proOptions[thankPopup][background_image]" value="<?php echo stripslashes($this->_options[proOptions][thankPopup][background_image]);?>">
+								</label>
+								<h3>ANIMATION</h3>
+								<label>
+								<select id="thankPopup_pro_animation" onchange="thankPopupPreview();" name="proOptions[thankPopup][animation]">
+									<option value="" <?php if($this->_options[proOptions][thankPopup][animation] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_a_bounceInLeft" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_bounceInLeft') echo 'selected';?>>Bounceinleft</option>
+									<option value="pq_pro_a_bounceInRight" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_bounceInRight') echo 'selected';?>>Bounceinright</option>
+									<option value="pq_pro_a_bounceInUp" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_bounceInUp') echo 'selected';?>>Bounceinup</option>									
+									<option value="pq_pro_a_fadeIn" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_fadeIn') echo 'selected';?>>Fadein</option>
+									<option value="pq_pro_a_fadeInDown" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_fadeInDown') echo 'selected';?>>Fadeindown</option>
+									<option value="pq_pro_a_fadeInDownBig" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_fadeInDownBig') echo 'selected';?>>Fadeindownbig</option>
+									<option value="pq_pro_a_fadeInLeft" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_fadeInLeft') echo 'selected';?>>Fadeinleft</option>
+									<option value="pq_pro_a_fadeInLeftBig" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_fadeInLeftBig') echo 'selected';?>>Fadeinleftbig</option>
+									<option value="pq_pro_a_fadeInRight" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_fadeInRight') echo 'selected';?>>Fadeinright</option>
+									<option value="pq_pro_a_fadeInRightBig" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_fadeInRightBig') echo 'selected';?>>Fadeinrightbig</option>
+									<option value="pq_pro_a_fadeInUp" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_fadeInUp') echo 'selected';?>>Fadeinup</option>
+									<option value="pq_pro_a_fadeInUpBig" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_fadeInUpBig') echo 'selected';?>>Fadeinupbig</option>
+									<option value="pq_pro_a_flip" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_flip') echo 'selected';?>>Flip</option>
+									<option value="pq_pro_a_flipInX" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_flipInX') echo 'selected';?>>Flipinx</option>
+									<option value="pq_pro_a_flipInY" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_flipInY') echo 'selected';?>>Flipiny</option>									
+									<option value="pq_pro_a_lightSpeedIn" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_lightSpeedIn') echo 'selected';?>>Lightspeedin</option>									
+									<option value="pq_pro_a_rotateIn" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_rotateIn') echo 'selected';?>>Rotatein</option>
+									<option value="pq_pro_a_rotateInDownLeft" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_rotateInDownLeft') echo 'selected';?>>Rotateindownleft</option>
+									<option value="pq_pro_a_rotateInDownRight" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_rotateInDownRight') echo 'selected';?>>Rotateindownright</option>
+									<option value="pq_pro_a_rotateInUpLeft" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_rotateInUpLeft') echo 'selected';?>>Rotateinupleft</option>
+									<option value="pq_pro_a_rotateInUpRight" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_rotateInUpRight') echo 'selected';?>>Rotateinupright</option>
+									<option value="pq_pro_a_rollIn" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_rollIn') echo 'selected';?>>Rollin</option>									
+									<option value="pq_pro_a_zoomIn" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_zoomIn') echo 'selected';?>>Zoomin</option>
+									<option value="pq_pro_a_zoomInDown" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_zoomInDown') echo 'selected';?>>Zoomindown</option>
+									<option value="pq_pro_a_zoomInLeft" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_zoomInLeft') echo 'selected';?>>Zoominleft</option>
+									<option value="pq_pro_a_zoomInRight" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_zoomInRight') echo 'selected';?>>Zoominright</option>
+									<option value="pq_pro_a_zoomInUp" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_zoomInUp') echo 'selected';?>>Zoominup</option>
+									<option value="pq_pro_a_slideInDown" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_slideInDown') echo 'selected';?>>Slideindown</option>
+									<option value="pq_pro_a_slideInLeft" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_slideInLeft') echo 'selected';?>>Slideinleft</option>
+									<option value="pq_pro_a_slideInRight" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_slideInRight') echo 'selected';?>>Slideinright</option>
+									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
+								</select>
+								</label>																
+								<!--h3>WHITELABEL</h3>
+								<label>
+								<select name="proOptions[thankPopup][whitelabel]">
+									<option value="1" <?php if((int)$this->_options[proOptions][thankPopup][whitelabel] == 1) echo 'selected';?>>Enable</option>
+									<option value="0" <?php if((int)$this->_options[proOptions][thankPopup][whitelabel] == 0) echo 'selected';?>>Disabled</option>
+								</select>
+								</label-->
+							</div>
+						</div>
+						<div class="settings follow">
+						<h2>Additional</h2>
+							<div class="popup selected">
+								<h3>DISPLAY AFTER</h3>
+								<label><p>Sharing Sidebar</p>
+								<select name="sharingSideBar[afterProceed][follow]">
+									<option value="1" <?php if((int)$this->_options[sharingSideBar][afterProceed][follow] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[sharingSideBar][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Image Sharer</p>
+								<select name="imageSharer[afterProceed][follow]">
+									<option value="1" <?php if((int)$this->_options[imageSharer][afterProceed][follow] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[imageSharer][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Subscribe Bar </p>
+								<select name="subscribeBar[afterProceed][follow]">
+									<option value="1" <?php if((int)$this->_options[subscribeBar][afterProceed][follow] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[subscribeBar][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Exit Intent Popup</p>
+								<select name="subscribeExit[afterProceed][follow]">
+									<option value="1" <?php if((int)$this->_options[subscribeExit][afterProceed][follow] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[subscribeExit][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>								
+								<label><p>Contact Form</p>
+								<select name="contactUs[afterProceed][follow]">
+									<option value="1" <?php if((int)$this->_options[contactUs][afterProceed][follow] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[contactUs][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Call Me Now</p>
+								<select name="callMe[afterProceed][follow]">
+									<option value="1" <?php if((int)$this->_options[callMe][afterProceed][follow] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[callMe][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<br>
+								<h2 class="pro_h1">PRO options</h2>
+								<h3>Design</h3>
+								<label>
+								<select id="follow_pro_1" onchange="followPreview();" name="proOptions[follow][head_font]">
+									<option value="" <?php if($this->_options[proOptions][follow][head_font] == '') echo 'selected';?>>Heading and Button - PT Sans Narrow</option>
+									<option value="pq_pro_h_georgia" <?php if($this->_options[proOptions][follow][head_font] == 'pq_pro_h_georgia') echo 'selected';?>>Heading and Button - Georgia</option>
+									<option value="pq_pro_h_helvetica" <?php if($this->_options[proOptions][follow][head_font] == 'pq_pro_h_helvetica') echo 'selected';?>>Heading and Button - Helvetica</option>
+									<option value="pq_pro_h_courier" <?php if($this->_options[proOptions][follow][head_font] == 'pq_pro_h_courier') echo 'selected';?>>Heading and Button - Courier New</option>
+									<option value="pq_pro_h_times" <?php if($this->_options[proOptions][follow][head_font] == 'pq_pro_h_times') echo 'selected';?>>Heading and Button - Times New Roman</option>
+									<option value="pq_pro_h_verdana" <?php if($this->_options[proOptions][follow][head_font] == 'pq_pro_h_verdana') echo 'selected';?>>Heading and Button - Verdana</option>
+									<option value="pq_pro_h_arial_black" <?php if($this->_options[proOptions][follow][head_font] == 'pq_pro_h_arial_black') echo 'selected';?>>Heading and Button - Arial Black</option>
+									<option value="pq_pro_h_comic" <?php if($this->_options[proOptions][follow][head_font] == 'pq_pro_h_comic') echo 'selected';?>>Heading and Button - Comic Sans MS</option>
+									<option value="pq_pro_h_impact" <?php if($this->_options[proOptions][follow][head_font] == 'pq_pro_h_impact') echo 'selected';?>>Heading and Button - Impact</option>
+									<option value="pq_pro_h_trebuchet" <?php if($this->_options[proOptions][follow][head_font] == 'pq_pro_h_trebuchet') echo 'selected';?>>Heading and Button - Trebuchet MS</option>
+								</select>
+								</label>
+								<label>
+								<select id="follow_pro_2" onchange="followPreview();" name="proOptions[follow][head_size]">
+									<option value="" <?php if($this->_options[proOptions][follow][head_size] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_head_size16" <?php if($this->_options[proOptions][follow][head_size] == 'pq_pro_head_size16') echo 'selected';?>>Heading Size - 16</option>
+									<option value="pq_pro_head_size20" <?php if($this->_options[proOptions][follow][head_size] == 'pq_pro_head_size20') echo 'selected';?>>Heading Size - 20</option>
+									<option value="pq_pro_head_size24" <?php if($this->_options[proOptions][follow][head_size] == 'pq_pro_head_size24') echo 'selected';?>>Heading Size - 24</option>
+									<option value="pq_pro_head_size28" <?php if($this->_options[proOptions][follow][head_size] == 'pq_pro_head_size28') echo 'selected';?>>Heading Size - 28</option>
+									<option value="pq_pro_head_size36" <?php if($this->_options[proOptions][follow][head_size] == 'pq_pro_head_size36') echo 'selected';?>>Heading Size - 36</option>
+									<option value="pq_pro_head_size48" <?php if($this->_options[proOptions][follow][head_size] == 'pq_pro_head_size48') echo 'selected';?>>Heading Size - 48</option>
+								</select>
+								</label>
+								<label>
+									<select id="follow_pro_3" onchange="followPreview();" name="proOptions[follow][head_color]">
+										<option value="pq_pro_head_color_white" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_white') echo 'selected';?>>Heading color - White</option>
+										<option value="pq_pro_head_color_iceblue" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_iceblue') echo 'selected';?>>Heading color - Iceblue</option>
+										<option value="pq_pro_head_color_beige" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_beige') echo 'selected';?>>Heading color - Beige</option>
+										<option value="pq_pro_head_color_lilac" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_lilac') echo 'selected';?>>Heading color - Lilac</option>
+										<option value="pq_pro_head_color_wormwood" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_wormwood') echo 'selected';?>>Heading color - Wormwood</option>
+										<option value="pq_pro_head_color_yellow" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_yellow') echo 'selected';?>>Heading color - Yellow</option>
+										<option value="pq_pro_head_color_grey" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_grey') echo 'selected';?>>Heading color - Grey</option>
+										<option value="pq_pro_head_color_red" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_red') echo 'selected';?>>Heading color - Red</option>
+										<option value="pq_pro_head_color_skyblue" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_skyblue') echo 'selected';?>>Heading color - Skyblue</option>
+										<option value="pq_pro_head_color_blue" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_blue') echo 'selected';?>>Heading color - Blue</option>
+										<option value="pq_pro_head_color_green" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_green') echo 'selected';?>>Heading color - Green</option>
+										<option value="pq_pro_head_color_black" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_black') echo 'selected';?>>Heading color - Black</option>
+									</select>
+								</label>
+								<label>
+								<select id="follow_pro_4" onchange="followPreview();" name="proOptions[follow][font]">
+									<option value="pq_pro_arial" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
+									<option value="pq_pro_georgia" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_georgia') echo 'selected';?>>Text - Georgia</option>
+									<option value="pq_pro_helvetica" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_helvetica') echo 'selected';?>>Text - Helvetica</option>
+									<option value="pq_pro_courier" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_courier') echo 'selected';?>>Text - Courier New</option>
+									<option value="pq_pro_times" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_times') echo 'selected';?>>Text - Times New Roman</option>
+									<option value="pq_pro_verdana" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_verdana') echo 'selected';?>>Text - Verdana</option>
+									<option value="pq_pro_arial_black" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_arial_black') echo 'selected';?>>Text - Arial Black</option>
+									<option value="pq_pro_comic" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_comic') echo 'selected';?>>Text - Comic Sans MS</option>
+									<option value="pq_pro_impact" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_impact') echo 'selected';?>>Text - Impact</option>
+									<option value="pq_pro_trebuchet" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_trebuchet') echo 'selected';?>>Text - Trebuchet MS</option>
+								</select>
+								</label>
+								<label>
+								<select id="follow_pro_5" onchange="followPreview();" name="proOptions[follow][text_size]">
+									<option value="" <?php if($this->_options[proOptions][follow][text_size] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_text_size12" <?php if($this->_options[proOptions][follow][text_size] == 'pq_pro_text_size12') echo 'selected';?>>Text Size - 12</option>
+									<option value="pq_pro_text_size16" <?php if($this->_options[proOptions][follow][text_size] == 'pq_pro_text_size16') echo 'selected';?>>Text Size - 16</option>
+									<option value="pq_pro_text_size20" <?php if($this->_options[proOptions][follow][text_size] == 'pq_pro_text_size20') echo 'selected';?>>Text Size - 20</option>
+									<option value="pq_pro_text_size24" <?php if($this->_options[proOptions][follow][text_size] == 'pq_pro_text_size24') echo 'selected';?>>Text Size - 24</option>
+									<option value="pq_pro_text_size28" <?php if($this->_options[proOptions][follow][text_size] == 'pq_pro_text_size28') echo 'selected';?>>Text Size - 28</option>
+									<option value="pq_pro_text_size36" <?php if($this->_options[proOptions][follow][text_size] == 'pq_pro_text_size36') echo 'selected';?>>Text Size - 36</option>	
+								</select>
+								</label>
+								<label>
+									<select id="follow_pro_6" onchange="followPreview();" name="proOptions[follow][text_color]">
+										<option value="pq_pro_text_color_white" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_white') echo 'selected';?>>Text color - White</option>
+										<option value="pq_pro_text_color_iceblue" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_iceblue') echo 'selected';?>>Text color - Iceblue</option>
+										<option value="pq_pro_text_color_beige" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_beige') echo 'selected';?>>Text color - Beige</option>
+										<option value="pq_pro_text_color_lilac" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_lilac') echo 'selected';?>>Text color - Lilac</option>
+										<option value="pq_pro_text_color_wormwood" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_wormwood') echo 'selected';?>>Text color - Wormwood</option>
+										<option value="pq_pro_text_color_yellow" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_yellow') echo 'selected';?>>Text color - Yellow</option>
+										<option value="pq_pro_text_color_grey" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_grey') echo 'selected';?>>Text color - Grey</option>
+										<option value="pq_pro_text_color_red" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_red') echo 'selected';?>>Text color - Red</option>
+										<option value="pq_pro_text_color_skyblue" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_skyblue') echo 'selected';?>>Text color - Skyblue</option>
+										<option value="pq_pro_text_color_blue" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_blue') echo 'selected';?>>Text color - Blue</option>
+										<option value="pq_pro_text_color_green" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_green') echo 'selected';?>>Text color - Green</option>
+										<option value="pq_pro_text_color_black" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_black') echo 'selected';?>>Text color - Black</option>
+									</select>
+								</label>
+								<label>
+								<select id="follow_pro_7" onchange="followPreview();" name="proOptions[follow][b_radius]">
+									<option value="" <?php if($this->_options[proOptions][follow][b_radius] == '') echo 'selected';?>>Border and Button Radius - Default</option>
+									<option value="pq_pro_br_sq" <?php if($this->_options[proOptions][follow][b_radius] == 'pq_pro_br_sq') echo 'selected';?>>Border and Button Radius - Square</option>
+									<option value="pq_pro_br_cr" <?php if($this->_options[proOptions][follow][b_radius] == 'pq_pro_br_cr') echo 'selected';?>>Border and Button Radius - Rounded</option>
+								</select>
+								</label>
+								<label>
+								<select id="follow_pro_9" onchange="followPreview();" name="proOptions[follow][b_width]">
+									<option value="" <?php if($this->_options[proOptions][follow][b_width] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_bd1" <?php if($this->_options[proOptions][follow][b_width] == 'pq_pro_bd1') echo 'selected';?>>Border Width - 1px</option>
+									<option value="pq_pro_bd2" <?php if($this->_options[proOptions][follow][b_width] == 'pq_pro_bd2') echo 'selected';?>>Border Width - 2px</option>
+									<option value="pq_pro_bd3" <?php if($this->_options[proOptions][follow][b_width] == 'pq_pro_bd3') echo 'selected';?>>Border Width - 3px</option>
+									<option value="pq_pro_bd4" <?php if($this->_options[proOptions][follow][b_width] == 'pq_pro_bd4') echo 'selected';?>>Border Width - 4px</option>
+									<option value="pq_pro_bd5" <?php if($this->_options[proOptions][follow][b_width] == 'pq_pro_bd5') echo 'selected';?>>Border Width - 5px</option>
+									<option value="pq_pro_bd6" <?php if($this->_options[proOptions][follow][b_width] == 'pq_pro_bd6') echo 'selected';?>>Border Width - 6px</option>
+									<option value="pq_pro_bd7" <?php if($this->_options[proOptions][follow][b_width] == 'pq_pro_bd7') echo 'selected';?>>Border Width - 7px</option>
+									<option value="pq_pro_bd8" <?php if($this->_options[proOptions][follow][b_width] == 'pq_pro_bd8') echo 'selected';?>>Border Width - 8px</option>
+									<option value="pq_pro_bd9" <?php if($this->_options[proOptions][follow][b_width] == 'pq_pro_bd9') echo 'selected';?>>Border Width - 9px</option>
+									<option value="pq_pro_bd10" <?php if($this->_options[proOptions][follow][b_width] == 'pq_pro_bd10') echo 'selected';?>>Border Width - 10px</option>
+								</select>
+								</label>
+								<label>
+								<select id="follow_pro_8" onchange="followPreview();" name="proOptions[follow][b_color]">
+									<option value="" <?php if($this->_options[proOptions][follow][b_color] == '') echo 'selected';?>>Border Color - White</option>
+									<option value="pq_pro_bd_iceblue" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_iceblue') echo 'selected';?>>Border Color - Iceblue</option>
+									<option value="pq_pro_bd_iceblue_lt " <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_iceblue_lt ') echo 'selected';?>>Border Color - Iceblue LT</option>
+									<option value="pq_pro_bd_beige" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_beige') echo 'selected';?>>Border Color - Beige</option>
+									<option value="pq_pro_bd_beige_lt" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_beige_lt') echo 'selected';?>>Border Color - Beige  LT</option>
+									<option value="pq_pro_bd_lilac" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_lilac') echo 'selected';?>>Border Color - Lilac</option>
+									<option value="pq_pro_bd_lilac_lt" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_lilac_lt') echo 'selected';?>>Border Color - Lilac LT</option>
+									<option value="pq_pro_bd_wormwood" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_wormwood') echo 'selected';?>>Border Color - Wormwood</option>
+									<option value="pq_pro_bd_wormwood_lt" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_wormwood_lt') echo 'selected';?>>Border Color - Wormwood LT</option>
+									<option value="pq_pro_bd_yellow" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_yellow') echo 'selected';?>>Border Color - Yellow</option>
+									<option value="pq_pro_bd_yellow_lt" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_yellow_lt') echo 'selected';?>>Border Color - Yellow LT</option>
+									<option value="pq_pro_bd_grey" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_grey') echo 'selected';?>>Border Color - Grey</option>
+									<option value="pq_pro_bd_grey_lt" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_grey_lt') echo 'selected';?>>Border Color - Grey LT</option>
+									<option value="pq_pro_bd_red" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_red') echo 'selected';?>>Border Color - Red</option>
+									<option value="pq_pro_bd_red_lt" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_red_lt') echo 'selected';?>>Border Color - Red LT</option>
+									<option value="pq_pro_bd_skyblue" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_skyblue') echo 'selected';?>>Border Color - Skyblue</option>
+									<option value="pq_pro_bd_skyblue_lt" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_skyblue_lt') echo 'selected';?>>Border Color - Skyblue LT</option>
+									<option value="pq_pro_bd_blue" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_blue') echo 'selected';?>>Border Color - Blue</option>
+									<option value="pq_pro_bd_blue_lt" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_blue_lt') echo 'selected';?>>Border Color - Blue LT</option>
+									<option value="pq_pro_bd_green" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_green') echo 'selected';?>>Border Color - Green</option>
+									<option value="pq_pro_bd_green_lt" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_green_lt') echo 'selected';?>>Border Color - Green LT</option>
+									<option value="pq_pro_bd_black" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_black') echo 'selected';?>>Border Color - Black</option>
+									<option value="pq_pro_bd_black_lt" <?php if($this->_options[proOptions][follow][b_color] == 'pq_pro_bd_black_lt') echo 'selected';?>>Border Color - Black LT</option-->
+								</select>
+								</label>
+																
+								<label>
+								<select id="follow_pro_11" onchange="followPreview();" name="proOptions[follow][b_style]">
+									<option value="" <?php if($this->_options[proOptions][follow][b_style] == '') echo 'selected';?>>Border Style - Solid</option>
+									<option value="pq_pro_bs_dotted" <?php if($this->_options[proOptions][follow][b_style] == 'pq_pro_bs_dotted') echo 'selected';?>>Border Style - Dotted</option>
+									<option value="pq_pro_bs_dashed" <?php if($this->_options[proOptions][follow][b_style] == 'pq_pro_bs_dashed') echo 'selected';?>>Border Style - Dashed</option>
+									<option value="pq_pro_bs_double" <?php if($this->_options[proOptions][follow][b_style] == 'pq_pro_bs_double') echo 'selected';?>>Border Style - Double</option>
+									<option value="pq_pro_bs_post" <?php if($this->_options[proOptions][follow][b_style] == 'pq_pro_bs_post') echo 'selected';?>>Border Style - Mail Post</option>
+								</select>
+								</label>
+								<label>
+								<select id="follow_pro_12" onchange="followPreview();" name="proOptions[follow][b_shadow]">
+								    <option value="" <?php if($this->_options[proOptions][follow][b_shadow] == '') echo 'selected';?>>No</option>
+								    <option value="pq_pro_sh0" <?php if($this->_options[proOptions][follow][b_shadow] == 'pq_pro_sh0') echo 'selected';?>>Shadow 0</option>
+									<option value="pq_pro_sh1" <?php if($this->_options[proOptions][follow][b_shadow] == 'pq_pro_sh1') echo 'selected';?>>Shadow 1</option>
+									<option value="pq_pro_sh2" <?php if($this->_options[proOptions][follow][b_shadow] == 'pq_pro_sh2') echo 'selected';?>>Shadow 2</option>
+									<option value="pq_pro_sh3" <?php if($this->_options[proOptions][follow][b_shadow] == 'pq_pro_sh3') echo 'selected';?>>Shadow 3</option>
+									<option value="pq_pro_sh4" <?php if($this->_options[proOptions][follow][b_shadow] == 'pq_pro_sh4') echo 'selected';?>>Shadow 4</option>
+									<option value="pq_pro_sh5" <?php if($this->_options[proOptions][follow][b_shadow] == 'pq_pro_sh5') echo 'selected';?>>Shadow 5</option>
+								</select>
+								</label>
+								<label>
+									<select id="follow_pro_13" onchange="followPreview();" name="proOptions[follow][b_c_color]">
+										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Cross color - White</option>
+										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Cross color - Iceblue</option>
+										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Cross color - Beige</option>
+										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Cross color - Lilac</option>
+										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Cross color - Wormwood</option>
+										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Cross color - Yellow</option>
+										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Cross color - Grey</option>
+										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Cross color - Red</option>
+										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Cross color - Skyblue</option>
+										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Cross color - Blue</option>
+										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Cross color - Green</option>
+										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
+									</select>
+								</label>
+								<label><p>Background-image URL</p>
+								<input type="text" id="follow_pro_background_image" onkeyup="followPreview();" name="proOptions[follow][background_image]" value="<?php echo stripslashes($this->_options[proOptions][follow][background_image]);?>">
+								</label>
+								<h3>ANIMATION</h3>
+								<label>
+								<select name="proOptions[follow][animation]" id="follow_pro_animation" onchange="followPreview();">
+									<option value="" <?php if($this->_options[proOptions][follow][animation] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_a_bounceInLeft" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_bounceInLeft') echo 'selected';?>>Bounceinleft</option>
+									<option value="pq_pro_a_bounceInRight" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_bounceInRight') echo 'selected';?>>Bounceinright</option>
+									<option value="pq_pro_a_bounceInUp" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_bounceInUp') echo 'selected';?>>Bounceinup</option>									
+									<option value="pq_pro_a_fadeIn" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_fadeIn') echo 'selected';?>>Fadein</option>
+									<option value="pq_pro_a_fadeInDown" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_fadeInDown') echo 'selected';?>>Fadeindown</option>
+									<option value="pq_pro_a_fadeInDownBig" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_fadeInDownBig') echo 'selected';?>>Fadeindownbig</option>
+									<option value="pq_pro_a_fadeInLeft" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_fadeInLeft') echo 'selected';?>>Fadeinleft</option>
+									<option value="pq_pro_a_fadeInLeftBig" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_fadeInLeftBig') echo 'selected';?>>Fadeinleftbig</option>
+									<option value="pq_pro_a_fadeInRight" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_fadeInRight') echo 'selected';?>>Fadeinright</option>
+									<option value="pq_pro_a_fadeInRightBig" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_fadeInRightBig') echo 'selected';?>>Fadeinrightbig</option>
+									<option value="pq_pro_a_fadeInUp" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_fadeInUp') echo 'selected';?>>Fadeinup</option>
+									<option value="pq_pro_a_fadeInUpBig" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_fadeInUpBig') echo 'selected';?>>Fadeinupbig</option>
+									<option value="pq_pro_a_flip" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_flip') echo 'selected';?>>Flip</option>
+									<option value="pq_pro_a_flipInX" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_flipInX') echo 'selected';?>>Flipinx</option>
+									<option value="pq_pro_a_flipInY" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_flipInY') echo 'selected';?>>Flipiny</option>									
+									<option value="pq_pro_a_lightSpeedIn" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_lightSpeedIn') echo 'selected';?>>Lightspeedin</option>									
+									<option value="pq_pro_a_rotateIn" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_rotateIn') echo 'selected';?>>Rotatein</option>
+									<option value="pq_pro_a_rotateInDownLeft" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_rotateInDownLeft') echo 'selected';?>>Rotateindownleft</option>
+									<option value="pq_pro_a_rotateInDownRight" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_rotateInDownRight') echo 'selected';?>>Rotateindownright</option>
+									<option value="pq_pro_a_rotateInUpLeft" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_rotateInUpLeft') echo 'selected';?>>Rotateinupleft</option>
+									<option value="pq_pro_a_rotateInUpRight" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_rotateInUpRight') echo 'selected';?>>Rotateinupright</option>
+									<option value="pq_pro_a_rollIn" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_rollIn') echo 'selected';?>>Rollin</option>									
+									<option value="pq_pro_a_zoomIn" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_zoomIn') echo 'selected';?>>Zoomin</option>
+									<option value="pq_pro_a_zoomInDown" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_zoomInDown') echo 'selected';?>>Zoomindown</option>
+									<option value="pq_pro_a_zoomInLeft" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_zoomInLeft') echo 'selected';?>>Zoominleft</option>
+									<option value="pq_pro_a_zoomInRight" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_zoomInRight') echo 'selected';?>>Zoominright</option>
+									<option value="pq_pro_a_zoomInUp" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_zoomInUp') echo 'selected';?>>Zoominup</option>
+									<option value="pq_pro_a_slideInDown" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_slideInDown') echo 'selected';?>>Slideindown</option>
+									<option value="pq_pro_a_slideInLeft" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_slideInLeft') echo 'selected';?>>Slideinleft</option>
+									<option value="pq_pro_a_slideInRight" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_slideInRight') echo 'selected';?>>Slideinright</option>
+									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
+								</select>
+								</label>
+								<label><p>Hover</p>
+								<select name="proOptions[follow][hover_animation]" id="follow_pro_hover_animation" onchange="followPreview();">
+									<option value="" <?php if($this->_options[proOptions][follow][hover_animation] == '') echo 'selected';?>>Default</option>
+									<option value="pq_pro_ha_hvr_grow" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_grow') echo 'selected';?>>Grow</option>
+									<option value="pq_pro_ha_hvr_shrink" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_shrink') echo 'selected';?>>Shrink</option>
+									<option value="pq_pro_ha_hvr_pulse" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_pulse') echo 'selected';?>>Pulse</option>
+									<option value="pq_pro_ha_hvr_pulse_grow" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_pulse_grow') echo 'selected';?>>Pulse Grow</option>
+									<option value="pq_pro_ha_hvr_push" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_push') echo 'selected';?>>Push</option>
+									<option value="pq_pro_ha_hvr_pop" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_pop') echo 'selected';?>>Pop</option>
+									<option value="pq_pro_ha_hvr_bounce_in" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_bounce_in') echo 'selected';?>>Bounce In</option>
+									<option value="pq_pro_ha_hvr_bounce_out" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_bounce_out') echo 'selected';?>>Bounce Out</option>
+									<option value="pq_pro_ha_hvr_rotate" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_rotate') echo 'selected';?>>Rotate</option>
+									<option value="pq_pro_ha_hvr_grow_rotate" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_grow_rotate') echo 'selected';?>>Grow Rotate</option>
+									<option value="pq_pro_ha_hvr_sink" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_sink') echo 'selected';?>>Sink</option>
+									<option value="pq_pro_ha_hvr_bob" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_bob') echo 'selected';?>>Bob</option>
+									<option value="pq_pro_ha_hvr_hang" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_hang') echo 'selected';?>>Hang</option>
+									<option value="pq_pro_ha_hvr_skew" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_skew') echo 'selected';?>>Skew</option>
+									<option value="pq_pro_ha_hvr_skew_forward" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_skew_forward') echo 'selected';?>>Skew Forward</option>
+									<option value="pq_pro_ha_hvr_skew_backward" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_skew_backward') echo 'selected';?>>Skew Backward</option>
+									<option value="pq_pro_ha_hvr_wobble_vertical" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_wobble_vertical') echo 'selected';?>>Wobble Vertical</option>
+									<option value="pq_pro_ha_hvr_wobble_horizontal" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_wobble_horizontal') echo 'selected';?>>Wobble Horizontal</option>
+									<option value="pq_pro_ha_hvr_wobble_to_bottom_right" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_wobble_to_bottom_right') echo 'selected';?>>Wobble B&amp;R</option>
+									<option value="pq_pro_ha_hvr_wobble_top" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_wobble_top') echo 'selected';?>>Wobble Top</option>
+									<option value="pq_pro_ha_hvr_wobble_bottom" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_wobble_bottom') echo 'selected';?>>Wobble Bottom</option>
+									<option value="pq_pro_ha_hvr_wobble_skew" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_wobble_skew') echo 'selected';?>>Wobble Skew</option>
+									<option value="pq_pro_ha_hvr_buzz" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_buzz') echo 'selected';?>>Buzz</option>
+									<option value="pq_pro_ha_hvr_buzz_out" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_buzz_out') echo 'selected';?>>Buzz Out</option>
+									<option value="pq_pro_ha_hvr_border_fade" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_border_fade') echo 'selected';?>>Bdr Fade</option>
+									<option value="pq_pro_ha_hvr_hollow" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_hollow') echo 'selected';?>>Hollow</option>
+									<option value="pq_pro_ha_hvr_trim" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_trim') echo 'selected';?>>Trim</option>
+									<option value="pq_pro_ha_hvr_ripple_out" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_ripple_out') echo 'selected';?>>Ripple Out</option>
+									<option value="pq_pro_ha_hvr_ripple_in" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_ripple_in') echo 'selected';?>>Ripple In</option>
+									<option value="pq_pro_ha_hvr_glow" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_glow') echo 'selected';?>>Glow</option>
+									<option value="pq_pro_ha_hvr_shadow" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_shadow') echo 'selected';?>>Shadow</option>
+									<option value="pq_pro_ha_hvr_grow_shadow" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_grow_shadow') echo 'selected';?>>Grow Shadow</option>
+									<option value="pq_pro_ha_hvr_float_shadow" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_float_shadow') echo 'selected';?>>Float Shadow</option>
+								</select>
+								</label>
+								<!--h3>WHITELABEL</h3>
+								<label>
+								<select name="proOptions[follow][whitelabel]">
+									<option value="1" <?php if((int)$this->_options[proOptions][follow][whitelabel] == 1) echo 'selected';?>>Enable</option>
+									<option value="0" <?php if((int)$this->_options[proOptions][follow][whitelabel] == 0) echo 'selected';?>>Disabled</option>
+								</select>
+								</label-->
+							</div>
+						</div>
+						
+					</div>
+						<div class="pq_button_group button_group_li5">
+							<input type="button" value="prev" class="ToLi4">
+							<br><input type="submit" value="Save and Activate" class="share_submit">
+							<input type="submit" value="Save and Activate" class="follow_submit">
+							<input type="submit" value="Save and Activate" class="contact_submit">
+							<input type="submit" value="Save and Activate" class="callme_submit">
+							<input type="submit" value="Save and Activate" class="exit_submit">
+							<input type="submit" value="Save and Activate" class="imagesharer_submit">
+							<input type="submit" value="Save and Activate" class="thankyou_submit">
+							<input type="submit" value="Save and Activate" class="marketing_submit">
+							<input type="submit" value="Save and Activate" class="collect_submit">
+						</div>
+		</form>
 	</div>
-</div>
-</div>
-		<script>
-			function changeSubscribeBarEnabled(){											
-				if(document.getElementById('subscribeBarEnabledCheckbox').checked){
-					document.getElementById('subscribeBarEnabledStyle').className = 'pq-switch-bg pq-on';
-					document.getElementById('subscribeBarEnabledText').innerHTML = 'On';					
-				} else {
-					document.getElementById('subscribeBarEnabledStyle').className = 'pq-switch-bg pq-off';
-					document.getElementById('subscribeBarEnabledText').innerHTML = 'Off';
-				}
-				
-				if(!document.getElementById('subscribeBarEnabledCheckbox').checked && !document.getElementById('subscribeExitEnabledCheckbox').checked){
-					document.getElementById('mailchimpBlockID').style.display = 'none';
-				} else {
-					document.getElementById('mailchimpBlockID').style.display = 'block';
-				}
-			}			
-			function changeSubscribeExitEnabled(){											
-				if(document.getElementById('subscribeExitEnabledCheckbox').checked){
-					document.getElementById('subscribeExitEnabledStyle').className = 'pq-switch-bg pq-on';
-					document.getElementById('subscribeExitEnabledText').innerHTML = 'On';																
-				} else {
-					document.getElementById('subscribeExitEnabledStyle').className = 'pq-switch-bg pq-off';
-					document.getElementById('subscribeExitEnabledText').innerHTML = 'Off';											
-				}																				
-				
-				if(!document.getElementById('subscribeBarEnabledCheckbox').checked && !document.getElementById('subscribeExitEnabledCheckbox').checked){
-					document.getElementById('mailchimpBlockID').style.display = 'none';
-				} else {
-					document.getElementById('mailchimpBlockID').style.display = 'block';
+	<div class="pq3">
+		<div style="text-align: center;">
+			<label class="choise">
+							<input type="radio" name="choise" value="3" checked="checked">
+							<div><img src="<?php echo plugins_url('i/30.png', __FILE__);?>" /></div>
+						</label><!--label class="choise">
+							<input type="radio" name="choise" value="4">
+							<div><img src="<?php echo plugins_url('i/31.png', __FILE__);?>" /></div>							
+						</label-->
+			<div class="pq_like_dash">
+				<p>Is that board comfortable for you?</p>
+				<a href="http://profitquery.com/dashboard_yes.html" target="blank"><img src="<?php echo plugins_url('i/like.png', __FILE__);?>" /></a>
+				<a href="http://profitquery.com/dashboard_no.html" target="blank"><img src="<?php echo plugins_url('i/dislike.png', __FILE__);?>" /></a>
+			</div>
+		</div>
+		<div class="frame">
+			<iframe src="about:blank" id="PQPreviewID" width="100%" height="100%" class="pq_if"></iframe>
+			<h2>Design and position demo</h2>
+			<p style="text-align: center; padding-top: 50px;">Your screen is too small to use. Min width is 850px.</p>
+		</div>
+		
+		<div id="Hello" class="pq_popup hello selected">
+			<h1>Thanks for your choise!</h1>
+			<p>Latest news and plans of our team.</p>
+			<p>New in 2.1.9: 1. Add new share provider Evernote, Pocket, Kindle, Flipboard. If you need a new share provider, just email ussupport@profitquery.com. 2. Add wonderfull features. Now you can share image from sharing sidebar through (Tumblr, Pinterest, VK). All image profitquery collect from your page, if profitquery library not found any photo by click on Tumblr or Pinterest or VK start default sharing. 3. Try to add Opera mini support (most of kind tools not displaying on this browser)</p>
+			<br>
+			<img src="<?php echo plugins_url('i/lesson.png', __FILE__);?>" />
+			<br><br>
+			<p>If you have any question or feedback or some ideas you can email us any time you want <a href="mailto:support@profitquery.com" target="_blank">support@profitquery.com</a> or visit Profitquery <a href="http://profitquery.com/community.html" target="_blank">community page.</a></p>
+			<!--input type="button" value="get started" onclick="document.getElementById('Hello').style.display='none';"-->
+			<br>
+			<a href="https://wordpress.org/plugins/share-subscribe-contact-aio-widget/" target="_blank"> <img src="<?php echo plugins_url('i/stars.png', __FILE__);?>" /></a>
+			<p>We work hard 7 days of week for make a best ever growth tools. If you like our work, you can make our team happy, please, <a href="https://wordpress.org/plugins/share-subscribe-contact-aio-widget/" target="_blank">rate our plugin.</a></p>
+			<a class="pq_close" onclick="document.getElementById('Hello').style.display='none';"></a>
+		</div>		
+		<div class="pq_popup protection share_desabled">
+		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+		<input type="hidden" name="action" value="disableSharingSidebar">
+			<h1>Disable Sharing Sidebar?</h1>
+			<input type="submit" value="disable" id="pq">
+			<input type="button" value="no" class="share_submit">
+		</form>	
+		</div>
+		<div class="pq_popup protection imagesharer_desabled">
+		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+		<input type="hidden" name="action" value="disableImageSharer">
+			<h1>Disable Image Sharer?</h1>
+			<input type="submit" value="disable">
+			<input type="button" value="no" class="imagesharer_submit">
+		</form>
+		</div>
+		<div class="pq_popup protection marketing_desabled">
+		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+		<input type="hidden" name="action" value="disableSubscribeBar">
+			<h1>Disable Subscribe Bar?</h1>
+			<input type="submit" value="disable">
+			<input type="button" value="no" class="marketing_submit">
+		</form>
+		</div>
+		<div class="pq_popup protection exit_desabled">
+		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+		<input type="hidden" name="action" value="disableSubscribeExit">
+			<h1>Disable Exit Intent Popup?</h1>
+			<input type="submit" value="disable">
+			<input type="button" value="no" class="exit_submit">
+		</form>
+		</div>		
+		<div class="pq_popup protection contact_desabled">
+		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+		<input type="hidden" name="action" value="disableContactUs">
+			<h1>Disable Contact Form?</h1>
+			<input type="submit" value="disable">
+			<input type="button" value="no" class="contact_submit">
+		</form>
+		</div>
+		<div class="pq_popup protection callme_desabled">
+		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+		<input type="hidden" name="action" value="disableCallMe">
+			<h1>Disable Call Me Popup</h1>
+			<input type="submit" value="disable">
+			<input type="button" value="no" class="callme_submit">
+		</form>
+		</div>		
+	</div>
+	<div class="pq_clear"></div>
+	<a class="question" href="javascript:void(0)" onclick="document.getElementById('Question').style.display='block';">
+		<img src="<?php echo plugins_url('i/29.png', __FILE__);?>" />
+	</a>
+	<div id="Question" class="pq_popup question" style="display:none">
+						<label class="about">
+							<input type="radio" name="about" checked="checked" value="1">
+							<div><p>About PQ</p></div>
+						</label><label class="developer">
+							<input type="radio" name="about" value="2">
+							<div><p>Developer</p></div>
+						</label><label class="community">
+							<input type="radio" name="about" value="3">
+							<div><p>Community</p></div>
+						</label>
+			<div class="question1 selected"><p>Profitquery is fast-growing intelligence system for boost any website. For now we have over 20 smart tools some of them are unique. And this is just the beginning. Our team make the complex simple. Make pro version similar tools - free. </p></div>
+			<div class="question2"><p>Write your article. Promote your blog.You can write any article about Profitquery for your customers, friends and send for us your link or content. We <a href="http://profitquery.com/blog.html#send" target="_blank">paste your work</a> on our blog. Use your native language.</p></div>
+			<div class="question3"><p>You can bind any enabled Profitquery popup for any event on your website.This is <a href="http://profitquery.com/developer.html" target="_blank">wonderfull opportunity</a> to make your website smarter. You can use Thank popup, Share popup, Follow us even Subscribe popup anywhere you want.</p></div>
+			<div class="question_footer">
+				<img src="<?php echo plugins_url('i/face.png', __FILE__);?>" />
+				<h1>Support</h1>
+				<p>If you have any question or feedback or some ideas you can email us any time you want <a href="mailto:support@profitquery.com" target="_blank">support@profitquery.com</a> or visit Profitquery <a href="http://profitquery.com/community.html" target="_blank">community page.</a></p>
+				<!--input type="button" value="support"-->
+			</div>
+			<a class="pq_close" onclick="document.getElementById('Question').style.display='none';"></a> 
+	</div>
+	<div id="GA" class="pq_popup analytics">
+	<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+	<input type="hidden" name="action" value="editGA">
+		<label>
+			<p>Google Analytics Enable</p><input type="radio" name="additionalOptions[enableGA]" value="1" <?php if((int)$this->_options[additionalOptions][enableGA] == 1) echo 'checked';?>>
+		</label>
+		<label>
+			<p>Google Analytics Disable</p><input type="radio" name="additionalOptions[enableGA]" value="0" <?php if((int)$this->_options[additionalOptions][enableGA] == 0) echo 'checked';?>>
+		</label>
+		<input type="submit" value="save" onclick="document.getElementById('GA').style.display='none';">
+		<a class="pq_close" onclick="document.getElementById('GA').style.display='none';"></a>
+	</form>
+	</div>
+	<div id="PQ_lang" class="pq_popup lang">
+	<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+	<input type="hidden" name="action" value="editLang">
+		
+			<h1>Default language for tools frontend side</h1>
+		
+		<label>
+			<p>English</p><input type="radio" name="additionalOptions[lang]" value="en" <?php if($this->_options[additionalOptions][lang] == 'en') echo "checked";?>>
+		</label>
+		<label>
+			<p>Russian</p><input type="radio" name="additionalOptions[lang]" value="ru" <?php if($this->_options[additionalOptions][lang] == 'ru') echo "checked";?>>
+		</label>
+		<label>
+			<p>Persian (Farsi; fa_IR)</p><input type="radio" name="additionalOptions[lang]" value="fa" <?php if($this->_options[additionalOptions][lang] == 'fa') echo "checked";?>>
+		</label>
+		<label>
+			<p>Browser Lang</p><input type="radio" name="additionalOptions[lang]" value="" <?php if($this->_options[additionalOptions][lang] == '') echo "checked";?>>
+		</label>
+		<input type="submit" value="save" onclick="document.getElementById('PQ_lang').style.display='none';">
+		<a class="pq_close" onclick="document.getElementById('PQ_lang').style.display='none';"></a>
+	</form>
+	</div>		
+	<div id="SProviderSettings" class="pq_popup emailsettings">
+	<span id="subscribeProviderFormID" <?php if((int)$this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]]['is_error'] == 1 || !$this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]][formAction]) echo 'style="display:block;";'; else echo 'style="display:none;";';?>>
+	<form   action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+	<input type="hidden" name="action" value="subscribeProviderSetup">
+			<h1>Email Settings</h1>
+			<label>
+				<select onchange="changeSubscribeProviderHelpUrl(1);" id="subscribeProvider" name="subscribeProvider">
+					<option value="mailchimp" <?php if($this->_options[subscribeProvider] == '' || $this->_options[subscribeProvider] == 'mailchimp') echo "selected";?>>MailChimp</option>
+					<option value="aweber" <?php if($this->_options[subscribeProvider] == 'aweber') echo "selected";?>>AWeber</option>
+				</select>
+			</label>
+			<label>
+				<p>Paste code</p>
+				<a id="subscribeProviderHelpUrl" href="http://profitquery.com/mailchimp.html" target="_blank">How to get code</a>
+				<textarea rows="2" name="subscribeProviderFormContent" ></textarea>
+			</label>	
+			<input type="submit" value="save">
+			
+	</form>
+	</span>
+	<div id="subscribeProviderEditLinkID" class="pq_result" onclick="enableSubsribeForm();" <?php if((int)$this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]]['is_error'] == 1 || !$this->_options['subscribeProviderOption'][$this->_options[subscribeProvider]][formAction]) echo 'style="display:none;";'; else echo 'style="display:block;";';?> />
+		<img src="<?php echo plugins_url('i/ok.png', __FILE__);?>" />
+		<span>MailChimp Integration</span><!-- добавить Aweber-->
+		<a href="javascript:void(0)" onclick="return false;">Settings</a>
+	</div>
+	<script>
+		function changeSubscribeProviderHelpUrl(withCheckCurrent){
+			var currentSubscribeProvider = '<?php echo $this->_options[subscribeProvider];?>'
+			if(document.getElementById('subscribeProvider').value == 'mailchimp'){
+				document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/mailchimp.html';
+			}
+			if(document.getElementById('subscribeProvider').value == 'aweber'){
+				document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/aweber.html';
+			}
+			if(withCheckCurrent == '1'){
+				if(currentSubscribeProvider){
+					if(currentSubscribeProvider == document.getElementById('subscribeProvider').value){
+						document.getElementById('subscribeProviderFormID').style.display = 'none';												
+						document.getElementById('subscribeProviderEditLinkID').style.display = 'block';
+					} else {
+						document.getElementById('subscribeProviderFormID').style.display = 'block';												
+						document.getElementById('subscribeProviderEditLinkID').style.display = 'none';
+					}
 				}
 			}
-			changeSubscribeExitEnabled();								
-			changeSubscribeBarEnabled();
-		</script>
-			<?php
-		}       
+		}											
+		function enableSubsribeForm(){												
+			document.getElementById('subscribeProviderFormID').style.display = 'block';												
+			document.getElementById('subscribeProviderEditLinkID').style.display = 'none';												
+		}
+		
+		changeSubscribeProviderHelpUrl();
+	</script>
+	<br>
+	<form  action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+	<input type="hidden" name="action" value="setAdminEmail">
+			<h1>Send Mail To</h1>			
+			<label>
+				<input type="text" name="adminEmail" value="<?php echo stripslashes($this->_options[adminEmail])?>">
+			</label>
+			<input type="submit" value="save">
+			
+	</form>
+	<a class="pq_close" onclick="document.getElementById('SProviderSettings').style.display='none';"></a>
+	</div>
+	
+	<div id="Get_Pro" class="pq_popup hello getpro">
+	<form  action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+	<input type="hidden" name="action" value="savePro">
+		<h1>Step 1</h1>		
+		<p>For Start Use Pro Options you need <a target="_getApiKey" href="http://api.profitquery.com/cms-sign-in/?domain=<?php echo $this->getDomain();?>&cms=wp&ae=<?php echo get_settings('admin_email');?>&redirect=<?php echo str_replace(".", "%2E", urlencode($this->getSettingsPageUrl()));?>">Get Api Key</a></p>
+		<input type="text" name="apiKey" value="<?php echo stripslashes($this->_options['apiKey']);?>">
+		<input type="submit" value="Save Api Key">
+		<br>
+		<h1>Step 2</h1>		
+		<p>Get Free All Pro Profitquery Options for 3 Day. Pro options works only with real domain name (even you use local version website, for ex. mywebsite.com)</p>
+		<a href="http://api.profitquery.com/getTrial/aio/" target="_blank"><input type="button" value="Enable Free Trial"></a>
+		<br>
+		<a class="pro_loader_filename">Pro Loader Filename</a>
+		<input type="text" class="filename filename_add filename_hidden" name="proOptions[proLoaderFilename]" value="<?php echo stripslashes($this->_options['proOptions']['proLoaderFilename']);?>">
+		<input type="submit" value="Save" class="filename_add filename_hidden">
+		<br>
+		<a class="pro_url">Website Main Page URL</a>
+			<input type="text" class="filename filename_url filename_hidden" name="proOptions[mainPageUrl]" value="<?php echo stripslashes($this->_options['proOptions']['mainPageUrl']);?>"; />	
+			<input type="submit" value="Save" class="filename_url filename_hidden">
+		<br><br>	
+		<div class="pq_pro">
+			<h1>Used Pro Options</h1>
+						
+			
+			<!--table>
+				<tr>
+					<td><input type="checkbox"><p>Package of 5000 Emails</p>
+					</td>
+					<td>
+					</td>
+					<td><input type="checkbox"><p>Advanced Animation</p>
+					</td>
+				</tr>
+				<tr>
+					<td><input type="checkbox"><p>Advanced Design Options</p>
+					</td>
+					<td>
+					</td>
+					<td><input type="checkbox"><p>Priority Email Support</p>
+					</td>
+				</tr>
+				<tr>
+					<td><input type="checkbox"><p>WhiteLabel for All Tools</p>
+					</td>
+					<td>
+					</td>
+					<td><input type="checkbox"><p>Advanced Hover Effects</p>
+					</td>
+				</tr>
+			</table-->
+			<table>
+				<?php
+					if(empty($getProCategoryArray)){
+						?>
+						<tr>
+							<td>						
+								<p>Only free options detected</p>
+							</td>
+						</tr>
+						<?php
+					}else{
+						if((int)$getProCategoryArray[disableMainPage]){
+							?>
+							<tr>
+								<td>						
+									<p>Disable main page option</p>
+								</td>
+							</tr>
+							<?php
+						}
+						if((int)$getProCategoryArray[disableExeptPageMask]){
+							?>
+							<tr>
+								<td>						
+									<p>Disable exept page mask options</p>
+								</td>
+							</tr>
+							<?php
+						}
+						if((int)$getProCategoryArray[ISdisableExeptExtensions]){
+							?>
+							<tr>
+								<td>						
+									<p>Image Sharer Extension options</p>
+								</td>
+							</tr>
+							<?php
+						}
+						if((int)$getProCategoryArray[ISminHeight]){
+							?>
+							<tr>
+								<td>						
+									<p>Image Sharer min Height option</p>
+								</td>
+							</tr>
+							<?php
+						}
+						if((int)$getProCategoryArray[useProAnimation]){
+							?>
+							<tr>
+								<td>						
+									<p>Pro Animation Options</p>
+								</td>
+							</tr>
+							<?php
+						}
+						if((int)$getProCategoryArray[useProDesignOptions]){
+							?>
+							<tr>
+								<td>						
+									<p>Pro Design Options</p>
+								</td>
+							</tr>
+							<?php
+						}
+						if((int)$getProCategoryArray[useProHover]){
+							?>
+							<tr>
+								<td>						
+									<p>Pro Hover Animation Options</p>
+								</td>
+							</tr>
+							<?php
+						}
+						?>
+						
+						<?php
+					}
+				?>				
+			</table>
+			<a href="<?php echo $this->getSettingsPageUrl();?>&action=deleteProOptions">Disable Pro Options for All Tools</a>		
+		</div>
+		<a href="http://api.profitquery.com/getPro/aio/" target="_blank"><input type="button" value="Order Pro Options" class="pq_order"></a>		
+		<a class="pq_close" onclick="document.getElementById('Get_Pro').style.display='none';"></a>
+	</form>
+	
+	
+	</div>
+	
+	<div id="ES" class="pq_popup emailsettings">
+	<form  action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+	<input type="hidden" name="action" value="setAdminEmail">
+			<h1>Email settings</h1>			
+			<label>
+				<p>Send mail to</p>
+				<input type="text" name="adminEmail" value="<?php echo stripslashes($this->_options[adminEmail])?>">
+			</label>
+			<input type="submit" value="save">
+			<a class="pq_close" onclick="document.getElementById('ES').style.display='none';"></a>
+	</form>
+	</div>
+</div>
+<script type="text/javascript">
+	jQuery(".ToLi1").click(function(){
+		jQuery(".pq_li3").removeClass("selected");
+		jQuery(".button_group_li3").removeClass("selected");
+		jQuery(".pq_li1").addClass("selected");
+		jQuery(".choise2").prop('checked', false);
+		jQuery(".choise1").prop('checked', true);
+		jQuery(".pq_tooltip1").removeClass("selected");
+		jQuery(".pq_tooltip2").removeClass("selected");
+	});
+	jQuery(".home").click(function(){
+		jQuery(".pq_li3").removeClass("selected");
+		jQuery(".pq_li4").removeClass("selected");
+		jQuery(".pq_li5").removeClass("selected");
+		jQuery(".button_group_li3").removeClass("selected");
+		jQuery(".button_group_li4").removeClass("selected");
+		jQuery(".button_group_li5").removeClass("selected");
+		jQuery(".pq_li1").addClass("selected");
+		jQuery(".pq_tooltip1").removeClass("selected");
+		jQuery(".pq_tooltip2").removeClass("selected");
+	});
+	jQuery(".set2").click(function(){
+		jQuery(".choise2").prop('checked', false);
+	});
+	jQuery(".set3").click(function(){
+		jQuery(".choise3").prop('checked', false);
+	});
+	jQuery(".set4").click(function(){
+		jQuery(".choise4").prop('checked', false);
+	});
+	jQuery(".ToLi3").click(function(){
+		jQuery(".pq_li1").removeClass("selected");
+		jQuery(".pq_li4").removeClass("selected");
+		jQuery(".button_group_li4").removeClass("selected");
+		jQuery(".pq_li3").addClass("selected");
+		jQuery(".button_group_li3").addClass("selected");
+		jQuery(".choise2").prop('checked', true);
+	});
+	
+	jQuery(".ToLi4").click(function(){
+		jQuery(".pq_li3").removeClass("selected");
+		jQuery(".button_group_li3").removeClass("selected");
+		jQuery(".pq_li5").removeClass("selected");
+		jQuery(".button_group_li5").removeClass("selected");
+		jQuery(".pq_li4").addClass("selected");
+		jQuery(".button_group_li4").addClass("selected");
+		jQuery(".choise2").prop('checked', false);
+		jQuery(".choise4").prop('checked', false);
+		jQuery(".choise3").prop('checked', true);		
+	});
+	jQuery(".ToLi5").click(function(){
+		jQuery(".pq_li4").removeClass("selected");
+		jQuery(".button_group_li4").removeClass("selected");
+		jQuery(".pq_li5").addClass("selected");
+		jQuery(".button_group_li5").addClass("selected");
+		jQuery(".choise3").prop('checked', false);
+		jQuery(".choise4").prop('checked', true);		
+	});
+	jQuery(".collect_tools_activate").click(function(){		
+		jQuery(".pq_default").removeClass("selected");
+		jQuery(".share").removeClass("selected");
+		jQuery(".follow").removeClass("selected");
+		jQuery(".contact").removeClass("selected");
+		jQuery(".callme").removeClass("selected");
+		jQuery(".exit").removeClass("selected");
+		jQuery(".imagesharer").removeClass("selected");
+		jQuery(".thankyou").removeClass("selected");
+		jQuery(".marketing").removeClass("selected");
+		jQuery(".collect").addClass("selected");
+		jQuery(".pq_li1").removeClass("selected");
+		jQuery(".pq_li3").addClass("selected");
+		jQuery(".button_group_li3").addClass("selected");
+		jQuery(".choise2").prop('checked', true);
+		jQuery(".collect_tools").prop('checked', true);
+		jQuery(".share_submit").removeClass("selected");
+		jQuery(".follow_submit").removeClass("selected");
+		jQuery(".contact_submit").removeClass("selected");
+		jQuery(".callme_submit").removeClass("selected");
+		jQuery(".exit_submit").removeClass("selected");
+		jQuery(".imagesharer_submit").removeClass("selected");
+		jQuery(".marketing_submit").removeClass("selected");
+		jQuery(".thankyou_submit").removeClass("selected");
+		jQuery(".collect_submit").addClass("selected");
+		jQuery(".hello").removeClass("selected");
+		jQuery(".pq_if").removeClass("pq_bar");
+		jQuery(".frame").removeClass("pq_share");
+	});
+	function sharingSideBarPreview(){									
+		var designIcons = 'pq-social-block '+document.getElementById('sharingSideBar_design_size').value+' pq_'+document.getElementById('sharingSideBar_design_form').value+' '+document.getElementById('sharingSideBar_design_color').value;
+		var position = 'pq_icons '+document.getElementById('sharingSideBar_side').value+' '+document.getElementById('sharingSideBar_top').value;
+		var hoverAnimation = document.getElementById('sharingSideBar_hover_animation').value;
+		var animation = document.getElementById('sharingSideBar_animation').value;
+		var galleryBTColor = document.getElementById('sharingSideBar_popup_button_color').value;
+		var galleryBGColor = document.getElementById('sharingSideBar_popup_bg_color').value;
+		
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=sidebarShare&position='+position+'&typeBlock='+designIcons+'&hoverAnimation='+hoverAnimation+'&galleryBTColor='+galleryBTColor+'&galleryBGColor='+galleryBGColor+'&animation='+animation;
+		document.getElementById('PQPreviewID').src = previewUrl;									
+		//document.getElementById('PQPreviewID').width = '100%';
+		
+	}
+	function imageSharerPreview(){									
+		var design = document.getElementById('imageSharer_design_size').value+' pq_'+document.getElementById('imageSharer_design_form').value+' '+document.getElementById('imageSharer_design_color').value+' '+document.getElementById('imageSharer_design_shadow').value+' '+document.getElementById('imageSharer_position').value;		
+		var hoverAnimation = document.getElementById('imageSharer_hover_animation').value;
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=imageSharer&design='+design+'&hoverAnimation='+hoverAnimation;									
+		document.getElementById('PQPreviewID').src = previewUrl;
+		//document.getElementById('PQPreviewID').width = '100%';
+	}
+	
+	function callMePreview(){
+		var animation = 'pq_animated '+document.getElementById('callMe_animation').value;		
+		if(document.getElementById('callMe_pro_animation').value){
+			animation = 'pq_animated '+document.getElementById('callMe_pro_animation').value;
+		}
+		var background_image = document.getElementById('callMe_pro_background_image').value;	
+		
+		var design = document.getElementById('callMe_typeWindow').value+' '+document.getElementById('callMe_background').value+' '+document.getElementById('callMe_button_color').value+' '+animation;
+		var img = document.getElementById('callMe_img').value;
+		var imgUrl = document.getElementById('callMeCustomFotoSrc').value;
+		var loaderBackground = document.getElementById('callMe_loader_background').value;
+		var overlay = document.getElementById('callMe_overlay').value;
+		var position = document.getElementById('callMe_top').value+' '+document.getElementById('callMe_side').value;
+		
+		
+		if(document.getElementById('callMe_pro_1').value) design += ' '+document.getElementById('callMe_pro_1').value;		
+		if(document.getElementById('callMe_pro_2').value) design += ' '+document.getElementById('callMe_pro_2').value;		
+		if(document.getElementById('callMe_pro_3').value) design += ' '+document.getElementById('callMe_pro_3').value;		
+		if(document.getElementById('callMe_pro_4').value) design += ' '+document.getElementById('callMe_pro_4').value;		
+		if(document.getElementById('callMe_pro_5').value) design += ' '+document.getElementById('callMe_pro_5').value;		
+		if(document.getElementById('callMe_pro_6').value) design += ' '+document.getElementById('callMe_pro_6').value;		
+		if(document.getElementById('callMe_pro_7').value) design += ' '+document.getElementById('callMe_pro_7').value;		
+		if(document.getElementById('callMe_pro_8').value) design += ' '+document.getElementById('callMe_pro_8').value;		
+		if(document.getElementById('callMe_pro_9').value) design += ' '+document.getElementById('callMe_pro_9').value;		
+		//if(document.getElementById('callMe_pro_10').value) design += ' '+document.getElementById('callMe_pro_10').value;		
+		if(document.getElementById('callMe_pro_11').value) design += ' '+document.getElementById('callMe_pro_11').value;		
+		if(document.getElementById('callMe_pro_12').value) design += ' '+document.getElementById('callMe_pro_12').value;		
+		if(document.getElementById('callMe_pro_13').value) design += ' '+document.getElementById('callMe_pro_13').value;		
+		
+		
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=callMe&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position+'&background_image='+encodeURIComponent(background_image);
+											
+		document.getElementById('PQPreviewID').src = previewUrl;
+		//document.getElementById('PQPreviewID').width = '100%';
+		
+	}
+	
+	function contactUsPreview(){
+		var animation = 'pq_animated '+document.getElementById('contactUs_animation').value;		
+		if(document.getElementById('contactUs_pro_animation').value){
+			animation = 'pq_animated '+document.getElementById('contactUs_pro_animation').value;
+		}
+		var background_image = document.getElementById('contactUs_pro_background_image').value;		
+		
+		var design = document.getElementById('contactUs_typeWindow').value+' '+document.getElementById('contactUs_background').value+' '+document.getElementById('contactUs_button_color').value+' '+animation;
+		if(document.getElementById('contactUs_pro_1').value) design += ' '+document.getElementById('contactUs_pro_1').value;		
+		if(document.getElementById('contactUs_pro_2').value) design += ' '+document.getElementById('contactUs_pro_2').value;
+		if(document.getElementById('contactUs_pro_3').value) design += ' '+document.getElementById('contactUs_pro_3').value;
+		if(document.getElementById('contactUs_pro_4').value) design += ' '+document.getElementById('contactUs_pro_4').value;
+		if(document.getElementById('contactUs_pro_5').value) design += ' '+document.getElementById('contactUs_pro_5').value;
+		if(document.getElementById('contactUs_pro_6').value) design += ' '+document.getElementById('contactUs_pro_6').value;
+		if(document.getElementById('contactUs_pro_7').value) design += ' '+document.getElementById('contactUs_pro_7').value;
+		if(document.getElementById('contactUs_pro_8').value) design += ' '+document.getElementById('contactUs_pro_8').value;
+		if(document.getElementById('contactUs_pro_9').value) design += ' '+document.getElementById('contactUs_pro_9').value;
+		//if(document.getElementById('contactUs_pro_10').value) design += ' '+document.getElementById('contactUs_pro_10').value;
+		if(document.getElementById('contactUs_pro_11').value) design += ' '+document.getElementById('contactUs_pro_11').value;
+		if(document.getElementById('contactUs_pro_12').value) design += ' '+document.getElementById('contactUs_pro_12').value;
+		if(document.getElementById('contactUs_pro_13').value) design += ' '+document.getElementById('contactUs_pro_13').value;
+		
+		
+		var img = document.getElementById('contactUs_img').value;
+		var imgUrl = document.getElementById('contactUsCustomFotoSrc').value;
+		var loaderBackground = document.getElementById('contactUs_loader_background').value;									
+		var position = document.getElementById('contactUs_top').value+' '+document.getElementById('contactUs_side').value;
+		var overlay = document.getElementById('contactUs_overlay').value;
+		
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=contactUs&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position+'&background_image='+encodeURIComponent(background_image);
+		document.getElementById('PQPreviewID').src = previewUrl;
+		//document.getElementById('PQPreviewID').width = '100%';		
+	}
+	
+	function subscribeExitPreview(){									
+		var img = document.getElementById('subscribeExit_img').value;
+		var imgUrl = document.getElementById('subscribeExitCustomFotoSrc').value;
+		
+		var animation = 'pq_animated '+document.getElementById('subscribeExit_animation').value;		
+		if(document.getElementById('subscribeExit_pro_animation').value){
+			animation = 'pq_animated '+document.getElementById('subscribeExit_pro_animation').value;
+		}
+		var design = document.getElementById('subscribeExit_typeWindow').value+' '+document.getElementById('subscribeExit_background').value+' '+document.getElementById('subscribeExit_button_color').value+' '+animation;
+		
+		if(document.getElementById('subscribeExit_pro_1').value) design += ' '+document.getElementById('subscribeExit_pro_1').value;		
+		if(document.getElementById('subscribeExit_pro_2').value) design += ' '+document.getElementById('subscribeExit_pro_2').value;
+		if(document.getElementById('subscribeExit_pro_3').value) design += ' '+document.getElementById('subscribeExit_pro_3').value;
+		if(document.getElementById('subscribeExit_pro_4').value) design += ' '+document.getElementById('subscribeExit_pro_4').value;
+		if(document.getElementById('subscribeExit_pro_5').value) design += ' '+document.getElementById('subscribeExit_pro_5').value;
+		if(document.getElementById('subscribeExit_pro_6').value) design += ' '+document.getElementById('subscribeExit_pro_6').value;
+		if(document.getElementById('subscribeExit_pro_7').value) design += ' '+document.getElementById('subscribeExit_pro_7').value;
+		if(document.getElementById('subscribeExit_pro_8').value) design += ' '+document.getElementById('subscribeExit_pro_8').value;
+		if(document.getElementById('subscribeExit_pro_9').value) design += ' '+document.getElementById('subscribeExit_pro_9').value;
+		//if(document.getElementById('subscribeExit_pro_10').value) design += ' '+document.getElementById('subscribeExit_pro_10').value;
+		if(document.getElementById('subscribeExit_pro_11').value) design += ' '+document.getElementById('subscribeExit_pro_11').value;
+		if(document.getElementById('subscribeExit_pro_12').value) design += ' '+document.getElementById('subscribeExit_pro_12').value;
+		if(document.getElementById('subscribeExit_pro_13').value) design += ' '+document.getElementById('subscribeExit_pro_13').value;
+		
+		var background_image = document.getElementById('subscribeExit_pro_background_image').value;		
+		var overlay = document.getElementById('subscribeExit_overlay').value;									
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=subscribeExit&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&background_image='+encodeURIComponent(background_image);
+		document.getElementById('PQPreviewID').src = previewUrl;
+		//document.getElementById('PQPreviewID').width = '100%';
+		
+	}
+	
+	function subscribeBarPreview(){	
+		
+		var animation = 'pq_animated '+document.getElementById('subscribeBar_animation').value;		
+		if(document.getElementById('subscribeBar_pro_animation').value){
+			animation = 'pq_animated '+document.getElementById('subscribeBar_pro_animation').value;
+		}
+		
+		var design = document.getElementById('subscribeBar_size').value+' '+document.getElementById('subscribeBar_position').value+' '+document.getElementById('subscribeBar_background').value+' '+document.getElementById('subscribeBar_button_color').value+' '+animation;		
+		if(document.getElementById('subscribeBar_pro_1').value) design += ' '+document.getElementById('subscribeBar_pro_1').value;		
+		if(document.getElementById('subscribeBar_pro_2').value) design += ' '+document.getElementById('subscribeBar_pro_2').value;
+		if(document.getElementById('subscribeBar_pro_3').value) design += ' '+document.getElementById('subscribeBar_pro_3').value;
+		
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=subscribeBar&design='+design;									
+		
+		document.getElementById('PQPreviewID').src = previewUrl;									
+		//document.getElementById('PQPreviewID').width = '100%';
+		
+	}
+	
+	function thankPopupPreview(){
+		var img = document.getElementById('thankPopup_img').value;
+		var imgUrl = document.getElementById('thankPopupCustomFotoSrc').value;
+		
+		var animation = 'pq_animated '+document.getElementById('thankPopup_animation').value;		
+		if(document.getElementById('thankPopup_pro_animation').value){
+			animation = 'pq_animated '+document.getElementById('thankPopup_pro_animation').value;
+		}
+		var design = document.getElementById('thankPopup_typeWindow').value+' '+document.getElementById('thankPopup_background').value+' '+document.getElementById('thankPopup_button_color').value+' '+animation;
+		
+		if(document.getElementById('thankPopup_pro_1').value) design += ' '+document.getElementById('thankPopup_pro_1').value;		
+		if(document.getElementById('thankPopup_pro_2').value) design += ' '+document.getElementById('thankPopup_pro_2').value;		
+		if(document.getElementById('thankPopup_pro_3').value) design += ' '+document.getElementById('thankPopup_pro_3').value;		
+		if(document.getElementById('thankPopup_pro_4').value) design += ' '+document.getElementById('thankPopup_pro_4').value;		
+		if(document.getElementById('thankPopup_pro_5').value) design += ' '+document.getElementById('thankPopup_pro_5').value;		
+		if(document.getElementById('thankPopup_pro_6').value) design += ' '+document.getElementById('thankPopup_pro_6').value;		
+		if(document.getElementById('thankPopup_pro_7').value) design += ' '+document.getElementById('thankPopup_pro_7').value;		
+		if(document.getElementById('thankPopup_pro_8').value) design += ' '+document.getElementById('thankPopup_pro_8').value;		
+		if(document.getElementById('thankPopup_pro_9').value) design += ' '+document.getElementById('thankPopup_pro_9').value;		
+		//if(document.getElementById('thankPopup_pro_10').value) design += ' '+document.getElementById('thankPopup_pro_10').value;		
+		if(document.getElementById('thankPopup_pro_11').value) design += ' '+document.getElementById('thankPopup_pro_11').value;		
+		if(document.getElementById('thankPopup_pro_12').value) design += ' '+document.getElementById('thankPopup_pro_12').value;		
+		if(document.getElementById('thankPopup_pro_13').value) design += ' '+document.getElementById('thankPopup_pro_13').value;		
+		
+		
+		var background_image = document.getElementById('thankPopup_pro_background_image').value;		
+		var overlay = document.getElementById('thankPopup_overlay').value;									
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=thankPopup&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&background_image='+encodeURIComponent(background_image);
+		document.getElementById('PQPreviewID').src = previewUrl;
+		//document.getElementById('PQPreviewID').width = '100%';
+	}
+	function followPreview(){
+		var animation = 'pq_animated '+document.getElementById('follow_animation').value;		
+		if(document.getElementById('follow_pro_animation').value){
+			animation = 'pq_animated '+document.getElementById('follow_pro_animation').value;
+		}
+		var design = document.getElementById('follow_typeWindow').value+' '+document.getElementById('follow_background').value+' '+animation;
+		
+		var typeBlock = document.getElementById('follow_design_size').value+' pq_'+document.getElementById('follow_design_form').value+' '+document.getElementById('follow_design_color').value+' '+document.getElementById('follow_design_shadow').value;
+		var hoverAnimation = document.getElementById('follow_pro_hover_animation').value;
+		
+		if(document.getElementById('follow_pro_1').value) design += ' '+document.getElementById('follow_pro_1').value;		
+		if(document.getElementById('follow_pro_2').value) design += ' '+document.getElementById('follow_pro_2').value;		
+		if(document.getElementById('follow_pro_3').value) design += ' '+document.getElementById('follow_pro_3').value;		
+		if(document.getElementById('follow_pro_4').value) design += ' '+document.getElementById('follow_pro_4').value;		
+		if(document.getElementById('follow_pro_5').value) design += ' '+document.getElementById('follow_pro_5').value;		
+		if(document.getElementById('follow_pro_6').value) design += ' '+document.getElementById('follow_pro_6').value;		
+		if(document.getElementById('follow_pro_7').value) design += ' '+document.getElementById('follow_pro_7').value;		
+		if(document.getElementById('follow_pro_8').value) design += ' '+document.getElementById('follow_pro_8').value;		
+		if(document.getElementById('follow_pro_9').value) design += ' '+document.getElementById('follow_pro_9').value;		
+		//if(document.getElementById('follow_pro_10').value) design += ' '+document.getElementById('follow_pro_10').value;		
+		if(document.getElementById('follow_pro_11').value) design += ' '+document.getElementById('follow_pro_11').value;		
+		if(document.getElementById('follow_pro_12').value) design += ' '+document.getElementById('follow_pro_12').value;		
+		if(document.getElementById('follow_pro_13').value) design += ' '+document.getElementById('follow_pro_13').value;		
+			
+		
+		
+		var background_image = document.getElementById('follow_pro_background_image').value;		
+		var overlay = document.getElementById('follow_overlay').value;									
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=follow&design='+design+'&overlay='+encodeURIComponent(overlay)+'&background_image='+encodeURIComponent(background_image)+'&hoverAnimation='+encodeURIComponent(hoverAnimation)+'&typeBlock='+encodeURIComponent(typeBlock);
+		document.getElementById('PQPreviewID').src = previewUrl;
+		//document.getElementById('PQPreviewID').width = '100%';
+	}	
+				  
+	
+	jQuery(".share_tools_activate").click(function(){
+		sharingSideBarPreview();
+		jQuery(".pq_default").removeClass("selected");
+		jQuery(".collect").removeClass("selected");
+		jQuery(".follow").removeClass("selected");
+		jQuery(".contact").removeClass("selected");
+		jQuery(".callme").removeClass("selected");
+		jQuery(".exit").removeClass("selected");
+		jQuery(".imagesharer").removeClass("selected");
+		jQuery(".thankyou").removeClass("selected");
+		jQuery(".marketing").removeClass("selected");
+		jQuery(".share").addClass("selected");
+		jQuery(".pq_li1").removeClass("selected");
+		jQuery(".pq_li3").addClass("selected");
+		jQuery(".button_group_li3").addClass("selected");
+		jQuery(".choise2").prop('checked', true);
+		jQuery(".share_tools").prop('checked', true);
+		jQuery(".collect_submit").removeClass("selected");
+		jQuery(".follow_submit").removeClass("selected");
+		jQuery(".contact_submit").removeClass("selected");
+		jQuery(".callme_submit").removeClass("selected");
+		jQuery(".exit_submit").removeClass("selected");
+		jQuery(".imagesharer_submit").removeClass("selected");
+		jQuery(".marketing_submit").removeClass("selected");
+		jQuery(".thankyou_submit").removeClass("selected");
+		jQuery(".share_submit").addClass("selected");
+		jQuery(".hello").removeClass("selected");
+		jQuery(".pq_if").removeClass("pq_bar");
+		jQuery(".frame").addClass("pq_share");
+	});
+	jQuery(".follow_tools_activate").click(function(){
+		followPreview()
+		jQuery(".pq_default").removeClass("selected");
+		jQuery(".collect").removeClass("selected");
+		jQuery(".share").removeClass("selected");
+		jQuery(".contact").removeClass("selected");
+		jQuery(".callme").removeClass("selected");
+		jQuery(".exit").removeClass("selected");
+		jQuery(".imagesharer").removeClass("selected");
+		jQuery(".thankyou").removeClass("selected");
+		jQuery(".marketing").removeClass("selected");
+		jQuery(".follow").addClass("selected");
+		jQuery(".pq_li1").removeClass("selected");
+		jQuery(".pq_li3").addClass("selected");
+		jQuery(".button_group_li3").addClass("selected");
+		jQuery(".choise2").prop('checked', true);
+		jQuery(".follow_tools").prop('checked', true);
+		jQuery(".collect_submit").removeClass("selected");
+		jQuery(".share_submit").removeClass("selected");
+		jQuery(".contact_submit").removeClass("selected");
+		jQuery(".callme_submit").removeClass("selected");
+		jQuery(".exit_submit").removeClass("selected");
+		jQuery(".imagesharer_submit").removeClass("selected");
+		jQuery(".marketing_submit").removeClass("selected");
+		jQuery(".thankyou_submit").removeClass("selected");
+		jQuery(".follow_submit").addClass("selected");
+		jQuery(".pq_tooltip2").addClass("selected");
+		jQuery(".hello").removeClass("selected");
+		jQuery(".pq_if").removeClass("pq_bar");
+		jQuery(".frame").removeClass("pq_share");
+	});
+	
+	jQuery(".contact_tools_activate").click(function(){
+		contactUsPreview();
+		jQuery(".pq_default").removeClass("selected");
+		jQuery(".collect").removeClass("selected");
+		jQuery(".share").removeClass("selected");
+		jQuery(".follow").removeClass("selected");
+		jQuery(".callme").removeClass("selected");
+		jQuery(".exit").removeClass("selected");
+		jQuery(".imagesharer").removeClass("selected");
+		jQuery(".thankyou").removeClass("selected");
+		jQuery(".marketing").removeClass("selected");
+		jQuery(".contact").addClass("selected");
+		jQuery(".pq_li1").removeClass("selected");
+		jQuery(".pq_li3").addClass("selected");
+		jQuery(".button_group_li3").addClass("selected");
+		jQuery(".choise2").prop('checked', true);
+		jQuery(".contact_tools").prop('checked', true);
+		jQuery(".collect_submit").removeClass("selected");
+		jQuery(".share_submit").removeClass("selected");
+		jQuery(".follow_submit").removeClass("selected");
+		jQuery(".callme_submit").removeClass("selected");
+		jQuery(".exit_submit").removeClass("selected");
+		jQuery(".imagesharer_submit").removeClass("selected");
+		jQuery(".marketing_submit").removeClass("selected");
+		jQuery(".thankyou_submit").removeClass("selected");
+		jQuery(".contact_submit").addClass("selected");
+		jQuery(".hello").removeClass("selected");
+		jQuery(".pq_if").removeClass("pq_bar");
+		jQuery(".frame").removeClass("pq_share");
+	});
+	jQuery(".callme_tools_activate").click(function(){
+		callMePreview();
+		jQuery(".pq_default").removeClass("selected");
+		jQuery(".collect").removeClass("selected");
+		jQuery(".share").removeClass("selected");
+		jQuery(".follow").removeClass("selected");
+		jQuery(".contact").removeClass("selected");
+		jQuery(".exit").removeClass("selected");
+		jQuery(".imagesharer").removeClass("selected");
+		jQuery(".thankyou").removeClass("selected");
+		jQuery(".marketing").removeClass("selected");
+		jQuery(".callme").addClass("selected");
+		jQuery(".pq_li1").removeClass("selected");
+		jQuery(".pq_li3").addClass("selected");
+		jQuery(".button_group_li3").addClass("selected");
+		jQuery(".choise2").prop('checked', true);
+		jQuery(".callme_tools").prop('checked', true);
+		jQuery(".collect_submit").removeClass("selected");
+		jQuery(".share_submit").removeClass("selected");
+		jQuery(".follow_submit").removeClass("selected");
+		jQuery(".contact_submit").removeClass("selected");
+		jQuery(".exit_submit").removeClass("selected");
+		jQuery(".imagesharer_submit").removeClass("selected");
+		jQuery(".marketing_submit").removeClass("selected");
+		jQuery(".thankyou_submit").removeClass("selected");
+		jQuery(".callme_submit").addClass("selected");
+		jQuery(".hello").removeClass("selected");
+		jQuery(".pq_if").removeClass("pq_bar");
+		jQuery(".frame").removeClass("pq_share");
+	});
+	jQuery(".exit_tools_activate").click(function(){
+		subscribeExitPreview();
+		jQuery(".pq_default").removeClass("selected");
+		jQuery(".collect").removeClass("selected");
+		jQuery(".share").removeClass("selected");
+		jQuery(".follow").removeClass("selected");
+		jQuery(".contact").removeClass("selected");
+		jQuery(".callme").removeClass("selected");
+		jQuery(".imagesharer").removeClass("selected");
+		jQuery(".thankyou").removeClass("selected");
+		jQuery(".marketing").removeClass("selected");
+		jQuery(".exit").addClass("selected");
+		jQuery(".pq_li1").removeClass("selected");
+		jQuery(".pq_li3").addClass("selected");
+		jQuery(".button_group_li3").addClass("selected");
+		jQuery(".choise2").prop('checked', true);
+		jQuery(".exit_tools").prop('checked', true);
+		jQuery(".collect_submit").removeClass("selected");
+		jQuery(".share_submit").removeClass("selected");
+		jQuery(".follow_submit").removeClass("selected");
+		jQuery(".contact_submit").removeClass("selected");
+		jQuery(".callme_submit").removeClass("selected");
+		jQuery(".imagesharer_submit").removeClass("selected");
+		jQuery(".marketing_submit").removeClass("selected");
+		jQuery(".thankyou_submit").removeClass("selected");
+		jQuery(".exit_submit").addClass("selected");
+		jQuery(".pq_tooltip1").addClass("selected");
+		jQuery(".hello").removeClass("selected");
+		jQuery(".pq_if").removeClass("pq_bar");
+		jQuery(".frame").removeClass("pq_share");
+	});
+	jQuery(".imagesharer_tools_activate").click(function(){
+		imageSharerPreview();
+		jQuery(".pq_default").removeClass("selected");
+		jQuery(".collect").removeClass("selected");
+		jQuery(".share").removeClass("selected");
+		jQuery(".follow").removeClass("selected");
+		jQuery(".contact").removeClass("selected");
+		jQuery(".callme").removeClass("selected");
+		jQuery(".exit").removeClass("selected");
+		jQuery(".thankyou").removeClass("selected");
+		jQuery(".marketing").removeClass("selected");
+		jQuery(".imagesharer").addClass("selected");
+		jQuery(".pq_li1").removeClass("selected");
+		jQuery(".pq_li3").addClass("selected");
+		jQuery(".button_group_li3").addClass("selected");
+		jQuery(".choise2").prop('checked', true);
+		jQuery(".imagesharer_tools").prop('checked', true);
+		jQuery(".collect_submit").removeClass("selected");
+		jQuery(".share_submit").removeClass("selected");
+		jQuery(".follow_submit").removeClass("selected");
+		jQuery(".contact_submit").removeClass("selected");
+		jQuery(".callme_submit").removeClass("selected");
+		jQuery(".exit_submit").removeClass("selected");
+		jQuery(".marketing_submit").removeClass("selected");
+		jQuery(".thankyou_submit").removeClass("selected");
+		jQuery(".imagesharer_submit").addClass("selected");
+		jQuery(".hello").removeClass("selected");
+		jQuery(".pq_if").removeClass("pq_bar");
+		jQuery(".frame").addClass("pq_share");
+	});
+	jQuery(".marketing_tools_activate").click(function(){
+		subscribeBarPreview();
+		jQuery(".pq_default").removeClass("selected");
+		jQuery(".collect").removeClass("selected");
+		jQuery(".share").removeClass("selected");
+		jQuery(".follow").removeClass("selected");
+		jQuery(".contact").removeClass("selected");
+		jQuery(".callme").removeClass("selected");
+		jQuery(".exit").removeClass("selected");
+		jQuery(".imagesharer").removeClass("selected");
+		jQuery(".thankyou").removeClass("selected");
+		jQuery(".marketing").addClass("selected");
+		jQuery(".pq_li1").removeClass("selected");
+		jQuery(".pq_li3").addClass("selected");
+		jQuery(".button_group_li3").addClass("selected");
+		jQuery(".choise2").prop('checked', true);
+		jQuery(".marketing_tools").prop('checked', true);
+		jQuery(".collect_submit").removeClass("selected");
+		jQuery(".share_submit").removeClass("selected");
+		jQuery(".follow_submit").removeClass("selected");
+		jQuery(".contact_submit").removeClass("selected");
+		jQuery(".callme_submit").removeClass("selected");
+		jQuery(".exit_submit").removeClass("selected");
+		jQuery(".imagesharer_submit").removeClass("selected");
+		jQuery(".thankyou_submit").removeClass("selected");
+		jQuery(".marketing_submit").addClass("selected");
+		jQuery(".pq_tooltip1").addClass("selected");
+		jQuery(".hello").removeClass("selected");
+		jQuery(".pq_if").addClass("pq_bar");
+		jQuery(".frame").removeClass("pq_share");
+	});
+	jQuery(".thankyou_tools_activate").click(function(){
+		thankPopupPreview()
+		jQuery(".pq_default").removeClass("selected");
+		jQuery(".collect").removeClass("selected");
+		jQuery(".share").removeClass("selected");
+		jQuery(".follow").removeClass("selected");
+		jQuery(".contact").removeClass("selected");
+		jQuery(".callme").removeClass("selected");
+		jQuery(".exit").removeClass("selected");
+		jQuery(".imagesharer").removeClass("selected");
+		jQuery(".marketing").removeClass("selected");
+		jQuery(".thankyou").addClass("selected");
+		jQuery(".pq_li1").removeClass("selected");
+		jQuery(".pq_li3").addClass("selected");
+		jQuery(".button_group_li3").addClass("selected");
+		jQuery(".choise2").prop('checked', true);
+		jQuery(".thankyou_tools").prop('checked', true);
+		jQuery(".collect_submit").removeClass("selected");
+		jQuery(".share_submit").removeClass("selected");
+		jQuery(".follow_submit").removeClass("selected");
+		jQuery(".contact_submit").removeClass("selected");
+		jQuery(".callme_submit").removeClass("selected");
+		jQuery(".exit_submit").removeClass("selected");
+		jQuery(".imagesharer_submit").removeClass("selected");
+		jQuery(".marketing_submit").removeClass("selected");
+		jQuery(".thankyou_submit").addClass("selected");
+		jQuery(".pq_tooltip2").addClass("selected");
+		jQuery(".hello").removeClass("selected");
+		jQuery(".pq_if").removeClass("pq_bar");
+		jQuery(".frame").removeClass("pq_share");
+	});
+	
+	jQuery('#pq').change(function(){
+		var vibor = jQuery('#pq :selected').attr('class');
+		if(vibor=='custom_image'){
+			jQuery('.custom_i').css('display','block');
+	}
+	});
+	
+	jQuery(".addservices7-12").click(function(){
+		jQuery('.n07').css('display','block');
+		jQuery('.n08').css('display','block');
+		jQuery('.n09').css('display','block');
+		jQuery('.n10').css('display','block');
+		jQuery('.n11').css('display','block');
+		jQuery('.n12').css('display','block');
+		jQuery('.addservices13-18').css('display','block');
+		jQuery('.addservices7-12').css('display','none');
+	});
+	
+	jQuery(".addservices13-18").click(function(){
+		jQuery('.n13').css('display','block');
+		jQuery('.n14').css('display','block');
+		jQuery('.n15').css('display','block');
+		jQuery('.n16').css('display','block');
+		jQuery('.n17').css('display','block');
+		jQuery('.n18').css('display','block');
+		jQuery('.addservices19-20').css('display','block');
+		jQuery('.addservices13-18').css('display','none');
+	});
+	
+	jQuery(".addservices19-20").click(function(){
+		jQuery('.n19').css('display','block');
+		jQuery('.n20').css('display','block');
+		jQuery('.addservices19-20').css('display','none');
+	});
+	
+	jQuery(".addservices4-6").click(function(){
+		jQuery('.f04').css('display','block');
+		jQuery('.f05').css('display','block');
+		jQuery('.f06').css('display','block');
+		jQuery('.addservices7-8').css('display','block');
+		jQuery('.addservices4-6').css('display','none');
+	});
+	
+	jQuery(".addservices7-8").click(function(){
+		jQuery('.f07').css('display','block');
+		jQuery('.f08').css('display','block');
+		jQuery('.addservices7-8').css('display','none');
+	});
+	jQuery(".about").click(function(){
+		jQuery(".question2").removeClass("selected");
+		jQuery(".question3").removeClass("selected");
+		jQuery(".question1").addClass("selected");
+	});
+	jQuery(".community").click(function(){
+		jQuery(".question1").removeClass("selected");
+		jQuery(".question3").removeClass("selected");
+		jQuery(".question2").addClass("selected");
+	});
+	jQuery(".developer").click(function(){
+		jQuery(".question1").removeClass("selected");
+		jQuery(".question2").removeClass("selected");
+		jQuery(".question3").addClass("selected");
+	});
+	
+	jQuery(".share_submit").click(function(){
+		jQuery(".share_checked").prop('checked', true);
+		jQuery(".share_desabled").removeClass("selected");
+		jQuery(".choise2").prop('checked', false);
+		jQuery(".choise3").prop('checked', false);
+		jQuery(".choise4").prop('checked', false);
+		jQuery(".choise1").prop('checked', true);
+	});
+	
+	jQuery(".imagesharer_submit").click(function(){
+		jQuery(".imagesharer_checked").prop('checked', true);
+		jQuery(".imagesharer_desabled").removeClass("selected");
+		jQuery(".choise2").prop('checked', false);
+		jQuery(".choise3").prop('checked', false);
+		jQuery(".choise4").prop('checked', false);
+		jQuery(".choise1").prop('checked', true);
+	});
+	
+	jQuery(".marketing_submit").click(function(){
+		jQuery(".marketing_checked").prop('checked', true);
+		jQuery(".marketing_desabled").removeClass("selected");
+		jQuery(".choise2").prop('checked', false);
+		jQuery(".choise3").prop('checked', false);
+		jQuery(".choise4").prop('checked', false);
+		jQuery(".choise1").prop('checked', true);
+	});
+	
+	jQuery(".exit_submit").click(function(){
+		jQuery(".exit_checked").prop('checked', true);
+		jQuery(".exit_desabled").removeClass("selected");
+		jQuery(".choise2").prop('checked', false);
+		jQuery(".choise3").prop('checked', false);
+		jQuery(".choise4").prop('checked', false);
+		jQuery(".choise1").prop('checked', true);
+	});
+	
+	jQuery(".collect_submit").click(function(){
+		jQuery(".collect_checked").prop('checked', true);
+		jQuery(".collect_desabled").removeClass("selected");
+		jQuery(".choise2").prop('checked', false);
+		jQuery(".choise3").prop('checked', false);
+		jQuery(".choise4").prop('checked', false);
+		jQuery(".choise1").prop('checked', true);
+	});
+	
+	jQuery(".contact_submit").click(function(){
+		jQuery(".contact_checked").prop('checked', true);
+		jQuery(".contact_desabled").removeClass("selected");
+		jQuery(".choise2").prop('checked', false);
+		jQuery(".choise3").prop('checked', false);
+		jQuery(".choise4").prop('checked', false);
+		jQuery(".choise1").prop('checked', true);
+	});
+	
+	jQuery(".callme_submit").click(function(){
+		jQuery(".callme_checked").prop('checked', true);
+		jQuery(".callme_desabled").removeClass("selected");
+		jQuery(".choise2").prop('checked', false);
+		jQuery(".choise3").prop('checked', false);
+		jQuery(".choise4").prop('checked', false);
+		jQuery(".choise1").prop('checked', true);
+	});
+	
+	jQuery(".follow_submit").click(function(){
+		jQuery(".follow_checked").prop('checked', true);
+		jQuery(".follow_desabled").removeClass("selected");
+		jQuery(".choise2").prop('checked', false);
+		jQuery(".choise3").prop('checked', false);
+		jQuery(".choise4").prop('checked', false);
+		jQuery(".choise1").prop('checked', true);
+	});
+	
+	jQuery(".thankyou_submit").click(function(){
+		jQuery(".thankyou_checked").prop('checked', true);
+		jQuery(".thankyou_desabled").removeClass("selected");
+		jQuery(".choise2").prop('checked', false);
+		jQuery(".choise3").prop('checked', false);
+		jQuery(".choise4").prop('checked', false);
+		jQuery(".choise1").prop('checked', true);
+	});
+	
+	jQuery(".share_tools_desabled").click(function(){
+		jQuery(".share_checked").prop('checked', false);
+		jQuery(".share_desabled").addClass("selected");
+	});
+	
+	jQuery(".imagesharer_tools_desabled").click(function(){
+		jQuery(".imagesharer_checked").prop('checked', false);
+		jQuery(".imagesharer_desabled").addClass("selected");
+	});
+	
+	jQuery(".marketing_tools_desabled").click(function(){
+		jQuery(".marketing_checked").prop('checked', false);
+		jQuery(".marketing_desabled").addClass("selected");
+	});
+	
+	jQuery(".exit_tools_desabled").click(function(){
+		jQuery(".exit_checked").prop('checked', false);
+		jQuery(".exit_desabled").addClass("selected");
+	});
+	
+	jQuery(".collect_tools_desabled").click(function(){
+		jQuery(".collect_checked").prop('checked', false);
+		jQuery(".collect_desabled").addClass("selected");
+	});
+	
+	jQuery(".contact_tools_desabled").click(function(){
+		jQuery(".contact_checked").prop('checked', false);
+		jQuery(".contact_desabled").addClass("selected");
+	});
+	
+	jQuery(".callme_tools_desabled").click(function(){
+		jQuery(".callme_checked").prop('checked', false);
+		jQuery(".callme_desabled").addClass("selected");
+	});
+	
+	jQuery(".follow_tools_desabled").click(function(){
+		jQuery(".follow_checked").prop('checked', false);
+		jQuery(".follow_desabled").addClass("selected");
+	});
+	
+	jQuery(".thankyou_tools_desabled").click(function(){
+		jQuery(".thankyou_checked").prop('checked', false);
+		jQuery(".thankyou_desabled").addClass("selected");
+	});
+	jQuery(".pro_loader_filename").click(function(){
+		jQuery(".filename_add").removeClass("filename_hidden");
+	});
+	jQuery(".pro_url").click(function(){
+		jQuery(".filename_url").removeClass("filename_hidden");
+	});
+</script>
+<?php
     }
 	
 	/**
