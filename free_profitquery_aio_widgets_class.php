@@ -5117,7 +5117,7 @@ function changePopupImg(img, custom_photo_block_id){
 			<input type="submit" value="Save" class="filename_url filename_hidden">
 		<br><br>	
 		<div class="pq_pro">
-			<h1>Used Pro Options</h1>
+			<h1>Pro Options Detected</h1>
 						
 			
 			<!--table>
