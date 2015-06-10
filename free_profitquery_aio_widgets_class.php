@@ -2163,7 +2163,7 @@ function changePopupImg(img, custom_photo_block_id){
 										</label>
 										<p>&rarr;</p></div>
 								</label>
-								<h3>AFTER CLIK IMAGE CLICK</h3>
+								<h3>DISABLE AFTER IMAGE CLICK</h3>
 								<label>							
 									<select name="imageSharer[disableAfterClick]">
 										<option value="0" <?php if((int)$this->_options[imageSharer][disableAfterClick] == 0) echo 'selected';?>>Enable</option>
