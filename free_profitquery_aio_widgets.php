@@ -22,7 +22,7 @@
 * Plugin Name: Share + Subscribe + Contact | AIO Widget
 * Plugin URI: http://profitquery.com/aio_widgets.html
 * Description: Next level widgets for growth your customers feedback, visitors contact information, share's, social networks referral's, folllowers and all for free.
-* Version: 3.0.4
+* Version: 3.0.5
 *
 * Author: Profitquery Team <support@profitquery.com>
 * Author URI: http://profitquery.com/?utm_campaign=aio_widgets_wp
@@ -287,6 +287,22 @@ function profitquery_prepare_sctructure_product($data){
 }
 
 
+
+function profitquery_prepare_image_url_mask_options($name){
+	global $profitquery;
+	$ret = array();
+	if($profitquery[proOptions][$name]){		
+		if($profitquery[proOptions][$name][disableExeptImageUrlMask]){
+			foreach((array)$profitquery[proOptions][$name][disableExeptImageUrlMask] as $k => $v){
+				if($v){
+					$ret[$k] = $v;
+				}
+			}
+		}
+	}
+	return $ret;
+}
+
 function profitquery_prepare_exp_options($name){
 	global $profitquery;
 	$ret = array();
@@ -381,6 +397,7 @@ function profitquery_smart_widgets_insert_code(){
 	$preparedObject = profitquery_prepare_sctructure_product($profitquery[imageSharer]);
 	$disableOptions = profitquery_prepare_disable_options('imageSharer');		
 	$enabledExpressions = profitquery_prepare_exp_options('imageSharer');		
+	$imageUrlMaskOptions = profitquery_prepare_image_url_mask_options('imageSharer');		
 	$proOptions = profitquery_prepare_pro_options('imageSharer');
 	//printr($proOptions);
 	//die();
@@ -394,6 +411,7 @@ function profitquery_smart_widgets_insert_code(){
 		'minHeight'=>$proOptions[minHeight],
 		'hoverAnimation'=>$proOptions[hover_animation],
 		'enabledExpressions'=>$enabledExpressions,				
+		'disableImageExeptUrlMaskOptions'=>$imageUrlMaskOptions,				
 		'afterProfitLoader'=>stripslashes($preparedObject[afterProceed])
 	);	
 	

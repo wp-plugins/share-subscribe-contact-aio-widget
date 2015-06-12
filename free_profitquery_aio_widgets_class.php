@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 3.0.4
+* @version  SVN: 3.0.5
 */
 
 
@@ -197,6 +197,7 @@ class ProfitQuerySmartWidgetsClass
 		
 		$this->_options[aio_widgets_loaded] = 1;
 		$this->_options[proOptions]['proLoaderFilename'] = $this->getDomain().'.pq_pro_loader';
+		$this->_options[proOptions]['mainPageUrl'] = 'http://'.$this->getDomain();
 		update_option('profitquery', $this->_options);
 	}	
 		
@@ -322,6 +323,17 @@ class ProfitQuerySmartWidgetsClass
 		return $array;
 	}
 	
+	function checkDisableExeptImageUrlMask(){
+		$ret = 0;
+		foreach((array)$this->_options[proOptions][imageSharer][disableExeptImageUrlMask] as $k => $v){
+			if(trim($v)) {
+				$ret = 1;
+				break;
+			}			
+		}
+		return $ret;
+	}
+	
 	function checkDisableExeptExtensions(){
 		$ret = 0;
 		foreach((array)$this->_options[proOptions][imageSharer][disableExeptExtensions] as $k => $v){
@@ -416,6 +428,7 @@ class ProfitQuerySmartWidgetsClass
 		if($this->checkDisableExeptPageMask('follow')) $ret[disableExeptPageMask]=1;
 		
 		if($this->checkDisableExeptExtensions()) $ret[ISdisableExeptExtensions]=1;
+		if($this->checkDisableExeptImageUrlMask()) $ret[ISdisableExeptImageUrlMask]=1;		
 		if((int)$this->_options[proOptions][imageSharer][minHeight]) $ret[ISminHeight]=1;
 		
 		if($this->checkUseProAnimation('sharingSideBar')) $ret[useProAnimation]=1;
@@ -622,7 +635,7 @@ class ProfitQuerySmartWidgetsClass
 				}
 				
 				if($_POST[sharingSideBar][galleryOption]){
-					if($_POST[sharingSideBar][galleryOption][disable] == 'on') $this->_options['sharingSideBar']['galleryOption']['disable'] = 1; else $this->_options['sharingSideBar']['galleryOption']['disable'] = 0;
+					if((int)$_POST[sharingSideBar][galleryOption][disable] == 1) $this->_options['sharingSideBar']['galleryOption']['disable'] = 1; else $this->_options['sharingSideBar']['galleryOption']['disable'] = 0;
 					if(trim($_POST[sharingSideBar][galleryOption][title])) $this->_options['sharingSideBar']['galleryOption']['title'] = sanitize_text_field($_POST[sharingSideBar][galleryOption][title]); else $this->_options['sharingSideBar']['galleryOption']['title'] = '';
 					if(trim($_POST[sharingSideBar][galleryOption][button_color])) $this->_options['sharingSideBar']['galleryOption']['button_color'] = sanitize_text_field($_POST[sharingSideBar][galleryOption][button_color]); else $this->_options['sharingSideBar']['galleryOption']['button_color'] = '';
 					if(trim($_POST[sharingSideBar][galleryOption][buttonTitle])) $this->_options['sharingSideBar']['galleryOption']['buttonTitle'] = sanitize_text_field($_POST[sharingSideBar][galleryOption][buttonTitle]); else $this->_options['sharingSideBar']['galleryOption']['buttonTitle'] = '';
@@ -882,6 +895,13 @@ class ProfitQuerySmartWidgetsClass
 					if(trim($_POST[proOptions][imageSharer][disableExeptExtensions][2])) $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][2] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptExtensions][2]); else $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][2] = '';
 					if(trim($_POST[proOptions][imageSharer][disableExeptExtensions][3])) $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][3] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptExtensions][3]); else $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][3] = '';
 					if(trim($_POST[proOptions][imageSharer][disableExeptExtensions][4])) $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][4] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptExtensions][4]); else $this->_options['proOptions']['imageSharer']['disableExeptExtensions'][4] = '';
+					
+					
+					if(trim($_POST[proOptions][imageSharer][disableExeptImageUrlMask][0])) $this->_options['proOptions']['imageSharer']['disableExeptImageUrlMask'][0] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptImageUrlMask][0]); else $this->_options['proOptions']['imageSharer']['disableExeptImageUrlMask'][0] = '';
+					if(trim($_POST[proOptions][imageSharer][disableExeptImageUrlMask][1])) $this->_options['proOptions']['imageSharer']['disableExeptImageUrlMask'][1] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptImageUrlMask][1]); else $this->_options['proOptions']['imageSharer']['disableExeptImageUrlMask'][1] = '';
+					if(trim($_POST[proOptions][imageSharer][disableExeptImageUrlMask][2])) $this->_options['proOptions']['imageSharer']['disableExeptImageUrlMask'][2] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptImageUrlMask][2]); else $this->_options['proOptions']['imageSharer']['disableExeptImageUrlMask'][2] = '';
+					if(trim($_POST[proOptions][imageSharer][disableExeptImageUrlMask][3])) $this->_options['proOptions']['imageSharer']['disableExeptImageUrlMask'][3] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptImageUrlMask][3]); else $this->_options['proOptions']['imageSharer']['disableExeptImageUrlMask'][3] = '';
+					if(trim($_POST[proOptions][imageSharer][disableExeptImageUrlMask][4])) $this->_options['proOptions']['imageSharer']['disableExeptImageUrlMask'][4] = sanitize_text_field($_POST[proOptions][imageSharer][disableExeptImageUrlMask][4]); else $this->_options['proOptions']['imageSharer']['disableExeptImageUrlMask'][4] = '';
 					
 					if(trim($_POST[proOptions][imageSharer][animation])) $this->_options['proOptions']['imageSharer']['animation'] = sanitize_text_field($_POST[proOptions][imageSharer][animation]); else $this->_options['proOptions']['imageSharer']['animation'] = '';
 					if(trim($_POST[proOptions][imageSharer][hover_animation])) $this->_options['proOptions']['imageSharer']['hover_animation'] = sanitize_text_field($_POST[proOptions][imageSharer][hover_animation]); else $this->_options['proOptions']['imageSharer']['hover_animation'] = '';					
@@ -3457,6 +3477,21 @@ function changePopupImg(img, custom_photo_block_id){
 								<label>
 									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][4]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][4]);?>">
 								</label>
+								<label><p>Disable All Exept Image Url Mask</p>
+									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][0]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][0]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][1]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][1]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][2]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][2]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][3]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][3]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][4]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][4]);?>">
+								</label>
 								<h3>ANIMATION</h3>								
 								<label><p>Hover</p>
 								<select name="proOptions[imageSharer][hover_animation]" id="imageSharer_hover_animation" onchange="imageSharerPreview()">
@@ -4940,7 +4975,7 @@ function changePopupImg(img, custom_photo_block_id){
 		</div>
 		<div class="frame">
 			<iframe src="about:blank" id="PQPreviewID" width="100%" height="100%" class="pq_if"></iframe>
-			<h2>Design and position demo</h2>
+			<h2>Only Design & position demo</h2>
 			<p style="text-align: center; padding-top: 50px;">Your screen is too small to use. Min width is 850px.</p>
 		</div>
 		
@@ -5154,7 +5189,7 @@ function changePopupImg(img, custom_photo_block_id){
 		<input type="text" class="filename filename_add filename_hidden" name="proOptions[proLoaderFilename]" value="<?php echo stripslashes($this->_options['proOptions']['proLoaderFilename']);?>">
 		<input type="submit" value="Save" class="filename_add filename_hidden">
 		<br>
-		<a class="pro_url">Website Main Page URL</a>
+		<a class="pro_url">Website Full Main Page URL (http://example.com)</a>
 			<input type="text" class="filename filename_url filename_hidden" name="proOptions[mainPageUrl]" value="<?php echo stripslashes($this->_options['proOptions']['mainPageUrl']);?>"; />	
 			<input type="submit" value="Save" class="filename_url filename_hidden">
 		<br><br>	
@@ -5213,6 +5248,16 @@ function changePopupImg(img, custom_photo_block_id){
 							<tr>
 								<td>						
 									<p>Disable exept page mask options</p>
+								</td>
+							</tr>
+							<?php
+						}
+						
+						if((int)$getProCategoryArray[ISdisableExeptImageUrlMask]){
+							?>
+							<tr>
+								<td>						
+									<p>Image Sharer image url mask options</p>
 								</td>
 							</tr>
 							<?php
