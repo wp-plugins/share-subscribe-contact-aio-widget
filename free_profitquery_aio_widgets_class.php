@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 3.0.5
+* @version  SVN: 3.0.6
 */
 
 
@@ -1163,7 +1163,7 @@ function changePopupImg(img, custom_photo_block_id){
 		<!--span style="position: absolute;top: 6px;right: 300px;" onclick="document.getElementById('SProviderSettings').style.display='block';">Subscribe Provider Stngs</span>
 		<span class="free">FREE</span-->
 		<a class="pq_adds" href="javascript:void(0)" onclick="document.getElementById('PQ_lang').style.display='block';">Languages</a>
-		<input class="pro" type="button" value="PRO SETUP" onclick="document.getElementById('Get_Pro').style.display='block';">
+		<input class="pro" type="button" value="Try Pro (for free)" onclick="document.getElementById('Get_Pro').style.display='block';">
 		<!--span class="pro">PRO 23$</span-->
 	</div>
 
@@ -2391,6 +2391,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<select id="sharingSideBar_design_size" onchange="sharingSideBarPreview();" name="sharingSideBar[design][size]">
 									<option value="x20" <?php if($this->_options[sharingSideBar][design][size] == 'x20') echo 'selected';?>>Size S</option>
 									<option value="x30" <?php if($this->_options[sharingSideBar][design][size] == 'x30') echo 'selected';?>>Size M</option>
+									<option value="x40" <?php if($this->_options[sharingSideBar][design][size] == 'x40') echo 'selected';?>>Size M+</option>
 									<option value="x50" <?php if($this->_options[sharingSideBar][design][size] == 'x50') echo 'selected';?>>Size L</option>
 									<option value="x70" <?php if($this->_options[sharingSideBar][design][size] == 'x70') echo 'selected';?>>Size XL</option>
 								</select>
@@ -2560,6 +2561,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<select name="follow[design][size]" id="follow_design_size" onchange="followPreview();">
 									<option value="x20" <?php if($this->_options[follow][design][size] == 'x20') echo 'selected';?>>Size S</option>
 									<option value="x30" <?php if($this->_options[follow][design][size] == 'x30') echo 'selected';?>>Size M</option>
+									<option value="x40" <?php if($this->_options[follow][design][size] == 'x40') echo 'selected';?>>Size M+</option>
 									<option value="x50" <?php if($this->_options[follow][design][size] == 'x50') echo 'selected';?>>Size L</option>
 									<option value="x70" <?php if($this->_options[follow][design][size] == 'x70') echo 'selected';?>>Size XL</option>
 								</select>
@@ -3124,6 +3126,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<select id="imageSharer_design_size" onchange="imageSharerPreview();" name="imageSharer[design][size]">
 									<option value="x20" <?php if($this->_options[imageSharer][design][size] == 'x20') echo 'selected';?>>Size S</option>
 									<option value="x30" <?php if($this->_options[imageSharer][design][size] == 'x30') echo 'selected';?>>Size M</option>
+									<option value="x40" <?php if($this->_options[imageSharer][design][size] == 'x40') echo 'selected';?>>Size M+</option>
 									<option value="x50" <?php if($this->_options[imageSharer][design][size] == 'x50') echo 'selected';?>>Size L</option>
 									<option value="x70" <?php if($this->_options[imageSharer][design][size] == 'x70') echo 'selected';?>>Size XL</option>
 								</select>
@@ -4982,6 +4985,7 @@ function changePopupImg(img, custom_photo_block_id){
 		<div id="Hello" class="pq_popup hello selected">
 			<h1>Thanks for your choise!</h1>
 			<p>Latest news and plans of our team.</p>
+			<p><strong><a href="javascrip:void(0);" onclick="document.getElementById('Get_Pro').style.display='block';">Try Pro for free right now. You can enable free trial with all pro features for 3 Day</a></strong></p>
 			<p>New in 3+: 1. New dashboard, that can most comfortable for set-up option 2 Add mail and Whats App service for image share. 3. Add free trial pro features, all features you can test with live demo section (right side window) 4. Add order pro features. 5. Add many design and position option. Now you can generate uniwue popup and tools for your website. 6. Add language chose for default tools text, and many more. Stay turned.</p>
 			<br>
 			<img src="<?php echo plugins_url('i/lesson.png', __FILE__);?>" />
