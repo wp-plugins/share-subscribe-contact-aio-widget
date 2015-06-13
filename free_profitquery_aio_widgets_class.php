@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 3.0.6
+* @version  SVN: 3.0.7
 */
 
 
@@ -475,7 +475,7 @@ class ProfitQuerySmartWidgetsClass
         }
 		echo "			
 			<link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&amp;subset=latin,cyrillic' rel='stylesheet' type='text/css'>
-			<link rel='stylesheet'  href='".plugins_url()."/".PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME."/".PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH."pq_wordpress.css' type='text/css' media='all' />			
+			<link rel='stylesheet'  href='".plugins_url()."/".PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME."/".PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH."pq_wordpress_v2.css' type='text/css' media='all' />			
 		<noscript>				
 				<p>Please enable JavaScript in your browser.</p>				
 		</noscript>

@@ -295,3 +295,22 @@ body {position: relative; margin: 0;}
 @media only screen and (max-height: 600px){#profitquery {height: 93vh;}}
 
 @media only screen and (max-width: 850px){#profitquery .pq3 iframe {display: none;}}
+.rtl #profitquery { left: 0; right: -20px;}
+.rtl #profitquery .pq3 {right: initial; left: 0;}
+.rtl #profitquery .ganalytics {left: initial; right: 0; padding: 0 0 0 15px;}
+.rtl #profitquery .pq1 a.pq_adds {right: initial; left: 220px;}
+.rtl #profitquery .pq1 input.pro { right: initial; left:15px;}
+.rtl #profitquery .pq1 img { left: initial; right: 15px;}
+.rtl #profitquery .pq1 p+a {  border-right-style: dotted; border-left-style: initial;}
+.rtl #profitquery .pq3 .pq_like_dash {right: initial;  left: 15px;}
+.rtl #profitquery .pq_popup.lang { right: initial; left :220px;}
+.rtl #profitquery .pq_popup.emailsettings { left: initial; right: 20%;}
+.rtl #profitquery .pq_popup.analytics { left: initial; right: 20%;}
+.rtl #profitquery .pq_button_group {left: initial; right: 0; padding: 0 15px 0 30px;}
+.rtl #profitquery a.question {right: initial; left: 35px;}
+.rtl #profitquery .pq_popup.question { right: initial; left:15px;}
+.rtl #profitquery .pq_popup.question .question_footer {padding: 0 0 0 50px;}
+.rtl #profitquery .pq_popup .pq_close {right: initial; left:10px;}
+.rtl #profitquery .pq2 h2, h3 {  font-family: pt sans narrow!important;  font-weight: normal!important;  text-align: center;  text-transform: uppercase;  color: rgb(68, 67, 67);}
+.rtl #profitquery .pq3 iframe.pq_bar { transform-origin: 100% 0;}
+.rtl #profitquery .pq2 form .choise {  display: none;}
