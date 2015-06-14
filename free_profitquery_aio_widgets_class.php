@@ -502,7 +502,9 @@ class ProfitQuerySmartWidgetsClass
 		
 		//firstActivate
 		if((int)$this->_options[pluginRegistration] == 0){
-			$this->activatePluginVersion();
+			if(!$this->_options[apiKey]){
+				$this->activatePluginVersion();
+			}
 		}
 		
 		//deleteProOptions
