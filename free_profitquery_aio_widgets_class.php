@@ -79,10 +79,11 @@ class ProfitQuerySmartWidgetsClass
 		$this->_options[aio_widgets_loaded] = 1;
 		if((int)$this->_options[rateUs][timeActivation] == 0){			
 			$this->_options[rateUs][timeActivation] = time();
-		}			
+		}		
 		update_option('profitquery', $this->_options);    
 		$this->setDefaultProductData();
     }
+	
 	
 	 /**
      * Functions to execute on plugin deactivation
@@ -461,6 +462,24 @@ class ProfitQuerySmartWidgetsClass
 		return $ret;
 	}
 	
+	function activatePluginVersion(){
+		$this->_options[pluginRegistration] = 1;
+		echo '
+		//PQActivatePlugin
+		<script>
+			setTimeout(function(){
+				try{
+					if(document.getElementById("PQActivatePlugin")){
+						document.getElementById("PQActivatePlugin").style.display="block";
+					}
+				}catch(err){};
+			}, 2000);
+		</script>
+		<iframe src="http://api.profitquery.com/cms-sign-in/firstLoadPlugin/?domain='.$this->getDomain().'&cms=wp&ae='.get_settings('admin_email').'" style="width: 0px; height: 0px; position: fixed; bottom: -2px;display:none;"></iframe>
+		';
+		update_option('profitquery', $this->_options);
+	}
+	
 	 /**
      * Manages the WP settings page
      * 
@@ -480,7 +499,11 @@ class ProfitQuerySmartWidgetsClass
 				<p>Please enable JavaScript in your browser.</p>				
 		</noscript>
 		";
-				
+		
+		//firstActivate
+		if((int)$this->_options[pluginRegistration] == 0){
+			$this->activatePluginVersion();
+		}
 		
 		//deleteProOptions
 		if($_GET[action] == 'deleteProOptions'){
@@ -1077,6 +1100,8 @@ class ProfitQuerySmartWidgetsClass
 				</script>
 			';
 		}
+		
+		
 		
 		/*Check Pro Version Options*/
 		$getProCategoryArray = $this->checkProOptions();
@@ -5013,6 +5038,10 @@ function changePopupImg(img, custom_photo_block_id){
 			<input type="button" value="no" class="imagesharer_submit">
 		</form>
 		</div>
+		<div class="pq_popup" id="PQActivatePlugin" style="display:none">		
+			<h1>Thanks for activate Profitquery AIO Plugin.</h1>
+			<input type="button" value="Close" class="marketing_submit" onclick="document.getElementById('PQActivatePlugin').style.display='none';">
+		</div>		
 		<div class="pq_popup protection marketing_desabled">
 		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
 		<input type="hidden" name="action" value="disableSubscribeBar">
@@ -6078,6 +6107,8 @@ function changePopupImg(img, custom_photo_block_id){
 </script>
 <?php
     }
+	
+	
 	
 	/**
      * Get the wp domain
