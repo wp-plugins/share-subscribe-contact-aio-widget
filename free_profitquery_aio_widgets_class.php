@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 3.0.7
+* @version  SVN: 3.1
 */
 
 
@@ -1186,11 +1186,11 @@ function changePopupImg(img, custom_photo_block_id){
 		<p class="thankyou">Thankyou Popup</p>
 		<a href="javascript:void(0)" onclick="document.getElementById('SProviderSettings').style.display='block';">Email settings</a>
 		<p class="pq_tooltip1">&larr; Subscribe Provider Settings Here</p>
-		<p class="pq_tooltip2">&larr; Send Mail To Settings Here</p>
+		<p class="pq_tooltip2">&larr; Mail Settings Here</p>
 		<!--span style="position: absolute;top: 6px;right: 300px;" onclick="document.getElementById('SProviderSettings').style.display='block';">Subscribe Provider Stngs</span>
 		<span class="free">FREE</span-->
 		<a class="pq_adds" href="javascript:void(0)" onclick="document.getElementById('PQ_lang').style.display='block';">Languages</a>
-		<input class="pro" type="button" value="Try Pro (for free)" onclick="document.getElementById('Get_Pro').style.display='block';">
+		<input class="pro" type="button" value="Try Pro options for free" onclick="document.getElementById('Get_Pro').style.display='block';">
 		<!--span class="pro">PRO 23$</span-->
 	</div>
 
@@ -1258,6 +1258,12 @@ function changePopupImg(img, custom_photo_block_id){
 							<input type="radio" name="task" value="13" class="thankyou_tools">
 							<input type="checkbox" name="thankPopup[enabled]" checked class="thankyou_checked">
 							<div><img src="<?php echo plugins_url('i/10.png', __FILE__);?>" class="pq_card" /><p>Thankyou Popup</p><input type="button" class="task activate thankyou_tools_activate" value="Activate"><input type="button" class="task settings thankyou_tools_activate" value="settings"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+						</label>
+						
+						<label>
+							<input type="radio" name="task" value="13" class="">
+							<input type="checkbox" name="" class="">
+							<div><img src="<?php echo plugins_url('i/57.png', __FILE__);?>" class="pq_card" /><p>Custom Tool</p><input type="button" class="task activate any_tools_activate" value="More info"></div>
 						</label>
 						
 					</div>
@@ -1990,6 +1996,45 @@ function changePopupImg(img, custom_photo_block_id){
 									<p>RSS feed</p>
 									<input type="text" name="follow[follow_socnet][RSS]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][RSS]);?>">
 								</label>																																
+								
+								<h3>DISPLAY AFTER</h3>
+								<label><p>Sharing Sidebar</p>
+								<select name="sharingSideBar[afterProceed][follow]">
+									<option value="1" <?php if((int)$this->_options[sharingSideBar][afterProceed][follow] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[sharingSideBar][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Image Sharer</p>
+								<select name="imageSharer[afterProceed][follow]">
+									<option value="1" <?php if((int)$this->_options[imageSharer][afterProceed][follow] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[imageSharer][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Subscribe Bar </p>
+								<select name="subscribeBar[afterProceed][follow]">
+									<option value="1" <?php if((int)$this->_options[subscribeBar][afterProceed][follow] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[subscribeBar][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Exit Intent Popup</p>
+								<select name="subscribeExit[afterProceed][follow]">
+									<option value="1" <?php if((int)$this->_options[subscribeExit][afterProceed][follow] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[subscribeExit][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>								
+								<label><p>Contact Form</p>
+								<select name="contactUs[afterProceed][follow]">
+									<option value="1" <?php if((int)$this->_options[contactUs][afterProceed][follow] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[contactUs][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Call Me Now</p>
+								<select name="callMe[afterProceed][follow]">
+									<option value="1" <?php if((int)$this->_options[callMe][afterProceed][follow] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[callMe][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<br>
 							</div>
 						</div>
 						
@@ -2277,6 +2322,45 @@ function changePopupImg(img, custom_photo_block_id){
 									<input class="text" type="text" name="thankPopup[buttonTitle]" value="<?php echo stripslashes($this->_options[thankPopup][buttonTitle])?>">
 									
 								</label>
+								
+								<h3>DISPLAY AFTER</h3>
+								<label><p>Sharing Sidebar</p>
+								<select  name="sharingSideBar[afterProceed][thank]">
+									<option value="1" <?php if((int)$this->_options[sharingSideBar][afterProceed][thank] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[sharingSideBar][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Image Sharer</p>
+								<select name="imageSharer[afterProceed][thank]">
+									<option value="1" <?php if((int)$this->_options[imageSharer][afterProceed][thank] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[imageSharer][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Subscribe Bar </p>
+								<select name="subscribeBar[afterProceed][thank]">
+									<option value="1" <?php if((int)$this->_options[subscribeBar][afterProceed][thank] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[subscribeBar][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Exit Intent Popup</p>
+								<select name="subscribeExit[afterProceed][thank]">
+									<option value="1" <?php if((int)$this->_options[subscribeExit][afterProceed][thank] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[subscribeExit][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>								
+								<label><p>Contact Form</p>
+								<select name="contactUs[afterProceed][thank]">
+									<option value="1" <?php if((int)$this->_options[contactUs][afterProceed][thank] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[contactUs][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<label><p>Call Me Now</p>
+								<select name="callMe[afterProceed][thank]">
+									<option value="1" <?php if((int)$this->_options[callMe][afterProceed][thank] == 1) echo 'selected';?>>On</option>
+									<option value="0" <?php if((int)$this->_options[callMe][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
+								</select>
+								</label>
+								<br>
 																								
 								
 							</div>
@@ -3342,15 +3426,17 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								
 								<h2 class="pro_h1">PRO options</h2>
-								<h3>DISPLAY RULES</h3>
+								<h3>DISPLAY RULES</h3><a href="#top" class="tooltip_pro">?</a>
 								<label><p>Disable Main Page</p>
 									<select name="proOptions[sharingSideBar][disableMainPage]">
 										<option value="1" <?php if((int)$this->_options[proOptions][sharingSideBar][disableMainPage] == 1) echo 'selected';?>>Yes</option>
 										<option value="0" <?php if((int)$this->_options[proOptions][sharingSideBar][disableMainPage] == 0) echo 'selected';?>>No</option>
 									</select>
+									
 								</label>								
 								<label><p>Disable Exept Url Mask</p>
 								<input type="text" name="proOptions[sharingSideBar][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][sharingSideBar][disableExeptPageMask][0]);?>">
+								
 								</label>
 								<label>
 								<input type="text" name="proOptions[sharingSideBar][disableExeptPageMask][1]" value="<?php echo stripslashes($this->_options[proOptions][sharingSideBar][disableExeptPageMask][1]);?>">
@@ -3364,7 +3450,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<label>
 								<input type="text" name="proOptions[sharingSideBar][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][sharingSideBar][disableExeptPageMask][4]);?>">
 								</label>								
-								<h3>ANIMATION</h3>
+								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select name="proOptions[sharingSideBar][animation]" id="sharingSideBar_animation" onchange="sharingSideBarPreview();">
 									<option value="" <?php if($this->_options[proOptions][sharingSideBar][animation] == '') echo 'selected';?>>Default</option>
@@ -3400,6 +3486,7 @@ function changePopupImg(img, custom_photo_block_id){
 									<option value="pq_pro_a_slideInRight" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_slideInRight') echo 'selected';?>>Slideinright</option>
 									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][sharingSideBar][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
 								</select>
+								
 								</label>
 								<label><p>Hover</p>
 								<select name="proOptions[sharingSideBar][hover_animation]" id="sharingSideBar_hover_animation" onchange="sharingSideBarPreview();">
@@ -3438,8 +3525,9 @@ function changePopupImg(img, custom_photo_block_id){
 									<option value="pq_pro_ha_hvr_grow_shadow" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_grow_shadow') echo 'selected';?>>Grow Shadow</option>
 									<option value="pq_pro_ha_hvr_float_shadow" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_float_shadow') echo 'selected';?>>Float Shadow</option>
 								</select>
+								
 								</label>
-								<!--h3>WHITELABEL</h3>
+								<!--h3>WHITELABEL</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select name="proOptions[sharingSideBar][whitelabel]">
 									<option value="1" <?php if((int)$this->_options[proOptions][sharingSideBar][whitelabel] == 1) echo 'selected';?>>Enable</option>
@@ -3453,7 +3541,7 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								
 								<h2 class="pro_h1">PRO options</h2>
-								<h3>DISPLAY RULES</h3>
+								<h3>DISPLAY RULES</h3><a class="tooltip_pro">?</a>
 								<label><p>Disable Main Page</p>
 									<select name="proOptions[imageSharer][disableMainPage]">
 										<option value="1" <?php if((int)$this->_options[proOptions][imageSharer][disableMainPage] == 1) echo 'selected';?>>Yes</option>
@@ -3475,7 +3563,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<label>
 								<input type="text" name="proOptions[imageSharer][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptPageMask][4]);?>">
 								</label>								
-								<h3>SHARE IMAGE</h3>
+								<h3>SHARE IMAGE</h3><a class="tooltip_pro">?</a>
 								<label>
 									<img class="picture" src="<?php echo plugins_url('i/capture.png', __FILE__);?>" />
 									<div><p>&#8597;</p> 
@@ -3522,7 +3610,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<label>
 									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][4]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][4]);?>">
 								</label>
-								<h3>ANIMATION</h3>								
+								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>								
 								<label><p>Hover</p>
 								<select name="proOptions[imageSharer][hover_animation]" id="imageSharer_hover_animation" onchange="imageSharerPreview()">
 									<option value="" <?php if($this->_options[proOptions][imageSharer][hover_animation] == '') echo 'selected';?>>Default</option-->
@@ -3569,7 +3657,7 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								
 								<h2 class="pro_h1">PRO options</h2>
-								<h3>DISPLAY RULES</h3>
+								<h3>DISPLAY RULES</h3><a class="tooltip_pro">?</a>
 								<label><p>Disable Main Page</p>
 									<select name="proOptions[subscribeBar][disableMainPage]">
 										<option value="1" <?php if((int)$this->_options[proOptions][subscribeBar][disableMainPage] == 1) echo 'selected';?>>Yes</option>
@@ -3591,7 +3679,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<label>
 								<input type="text" name="proOptions[subscribeBar][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][subscribeBar][disableExeptPageMask][4]);?>">
 								</label>
-								<h3>Design</h3>
+								<h3>Design</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="subscribeBar_pro_1" onchange="subscribeBarPreview();" name="proOptions[subscribeBar][font]">
 									<option value="pq_pro_arial" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
@@ -3630,7 +3718,7 @@ function changePopupImg(img, custom_photo_block_id){
 										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
 									</select>
 								</label>
-								<h3>ANIMATION</h3>
+								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="subscribeBar_pro_animation" onchange="subscribeBarPreview();" name="proOptions[subscribeBar][animation]">
 									<option value="" <?php if($this->_options[proOptions][subscribeBar][animation] == '') echo 'selected';?>>Default</option>
@@ -3668,7 +3756,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</select>
 								</label>
 								
-								<!--h3>WHITELABEL</h3>
+								<!--h3>WHITELABEL</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select name="proOptions[subscribeBar][whitelabel]">
 									<option value="1" <?php if((int)$this->_options[proOptions][subscribeBar][whitelabel] == 1) echo 'selected';?>>Enable</option>
@@ -3683,7 +3771,7 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								
 								<h2 class="pro_h1">PRO options</h2>
-								<h3>DISPLAY RULES</h3>
+								<h3>DISPLAY RULES</h3><a class="tooltip_pro">?</a>
 								<label><p>Disable Main Page</p>
 									<select name="proOptions[subscribeExit][disableMainPage]">
 										<option value="1" <?php if((int)$this->_options[proOptions][subscribeExit][disableMainPage] == 1) echo 'selected';?>>Yes</option>
@@ -3705,7 +3793,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<label>
 								<input type="text" name="proOptions[subscribeExit][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][subscribeExit][disableExeptPageMask][4]);?>">
 								</label>
-								<h3>Design</h3>
+								<h3>Design</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="subscribeExit_pro_1" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][head_font]">
 									<option value="" <?php if($this->_options[proOptions][subscribeExit][head_font] == '') echo 'selected';?>>Heading and Button - PT Sans Narrow</option>
@@ -3877,7 +3965,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<label><p>Background-image URL</p>
 								<input type="text" id="subscribeExit_pro_background_image" onKeyUp="subscribeExitPreview();" name="proOptions[subscribeExit][background_image]" value="<?php echo stripslashes($this->_options[proOptions][subscribeExit][background_image]);?>">
 								</label>
-								<h3>ANIMATION</h3>
+								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="subscribeExit_pro_animation" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][animation]">
 									<option value="" <?php if($this->_options[proOptions][subscribeExit][animation] == '') echo 'selected';?>>Default</option>
@@ -3914,7 +4002,7 @@ function changePopupImg(img, custom_photo_block_id){
 									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][subscribeExit][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
 								</select>
 								</label>																
-								<!--h3>WHITELABEL</h3>
+								<!--h3>WHITELABEL</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select name="proOptions[subscribeExit][whitelabel]">
 									<option value="1" <?php if((int)$this->_options[proOptions][subscribeExit][whitelabel] == 1) echo 'selected';?>>Enable</option>
@@ -3928,7 +4016,7 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								
 								<h2 class="pro_h1">PRO options</h2>
-								<h3>DISPLAY RULES</h3>
+								<h3>DISPLAY RULES</h3><a class="tooltip_pro">?</a>
 								<label><p>Disable Main Page</p>
 									<select name="proOptions[contactUs][disableMainPage]">
 										<option value="1" <?php if((int)$this->_options[proOptions][contactUs][disableMainPage] == 1) echo 'selected';?>>Yes</option>
@@ -3950,7 +4038,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<label>
 								<input type="text" name="proOptions[contactUs][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][contactUs][disableExeptPageMask][4]);?>">
 								</label>								
-								<h3>Design</h3>
+								<h3>Design</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="contactUs_pro_1" onchange="contactUsPreview();" name="proOptions[contactUs][head_font]">
 									<option value="" <?php if($this->_options[proOptions][contactUs][head_font] == '') echo 'selected';?>>Heading and Button - PT Sans Narrow</option>
@@ -4122,7 +4210,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<label><p>Background-image URL</p>
 								<input type="text" id="contactUs_pro_background_image" onkeyup="contactUsPreview();" name="proOptions[contactUs][background_image]" value="<?php echo stripslashes($this->_options[proOptions][contactUs][background_image]);?>">
 								</label>
-								<h3>ANIMATION</h3>
+								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="contactUs_pro_animation" onchange="contactUsPreview();" name="proOptions[contactUs][animation]">
 									<option value="" <?php if($this->_options[proOptions][contactUs][animation] == '') echo 'selected';?>>Default</option>
@@ -4159,7 +4247,7 @@ function changePopupImg(img, custom_photo_block_id){
 									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][contactUs][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
 								</select>
 								</label>																
-								<!--h3>WHITELABEL</h3>
+								<!--h3>WHITELABEL</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select name="proOptions[contactUs][whitelabel]">
 									<option value="1" <?php if((int)$this->_options[proOptions][contactUs][whitelabel] == 1) echo 'selected';?>>Enable</option>
@@ -4173,7 +4261,7 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								
 								<h2 class="pro_h1">PRO options</h2>
-								<h3>DISPLAY RULES</h3>
+								<h3>DISPLAY RULES</h3><a class="tooltip_pro">?</a>
 								<label><p>Disable Main Page</p>
 									<select name="proOptions[callMe][disableMainPage]">
 										<option value="1" <?php if((int)$this->_options[proOptions][callMe][disableMainPage] == 1) echo 'selected';?>>Yes</option>
@@ -4196,7 +4284,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<input type="text" name="proOptions[callMe][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][callMe][disableExeptPageMask][4]);?>">
 								</label>
 								
-								<h3>Design</h3>
+								<h3>Design</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="callMe_pro_1" onchange="callMePreview();" name="proOptions[callMe][head_font]">
 									<option value="" <?php if($this->_options[proOptions][callMe][head_font] == '') echo 'selected';?>>Heading and Button - PT Sans Narrow</option>
@@ -4368,7 +4456,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<label><p>Background-image URL</p>
 								<input type="text" id="callMe_pro_background_image" onkeyUp="callMePreview();" name="proOptions[callMe][background_image]" value="<?php echo stripslashes($this->_options[proOptions][callMe][background_image]);?>">
 								</label>
-								<h3>ANIMATION</h3>
+								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="callMe_pro_animation" onchange="callMePreview();" name="proOptions[callMe][animation]">
 									<option value="" <?php if($this->_options[proOptions][callMe][animation] == '') echo 'selected';?>>Default</option>
@@ -4405,7 +4493,7 @@ function changePopupImg(img, custom_photo_block_id){
 									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][callMe][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
 								</select>
 								</label>																
-								<!--h3>WHITELABEL</h3>
+								<!--h3>WHITELABEL</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select name="proOptions[callMe][whitelabel]">
 									<option value="1" <?php if((int)$this->_options[proOptions][callMe][whitelabel] == 1) echo 'selected';?>>Enable</option>
@@ -4414,49 +4502,11 @@ function changePopupImg(img, custom_photo_block_id){
 								</label-->
 							</div>
 						</div>
-						<div class="settings thankyou">
-						<h2>Additional</h2>
+						<div class="settings thankyou">							
 							<div class="popup selected">
-								<h3>DISPLAY AFTER</h3>
-								<label><p>Sharing Sidebar</p>
-								<select  name="sharingSideBar[afterProceed][thank]">
-									<option value="1" <?php if((int)$this->_options[sharingSideBar][afterProceed][thank] == 1) echo 'selected';?>>On</option>
-									<option value="0" <?php if((int)$this->_options[sharingSideBar][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
-								</select>
-								</label>
-								<label><p>Image Sharer</p>
-								<select name="imageSharer[afterProceed][thank]">
-									<option value="1" <?php if((int)$this->_options[imageSharer][afterProceed][thank] == 1) echo 'selected';?>>On</option>
-									<option value="0" <?php if((int)$this->_options[imageSharer][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
-								</select>
-								</label>
-								<label><p>Subscribe Bar </p>
-								<select name="subscribeBar[afterProceed][thank]">
-									<option value="1" <?php if((int)$this->_options[subscribeBar][afterProceed][thank] == 1) echo 'selected';?>>On</option>
-									<option value="0" <?php if((int)$this->_options[subscribeBar][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
-								</select>
-								</label>
-								<label><p>Exit Intent Popup</p>
-								<select name="subscribeExit[afterProceed][thank]">
-									<option value="1" <?php if((int)$this->_options[subscribeExit][afterProceed][thank] == 1) echo 'selected';?>>On</option>
-									<option value="0" <?php if((int)$this->_options[subscribeExit][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
-								</select>
-								</label>								
-								<label><p>Contact Form</p>
-								<select name="contactUs[afterProceed][thank]">
-									<option value="1" <?php if((int)$this->_options[contactUs][afterProceed][thank] == 1) echo 'selected';?>>On</option>
-									<option value="0" <?php if((int)$this->_options[contactUs][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
-								</select>
-								</label>
-								<label><p>Call Me Now</p>
-								<select name="callMe[afterProceed][thank]">
-									<option value="1" <?php if((int)$this->_options[callMe][afterProceed][thank] == 1) echo 'selected';?>>On</option>
-									<option value="0" <?php if((int)$this->_options[callMe][afterProceed][thank] == 0) echo 'selected';?>>Off</option>
-								</select>
-								</label>
-								<br>
+								
 								<h2 class="pro_h1">PRO options</h2>
-								<h3>Design</h3>
+								<h3>Design</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="thankPopup_pro_1" onchange="thankPopupPreview();" name="proOptions[thankPopup][head_font]">
 									<option value="" <?php if($this->_options[proOptions][thankPopup][head_font] == '') echo 'selected';?>>Heading and Button - PT Sans Narrow</option>
@@ -4628,7 +4678,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<label><p>Background-image URL</p>
 								<input type="text" id="thankPopup_pro_background_image" onchange="thankPopupPreview();" name="proOptions[thankPopup][background_image]" value="<?php echo stripslashes($this->_options[proOptions][thankPopup][background_image]);?>">
 								</label>
-								<h3>ANIMATION</h3>
+								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="thankPopup_pro_animation" onchange="thankPopupPreview();" name="proOptions[thankPopup][animation]">
 									<option value="" <?php if($this->_options[proOptions][thankPopup][animation] == '') echo 'selected';?>>Default</option>
@@ -4665,7 +4715,7 @@ function changePopupImg(img, custom_photo_block_id){
 									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][thankPopup][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
 								</select>
 								</label>																
-								<!--h3>WHITELABEL</h3>
+								<!--h3>WHITELABEL</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select name="proOptions[thankPopup][whitelabel]">
 									<option value="1" <?php if((int)$this->_options[proOptions][thankPopup][whitelabel] == 1) echo 'selected';?>>Enable</option>
@@ -4674,49 +4724,11 @@ function changePopupImg(img, custom_photo_block_id){
 								</label-->
 							</div>
 						</div>
-						<div class="settings follow">
-						<h2>Additional</h2>
+						<div class="settings follow">						
 							<div class="popup selected">
-								<h3>DISPLAY AFTER</h3>
-								<label><p>Sharing Sidebar</p>
-								<select name="sharingSideBar[afterProceed][follow]">
-									<option value="1" <?php if((int)$this->_options[sharingSideBar][afterProceed][follow] == 1) echo 'selected';?>>On</option>
-									<option value="0" <?php if((int)$this->_options[sharingSideBar][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
-								</select>
-								</label>
-								<label><p>Image Sharer</p>
-								<select name="imageSharer[afterProceed][follow]">
-									<option value="1" <?php if((int)$this->_options[imageSharer][afterProceed][follow] == 1) echo 'selected';?>>On</option>
-									<option value="0" <?php if((int)$this->_options[imageSharer][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
-								</select>
-								</label>
-								<label><p>Subscribe Bar </p>
-								<select name="subscribeBar[afterProceed][follow]">
-									<option value="1" <?php if((int)$this->_options[subscribeBar][afterProceed][follow] == 1) echo 'selected';?>>On</option>
-									<option value="0" <?php if((int)$this->_options[subscribeBar][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
-								</select>
-								</label>
-								<label><p>Exit Intent Popup</p>
-								<select name="subscribeExit[afterProceed][follow]">
-									<option value="1" <?php if((int)$this->_options[subscribeExit][afterProceed][follow] == 1) echo 'selected';?>>On</option>
-									<option value="0" <?php if((int)$this->_options[subscribeExit][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
-								</select>
-								</label>								
-								<label><p>Contact Form</p>
-								<select name="contactUs[afterProceed][follow]">
-									<option value="1" <?php if((int)$this->_options[contactUs][afterProceed][follow] == 1) echo 'selected';?>>On</option>
-									<option value="0" <?php if((int)$this->_options[contactUs][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
-								</select>
-								</label>
-								<label><p>Call Me Now</p>
-								<select name="callMe[afterProceed][follow]">
-									<option value="1" <?php if((int)$this->_options[callMe][afterProceed][follow] == 1) echo 'selected';?>>On</option>
-									<option value="0" <?php if((int)$this->_options[callMe][afterProceed][follow] == 0) echo 'selected';?>>Off</option>
-								</select>
-								</label>
-								<br>
+								
 								<h2 class="pro_h1">PRO options</h2>
-								<h3>Design</h3>
+								<h3>Design</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="follow_pro_1" onchange="followPreview();" name="proOptions[follow][head_font]">
 									<option value="" <?php if($this->_options[proOptions][follow][head_font] == '') echo 'selected';?>>Heading and Button - PT Sans Narrow</option>
@@ -4888,7 +4900,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<label><p>Background-image URL</p>
 								<input type="text" id="follow_pro_background_image" onkeyup="followPreview();" name="proOptions[follow][background_image]" value="<?php echo stripslashes($this->_options[proOptions][follow][background_image]);?>">
 								</label>
-								<h3>ANIMATION</h3>
+								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select name="proOptions[follow][animation]" id="follow_pro_animation" onchange="followPreview();">
 									<option value="" <?php if($this->_options[proOptions][follow][animation] == '') echo 'selected';?>>Default</option>
@@ -4963,7 +4975,7 @@ function changePopupImg(img, custom_photo_block_id){
 									<option value="pq_pro_ha_hvr_float_shadow" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_float_shadow') echo 'selected';?>>Float Shadow</option>
 								</select>
 								</label>
-								<!--h3>WHITELABEL</h3>
+								<!--h3>WHITELABEL</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select name="proOptions[follow][whitelabel]">
 									<option value="1" <?php if((int)$this->_options[proOptions][follow][whitelabel] == 1) echo 'selected';?>>Enable</option>
@@ -4990,10 +5002,10 @@ function changePopupImg(img, custom_photo_block_id){
 	</div>
 	<div class="pq3">
 		<div style="text-align: center;">
-			<label class="choise">
+			<!--label class="choise">
 							<input type="radio" name="choise" value="3" checked="checked">
 							<div><img src="<?php echo plugins_url('i/30.png', __FILE__);?>" /></div>
-						</label><!--label class="choise">
+						</label><label class="choise">
 							<input type="radio" name="choise" value="4">
 							<div><img src="<?php echo plugins_url('i/31.png', __FILE__);?>" /></div>							
 						</label-->
@@ -5006,24 +5018,42 @@ function changePopupImg(img, custom_photo_block_id){
 		<div class="frame">
 			<iframe src="about:blank" id="PQPreviewID" width="100%" height="100%" class="pq_if"></iframe>
 			<h2>Only Design & position demo</h2>
+			<h2 class="pro">PRO Design Option Preview</h2>
 			<p style="text-align: center; padding-top: 50px;">Your screen is too small to use. Min width is 850px.</p>
 		</div>
 		
 		<div id="Hello" class="pq_popup hello selected">
-			<h1>Thanks for your choise!</h1>
-			<p>Latest news and plans of our team.</p>
-			<p><strong><a href="javascrip:void(0);" onclick="document.getElementById('Get_Pro').style.display='block';">Try Pro for free right now. You can enable free trial with all pro features for 3 Day</a></strong></p>
-			<p>New in 3+: 1. New dashboard, that can most comfortable for set-up option 2 Add mail and Whats App service for image share. 3. Add free trial pro features, all features you can test with live demo section (right side window) 4. Add order pro features. 5. Add many design and position option. Now you can generate uniwue popup and tools for your website. 6. Add language chose for default tools text, and many more. Stay turned.</p>
+			<h1>What you can setup here?</h1>			
+			
+			<!--p>Latest news and plans of our team.</p>
+			<p><strong><a href="javascrip:void(0);" onclick="document.getElementById('Get_Pro').style.display='block';">Try Pro for free right now. You can enable free trial with all pro features for 3 Day</a></strong></p-->
+			<p>You can setup sharing sidebar, image sharer hover icons block (if you want more providers, email us <a href="mailto:support@profitquery.com">support@profitquery.com</a>), subscribe bar and subscribe exit intent which you can integrate with Aweber, Mailchimp and Active Campaign (if you need more mail providers just email us <a href="mailto:support@profitquery.com">support@profitquery.com</a>), you can setup Contact Us and Call Me tools which help you to get feedback from customers, emails and phone numbers. You can setup Follow popup and Thank popup and bind them after any action proceed (for example, after sharing, or after subscribing action). Also, you can order our technical specialist for generate for you some new tools. For example Bar with promoting link, or floating popup with a subscribe or exit popup with follow button. <a href="javascript:void(0)" onclick="document.getElementById('Any_tools').style.display='block';">Read more about Custom Tools</a>.</p>
+			<br>
+			<h1>All tools for free</h1>
+			<p>But you can can greatly upgrade each tool if you enable pro options. Each option increases the efficiency of the decision by hundreds of percent.
+			<a class="pq_pro_options_">Read more about pro options.</a></p>
 			<br>
 			<img src="<?php echo plugins_url('i/lesson.png', __FILE__);?>" />
-			<br><br>
+			<br>
+			<a class="hello_btn">Start Dashboard Guide</a>
+			<br>
 			<p>If you have any question or feedback or some ideas you can email us any time you want <a href="mailto:support@profitquery.com" target="_blank">support@profitquery.com</a> or visit Profitquery <a href="http://profitquery.com/community.html" target="_blank">community page.</a></p>
 			<!--input type="button" value="get started" onclick="document.getElementById('Hello').style.display='none';"-->
 			<br>
 			<a href="https://wordpress.org/plugins/share-subscribe-contact-aio-widget/" target="_blank"> <img src="<?php echo plugins_url('i/stars.png', __FILE__);?>" /></a>
 			<p>We work hard 7 days of week for make a best ever growth tools. If you like our work, you can make our team happy, please, <a href="https://wordpress.org/plugins/share-subscribe-contact-aio-widget/" target="_blank">rate our plugin.</a></p>
 			<a class="pq_close" onclick="document.getElementById('Hello').style.display='none';"></a>
-		</div>		
+		</div>
+		<div id="Any_tools" class="pq_popup any_tools">
+			<h1>Generate new tool</h1>
+			<p>Great News! If you want some new tools, you can offer our technical specialist which can generate new tool for your website. For example subscribe bar with promo link, or exit popup with follow button or something else. Cost of service 5$ (single payment). Email us <a href="mailto:support@profitquery.com">support@profitquery.com</a> (with subject: Order custom popup)</p>
+			<a class="pq_close" onclick="document.getElementById('Any_tools').style.display='none';"></a>
+		</div>	
+		<div id="affiliate_program" class="pq_popup" style="z-index:600;">
+			<h1>Affiliate program</h1>
+			<p>This is a wonderful opportunity use <strong>PRO options for free</strong>! You need to invite new customers, which order PRO options. And you can use pro options for free. For more detail email us <a href="mailto:support@profitquery.com">support@profitquery.com</a> (subject:Affiliate program) For webmaster/web studios we have a <strong>special offer</strong>(subject:Affiliate program for webmaster). <strong>Do not miss, this offer is limited.</strong></p>
+			<a class="pq_close" onclick="document.getElementById('affiliate_program').style.display='none';"></a>
+		</div>	
 		<div class="pq_popup protection share_desabled">
 		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
 		<input type="hidden" name="action" value="disableSharingSidebar">
@@ -5081,7 +5111,105 @@ function changePopupImg(img, custom_photo_block_id){
 	<a class="question" href="javascript:void(0)" onclick="document.getElementById('Question').style.display='block';">
 		<img src="<?php echo plugins_url('i/29.png', __FILE__);?>" />
 	</a>
-	<div id="Question" class="pq_popup question" style="display:none">
+	<div id="Question" class="pq_popup question">
+						<label class="how_it_works" style="width:34%;">
+							<input type="radio" name="about" checked="checked" value="1" class="pq_pro_1">
+							<div><p>How it works</p></div>
+						</label><label class="pro_optoins">
+							<input type="radio" name="about" value="2" class="pq_pro_2">
+							<div><p>Pro options</p></div>
+						</label><label class="contact_us">
+							<input type="radio" name="about" value="3">
+							<div><p>Contact us</p></div>
+						</label>
+			<div class="question1 selected">
+				<img src="<?php echo plugins_url('i/37.png', __FILE__);?>"/>
+				<h1>Chose Tool for configure</h1>
+				<p>In this step you can start to configure any tools you want. Green border means that tool activated, without border - deactivated.</p>
+				<img src="<?php echo plugins_url('i/38.png', __FILE__);?>"/>
+				<h1>Activate/Deactivate Tools</h1>
+				<p>When you hover to the tool image on the first step you can Active or Deactivate tools.</p>
+				<img src="<?php echo plugins_url('i/39.png', __FILE__);?>"/>
+				<h1>Second Step Settings</h1>
+				<p>On the second step for each tool you can setup general settings for current tool</p>
+				<img src="<?php echo plugins_url('i/40.png', __FILE__);?>"/>
+				<h1>Next Step</h1>
+				<p>For navigate between steps you can click Prev or Next Button. </p>
+				<img src="<?php echo plugins_url('i/41.png', __FILE__);?>"/>
+				<h1>Third Step Design options</h1>
+				<p>On this section you can set-up free design option.</p>
+				<img src="<?php echo plugins_url('i/42.png', __FILE__);?>"/>
+				<h1>PRO Options</h1>
+				<p>Each tool has pro options step. All design pro options you can see in the preview window (for demonstration only). If you want to enable it for your website you need try free trial or order pro tools, also we have an affiliate program. <a href="javascript:void(0)" onclick="document.getElementById('affiliate_program').style.display='block';">Read more</a>. </p>
+				<img src="<?php echo plugins_url('i/43.png', __FILE__);?>"/>
+				<h1>Save changes</h1>
+				<p>For save changes you need click Save and activate button. </p>
+				<img src="<?php echo plugins_url('i/44.png', __FILE__);?>"/>
+				<h1>Deactivate tool</h1>
+				<p>For disable already active tools, you need to go to the first step (Choose Tools), hover to the tool you need to disable and click disable. Then you need confirm disable. </p>
+				<img src="<?php echo plugins_url('i/45.png', __FILE__);?>"/>
+				<h1>Email settings</h1>
+				<p>This section for setup your email address. Some profitquery tools send email to website admin.</p>
+				<img src="<?php echo plugins_url('i/46.png', __FILE__);?>"/>
+				<h1>Subscribe Provider Setup</h1>
+				<p>This section for setup, subscribe sign in form. You can choose one of the provider (<a href="http://profitquery.com/mailchimp.html" target="_blank">Mailchimp</a>, <a href="http://profitquery.com/aweber.html" target="_blank">Aweber</a>, <a href="http://profitquery.com/acampaign.html" target="_blank">ActiveCampaign</a>) and paste sign-in form which you need to create on the chosen provider website. If you paste the wrong sign-in code, we will write Error Message. For use Bar and Exit popup you need a setup provider. If you want another mail provider which can generate sign-in form (not another plugin, only external mail service like mailchimp) you can email us <a href="mailto:support@profitquery.com">support@profitquery.com</a></p>
+				<img src="<?php echo plugins_url('i/47.png', __FILE__);?>"/>
+				<h1>Provider Setup Status</h1>
+				<p>If you right set-up your subscribe provider by the click to the Email Settings you will see that window. Also, you can change provider sign in form by the click Settings. </p>
+				<img src="<?php echo plugins_url('i/48.png', __FILE__);?>"/>
+				<h1>Choose Language</h1>
+				<p>This option only for front-end side default tools text. If you want to use default tools text, you can setup empty value for all text input fields. If you select Persian language, all tools would be from right to left on the front-end side of your website. If you want to translate Profitquery default dictionary to your native language, just email us <a href="mailto:support@profitquery.com">support@profitquery.com</a> and we add information about you to our Translators block in the plugin description which will see million people. </p>
+				<img src="<?php echo plugins_url('i/49.png', __FILE__);?>"/>
+				<h1>Google Analytics</h1>
+				<p>Profitquery bind for current google analytics (if you use it on your website) Profitquery tool's action (generate tools, share action, etc.) If you want to disable track Profitquery tools, set its option to Off. </p>
+			</div>
+			<div class="question2">
+				<img src="<?php echo plugins_url('i/1.gif', __FILE__);?>"/>
+				<h1>Pro Design Option</h1>
+				<p>Create with Profitquery, you could create amazing tools, for all themes and all tasks. Your customers will appreciate your unique style. One pays for all Profitquery tools (popup, bar, thank pop up, follow, subscribe exit intent, custom tools from Profitquery etc.). This option can increase all action to 200%. </p>
+				<img src="<?php echo plugins_url('i/2.gif', __FILE__);?>"/>
+				<h1>Pro Animation</h1>
+				<p>All visitors love beautiful visual effects, this option allows you to animate any popup or object on your website. Many animation options can satisfy even the most refined taste. You can increase conversion, loyalty to 230% right now. </p>
+				<img src="<?php echo plugins_url('i/3.gif', __FILE__);?>"/>
+				<h1>Pro Hover Animation</h1>
+				<p>Hover animation can increase share action, follow action on your website. You can use all hover animation for all objects on your website. </p>
+				<img src="<?php echo plugins_url('i/50.png', __FILE__);?>"/>
+				<h1>Send Mail</h1>
+				<p>When you enable sending letters through Profiquery mail service from the first minute you start to collect customer contacts, feedbacks. From that moment your customers can send images, link from your website to friends without any setup. You can increase to 200% from customers' inbox, shares and loyalty. </p><a name="top"></a>
+				<img src="<?php echo plugins_url('i/51.png', __FILE__);?>"/>
+				<h1>Whitelabel</h1>
+				<p>You can use all amazing Profitquery tools without a copyright link, these features need to be enable for branded web sites. </p>
+				<img src="<?php echo plugins_url('i/52.png', __FILE__);?>"/>
+				<h1>Disable Exept Page (Mask opt.)</h1>
+				<p>There is special option for disable any Profitquery tools for all pages except you set-up. You can set-up a part of the url, for example, disable for all pages except page url address contained /product/ text. </p>
+				<img src="<?php echo plugins_url('i/53.png', __FILE__);?>"/>
+				<h1>Main Page disable</h1>
+				<p>There is special option for disable any Profitquery tools for the main page, even if your main page is for example example.com/mainpage/. </p>
+				<img src="<?php echo plugins_url('i/54.png', __FILE__);?>"/>
+				<h1>Can set height</h1>
+				<p>There is add-on for Image Sharer, which can paste image which height smaller than the option value. </p>
+				<img src="<?php echo plugins_url('i/55.png', __FILE__);?>"/>
+				<h1>Image Url Mask</h1>
+				<p>Image Sharer unique option, which can work with image if the image url address contains any mask you want. For ex. for image which url address contains /uploads/customers-image/ text. </p>
+				<img src="<?php echo plugins_url('i/56.png', __FILE__);?>"/>
+				<h1>Image Expressions</h1>
+				<p>There is add-on for Image Sharer which can work on with image expressions which you can set up. For ex. only with JPG image. </p>
+			</div>
+			<div class="question3">
+				<p>You need help, or you want some special PRO option, or you want offer Custom Tool? No problem, email us <a href='mailto:support@profitquery.com'>support@profitquery.com</a> with subject(New PRO option, or Order custom popup)<br><br>
+					You want use pro option <strong>for free</strong>? We have affiliate program, <a href="javascript:void(0);" onclick="document.getElementById('affiliate_program').style.display='block';">read more</a>.
+				</p>
+			</div>
+			<!--div class="question_footer">
+				<img src="<?php echo plugins_url('i/face.png', __FILE__);?>" />
+				<h1>Support</h1>
+				<p>If you have any question or feedback or some ideas you can email us any time you want <a href="mailto:support@profitquery.com" target="_blank">support@profitquery.com</a> or visit Profitquery <a href="http://profitquery.com/community.html" target="_blank">community page.</a></p>
+				<!--input type="button" value="support"-->
+			</div-->
+			<a class="pq_close" onclick="document.getElementById('Question').style.display='none';"></a> 
+	</div>
+	
+	<!--div id="Question" class="pq_popup question" style="display:none">
 						<label class="about">
 							<input type="radio" name="about" checked="checked" value="1">
 							<div><p>About PQ</p></div>
@@ -5099,10 +5227,10 @@ function changePopupImg(img, custom_photo_block_id){
 				<img src="<?php echo plugins_url('i/face.png', __FILE__);?>" />
 				<h1>Support</h1>
 				<p>If you have any question or feedback or some ideas you can email us any time you want <a href="mailto:support@profitquery.com" target="_blank">support@profitquery.com</a> or visit Profitquery <a href="http://profitquery.com/community.html" target="_blank">community page.</a></p>
-				<!--input type="button" value="support"-->
+				
 			</div>
 			<a class="pq_close" onclick="document.getElementById('Question').style.display='none';"></a> 
-	</div>
+	</div-->
 	<div id="GA" class="pq_popup analytics">
 	<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
 	<input type="hidden" name="action" value="editGA">
@@ -5209,55 +5337,53 @@ function changePopupImg(img, custom_photo_block_id){
 	</div>
 	
 	<div id="Get_Pro" class="pq_popup hello getpro">
+	<div style="overflow: hidden; background: rgb(246, 246, 223); margin: 0 0 20px;">
+		<h1>Pro options</h1>
+		<p>Pro options the most powerful add-on for greatly increase the efficiency of the each tool by hundreds of percent. Create your unique design, using whitelabel for all tools, 2D 3D animation, visual effects, url settings, Profitquery mail service and more for making your website smarter and grow faster. <a class="pq_more_btn">Read more</a>.</p>
+		
+	<label class="free_activate">
+		<input type="radio" name="pro" checked="checked" value="1">
+		<div><p>free trial</p></div>
+	</label>
+	<label class="used_pro">
+		<input type="radio" id="PQRadioProActivate" name="pro" value="2">
+		<div><p>Activate Pro</p></div>
+	</label>
+	<label class="order_options">
+		<input type="radio" name="pro" value="3">
+		<div><p>order Pro options</p></div>
+	</label>
+	</div>
 	<form  action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+	<div id="PQActivateProStep1" class="pq_pro1 selected">
 	<input type="hidden" name="action" value="savePro">
-		<h1>Step 1</h1>		
-		<p>For Start Use Pro Options you need <a target="_getApiKey" href="http://api.profitquery.com/cms-sign-in/?domain=<?php echo $this->getDomain();?>&cms=wp&ae=<?php echo get_settings('admin_email');?>&redirect=<?php echo str_replace(".", "%2E", urlencode($this->getSettingsPageUrl()));?>">Get Api Key</a></p>
-		<input type="text" name="apiKey" value="<?php echo stripslashes($this->_options['apiKey']);?>">
-		<input type="submit" value="Save Api Key">
+		<p>You can test All Pro options for Free whole 3 Day. Without any payments. </p><br>
+		<p style="text-align:left;">1) Go to the <a href="http://api.profitquery.com/getTrial/aio/" target="_blank">trial page</a> to enable Pro Options. Set-up form fields (note:You can test all pro options on any website exept localhost and website without domain name (for ex 192.168....))<br>
+		2) We send to you email with apiKey and you pro loader filename. <a href="javascript:void(0)" onclick="document.getElementById('PQActivateProStep2').className='pq_pro2 selected'; document.getElementById('PQActivateProStep1').className='pq_pro1'; document.getElementById('PQRadioProActivate').checked=true; ">Set up</a> apiKey and pro loader filename.<br>
+		3) Go to the frontend side your website, clear browser cache, reload page and you can see all pro options that you set-up for each tools.<br>
+		</p>
 		<br>
-		<h1>Step 2</h1>		
-		<p>Get Free All Pro Profitquery Options for 3 Day. Pro options works only with real domain name (even you use local version website, for ex. mywebsite.com)</p>
 		<a href="http://api.profitquery.com/getTrial/aio/" target="_blank"><input type="button" value="Enable Free Trial"></a>
-		<br>
-		<a class="pro_loader_filename">Pro Loader Filename</a>
+		<p>Atfer 3 Day we disable pro options and your enabled tools start work only with free options</p><br>
+		
+		<!--a class="pro_loader_filename">Pro Loader Filename</a>
 		<input type="text" class="filename filename_add filename_hidden" name="proOptions[proLoaderFilename]" value="<?php echo stripslashes($this->_options['proOptions']['proLoaderFilename']);?>">
-		<input type="submit" value="Save" class="filename_add filename_hidden">
+		<input type="submit" value="Save" class="filename_add filename_hidden"-->
+	</div>
+	<div id="PQActivateProStep2" class="pq_pro2">
+		<p>For Using Pro Options insert your <a target="_getApiKey" href="http://api.profitquery.com/cms-sign-in/?domain=<?php echo $this->getDomain();?>&cms=wp&ae=<?php echo get_settings('admin_email');?>&redirect=<?php echo str_replace(".", "%2E", urlencode($this->getSettingsPageUrl()));?>">Api Key</a></p>
+		<input type="text" name="apiKey" value="<?php echo stripslashes($this->_options['apiKey']);?>" class="filename">
+		<input type="submit" value="Save" class="filename_url">
 		<br>
-		<a class="pro_url">Website Full Main Page URL (http://example.com)</a>
-			<input type="text" class="filename filename_url filename_hidden" name="proOptions[mainPageUrl]" value="<?php echo stripslashes($this->_options['proOptions']['mainPageUrl']);?>"; />	
-			<input type="submit" value="Save" class="filename_url filename_hidden">
+		<p class="pro_loader_filename">Pro Loader Filename</p>
+		<input type="text" class="filename filename_add" name="proOptions[proLoaderFilename]" value="<?php echo stripslashes($this->_options['proOptions']['proLoaderFilename']);?>">
+		<input type="submit" value="Save" class="filename_add">
+		<p class="pro_url">Website Full Main Page URL (http://example.com)</p>
+			<input type="text" class="filename filename_url" name="proOptions[mainPageUrl]" value="<?php echo stripslashes($this->_options['proOptions']['mainPageUrl']);?>"; />	
+			<input type="submit" value="Save" class="filename_url">
 		<br><br>	
 		<div class="pq_pro">
 			<h1>Pro Options Detected</h1>
-						
-			
-			<!--table>
-				<tr>
-					<td><input type="checkbox"><p>Package of 5000 Emails</p>
-					</td>
-					<td>
-					</td>
-					<td><input type="checkbox"><p>Advanced Animation</p>
-					</td>
-				</tr>
-				<tr>
-					<td><input type="checkbox"><p>Advanced Design Options</p>
-					</td>
-					<td>
-					</td>
-					<td><input type="checkbox"><p>Priority Email Support</p>
-					</td>
-				</tr>
-				<tr>
-					<td><input type="checkbox"><p>WhiteLabel for All Tools</p>
-					</td>
-					<td>
-					</td>
-					<td><input type="checkbox"><p>Advanced Hover Effects</p>
-					</td>
-				</tr>
-			</table-->
 			<table>
 				<?php
 					if(empty($getProCategoryArray)){
@@ -5350,11 +5476,26 @@ function changePopupImg(img, custom_photo_block_id){
 			</table>
 			<a href="<?php echo $this->getSettingsPageUrl();?>&action=deleteProOptions">Disable Pro Options for All Tools</a>		
 		</div>
-		<a href="http://api.profitquery.com/getPro/aio/" target="_blank"><input type="button" value="Order Pro Options" class="pq_order"></a>		
-		<a class="pq_close" onclick="document.getElementById('Get_Pro').style.display='none';"></a>
+		<a href="http://api.profitquery.com/getPro/aio/" target="_blank"><input type="button" value="Order Pro Options" class="pq_order"></a>	
+	</div>
+	<div class="pq_pro3">	
+		<p>
+			A wise decision! Order Pro Right Now!
+			<br>
+			<a href="http://api.profitquery.com/getPro/aio/" target="_blank"><input type="button" value="Order Pro Options" class="pq_order"></a>
+			<br><br>
+			You want pro tools, but can not pay for that? No problem, we have an affiliate program, you can get pro tools for free. <a href="javascript:void(0)" onclick="document.getElementById('affiliate_program').style.display='block';">Read more.</a>			
+		</p>
+	</div>
+		
 	</form>
-	
-	
+	<!--div class="pq_support">
+		<h1>support</h1>
+		<p>If you have any questions or feedback or some ideas you can email us any time you want <a href="mailto:support@profitquery.com">support@profitquery.com</a> or visit Profitquery <a>community page</a></p>
+		<div></div>
+		
+	</div-->
+	<a class="pq_close" onclick="document.getElementById('Get_Pro').style.display='none';"></a>
 	</div>
 	
 	<div id="ES" class="pq_popup emailsettings">
@@ -5379,6 +5520,7 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".choise1").prop('checked', true);
 		jQuery(".pq_tooltip1").removeClass("selected");
 		jQuery(".pq_tooltip2").removeClass("selected");
+		jQuery(".frame").removeClass("pro");
 	});
 	jQuery(".home").click(function(){
 		jQuery(".pq_li3").removeClass("selected");
@@ -5390,6 +5532,7 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".pq_li1").addClass("selected");
 		jQuery(".pq_tooltip1").removeClass("selected");
 		jQuery(".pq_tooltip2").removeClass("selected");
+		jQuery(".frame").removeClass("pro");
 	});
 	jQuery(".set2").click(function(){
 		jQuery(".choise2").prop('checked', false);
@@ -5407,6 +5550,7 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".pq_li3").addClass("selected");
 		jQuery(".button_group_li3").addClass("selected");
 		jQuery(".choise2").prop('checked', true);
+		jQuery(".frame").removeClass("pro");
 	});
 	
 	jQuery(".ToLi4").click(function(){
@@ -5418,7 +5562,8 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".button_group_li4").addClass("selected");
 		jQuery(".choise2").prop('checked', false);
 		jQuery(".choise4").prop('checked', false);
-		jQuery(".choise3").prop('checked', true);		
+		jQuery(".choise3").prop('checked', true);
+		jQuery(".frame").removeClass("pro");		
 	});
 	jQuery(".ToLi5").click(function(){
 		jQuery(".pq_li4").removeClass("selected");
@@ -5426,7 +5571,8 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".pq_li5").addClass("selected");
 		jQuery(".button_group_li5").addClass("selected");
 		jQuery(".choise3").prop('checked', false);
-		jQuery(".choise4").prop('checked', true);		
+		jQuery(".choise4").prop('checked', true);
+		jQuery(".frame").addClass("pro");
 	});
 	jQuery(".collect_tools_activate").click(function(){		
 		jQuery(".pq_default").removeClass("selected");
@@ -5721,7 +5867,6 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".marketing_submit").removeClass("selected");
 		jQuery(".thankyou_submit").removeClass("selected");
 		jQuery(".follow_submit").addClass("selected");
-		jQuery(".pq_tooltip2").addClass("selected");
 		jQuery(".hello").removeClass("selected");
 		jQuery(".pq_if").removeClass("pq_bar");
 		jQuery(".frame").removeClass("pq_share");
@@ -5751,6 +5896,7 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".exit_submit").removeClass("selected");
 		jQuery(".imagesharer_submit").removeClass("selected");
 		jQuery(".marketing_submit").removeClass("selected");
+		jQuery(".pq_tooltip2").addClass("selected");
 		jQuery(".thankyou_submit").removeClass("selected");
 		jQuery(".contact_submit").addClass("selected");
 		jQuery(".hello").removeClass("selected");
@@ -5783,6 +5929,7 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".marketing_submit").removeClass("selected");
 		jQuery(".thankyou_submit").removeClass("selected");
 		jQuery(".callme_submit").addClass("selected");
+		jQuery(".pq_tooltip2").addClass("selected");
 		jQuery(".hello").removeClass("selected");
 		jQuery(".pq_if").removeClass("pq_bar");
 		jQuery(".frame").removeClass("pq_share");
@@ -5905,7 +6052,6 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".imagesharer_submit").removeClass("selected");
 		jQuery(".marketing_submit").removeClass("selected");
 		jQuery(".thankyou_submit").addClass("selected");
-		jQuery(".pq_tooltip2").addClass("selected");
 		jQuery(".hello").removeClass("selected");
 		jQuery(".pq_if").removeClass("pq_bar");
 		jQuery(".frame").removeClass("pq_share");
@@ -5959,20 +6105,72 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery('.f08').css('display','block');
 		jQuery('.addservices7-8').css('display','none');
 	});
-	jQuery(".about").click(function(){
+	jQuery(".how_it_works").click(function(){
 		jQuery(".question2").removeClass("selected");
 		jQuery(".question3").removeClass("selected");
 		jQuery(".question1").addClass("selected");
 	});
-	jQuery(".community").click(function(){
+	jQuery(".pro_optoins").click(function(){
 		jQuery(".question1").removeClass("selected");
 		jQuery(".question3").removeClass("selected");
 		jQuery(".question2").addClass("selected");
 	});
-	jQuery(".developer").click(function(){
+	jQuery(".contact_us").click(function(){
 		jQuery(".question1").removeClass("selected");
 		jQuery(".question2").removeClass("selected");
 		jQuery(".question3").addClass("selected");
+	});
+	jQuery(".pq_pro_options_").click(function(){
+		jQuery(".question").css('display','block');
+		jQuery(".pq_pro_2").prop('checked', true);
+		jQuery(".question1").removeClass("selected");
+		jQuery(".question3").removeClass("selected");
+		jQuery(".question2").addClass("selected");
+	});
+	jQuery(".hello_btn").click(function(){
+		jQuery(".question").css('display','block');
+		jQuery(".pq_pro_1").prop('checked', true);
+		jQuery(".question2").removeClass("selected");
+		jQuery(".question3").removeClass("selected");
+		jQuery(".question1").addClass("selected");
+	});
+	jQuery(".pq_more_btn").click(function(){
+		jQuery(".getpro").css('display','none');
+		jQuery(".question").css('display','block');
+		jQuery(".pq_pro_2").prop('checked', true);
+		jQuery(".question1").removeClass("selected");
+		jQuery(".question3").removeClass("selected");
+		jQuery(".question2").addClass("selected");
+	});
+	jQuery(".tooltip_pro").click(function(){
+		jQuery(".question").css('display','block');
+		jQuery(".pq_pro_2").prop('checked', true);
+		jQuery(".question1").removeClass("selected");
+		jQuery(".question3").removeClass("selected");
+		jQuery(".question2").addClass("selected");
+	});
+	jQuery('a[href^="#"]').click(function(){/*!!!*/
+	var target = $(this).attr('href');
+	jQuery('.question').animate({scrollTop: $(target).offset().top}, 800);
+	return false;
+	});
+	jQuery(".any_tools_activate").click(function(){
+		jQuery(".any_tools").css('display','block');
+	});
+	jQuery(".free_activate").click(function(){
+		jQuery(".pq_pro2").removeClass("selected");
+		jQuery(".pq_pro3").removeClass("selected");
+		jQuery(".pq_pro1").addClass("selected");
+	});
+	jQuery(".used_pro").click(function(){
+		jQuery(".pq_pro1").removeClass("selected");
+		jQuery(".pq_pro3").removeClass("selected");
+		jQuery(".pq_pro2").addClass("selected");
+	});
+	jQuery(".order_options").click(function(){
+		jQuery(".pq_pro1").removeClass("selected");
+		jQuery(".pq_pro2").removeClass("selected");
+		jQuery(".pq_pro3").addClass("selected");
 	});
 	
 	jQuery(".share_submit").click(function(){
