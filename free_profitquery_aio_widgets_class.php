@@ -5187,7 +5187,7 @@ function changePopupImg(img, custom_photo_block_id){
 				<p>There is special option for disable any Profitquery tools for the main page, even if your main page is for example example.com/mainpage/. </p>
 				<img src="<?php echo plugins_url('i/54.png', __FILE__);?>"/>
 				<h1>Can set height</h1>
-				<p>There is add-on for Image Sharer, which can paste image which height smaller than the option value. </p>
+				<p>There is add-on for Image Sharer, which can skip image which height smaller than the option value. </p>
 				<img src="<?php echo plugins_url('i/55.png', __FILE__);?>"/>
 				<h1>Image Url Mask</h1>
 				<p>Image Sharer unique option, which can work with image if the image url address contains any mask you want. For ex. for image which url address contains /uploads/customers-image/ text. </p>
