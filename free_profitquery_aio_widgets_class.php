@@ -5124,7 +5124,7 @@ function changePopupImg(img, custom_photo_block_id){
 						</label>
 			<div class="question1 selected">
 				<img src="<?php echo plugins_url('i/37.png', __FILE__);?>"/>
-				<h1>Chose Tool for configure</h1>
+				<h1>Choose Tool for configure</h1>
 				<p>In this step you can start to configure any tools you want. Green border means that tool activated, without border - deactivated.</p>
 				<img src="<?php echo plugins_url('i/38.png', __FILE__);?>"/>
 				<h1>Activate/Deactivate Tools</h1>
