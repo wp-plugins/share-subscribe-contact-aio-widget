@@ -22,7 +22,7 @@
 * Plugin Name: Share + Subscribe + Contact | AIO Widget
 * Plugin URI: http://profitquery.com/aio_widgets.html
 * Description: Next level widgets for growth your customers feedback, visitors contact information, share's, social networks referral's, folllowers and all for free.
-* Version: 3.1
+* Version: 3.1.1
 *
 * Author: Profitquery Team <support@profitquery.com>
 * Author URI: http://profitquery.com/?utm_campaign=aio_widgets_wp
@@ -486,6 +486,7 @@ function profitquery_smart_widgets_insert_code(){
 		$preparedObject[animation] = 'pq_animated '.$proOptions[animation];
 	}
 	$preparedObject[follow_socnet][hoverAnimation] = $proOptions[hover_animation];
+	$preparedObject[follow_socnet][typeBlock] = 'pq-social-block '.$preparedObject[design];
 	//printr($proOptions);
 	//die();
 	$profitquerySmartWidgetsStructure['followUsOptions'] = array(
