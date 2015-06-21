@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 3.1.1
+* @version  SVN: 3.2
 */
 
 
@@ -104,9 +104,10 @@ class ProfitQuerySmartWidgetsClass
      * @return null
      */
     function ProfitquerySmartWidgetsMenu()
-    {		
-        add_options_page(
-            'AIO Widgets | Profitquery', 'Share + Subscribe + Contact',
+    {
+		add_menu_page( 'Profitquery Settings', 'Profitquery AIO', 'manage_options', PROFITQUERY_SMART_WIDGETS_PAGE_NAME, array($this, 'ProfitquerySmartWidgetsOptions'), plugins_url( 'i/pq_icon_2.png', __FILE__ ), 103.787 );        
+		 add_options_page(
+            'AIO Widgets | Profitquery', 'Share + Subscribe + Contact | Profitquery',
             'manage_options', PROFITQUERY_SMART_WIDGETS_PAGE_NAME,
             array($this, 'ProfitquerySmartWidgetsOptions')
         );
@@ -134,13 +135,16 @@ class ProfitQuerySmartWidgetsClass
 			$this->_options[imageSharer][design][form] = 'rounded';
 			$this->_options[imageSharer][design][shadow] = 'sh4';
 			$this->_options[imageSharer][minWidth] = 100;
+			$this->_options[imageSharer][position] = 'inline';
 		}	
 				
 		
 		if(!$this->_options[follow]){
+			$this->_options['follow']['background'] = 'bg_grey';
 			$this->_options[follow][disabled] = 1;			
 		}
 		if(!$this->_options[callMe]){
+			$this->_options['callMe']['background'] = 'bg_grey';
 			$this->_options[callMe][disabled] = 1;
 		}
 		
@@ -149,7 +153,8 @@ class ProfitQuerySmartWidgetsClass
 			$this->_options[sharingSideBar][socnet] = array('FB'=>1, 'GP'=>1, 'TW'=>1, 'LI'=>1, 'Mail'=>1);
 			$this->_options[sharingSideBar][position] = 'pq_left pq_middle';
 			$this->_options[sharingSideBar][design][color] = 'c4';
-			$this->_options[sharingSideBar][design][size] = 'x40';
+			$this->_options[sharingSideBar][design][size] = 'x40';			
+			$this->_options[sharingSideBar][galleryOption][background_color] = 'bg_grey';
 		}
 		
 		if(!$this->_options[contactUs]){
@@ -178,14 +183,14 @@ class ProfitQuerySmartWidgetsClass
 		
 		if(!$this->_options[subscribeBar]){
 			$this->_options[subscribeBar][disabled] = 1;
-			$this->_options[subscribeBar][background] = 'bg_red';
+			$this->_options[subscribeBar][background] = 'bg_grey';
 			$this->_options[subscribeBar][button_color] = 'btn_black';			
 			$this->_options[subscribeBar][animation] = 'bounce';			
 		}
 		
 		if(!$this->_options[subscribeExit]){
 			$this->_options[subscribeExit][disabled] = 1;
-			$this->_options[subscribeExit][background] = 'bg_red';
+			$this->_options[subscribeExit][background] = 'bg_grey';
 			$this->_options[subscribeExit][button_color] = 'btn_black invert';
 			$this->_options[subscribeExit][typeWindow] = 'pq_medium';
 			$this->_options[subscribeExit][animation] = 'tada';						
@@ -507,15 +512,37 @@ class ProfitQuerySmartWidgetsClass
 			}
 		}
 		
+		//disableFollow
+		if($_POST[action] == 'disableFollow'){			
+			unset($this->_options[contactUs][afterProceed][follow]);
+			unset($this->_options[callMe][afterProceed][follow]);
+			unset($this->_options[subscribeExit][afterProceed][follow]);
+			unset($this->_options[subscribeBar][afterProceed][follow]);
+			unset($this->_options[sharingSideBar][afterProceed][follow]);
+			unset($this->_options[imageSharer][afterProceed][follow]);
+			update_option('profitquery', $this->_options);
+		}
+		
+		//disable Thank
+		if($_POST[action] == 'disableThank'){			
+			unset($this->_options[contactUs][afterProceed][thank]);
+			unset($this->_options[callMe][afterProceed][thank]);
+			unset($this->_options[subscribeExit][afterProceed][thank]);
+			unset($this->_options[subscribeBar][afterProceed][thank]);
+			unset($this->_options[sharingSideBar][afterProceed][thank]);
+			unset($this->_options[imageSharer][afterProceed][thank]);
+			update_option('profitquery', $this->_options);
+		}
+		
 		//deleteProOptions
 		if($_GET[action] == 'deleteProOptions'){
 			$proLoaderFilename = $this->_options['proOptions'][proLoaderFilename];
 			$mainPageUrl = $this->_options['proOptions'][mainPageUrl];
 			$this->_options['proOptions'] = array();
 			$this->_options['proOptions'][proLoaderFilename] = $proLoaderFilename;
-			$this->_options['proOptions'][mainPageUrl] = $mainPageUrl;
-			update_option('profitquery', $this->_options);
-		}
+			$this->_options['proOptions'][mainPageUrl] = $mainPageUrl;			
+			update_option('profitquery', $this->_options);				
+		}		
 		
 		//disableSharingSidebar
 		if($_POST[action] == 'disableSharingSidebar'){
@@ -614,14 +641,14 @@ class ProfitQuerySmartWidgetsClass
 				if(trim($_POST[follow][overlay])) $this->_options['follow']['overlay'] = sanitize_text_field($_POST[follow][overlay]); else $this->_options['follow']['overlay'] = '';
 				if(trim($_POST[follow][typeWindow])) $this->_options['follow']['typeWindow'] = sanitize_text_field($_POST[follow][typeWindow]); else $this->_options['follow']['typeWindow'] = '';				
 				if($_POST[follow][follow_socnet]){
-					if(trim($_POST[follow][follow_socnet][FB]) != '') $this->_options[follow][follow_socnet][FB] = sanitize_text_field($_POST[follow][follow_socnet][FB]); else $this->_options[follow][follow_socnet][FB] = '';
-					if(trim($_POST[follow][follow_socnet][TW]) != '') $this->_options[follow][follow_socnet][TW] = sanitize_text_field($_POST[follow][follow_socnet][TW]); else $this->_options[follow][follow_socnet][TW] = '';
-					if(trim($_POST[follow][follow_socnet][GP]) != '') $this->_options[follow][follow_socnet][GP] = sanitize_text_field($_POST[follow][follow_socnet][GP]); else $this->_options[follow][follow_socnet][GP] = '';
-					if(trim($_POST[follow][follow_socnet][PI]) != '') $this->_options[follow][follow_socnet][PI] = sanitize_text_field($_POST[follow][follow_socnet][PI]); else $this->_options[follow][follow_socnet][PI] = '';
-					if(trim($_POST[follow][follow_socnet][VK]) != '') $this->_options[follow][follow_socnet][VK] = sanitize_text_field($_POST[follow][follow_socnet][VK]); else $this->_options[follow][follow_socnet][VK] = '';
-					if(trim($_POST[follow][follow_socnet][OD]) != '') $this->_options[follow][follow_socnet][OD] = sanitize_text_field($_POST[follow][follow_socnet][OD]); else $this->_options[follow][follow_socnet][OD] = '';
+					if(trim($_POST[follow][follow_socnet][FB]) != '') $this->_options[follow][follow_socnet][FB] = sanitize_text_field(str_replace('https://facebook.com/', '', $_POST[follow][follow_socnet][FB])); else $this->_options[follow][follow_socnet][FB] = '';
+					if(trim($_POST[follow][follow_socnet][TW]) != '') $this->_options[follow][follow_socnet][TW] = sanitize_text_field(str_replace('https://twitter.com/', '', $_POST[follow][follow_socnet][TW])); else $this->_options[follow][follow_socnet][TW] = '';
+					if(trim($_POST[follow][follow_socnet][GP]) != '') $this->_options[follow][follow_socnet][GP] = sanitize_text_field(str_replace('https://plus.google.com/', '', $_POST[follow][follow_socnet][GP])); else $this->_options[follow][follow_socnet][GP] = '';
+					if(trim($_POST[follow][follow_socnet][PI]) != '') $this->_options[follow][follow_socnet][PI] = sanitize_text_field(str_replace('https://pinterest.com/', '', $_POST[follow][follow_socnet][PI])); else $this->_options[follow][follow_socnet][PI] = '';
+					if(trim($_POST[follow][follow_socnet][VK]) != '') $this->_options[follow][follow_socnet][VK] = sanitize_text_field(str_replace('http://vk.com/', '', $_POST[follow][follow_socnet][VK])); else $this->_options[follow][follow_socnet][VK] = '';
+					if(trim($_POST[follow][follow_socnet][OD]) != '') $this->_options[follow][follow_socnet][OD] = sanitize_text_field(str_replace('http://ok.ru/', '', $_POST[follow][follow_socnet][OD])); else $this->_options[follow][follow_socnet][OD] = '';
 					if(trim($_POST[follow][follow_socnet][RSS]) != '') $this->_options[follow][follow_socnet][RSS] = sanitize_text_field($_POST[follow][follow_socnet][RSS]); else $this->_options[follow][follow_socnet][RSS] = '';
-					if(trim($_POST[follow][follow_socnet][IG]) != '') $this->_options[follow][follow_socnet][IG] = sanitize_text_field($_POST[follow][follow_socnet][IG]); else $this->_options[follow][follow_socnet][IG] = '';					
+					if(trim($_POST[follow][follow_socnet][IG]) != '') $this->_options[follow][follow_socnet][IG] = sanitize_text_field(str_replace('http://instagram.com/', '', $_POST[follow][follow_socnet][IG])); else $this->_options[follow][follow_socnet][IG] = '';					
 				}
 				if(trim($_POST[follow][design][color])) $this->_options['follow']['design']['color'] = sanitize_text_field($_POST[follow][design][color]); else $this->_options['sharingSideBar']['design']['color'] = 'c4';
 				if(trim($_POST[follow][design][form])) $this->_options['follow']['design']['form'] = sanitize_text_field($_POST[follow][design][form]); else $this->_options['sharingSideBar']['design']['form'] = '';
@@ -1173,7 +1200,7 @@ function changePopupImg(img, custom_photo_block_id){
 
 <div id="profitquery">
 	<div class="pq1">
-		<a href="http://profitquery.com/" target="_blank"> <img src="<?php echo plugins_url('i/profitquery.png', __FILE__);?>" /></a>				
+		<a href="http://profitquery.com/?utm-campaign=wp_aio_widgets_logo" target="_blank"> <img src="<?php echo plugins_url('i/profitquery.png', __FILE__);?>" /></a>				
 		<p class="pq_default selected">Select tools</p>
 		<p class="share">Sharing Sidebar</p>
 		<p class="imagesharer">Image Sharer</p>
@@ -1198,7 +1225,7 @@ function changePopupImg(img, custom_photo_block_id){
 		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post" id="pq">
 		<input type="hidden" name="action" value="edit">
 						<label class="choise home">
-							<input type="radio" name="choise" class="choise1" checked="checked" value="1">
+							<input type="radio" name="choise" class="choise1" onclick="document.getElementById('Hello').style.display='block';document.getElementById('PQPreviewID').src = 'about:blank';" checked="checked" value="1">
 							<div><img src="<?php echo plugins_url('i/32.png', __FILE__);?>" /></div>
 						</label><label class="choise set2">
 							<input type="radio" name="choise" class="choise2" value="2">
@@ -1250,16 +1277,30 @@ function changePopupImg(img, custom_photo_block_id){
 						</label>
 						<label>
 							<input type="radio" name="task" value="2" class="follow_tools">
-							<input type="checkbox" name="follow[enabled]" checked class="follow_checked">
-							<div><img src="<?php echo plugins_url('i/3.png', __FILE__);?>" class="pq_card" /><p>Follow Popup</p><input type="button" class="task activate follow_tools_activate" value="Activate"><input type="button" class="task settings follow_tools_activate" value="settings"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+							<input type="checkbox" name="follow[enabled]" <?php if(profitquery_is_follow_enabled($this->_options)) echo 'checked';?> class="follow_checked">
+							<div><img src="<?php echo plugins_url('i/3.png', __FILE__);?>" class="pq_card" /><p>Follow Popup</p><input type="button" class="task activate follow_tools_activate" value="Settings"><input type="button" class="task settings follow_tools_activate" value="settings"><input type="button" class="task desabled follow_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
 						</label>
 						
 						<label>
 							<input type="radio" name="task" value="13" class="thankyou_tools">
-							<input type="checkbox" name="thankPopup[enabled]" checked class="thankyou_checked">
-							<div><img src="<?php echo plugins_url('i/10.png', __FILE__);?>" class="pq_card" /><p>Thankyou Popup</p><input type="button" class="task activate thankyou_tools_activate" value="Activate"><input type="button" class="task settings thankyou_tools_activate" value="settings"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+							<input type="checkbox" name="thankPopup[enabled]" <?php if(profitquery_is_thank_enabled($this->_options)) echo 'checked';?> class="thankyou_checked">
+							<div><img src="<?php echo plugins_url('i/10.png', __FILE__);?>" class="pq_card" /><p>Thankyou Popup</p><input type="button" class="task activate thankyou_tools_activate" value="Settings"><input type="button" class="task settings thankyou_tools_activate" value="settings"><input type="button" class="task desabled thankyou_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
 						</label>
-						
+						<label>
+							<input type="radio" name="task" value="13" class="">
+							<input type="checkbox" name="" class="">
+							<div><img src="<?php echo plugins_url('i/popup.png', __FILE__);?>" class="pq_card" /><p>Any Popup</p><input type="button" class="task activate any_popup_activate" value="More info"></div>
+						</label>
+						<label>
+							<input type="radio" name="task" value="13" class="">
+							<input type="checkbox" name="" class="">
+							<div><img src="<?php echo plugins_url('i/float.png', __FILE__);?>" class="pq_card" /><p>Any Floating</p><input type="button" class="task activate any_floating_activate" value="More info"></div>
+						</label>
+						<label>
+							<input type="radio" name="task" value="13" class="">
+							<input type="checkbox" name="" class="">
+							<div><img src="<?php echo plugins_url('i/bar.png', __FILE__);?>" class="pq_card" /><p>Any Bar</p><input type="button" class="task activate any_bar_activate" value="More info"></div>
+						</label>
 						<label>
 							<input type="radio" name="task" value="13" class="">
 							<input type="checkbox" name="" class="">
@@ -1303,12 +1344,12 @@ function changePopupImg(img, custom_photo_block_id){
 									<input class="text" type="text" name="" value="" placeholder="">
 									
 								</label>
-								<h3>Button</h3>
 								<label>
 								<p>Button Title</p>
 									<input class="text" type="text" name="" value="" placeholder="">
 									
 								</label>
+																
 								<label>
 									<select>
 										<option name="">Close</option>
@@ -1331,8 +1372,8 @@ function changePopupImg(img, custom_photo_block_id){
 						<div class="settings share selected">
 							<div class="sidebar selected">
 							<h3>SHOW SERVICES</h3>
-								<label class="sm nn n01">							
-									<select name="sharingSideBar[socnet_with_pos][0]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][0]]) echo 'class="pq_error"';?>>
+								<label class="n01">							
+									<select id="sharingSideBar_provider[0]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][0]"  <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][0]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1360,8 +1401,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][0] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n02">							
-									<select name="sharingSideBar[socnet_with_pos][1]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][1]]) echo 'class="pq_error"';?>>
+								<label class="n02">							
+									<select id="sharingSideBar_provider[1]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][1]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][1]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1389,8 +1430,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][1] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n03">							
-									<select name="sharingSideBar[socnet_with_pos][2]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][2]]) echo 'class="pq_error"';?>>
+								<label class="n03">							
+									<select id="sharingSideBar_provider[2]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][2]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][2]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1418,8 +1459,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][2] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n04">							
-									<select name="sharingSideBar[socnet_with_pos][3]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][3]]) echo 'class="pq_error"';?>>
+								<label class="n04">							
+									<select id="sharingSideBar_provider[3]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][3]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][3]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1447,8 +1488,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][3] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n05">							
-									<select name="sharingSideBar[socnet_with_pos][4]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][4]]) echo 'class="pq_error"';?>>
+								<label class="n05">							
+									<select id="sharingSideBar_provider[4]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][4]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][4]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1476,8 +1517,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][4] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n06">							
-									<select name="sharingSideBar[socnet_with_pos][5]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][5]]) echo 'class="pq_error"';?>>
+								<label class="n06">							
+									<select id="sharingSideBar_provider[5]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][5]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][5]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][5] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1506,8 +1547,8 @@ function changePopupImg(img, custom_photo_block_id){
 									</select>
 								</label>
 								<input type="button" class="pq_li_button addservices7-12" value="more services">
-								<label class="sm nn n07">							
-									<select name="sharingSideBar[socnet_with_pos][6]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][6]]) echo 'class="pq_error"';?>>
+								<label class="n07">							
+									<select id="sharingSideBar_provider[6]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][6]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][6]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1535,8 +1576,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][6] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n08">							
-									<select name="sharingSideBar[socnet_with_pos][7]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][7]]) echo 'class="pq_error"';?>>
+								<label class="n08">							
+									<select id="sharingSideBar_provider[7]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][7]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][7]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1564,8 +1605,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][7] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n09">							
-									<select name="sharingSideBar[socnet_with_pos][8]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][8]]) echo 'class="pq_error"';?>>
+								<label class="n09">							
+									<select id="sharingSideBar_provider[8]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][8]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][8]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1593,8 +1634,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][8] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n10">							
-									<select name="sharingSideBar[socnet_with_pos][9]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][9]]) echo 'class="pq_error"';?>>
+								<label class="n10">							
+									<select id="sharingSideBar_provider[9]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][9]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][9]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1622,8 +1663,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][9] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n11">							
-									<select name="sharingSideBar[socnet_with_pos][10]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][10]]) echo 'class="pq_error"';?>>
+								<label class="n11">							
+									<select id="sharingSideBar_provider[10]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][10]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][10]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1651,8 +1692,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][10] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n12">							
-									<select name="sharingSideBar[socnet_with_pos][11]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][11]]) echo 'class="pq_error"';?>>
+								<label class="n12">							
+									<select id="sharingSideBar_provider[11]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][11]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][11]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][11] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1681,8 +1722,8 @@ function changePopupImg(img, custom_photo_block_id){
 									</select>
 								</label>
 								<input type="button" class="pq_li_button addservices13-18" value="more services">
-								<label class="sm nn n13">							
-									<select name="sharingSideBar[socnet_with_pos][12]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][12]]) echo 'class="pq_error"';?>>
+								<label class="n13">							
+									<select id="sharingSideBar_provider[12]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][12]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][12]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1710,8 +1751,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][12] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n14">							
-									<select name="sharingSideBar[socnet_with_pos][13]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][13]]) echo 'class="pq_error"';?>>
+								<label class="n14">							
+									<select id="sharingSideBar_provider[13]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][13]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][13]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1739,8 +1780,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][13] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n15">							
-									<select name="sharingSideBar[socnet_with_pos][14]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][14]]) echo 'class="pq_error"';?>>
+								<label class="n15">							
+									<select id="sharingSideBar_provider[14]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][14]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][14]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1768,8 +1809,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][14] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n16">							
-									<select name="sharingSideBar[socnet_with_pos][15]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][15]]) echo 'class="pq_error"';?>>
+								<label class="n16">							
+									<select id="sharingSideBar_provider[15]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][15]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][15]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1797,8 +1838,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][15] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n17">							
-									<select name="sharingSideBar[socnet_with_pos][16]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][16]]) echo 'class="pq_error"';?>>
+								<label class="n17">							
+									<select id="sharingSideBar_provider[16]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][16]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][16]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1826,8 +1867,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][16] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n18">							
-									<select name="sharingSideBar[socnet_with_pos][17]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][17]]) echo 'class="pq_error"';?>>
+								<label class="n18">							
+									<select id="sharingSideBar_provider[17]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][17]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][17]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][17] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1856,8 +1897,8 @@ function changePopupImg(img, custom_photo_block_id){
 									</select>
 								</label>
 								<input type="button" class="pq_li_button addservices19-20" value="more services">
-								<label class="sm nn n19">							
-									<select name="sharingSideBar[socnet_with_pos][18]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][18]]) echo 'class="pq_error"';?>>
+								<label class="n19">							
+									<select id="sharingSideBar_provider[18]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][18]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][18]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1885,8 +1926,8 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="Mail" <?php if($this->_options[sharingSideBar][socnet_with_pos][18] == 'Mail') echo 'selected';?>>Email</option>
 									</select>
 								</label>
-								<label class="sm nn n20">							
-									<select name="sharingSideBar[socnet_with_pos][19]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][19]]) echo 'class="pq_error"';?>>
+								<label class="n20">							
+									<select id="sharingSideBar_provider[19]" onchange="sharingSideBarPreview();" name="sharingSideBar[socnet_with_pos][19]" <?php if($socnet_with_pos_error[$this->_options[sharingSideBar][socnet_with_pos][19]]) echo 'class="pq_error"';?>>
 										<option value="" selected>None</option>
 										<option value="FB" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'FB') echo 'selected';?> >Facebook</option>
 										<option value="TW" <?php if($this->_options[sharingSideBar][socnet_with_pos][19] == 'TW') echo 'selected';?>>Twitter</option>
@@ -1915,34 +1956,38 @@ function changePopupImg(img, custom_photo_block_id){
 									</select>
 								</label>
 								<h3>Sharing Image Window</h3>
+								<!--span class="pq_for">For Pinterest, Tumblr and VK only</span-->
+								<div class="pq_clear"></div>
 								<label>							
 									<select name="sharingSideBar[galleryOption][disable]" >
 										<option <?php if((int)$this->_options[sharingSideBar][galleryOption][disable] == 1) echo 'selected';?> value="1">Disabled</option>
-										<option <?php if((int)$this->_options[sharingSideBar][galleryOption][disable] == 0) echo 'selected';?> value="0">Enabled</option>
+										<option <?php if((int)$this->_options[sharingSideBar][galleryOption][disable] == 0) echo 'selected';?> value="0">Enabled for Pinterest, VK, Tumblr</option>
+									</select>
+								</label>
+								<label>					
+									<select name="sharingSideBar[galleryOption][minWidth]">
+										<option value="100" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '100' || $this->_options[sharingSideBar][galleryOption][minWidth] == '') echo 'selected';?>> Share Image > 100 px </option>
+										<option value="200" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '200') echo 'selected';?>>Share Image > 200 px </option>
+										<option value="300" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '300') echo 'selected';?>>Share Image > 300 px </option>
+										<option value="400" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '400') echo 'selected';?>>Share Image > 400 px</option>
+										<option value="500" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '500') echo 'selected';?>>Share Image > 500 px</option>
+										<option value="600" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '600') echo 'selected';?>>Share Image > 600 px</option>
 									</select>
 								</label>
 								<label>
 								<p>Heading</p>
-									<input class="text" type="text" name="sharingSideBar[galleryOption][title]" value="<?php echo stripslashes($this->_options[sharingSideBar][galleryOption][title]);?>">
+									<input class="text" type="text" id="sharingSideBar_text_g_title" onKeyUp="sharingSideBarPreview();" name="sharingSideBar[galleryOption][title]" value="<?php echo stripslashes($this->_options[sharingSideBar][galleryOption][title]);?>">
 									
 								</label>
 								<label>
 								<p>Button</p>
-									<input class="text" type="text" name="sharingSideBar[galleryOption][buttonTitle]" value="<?php echo stripslashes($this->_options[sharingSideBar][galleryOption][buttonTitle]);?>">
+									<input class="text" type="text" id="sharingSideBar_text_g_button_title" onKeyUp="sharingSideBarPreview();" name="sharingSideBar[galleryOption][buttonTitle]" value="<?php echo stripslashes($this->_options[sharingSideBar][galleryOption][buttonTitle]);?>">
 									
 								</label>
-								<label>
-								<label><p>Share Image</p>						
-									<select name="sharingSideBar[galleryOption][minWidth]">
-										<option value="100" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '100' || $this->_options[sharingSideBar][galleryOption][minWidth] == '') echo 'selected';?>>100 px and more</option>
-										<option value="200" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '200') echo 'selected';?>>200 px and more</option>
-										<option value="300" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '300') echo 'selected';?>>300 px and more</option>
-										<option value="400" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '400') echo 'selected';?>>400 px and more</option>
-										<option value="500" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '500') echo 'selected';?>>500 px and more</option>
-										<option value="600" <?php if((int)$this->_options[sharingSideBar][galleryOption][minWidth] == '600') echo 'selected';?>>600 px and more</option>
-									</select>
-								</label>
+								
+							
 								<h3>FOR MOBILE</h3>
+								<label>
 								<p>Heading</p>
 									<input class="text" type="text" name="sharingSideBar[mobile_title]" value="<?php echo stripslashes($this->_options[sharingSideBar][mobile_title]);?>">
 									
@@ -1951,50 +1996,51 @@ function changePopupImg(img, custom_photo_block_id){
 						</div>
 						<div class="settings follow">
 							<div class="popup selected">
-								<h3>Text</h3>
+								<h3>POPUP</h3>
 								<label>
 								<p>Heading</p>
-									<input class="text" type="text" name="follow[title]" value="<?php echo stripslashes($this->_options[follow][title])?>">
+									<input class="text" type="text" id="follow_text_title" onkeyup="followPreview();" name="follow[title]" value="<?php echo stripslashes($this->_options[follow][title])?>">
 									
 								</label>
 								<label>
 								<p>Text</p>
-									<textarea rows="2" type="text" name="follow[sub_title]" ><?php echo stripslashes($this->_options[follow][sub_title])?></textarea>
+									<textarea rows="2" type="text" id="follow_text_subtitle" onkeyup="followPreview();" name="follow[sub_title]" ><?php echo stripslashes($this->_options[follow][sub_title])?></textarea>
 									
 								</label>
+								<span class="pq_for" style="margin: 15px 0 10px;">All icons on preview open profitquery facebook page (demonstration only)</span>
 								<label class="sm fb">
 									<p>facebook.com/</p>
-									<input type="text" name="follow[follow_socnet][FB]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][FB]);?>">
+									<input type="text" id="follow_provider[FB]" onkeyup="followPreview()" name="follow[follow_socnet][FB]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][FB]);?>">
 								</label>
 								<label class="sm tw">							
 									<p>twitter.com/</p>
-									<input type="text" name="follow[follow_socnet][TW]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][TW]);?>">
+									<input type="text" id="follow_provider[TW]" onkeyup="followPreview()" name="follow[follow_socnet][TW]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][TW]);?>">
 								</label>
 								<label class="sm gp">
 									<p>plus.google.com/</p>								
-									<input type="text" name="follow[follow_socnet][GP]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][GP]);?>">
+									<input type="text" id="follow_provider[GP]" onkeyup="followPreview()" name="follow[follow_socnet][GP]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][GP]);?>">
 								</label>
 								<input type="button" class="pq_li_button addservices4-6" value="more services">
 								<label class="sm pi f04">							
 									<p>pinterest.com/</p>
-									<input type="text" name="follow[follow_socnet][PI]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][PI]);?>">
+									<input type="text" id="follow_provider[PI]" onkeyup="followPreview()" name="follow[follow_socnet][PI]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][PI]);?>">
 								</label>
 								<label class="sm vk f05">							
 									<p>vk.com/</p>
-									<input type="text" name="follow[follow_socnet][VK]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][VK]);?>">
+									<input type="text" id="follow_provider[VK]" onkeyup="followPreview()" name="follow[follow_socnet][VK]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][VK]);?>">
 								</label>
 								<label class="sm od f06">
 									<p>odnoklassniki.ru/</p>
-									<input type="text" name="follow[follow_socnet][OD]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][OD]);?>">
+									<input type="text" id="follow_provider[OD]" onkeyup="followPreview()" name="follow[follow_socnet][OD]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][OD]);?>">
 								</label>
 								<input type="button" class="pq_li_button addservices7-8" value="more services">
 								<label class="sm ig f07">
 									<p>instagram.com/</p>
-									<input type="text" name="follow[follow_socnet][IG]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][IG]);?>">
+									<input type="text" id="follow_provider[IG]" onkeyup="followPreview()" name="follow[follow_socnet][IG]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][IG]);?>">
 								</label>
 								<label class="sm rs f08">
 									<p>RSS feed</p>
-									<input type="text" name="follow[follow_socnet][RSS]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][RSS]);?>">
+									<input type="text" id="follow_provider[RSS]" onkeyup="followPreview()" name="follow[follow_socnet][RSS]" value="<?php echo stripslashes($this->_options[follow][follow_socnet][RSS]);?>">
 								</label>																																
 								
 								<h3>DISPLAY AFTER</h3>
@@ -2040,66 +2086,70 @@ function changePopupImg(img, custom_photo_block_id){
 						
 						<div class="settings marketing">
 							<div class="pq_bar selected">
-								<h3>Text</h3>
+								<h3>FOR DESKTOP</h3>
 								<label>
 								<p>Heading</p>
-									<input class="text" type="text" name="subscribeBar[title]" value="<?php echo stripslashes($this->_options[subscribeBar][title]);?>">
+									<input class="text" type="text" id="subscribeBar_text_title" onkeyup="subscribeBarPreview();" name="subscribeBar[title]" value="<?php echo stripslashes($this->_options[subscribeBar][title]);?>">
 									
 								</label>
 								
 								<label>
-								<p>Input email text</p>
-									<input class="text" type="text" name="subscribeBar[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][inputEmailTitle]);?>">
+								<p>Input email</p>
+									<input class="text" type="text" id="subscribeBar_text_email" onkeyup="subscribeBarPreview();" name="subscribeBar[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][inputEmailTitle]);?>">
 									
 								</label>
 								<label>
-								<p>Input name text (Aweber)</p>
-									<input class="text" type="text" name="subscribeBar[inputNameTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][inputNameTitle]);?>">
+								<p>Input name</p>
+									<input class="text" type="text" id="subscribeBar_text_name" onkeyup="subscribeBarPreview();" name="subscribeBar[inputNameTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][inputNameTitle]);?>">
 									
 								</label>
+								
+								<label>
+								<p>Button Title</p>
+									<input class="text" type="text" id="subscribeBar_button_title" onkeyup="subscribeBarPreview();" name="subscribeBar[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][buttonTitle]);?>">
 									
+								</label>	
 								
 								
 								<h3>For mobile</h3>
 								<label>
 								<p>Heading</p>
-									<input class="text" type="text" name="subscribeBar[mobile_title]" value="<?php echo stripslashes($this->_options[subscribeBar][mobile_title]);?>">
+									<input class="text" type="text" id="subscribeBar_text_m_title" onkeyup="subscribeBarPreview();" name="subscribeBar[mobile_title]" value="<?php echo stripslashes($this->_options[subscribeBar][mobile_title]);?>">
 									
 								</label>
-								<h3>Button</h3>
-								<label>
-								<p>Title</p>
-									<input class="text" type="text" name="subscribeBar[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeBar][buttonTitle]);?>">
-									
-								</label>								
+															
 							</div>
 						</div>
 						<div class="settings contact">
 							<div class="popup selected">
-								<h3>Text</h3>
+								<h3>POPUP</h3>
 								<label>
 								<p>Heading</p>
-									<input type="text" name="contactUs[title]" value="<?php echo stripslashes($this->_options[contactUs][title]);?>">
+									<input type="text" name="contactUs[title]" id="contactUs_text_title" onkeyup="contactUsPreview();" value="<?php echo stripslashes($this->_options[contactUs][title]);?>">
 									
 								</label>
 								<label>
 								<p>Text</p>
-									<input type="text" name="contactUs[sub_title]" value="<?php echo stripslashes($this->_options[contactUs][sub_title]);?>">
+									<input type="text" name="contactUs[sub_title]" id="contactUs_text_subtitle" onkeyup="contactUsPreview();" value="<?php echo stripslashes($this->_options[contactUs][sub_title]);?>">
 									
 								</label>
 								<label>
-								<p>Enter Name Text</p>
-									<input class="text" type="text" name="contactUs[enter_name_text]" value="<?php echo stripslashes($this->_options[contactUs][enter_name_text]);?>">
+								<p>Input Name</p>
+									<input class="text" type="text" id="contactUs_text_name" onkeyup="contactUsPreview();" name="contactUs[enter_name_text]" value="<?php echo stripslashes($this->_options[contactUs][enter_name_text]);?>">
 									
 								</label>
 								<label>
-								<p>Enter Email Text</p>
-									<input class="text" type="text" name="contactUs[enter_email_text]" value="<?php echo stripslashes($this->_options[contactUs][enter_email_text]);?>">
+								<p>Input Email</p>
+									<input class="text" type="text" name="contactUs[enter_email_text]" id="contactUs_text_email" onkeyup="contactUsPreview();" value="<?php echo stripslashes($this->_options[contactUs][enter_email_text]);?>">
 									
 								</label>
 								<label>
-									<p>Enter Message Text</p>
-										<input class="text" type="text" name="contactUs[enter_message_text]" value="<?php echo stripslashes($this->_options[contactUs][enter_message_text]);?>">
+									<p>Message</p>
+										<input class="text" type="text" name="contactUs[enter_message_text]" id="contactUs_text_message" onkeyup="contactUsPreview();" value="<?php echo stripslashes($this->_options[contactUs][enter_message_text]);?>">
+								</label>
+								<label>
+								<p>Button Title</p>
+									<input class="text" type="text" name="contactUs[buttonTitle]" id="contactUs_text_button" onkeyup="contactUsPreview();" value="<?php echo stripslashes($this->_options[contactUs][buttonTitle]);?>">
 								</label>
 								
 								<h3>Loader</h3>	
@@ -2113,37 +2163,38 @@ function changePopupImg(img, custom_photo_block_id){
 								</label-->
 								<label>
 									<p>Heading</p>
-									<input class="text" type="text" name="contactUs[loaderText]" value="<?php echo stripslashes($this->_options[contactUs][loaderText]);?>">
+									<input class="text" type="text" name="contactUs[loaderText]" id="contactUs_text_l_title" onkeyup="contactUsPreview();" value="<?php echo stripslashes($this->_options[contactUs][loaderText]);?>">
 								</label>
-								<h3>Button</h3>
-								<label>
-								<p>Button Title</p>
-									<input class="text" type="text" name="contactUs[buttonTitle]" value="<?php echo stripslashes($this->_options[contactUs][buttonTitle]);?>">
-								</label>
+																
 							</div>
 						</div>
 						<div class="settings callme">
 							<div class="popup selected">
-								<h3>Text</h3>
+								<h3>POPUP</h3>
 								<label>
 								<p>Heading</p>
-									<input class="text" type="text" name="callMe[title]" value="<?php echo stripslashes($this->_options[callMe][title])?>">
+									<input class="text" type="text" id="callMe_text_title" onkeyup="callMePreview();" name="callMe[title]" value="<?php echo stripslashes($this->_options[callMe][title])?>">
 									
 								</label>
 								<label>
 								<p>Text</p>
-									<textarea rows="2" type="text" name="callMe[sub_title]"><?php echo stripslashes($this->_options[callMe][sub_title])?></textarea>
+									<textarea rows="2" type="text" id="callMe_text_subtitle" onkeyup="callMePreview();" name="callMe[sub_title]"><?php echo stripslashes($this->_options[callMe][sub_title])?></textarea>
 									
 								</label>
 								<label class="">
-								<p>Enter Name Text</p>
-									<input class="text" type="text" name="callMe[enter_name_text]" value="<?php echo stripslashes($this->_options[callMe][enter_name_text]);?>">
+								<p>Input Name</p>
+									<input class="text" type="text" id="callMe_text_name" onkeyup="callMePreview();" name="callMe[enter_name_text]" value="<?php echo stripslashes($this->_options[callMe][enter_name_text]);?>">
 									
 								</label>
 								<label class="">
-								<p>Enter Phone Text</p>
-									<input class="text" type="text" name="callMe[enter_phone_text]" value="<?php echo stripslashes($this->_options[callMe][enter_phone_text]);?>">									
-								</label>								
+								<p>Input Phone</p>
+									<input class="text" type="text" id="callMe_text_phone" onkeyup="callMePreview();" name="callMe[enter_phone_text]" value="<?php echo stripslashes($this->_options[callMe][enter_phone_text]);?>">									
+								</label>	
+								
+								<label>
+								<p>Button Title</p>
+									<input class="text" type="text" id="callMe_text_button" onkeyup="callMePreview();" name="callMe[buttonTitle]" value="<?php echo stripslashes($this->_options[callMe][buttonTitle])?>">
+								</label>
 								
 								<h3>Loader</h3>	
 								<!--label>
@@ -2156,41 +2207,37 @@ function changePopupImg(img, custom_photo_block_id){
 								</label-->
 								<label>
 									<p>Heading</p>
-									<input class="text" type="text" name="callMe[loaderText]" value="<?php echo stripslashes($this->_options[callMe][loaderText]);?>">
+									<input class="text" type="text" id="callMe_text_l_title" onkeyup="callMePreview();" name="callMe[loaderText]" value="<?php echo stripslashes($this->_options[callMe][loaderText]);?>">
 								</label>
-								<h3>Button</h3>
-								<label>
-								<p>Button Title</p>
-									<input class="text" type="text" name="callMe[buttonTitle]" value="<?php echo stripslashes($this->_options[callMe][buttonTitle])?>">
-								</label>
+								
 							</div>
 						</div>
 						<div class="settings exit">
 							<div class="popup selected">
 								
-								<h3>TEXT</h3>
+								<h3>POPUP</h3>
 								<label>
 								<p>Heading</p>
-									<input class="text" type="text" name="subscribeExit[title]" value="<?php echo stripslashes($this->_options[subscribeExit][title]);?>">
+									<input class="text" type="text" id="subscribeExit_text_title" onkeyup="subscribeExitPreview();" name="subscribeExit[title]" value="<?php echo stripslashes($this->_options[subscribeExit][title]);?>">
 									
 								</label>
 								<label>
 								<p>Text</p>
-									<textarea rows="2" type="text" name="subscribeExit[sub_title]" ><?php echo stripslashes($this->_options[subscribeExit][sub_title]);?></textarea>
+									<textarea rows="2" type="text" id="subscribeExit_text_subtitle" onkeyup="subscribeExitPreview();" name="subscribeExit[sub_title]" name="subscribeExit[sub_title]" ><?php echo stripslashes($this->_options[subscribeExit][sub_title]);?></textarea>
 								
 								</label>
 								<label>
-								<p>Input email text</p>
-									<input class="text" type="text" name="subscribeExit[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][inputEmailTitle]);?>">
+								<p>Input email</p>
+									<input class="text" type="text" id="subscribeExit_text_email" onkeyup="subscribeExitPreview();" name="subscribeExit[inputEmailTitle]" name="subscribeExit[inputEmailTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][inputEmailTitle]);?>">
 								</label>
 								<label>
-								<p>Input name text (Aweber)</p>
-									<input class="text" type="text" name="subscribeExit[inputNameTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][inputNameTitle]);?>">
+								<p>Input name</p>
+									<input class="text" type="text" id="subscribeExit_text_name" onkeyup="subscribeExitPreview();" name="subscribeExit[inputNameTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][inputNameTitle]);?>">
 								</label>
 							
 								<label>
 								<p>Button Title</p>
-									<input class="text" type="text" name="subscribeExit[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][buttonTitle]);?>">									
+									<input class="text" type="text" id="subscribeExit_text_button" onkeyup="subscribeExitPreview();" name="subscribeExit[buttonTitle]" value="<?php echo stripslashes($this->_options[subscribeExit][buttonTitle]);?>">									
 								</label>															
 							</div>
 							
@@ -2199,7 +2246,7 @@ function changePopupImg(img, custom_photo_block_id){
 							<div class="onmedia selected">
 								<h3>SHOW SERVICES </h3>
 								<label class="sm">							
-									<input type="checkbox" name="imageSharer[socnet][FB]" <?php if((int)$this->_options[imageSharer][socnet][FB] == 1) echo 'checked';?> />
+									<input type="checkbox" id="imageSharer_provider[FB]" onclick="imageSharerPreview()"  name="imageSharer[socnet][FB]" <?php if((int)$this->_options[imageSharer][socnet][FB] == 1) echo 'checked';?> />
 									<div class="fb pq_checkbox"></div>
 									<select name="imageSharer[socnetOption][FB][type]" class="sm">
 										<option value="app" <?php if($this->_options[imageSharer][socnetOption][FB][type] == 'app') echo 'selected';?>>Use Facebook App</option>
@@ -2214,7 +2261,7 @@ function changePopupImg(img, custom_photo_block_id){
 									<input type="text" name="imageSharer[socnetOption][FB][app_id]" value="<?php if(stripslashes($this->_options[imageSharer][socnetOption][FB][app_id]) != '') echo stripslashes($this->_options[imageSharer][socnetOption][FB][app_id]);?>" placeholder="FaceBook APP ID"/>
 								</label>
 								<label class="sm">
-									<input type="checkbox" name="imageSharer[socnet][TW]" <?php if((int)$this->_options[imageSharer][socnet][TW] == 1) echo 'checked';?> />
+									<input type="checkbox" id="imageSharer_provider[TW]" onclick="imageSharerPreview()" name="imageSharer[socnet][TW]" <?php if((int)$this->_options[imageSharer][socnet][TW] == 1) echo 'checked';?> />
 									<div class="tw pq_checkbox"></div>									
 									<select name="imageSharer[socnetOption][TW][type]" class="sm">
 										<option value="" <?php if($this->_options[imageSharer][socnetOption][TW][type] == '') echo 'selected';?>>Default Twitter Share</option>
@@ -2223,8 +2270,8 @@ function changePopupImg(img, custom_photo_block_id){
 									</select>
 								</label>
 								<label class="sm">
-									<input type="checkbox" />
-									<div class="gp pq_checkbox"></div>
+									<input type="checkbox" id="imageSharer_provider[GP]" onclick="imageSharerPreview()" name="imageSharer[socnet][GP]" <?php if((int)$this->_options[imageSharer][socnet][GP] == 1) echo 'checked';?>/>
+									<div class="gp pq_checkbox" ></div>
 									<select class="sm" name="imageSharer[socnetOption][GP][type]" >
 										<option value="" <?php if($this->_options[imageSharer][socnetOption][GP][type] == '') echo 'selected';?>>Default Google+ Share</option>
 										<option value="pq" <?php if($this->_options[imageSharer][socnetOption][GP][type] == 'pq') echo 'selected';?>>Without Apps & OG Tags</option>
@@ -2232,7 +2279,7 @@ function changePopupImg(img, custom_photo_block_id){
 									</select>
 								</label>
 								<label class="sm">	
-									<input type="checkbox" name="imageSharer[socnet][PI]" <?php if((int)$this->_options[imageSharer][socnet][PI] == 1) echo 'checked';?> />
+									<input type="checkbox" id="imageSharer_provider[PI]" onclick="imageSharerPreview()" name="imageSharer[socnet][PI]" <?php if((int)$this->_options[imageSharer][socnet][PI] == 1) echo 'checked';?> />
 									<div class="pi pq_checkbox"></div>
 									<select class="sm" name="imageSharer[socnetOption][PI][type]">
 										<option value="" <?php if($this->_options[imageSharer][socnetOption][PI][type] == '') echo 'selected';?> >Default Pinterest Share</option>
@@ -2241,7 +2288,7 @@ function changePopupImg(img, custom_photo_block_id){
 									</select>
 								</label>
 								<label class="sm">	
-									<input type="checkbox" name="imageSharer[socnet][TR]" <?php if((int)$this->_options[imageSharer][socnet][TR] == 1) echo 'checked';?> />
+									<input type="checkbox" id="imageSharer_provider[TR]" onclick="imageSharerPreview()" name="imageSharer[socnet][TR]" <?php if((int)$this->_options[imageSharer][socnet][TR] == 1) echo 'checked';?> />
 									<div class="tr pq_checkbox"></div>
 									<select class="sm" name="imageSharer[socnetOption][TR][type]" >
 										<option value="" <?php if($this->_options[imageSharer][socnetOption][TR][type] == '') echo 'selected';?>>Default Tumbrl Share</option>
@@ -2250,7 +2297,7 @@ function changePopupImg(img, custom_photo_block_id){
 									</select>
 								</label>
 								<label class="sm">
-									<input type="checkbox" name="imageSharer[socnet][VK]" <?php if((int)$this->_options[imageSharer][socnet][VK] == 1) echo 'checked';?> />
+									<input type="checkbox" id="imageSharer_provider[VK]" onclick="imageSharerPreview()" name="imageSharer[socnet][VK]" <?php if((int)$this->_options[imageSharer][socnet][VK] == 1) echo 'checked';?> />
 									<div class="vk pq_checkbox"></div>
 									<select class="sm" name="imageSharer[socnetOption][VK][type]" >
 										<option value="" <?php if($this->_options[imageSharer][socnetOption][VK][type] == '') echo 'selected';?> >Default VKontakte Share</option>
@@ -2259,7 +2306,7 @@ function changePopupImg(img, custom_photo_block_id){
 									</select>
 								</label>
 								<label class="sm">	
-									<input type="checkbox" name="imageSharer[socnet][OD]" <?php if((int)$this->_options[imageSharer][socnet][OD] == 1) echo 'checked';?> />
+									<input type="checkbox" id="imageSharer_provider[OD]" onclick="imageSharerPreview()" name="imageSharer[socnet][OD]" <?php if((int)$this->_options[imageSharer][socnet][OD] == 1) echo 'checked';?> />
 									<div class="od pq_checkbox"></div>									
 									<select class="sm" name="imageSharer[socnetOption][OD][type]" >
 										<option value="" <?php if($this->_options[imageSharer][socnetOption][OD][type] == '') echo 'selected';?> >Default Odnoklassniki Share</option>
@@ -2268,12 +2315,12 @@ function changePopupImg(img, custom_photo_block_id){
 									</select>
 								</label>
 								<label class="sm">
-									<input type="checkbox" name="imageSharer[socnet][WU]" <?php if((int)$this->_options[imageSharer][socnet][WU] == 1) echo 'checked';?> />
+									<input type="checkbox" id="imageSharer_provider[WU]" onclick="imageSharerPreview()" name="imageSharer[socnet][WU]" <?php if((int)$this->_options[imageSharer][socnet][WU] == 1) echo 'checked';?> />
 									<div class="wu pq_checkbox"></div>
 									<select class="sm" disabled="disabled"></select>									
 								</label>
 								<label class="sm">
-									<input type="checkbox" name="imageSharer[socnet][Mail]" <?php if((int)$this->_options[imageSharer][socnet][Mail] == 1) echo 'checked';?> />
+									<input type="checkbox" id="imageSharer_provider[Mail]" onclick="imageSharerPreview()" name="imageSharer[socnet][Mail]" <?php if((int)$this->_options[imageSharer][socnet][Mail] == 1) echo 'checked';?> />
 									<div class="em pq_checkbox"></div>
 									<select class="sm" disabled="disabled"></select>										
 								</label>									
@@ -2304,25 +2351,24 @@ function changePopupImg(img, custom_photo_block_id){
 						</div>
 						<div class="settings thankyou">
 							<div class="popup selected">
-								<h3>Text</h3>
+								<h3>POPUP</h3>
 								<label>
 								<p>Heading</p>
-									<input class="text" type="text" name="thankPopup[title]" value="<?php echo stripslashes($this->_options[thankPopup][title])?>">
+									<input class="text" type="text" id="thankPopup_text_title" onkeyup="thankPopupPreview();" name="thankPopup[title]" value="<?php echo stripslashes($this->_options[thankPopup][title])?>">
 									
 								</label>
 								<label>
 								<p>Text</p>
-									<textarea rows="2" type="text" name="thankPopup[sub_title]" ><?php echo stripslashes($this->_options[thankPopup][sub_title])?></textarea>
+									<textarea rows="2" type="text" id="thankPopup_text_subtitle" onkeyup="thankPopupPreview();" name="thankPopup[sub_title]" ><?php echo stripslashes($this->_options[thankPopup][sub_title])?></textarea>
+									
+								</label>
+								<label>
+								<p>Button Title</p>
+									<input class="text" type="text" id="thankPopup_text_button" onkeyup="thankPopupPreview();" name="thankPopup[buttonTitle]" value="<?php echo stripslashes($this->_options[thankPopup][buttonTitle])?>">
 									
 								</label>
 											
-								<h3>Button</h3>
-								<label>
-								<p>Button Title</p>
-									<input class="text" type="text" name="thankPopup[buttonTitle]" value="<?php echo stripslashes($this->_options[thankPopup][buttonTitle])?>">
-									
-								</label>
-								
+																
 								<h3>DISPLAY AFTER</h3>
 								<label><p>Sharing Sidebar</p>
 								<select  name="sharingSideBar[afterProceed][thank]">
@@ -2692,7 +2738,7 @@ function changePopupImg(img, custom_photo_block_id){
 									<option value="c11" <?php if($this->_options[follow][design][color] == 'c11') echo 'selected';?>>Lightest</option>
 								</select>
 								</label>
-								<h3>Shadow</h3>
+								<!--h3>Shadow</h3>
 								<label>
 									<select id="follow_design_shadow" onchange="followPreview();" name="follow[design][shadow]">
 										<option value="sh1" <?php if($this->_options[follow][design][shadow] == 'sh1') echo 'selected';?>>Shadow1</option>
@@ -2702,7 +2748,7 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="sh5" <?php if($this->_options[follow][design][shadow] == 'sh5') echo 'selected';?>>Shadow5</option>
 										<option value="sh6" <?php if($this->_options[follow][design][shadow] == 'sh6') echo 'selected';?>>Shadow6</option>
 									</select>
-								</label>
+								</label-->
 							</div>
 								
 						</div>
@@ -2773,6 +2819,13 @@ function changePopupImg(img, custom_photo_block_id){
 							<div class="popup selected">
 							<h3>POPUP</h3>
 								<label>
+								<label>
+								<select id="contactUs_typeWindow" onchange="contactUsPreview();"  name="contactUs[typeWindow]">
+									<option value="pq_large" <?php if($this->_options[contactUs][typeWindow] == 'pq_large' || $this->_options[contactUs][typeWindow] == '') echo 'selected';?>>Size L</option>
+									<option value="pq_medium" <?php if($this->_options[contactUs][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
+									<option value="pq_mini" <?php if($this->_options[contactUs][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
+								</select>
+								</label>
 								<select id="contactUs_background" onchange="contactUsPreview();" name="contactUs[background]">
 								    <option value="bg_grey" <?php if($this->_options[contactUs][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
 									<option value="" <?php if($this->_options[contactUs][background] == '') echo 'selected';?>>Background - White</option>
@@ -2822,22 +2875,16 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="img_08.png" <?php if($this->_options[contactUs][img] == 'img_08.png') echo 'selected';?>>Megaphone</option>
 										<option value="img_09.png" <?php if($this->_options[contactUs][img] == 'img_09.png') echo 'selected';?>>Gift</option>
 										<option value="img_10.png" <?php if($this->_options[contactUs][img] == 'img_10.png') echo 'selected';?>>Success</option>
-										<option value="custom" <?php if($this->_options[contactUs][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
+										<option value="custom" <?php if($this->_options[contactUs][img] == 'custom') echo 'selected';?>>Your custom image</option>
 									</select>
 								</label>								
-								<label class="custom_i" id="contactUsCustomFotoBlock" style="display:none;"><p>Link</p>									
+								<label class="custom_i" id="contactUsCustomFotoBlock" style="display:none;"><span class="pq_for" style="margin:0;">custom image link</span>									
 									<input type="text" name="contactUs[imgUrl]" id="contactUsCustomFotoSrc" onkeyup="contactUsPreview();" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[contactUs][imgUrl]);?>">
 								</label>
 								<script>
 									changePopupImg('<?php echo $this->_options[contactUs][img];?>', 'contactUsCustomFotoBlock');
 								</script>
-								<label>
-								<select id="contactUs_typeWindow" onchange="contactUsPreview();"  name="contactUs[typeWindow]">
-									<option value="pq_large" <?php if($this->_options[contactUs][typeWindow] == 'pq_large' || $this->_options[contactUs][typeWindow] == '') echo 'selected';?>>Size L</option>
-									<option value="pq_medium" <?php if($this->_options[contactUs][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
-									<option value="pq_mini" <?php if($this->_options[contactUs][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
-								</select>
-								</label>
+								
 								<h3>Animation</h3>
 								<label>
 								<select name="contactUs[animation]" id="contactUs_animation" onchange="contactUsPreview();">									
@@ -2923,6 +2970,16 @@ function changePopupImg(img, custom_photo_block_id){
 						<div class="settings callme">
 							<div class="popup selected">
 							<h3>POPUP</h3>
+							    <label>
+								<script>
+									changePopupImg('<?php echo $this->_options[callMe][img];?>', 'callMeCustomFotoBlock');
+								</script>
+								<select id="callMe_typeWindow" onchange="callMePreview();" name="callMe[typeWindow]">
+									<option value="pq_large" <?php if($this->_options[callMe][typeWindow] == 'pq_large' || $this->_options[callMe][typeWindow] == '') echo 'selected';?>>Size L</option>
+									<option value="pq_medium" <?php if($this->_options[callMe][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
+									<option value="pq_mini" <?php if($this->_options[callMe][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
+								</select>
+								</label>
 								<label>
 								<select id="callMe_background" onchange="callMePreview();" name="callMe[background]">
 								    <option value="bg_grey" <?php if($this->_options[callMe][background] == 'bg_grey') echo 'selected';?>>Background - Grey</option>
@@ -2974,22 +3031,13 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="img_08.png" <?php if($this->_options[callMe][img] == 'img_08.png') echo 'selected';?>>Megaphone</option>
 										<option value="img_09.png" <?php if($this->_options[callMe][img] == 'img_09.png') echo 'selected';?>>Gift</option>
 										<option value="img_10.png" <?php if($this->_options[callMe][img] == 'img_10.png') echo 'selected';?>>Success</option>
-										<option value="custom" <?php if($this->_options[callMe][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
+										<option value="custom" <?php if($this->_options[callMe][img] == 'custom') echo 'selected';?>>Your custom image</option>
 									</select>
 								</label>
-								<label class="custom_i" id="callMeCustomFotoBlock"><p>Link</p>
+								<label class="custom_i" id="callMeCustomFotoBlock"><span class="pq_for" style="margin:0;">custom image link</span>
 									<input type="text" name="callMe[imgUrl]" onkeyup="callMePreview();" id="callMeCustomFotoSrc" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[callMe][imgUrl])?>">
 								</label>
-								<label>
-								<script>
-									changePopupImg('<?php echo $this->_options[callMe][img];?>', 'callMeCustomFotoBlock');
-								</script>
-								<select id="callMe_typeWindow" onchange="callMePreview();" name="callMe[typeWindow]">
-									<option value="pq_large" <?php if($this->_options[callMe][typeWindow] == 'pq_large' || $this->_options[callMe][typeWindow] == '') echo 'selected';?>>Size L</option>
-									<option value="pq_medium" <?php if($this->_options[callMe][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
-									<option value="pq_mini" <?php if($this->_options[callMe][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
-								</select>
-								</label>
+								
 								<h3>Animation</h3>
 								<label>
 								<select name="callMe[animation]" id="callMe_animation" onchange="callMePreview();">									
@@ -3087,6 +3135,13 @@ function changePopupImg(img, custom_photo_block_id){
 						<div class="settings exit">
 							<div class="popup selected">
 							<h3>POPUP</h3>
+							    <label>
+								<select id="subscribeExit_typeWindow" onchange="subscribeExitPreview();" name="subscribeExit[typeWindow]">
+									<option value="pq_large" <?php if($this->_options[subscribeExit][typeWindow] == 'pq_large' || $this->_options[subscribeExit][typeWindow] == '') echo 'selected';?>>Size L</option>
+									<option value="pq_medium" <?php if($this->_options[subscribeExit][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
+									<option value="pq_mini" <?php if($this->_options[subscribeExit][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
+								</select>
+								</label>
 								<label>
 								<select id="subscribeExit_background" onchange="subscribeExitPreview();" name="subscribeExit[background]">
 								    <option value="bg_white" <?php if($this->_options[subscribeExit][background] == 'bg_white') echo 'selected';?>>Background - White</option>
@@ -3150,22 +3205,16 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="img_08.png" <?php if($this->_options[subscribeExit][img] == 'img_08.png') echo 'selected';?>>Megaphone</option>
 										<option value="img_09.png" <?php if($this->_options[subscribeExit][img] == 'img_09.png') echo 'selected';?>>Gift</option>
 										<option value="img_10.png" <?php if($this->_options[subscribeExit][img] == 'img_10.png') echo 'selected';?>>Success</option>
-										<option value="custom" <?php if($this->_options[subscribeExit][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
+										<option value="custom" <?php if($this->_options[subscribeExit][img] == 'custom') echo 'selected';?>>Your custom image</option>
 									</select>
 								</label>
-								<label class="custom_i" id="subscribeExitCustomFotoBlock"><p>Link</p>
+								<label class="custom_i" id="subscribeExitCustomFotoBlock"><span class="pq_for" style="margin:0;">custom image link</span>
 									<input type="text" name="subscribeExit[imgUrl]" onkeyup="subscribeExitPreview();"  id="subscribeExitCustomFotoSrc" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[subscribeExit][imgUrl]);?>">
 								</label>
 								<script>
 									changePopupImg('<?php echo $this->_options[subscribeExit][img];?>', 'subscribeExitCustomFotoBlock');
 								</script>
-								<label>
-								<select id="subscribeExit_typeWindow" onchange="subscribeExitPreview();" name="subscribeExit[typeWindow]">
-									<option value="pq_large" <?php if($this->_options[subscribeExit][typeWindow] == 'pq_large' || $this->_options[subscribeExit][typeWindow] == '') echo 'selected';?>>Size L</option>
-									<option value="pq_medium" <?php if($this->_options[subscribeExit][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
-									<option value="pq_mini" <?php if($this->_options[subscribeExit][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
-								</select>
-								</label>
+								
 								<h3>Animation</h3>
 								<label>
 								<select name="subscribeExit[animation]" id="subscribeExit_animation" onchange="subscribeExitPreview();">									
@@ -3176,7 +3225,7 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								<h3>Overlay</h3>
 								<label>
-								<select id="subscribeExit_overlay" onchange="subscribeExitPreview();" name="subscribeExit[overlay]">
+								<select id="subscribeExit_overlay" onchange="subscribeExitPreview();" name="subscribeExit[overlay]">								    
 								    <option value="over_grey" <?php if($this->_options[subscribeExit][overlay] == 'over_grey') echo 'selected';?>>Color overlay - Grey</option>
 									<option value="over_white" <?php if($this->_options[subscribeExit][overlay] == 'over_white' || $this->_options[subscribeExit][overlay] == '') echo 'selected';?>>Color overlay - White</option>
 									<option value="over_yellow" <?php if($this->_options[subscribeExit][overlay] == 'over_yellow') echo 'selected';?>>Color overlay - Yellow</option>
@@ -3275,6 +3324,13 @@ function changePopupImg(img, custom_photo_block_id){
 							<div class="popup selected">
 								<h3>POPUP</h3>
 								<label>
+								<select name="thankPopup[typeWindow]" id="thankPopup_typeWindow" onchange="thankPopupPreview();">
+									<option value="pq_large" <?php if($this->_options[thankPopup][typeWindow] == 'pq_large' || $this->_options[thankPopup][typeWindow] == '') echo 'selected';?>>Size L</option>
+									<option value="pq_medium" <?php if($this->_options[thankPopup][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
+									<option value="pq_mini" <?php if($this->_options[thankPopup][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
+								</select>
+								</label>
+								<label>
 								<select id="thankPopup_background" onchange="thankPopupPreview();" name="thankPopup[background]">
 									<option value="bg_white" <?php if($this->_options[thankPopup][background] == 'bg_white') echo 'selected';?>>Background - White</option>
 									<option value="bg_white_lt" <?php if($this->_options[thankPopup][background] == 'bg_white_lt') echo 'selected';?>>Background - White Lite</option>
@@ -3336,22 +3392,16 @@ function changePopupImg(img, custom_photo_block_id){
 										<option value="img_08.png" <?php if($this->_options[thankPopup][img] == 'img_08.png') echo 'selected';?>>Megaphone</option>
 										<option value="img_09.png" <?php if($this->_options[thankPopup][img] == 'img_09.png') echo 'selected';?>>Gift</option>
 										<option value="img_10.png" <?php if($this->_options[thankPopup][img] == 'img_10.png') echo 'selected';?>>Success</option>
-										<option value="custom" <?php if($this->_options[thankPopup][img] == 'custom') echo 'selected';?>>Your custom image ...</option>
+										<option value="custom" <?php if($this->_options[thankPopup][img] == 'custom') echo 'selected';?>>Your custom image</option>
 									</select>
 								</label>
-								<label class="custom_i" id="thankPopupCustomFotoBlock"><p>Link</p>
+								<label class="custom_i" id="thankPopupCustomFotoBlock"><span class="pq_for" style="margin:0;">custom image link</span>
 									<input type="text" name="thankPopup[imgUrl]" onchange="thankPopupPreview();" style="margin-top: 10px;" id="thankPopupCustomFotoSrc" placeholder="Enter your image URL" value="<?php echo stripslashes($this->_options[thankPopup][imgUrl])?>">
 								</label>
 								<script>
 									changePopupImg('<?php echo $this->_options[thankPopup][img];?>', 'thankPopupCustomFotoBlock');
 								</script>
-								<label>
-								<select name="thankPopup[typeWindow]" id="thankPopup_typeWindow" onchange="thankPopupPreview();">
-									<option value="pq_large" <?php if($this->_options[thankPopup][typeWindow] == 'pq_large' || $this->_options[thankPopup][typeWindow] == '') echo 'selected';?>>Size L</option>
-									<option value="pq_medium" <?php if($this->_options[thankPopup][typeWindow] == 'pq_medium') echo 'selected';?>>Size M</option>								
-									<option value="pq_mini" <?php if($this->_options[thankPopup][typeWindow] == 'pq_mini') echo 'selected';?>>Size S</option>
-								</select>
-								</label>
+							
 								<h3>Animation</h3>
 								<label>
 								<select name="thankPopup[animation]" id="thankPopup_animation" onchange="thankPopupPreview();">
@@ -3426,15 +3476,15 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								
 								<h2 class="pro_h1">PRO options</h2>
-								<h3>DISPLAY RULES</h3><a href="#top" class="tooltip_pro">?</a>
-								<label><p>Disable Main Page</p>
+								<h3>DISPLAY RULES</h3><a class="tooltip_pro">?</a><!--href="#top" -->
+								<label>
 									<select name="proOptions[sharingSideBar][disableMainPage]">
-										<option value="1" <?php if((int)$this->_options[proOptions][sharingSideBar][disableMainPage] == 1) echo 'selected';?>>Yes</option>
-										<option value="0" <?php if((int)$this->_options[proOptions][sharingSideBar][disableMainPage] == 0) echo 'selected';?>>No</option>
+										<option value="1" <?php if((int)$this->_options[proOptions][sharingSideBar][disableMainPage] == 1) echo 'selected';?>>Enable Site Main Page</option>
+										<option value="0" <?php if((int)$this->_options[proOptions][sharingSideBar][disableMainPage] == 0) echo 'selected';?>>Disable Site Main Page</option>
 									</select>
 									
 								</label>								
-								<label><p>Disable Exept Url Mask</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Disable Exept Url Mask</span>
 								<input type="text" name="proOptions[sharingSideBar][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][sharingSideBar][disableExeptPageMask][0]);?>">
 								
 								</label>
@@ -3488,7 +3538,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</select>
 								
 								</label>
-								<label><p>Hover</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Hover</span>
 								<select name="proOptions[sharingSideBar][hover_animation]" id="sharingSideBar_hover_animation" onchange="sharingSideBarPreview();">
 									<option value="" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == '') echo 'selected';?>>Default</option>
 									<option value="pq_pro_ha_hvr_grow" <?php if($this->_options[proOptions][sharingSideBar][hover_animation] == 'pq_pro_ha_hvr_grow') echo 'selected';?>>Grow</option>
@@ -3542,13 +3592,13 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								<h2 class="pro_h1">PRO options</h2>
 								<h3>DISPLAY RULES</h3><a class="tooltip_pro">?</a>
-								<label><p>Disable Main Page</p>
+								<label>
 									<select name="proOptions[imageSharer][disableMainPage]">
-										<option value="1" <?php if((int)$this->_options[proOptions][imageSharer][disableMainPage] == 1) echo 'selected';?>>Yes</option>
-										<option value="0" <?php if((int)$this->_options[proOptions][imageSharer][disableMainPage] == 0) echo 'selected';?>>No</option>
+										<option value="1" <?php if((int)$this->_options[proOptions][imageSharer][disableMainPage] == 1) echo 'selected';?>>Enable Site Main Page</option>
+										<option value="0" <?php if((int)$this->_options[proOptions][imageSharer][disableMainPage] == 0) echo 'selected';?>>Disable Site Main Page</option>
 									</select>
 								</label>								
-								<label><p>Disable Exept Url Mask</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Disable Exept Url Mask</span>
 								<input type="text" name="proOptions[imageSharer][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptPageMask][0]);?>">
 								</label>
 								<label>
@@ -3562,7 +3612,37 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 								<input type="text" name="proOptions[imageSharer][disableExeptPageMask][4]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptPageMask][4]);?>">
-								</label>								
+								</label>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Disable All Exept Image Extensions</span>
+									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][0]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][0]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][1]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][1]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][2]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][2]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][3]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][3]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][4]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][4]);?>">
+								</label>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Disable All Exept Image Url Mask</span>
+									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][0]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][0]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][1]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][1]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][2]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][2]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][3]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][3]);?>">
+								</label>
+								<label>
+									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][4]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][4]);?>">
+								</label>
 								<h3>SHARE IMAGE</h3><a class="tooltip_pro">?</a>
 								<label>
 									<img class="picture" src="<?php echo plugins_url('i/capture.png', __FILE__);?>" />
@@ -3580,38 +3660,8 @@ function changePopupImg(img, custom_photo_block_id){
 										</label>
 										<p>&#8597;</p></div>
 								</label>
-								<label><p>Disable All Exept Image Extensions</p>
-									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][0]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][0]);?>">
-								</label>
-								<label>
-									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][1]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][1]);?>">
-								</label>
-								<label>
-									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][2]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][2]);?>">
-								</label>
-								<label>
-									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][3]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][3]);?>">
-								</label>
-								<label>
-									<input type="text" name="proOptions[imageSharer][disableExeptExtensions][4]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptExtensions][4]);?>">
-								</label>
-								<label><p>Disable All Exept Image Url Mask</p>
-									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][0]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][0]);?>">
-								</label>
-								<label>
-									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][1]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][1]);?>">
-								</label>
-								<label>
-									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][2]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][2]);?>">
-								</label>
-								<label>
-									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][3]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][3]);?>">
-								</label>
-								<label>
-									<input type="text" name="proOptions[imageSharer][disableExeptImageUrlMask][4]" value="<?php echo stripslashes($this->_options[proOptions][imageSharer][disableExeptImageUrlMask][4]);?>">
-								</label>
 								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>								
-								<label><p>Hover</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Hover</span>
 								<select name="proOptions[imageSharer][hover_animation]" id="imageSharer_hover_animation" onchange="imageSharerPreview()">
 									<option value="" <?php if($this->_options[proOptions][imageSharer][hover_animation] == '') echo 'selected';?>>Default</option-->
 									<option value="pq_pro_ha_hvr_grow" <?php if($this->_options[proOptions][imageSharer][hover_animation] == 'pq_pro_ha_hvr_grow') echo 'selected';?>>Grow</option>
@@ -3658,13 +3708,13 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								<h2 class="pro_h1">PRO options</h2>
 								<h3>DISPLAY RULES</h3><a class="tooltip_pro">?</a>
-								<label><p>Disable Main Page</p>
+								<label>
 									<select name="proOptions[subscribeBar][disableMainPage]">
-										<option value="1" <?php if((int)$this->_options[proOptions][subscribeBar][disableMainPage] == 1) echo 'selected';?>>Yes</option>
-										<option value="0" <?php if((int)$this->_options[proOptions][subscribeBar][disableMainPage] == 0) echo 'selected';?>>No</option>
+										<option value="1" <?php if((int)$this->_options[proOptions][subscribeBar][disableMainPage] == 1) echo 'selected';?>>Enable Site Main Page</option>
+										<option value="0" <?php if((int)$this->_options[proOptions][subscribeBar][disableMainPage] == 0) echo 'selected';?>>Disable Site Main Page</option>
 									</select>
 								</label>
-								<label><p>Disable Exept Url Mask</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Disable Exept Url Mask</span>
 								<input type="text" name="proOptions[subscribeBar][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][subscribeBar][disableExeptPageMask][0]);?>">
 								</label>
 								<label>
@@ -3682,6 +3732,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<h3>Design</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="subscribeBar_pro_1" onchange="subscribeBarPreview();" name="proOptions[subscribeBar][font]">
+									<option value="" <?php if($this->_options[proOptions][subscribeBar][font] == '') echo 'selected';?>>Text - Default</option>
 									<option value="pq_pro_arial" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
 									<option value="pq_pro_georgia" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_georgia') echo 'selected';?>>Text - Georgia</option>
 									<option value="pq_pro_helvetica" <?php if($this->_options[proOptions][subscribeBar][font] == 'pq_pro_helvetica') echo 'selected';?>>Text - Helvetica</option>
@@ -3704,18 +3755,19 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								<label>
 									<select id="subscribeBar_pro_3" onchange="subscribeBarPreview();" name="proOptions[subscribeBar][b_c_color]">
-										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Cross color - White</option>
-										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Cross color - Iceblue</option>
-										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Cross color - Beige</option>
-										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Cross color - Lilac</option>
-										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Cross color - Wormwood</option>
-										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Cross color - Yellow</option>
-										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Cross color - Grey</option>
-										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Cross color - Red</option>
-										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Cross color - Skyblue</option>
-										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Cross color - Blue</option>
-										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Cross color - Green</option>
-										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
+										<option value="" <?php if($this->_options[proOptions][subscribeBar][border_color] == '') echo 'selected';?>>Close icon color - Default</option>
+										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Close icon color - White</option>
+										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Close icon color - Iceblue</option>
+										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Close icon color - Beige</option>
+										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Close icon color - Lilac</option>
+										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Close icon color - Wormwood</option>
+										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Close icon color - Yellow</option>
+										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Close icon color - Grey</option>
+										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Close icon color - Red</option>
+										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Close icon color - Skyblue</option>
+										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Close icon color - Blue</option>
+										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Close icon color - Green</option>
+										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][subscribeBar][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Close icon color - Black</option>
 									</select>
 								</label>
 								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
@@ -3772,13 +3824,13 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								<h2 class="pro_h1">PRO options</h2>
 								<h3>DISPLAY RULES</h3><a class="tooltip_pro">?</a>
-								<label><p>Disable Main Page</p>
+								<label>
 									<select name="proOptions[subscribeExit][disableMainPage]">
-										<option value="1" <?php if((int)$this->_options[proOptions][subscribeExit][disableMainPage] == 1) echo 'selected';?>>Yes</option>
-										<option value="0" <?php if((int)$this->_options[proOptions][subscribeExit][disableMainPage] == 0) echo 'selected';?>>No</option>
+										<option value="1" <?php if((int)$this->_options[proOptions][subscribeExit][disableMainPage] == 1) echo 'selected';?>>Enable Site Main Page</option>
+										<option value="0" <?php if((int)$this->_options[proOptions][subscribeExit][disableMainPage] == 0) echo 'selected';?>>Disable Site Main Page</option>
 									</select>
 								</label>
-								<label><p>Disable Exept Url Mask</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Disable Exept Url Mask</span>
 								<input type="text" name="proOptions[subscribeExit][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][subscribeExit][disableExeptPageMask][0]);?>">
 								</label>
 								<label>
@@ -3796,7 +3848,7 @@ function changePopupImg(img, custom_photo_block_id){
 								<h3>Design</h3><a class="tooltip_pro">?</a>
 								<label>
 								<select id="subscribeExit_pro_1" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][head_font]">
-									<option value="" <?php if($this->_options[proOptions][subscribeExit][head_font] == '') echo 'selected';?>>Heading and Button - PT Sans Narrow</option>
+									<option value="" <?php if($this->_options[proOptions][subscribeExit][head_font] == '') echo 'selected';?>>Heading and Button - Default</option>
 									<option value="pq_pro_h_georgia" <?php if($this->_options[proOptions][subscribeExit][head_font] == 'pq_pro_h_georgia') echo 'selected';?>>Heading and Button - Georgia</option>
 									<option value="pq_pro_h_helvetica" <?php if($this->_options[proOptions][subscribeExit][head_font] == 'pq_pro_h_helvetica') echo 'selected';?>>Heading and Button - Helvetica</option>
 									<option value="pq_pro_h_courier" <?php if($this->_options[proOptions][subscribeExit][head_font] == 'pq_pro_h_courier') echo 'selected';?>>Heading and Button - Courier New</option>
@@ -3821,6 +3873,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="subscribeExit_pro_3" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][head_color]">
+										<option value="" <?php if($this->_options[proOptions][subscribeExit][head_color] == '') echo 'selected';?>>Heading color - Default</option>
 										<option value="pq_pro_head_color_white" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_white') echo 'selected';?>>Heading color - White</option>
 										<option value="pq_pro_head_color_iceblue" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_iceblue') echo 'selected';?>>Heading color - Iceblue</option>
 										<option value="pq_pro_head_color_beige" <?php if($this->_options[proOptions][subscribeExit][head_color] == 'pq_pro_head_color_beige') echo 'selected';?>>Heading color - Beige</option>
@@ -3837,6 +3890,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 								<select id="subscribeExit_pro_4" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][font]">
+									<option value="" <?php if($this->_options[proOptions][subscribeExit][font] == '') echo 'selected';?>>Text - Default</option>
 									<option value="pq_pro_arial" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
 									<option value="pq_pro_georgia" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_georgia') echo 'selected';?>>Text - Georgia</option>
 									<option value="pq_pro_helvetica" <?php if($this->_options[proOptions][subscribeExit][font] == 'pq_pro_helvetica') echo 'selected';?>>Text - Helvetica</option>
@@ -3862,6 +3916,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="subscribeExit_pro_6" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][text_color]">
+										<option value="" <?php if($this->_options[proOptions][subscribeExit][text_color] == '') echo 'selected';?>>Text color - Default</option>
 										<option value="pq_pro_text_color_white" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_white') echo 'selected';?>>Text color - White</option>
 										<option value="pq_pro_text_color_iceblue" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_iceblue') echo 'selected';?>>Text color - Iceblue</option>
 										<option value="pq_pro_text_color_beige" <?php if($this->_options[proOptions][subscribeExit][text_color] == 'pq_pro_text_color_beige') echo 'selected';?>>Text color - Beige</option>
@@ -3948,21 +4003,22 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="subscribeExit_pro_13" onchange="subscribeExitPreview();" name="proOptions[subscribeExit][b_c_color]">
-										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Cross color - White</option>
-										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Cross color - Iceblue</option>
-										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Cross color - Beige</option>
-										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Cross color - Lilac</option>
-										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Cross color - Wormwood</option>
-										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Cross color - Yellow</option>
-										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Cross color - Grey</option>
-										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Cross color - Red</option>
-										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Cross color - Skyblue</option>
-										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Cross color - Blue</option>
-										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Cross color - Green</option>
-										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
+										<option value="" <?php if($this->_options[proOptions][subscribeExit][border_color] == '') echo 'selected';?>>Close icon color - Default</option>
+										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Close icon color - White</option>
+										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Close icon color - Iceblue</option>
+										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Close icon color - Beige</option>
+										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Close icon color - Lilac</option>
+										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Close icon color - Wormwood</option>
+										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Close icon color - Yellow</option>
+										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Close icon color - Grey</option>
+										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Close icon color - Red</option>
+										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Close icon color - Skyblue</option>
+										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Close icon color - Blue</option>
+										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Close icon color - Green</option>
+										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][subscribeExit][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Close icon color - Black</option>
 									</select>
 								</label>
-								<label><p>Background-image URL</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Background image URL</span>
 								<input type="text" id="subscribeExit_pro_background_image" onKeyUp="subscribeExitPreview();" name="proOptions[subscribeExit][background_image]" value="<?php echo stripslashes($this->_options[proOptions][subscribeExit][background_image]);?>">
 								</label>
 								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
@@ -4017,13 +4073,13 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								<h2 class="pro_h1">PRO options</h2>
 								<h3>DISPLAY RULES</h3><a class="tooltip_pro">?</a>
-								<label><p>Disable Main Page</p>
+								<label>
 									<select name="proOptions[contactUs][disableMainPage]">
-										<option value="1" <?php if((int)$this->_options[proOptions][contactUs][disableMainPage] == 1) echo 'selected';?>>Yes</option>
-										<option value="0" <?php if((int)$this->_options[proOptions][contactUs][disableMainPage] == 0) echo 'selected';?>>No</option>
+										<option value="1" <?php if((int)$this->_options[proOptions][contactUs][disableMainPage] == 1) echo 'selected';?>>Enable Site Main Page</option>
+										<option value="0" <?php if((int)$this->_options[proOptions][contactUs][disableMainPage] == 0) echo 'selected';?>>Disable Site Main Page</option>
 									</select>
 								</label>
-								<label><p>Disable Exept Url Mask</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Disable Exept Url Mask</span>
 								<input type="text" name="proOptions[contactUs][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][contactUs][disableExeptPageMask][0]);?>">
 								</label>
 								<label>
@@ -4066,6 +4122,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="contactUs_pro_3" onchange="contactUsPreview();" name="proOptions[contactUs][head_color]">
+										<option value="" <?php if($this->_options[proOptions][contactUs][head_color] == '') echo 'selected';?>>Heading color - Default</option>
 										<option value="pq_pro_head_color_white" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_white') echo 'selected';?>>Heading color - White</option>
 										<option value="pq_pro_head_color_iceblue" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_iceblue') echo 'selected';?>>Heading color - Iceblue</option>
 										<option value="pq_pro_head_color_beige" <?php if($this->_options[proOptions][contactUs][head_color] == 'pq_pro_head_color_beige') echo 'selected';?>>Heading color - Beige</option>
@@ -4082,6 +4139,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 								<select id="contactUs_pro_4" onchange="contactUsPreview();" name="proOptions[contactUs][font]">
+									<option value="" <?php if($this->_options[proOptions][contactUs][font] == '') echo 'selected';?>>Text - Default</option>
 									<option value="pq_pro_arial" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
 									<option value="pq_pro_georgia" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_georgia') echo 'selected';?>>Text - Georgia</option>
 									<option value="pq_pro_helvetica" <?php if($this->_options[proOptions][contactUs][font] == 'pq_pro_helvetica') echo 'selected';?>>Text - Helvetica</option>
@@ -4107,6 +4165,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="contactUs_pro_6" onchange="contactUsPreview();" name="proOptions[contactUs][text_color]">
+										<option value="" <?php if($this->_options[proOptions][contactUs][text_color] == '') echo 'selected';?>>Text color - Default</option>
 										<option value="pq_pro_text_color_white" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_white') echo 'selected';?>>Text color - White</option>
 										<option value="pq_pro_text_color_iceblue" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_iceblue') echo 'selected';?>>Text color - Iceblue</option>
 										<option value="pq_pro_text_color_beige" <?php if($this->_options[proOptions][contactUs][text_color] == 'pq_pro_text_color_beige') echo 'selected';?>>Text color - Beige</option>
@@ -4193,21 +4252,22 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="contactUs_pro_13" onchange="contactUsPreview();" name="proOptions[contactUs][b_c_color]">
-										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Cross color - White</option>
-										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Cross color - Iceblue</option>
-										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Cross color - Beige</option>
-										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Cross color - Lilac</option>
-										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Cross color - Wormwood</option>
-										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Cross color - Yellow</option>
-										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Cross color - Grey</option>
-										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Cross color - Red</option>
-										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Cross color - Skyblue</option>
-										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Cross color - Blue</option>
-										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Cross color - Green</option>
-										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
+										<option value="" <?php if($this->_options[proOptions][contactUs][border_color] == '') echo 'selected';?>>Close icon color - Default</option>
+										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Close icon color - White</option>
+										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Close icon color - Iceblue</option>
+										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Close icon color - Beige</option>
+										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Close icon color - Lilac</option>
+										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Close icon color - Wormwood</option>
+										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Close icon color - Yellow</option>
+										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Close icon color - Grey</option>
+										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Close icon color - Red</option>
+										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Close icon color - Skyblue</option>
+										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Close icon color - Blue</option>
+										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Close icon color - Green</option>
+										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][contactUs][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Close icon color - Black</option>
 									</select>								
 								</label>
-								<label><p>Background-image URL</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Background image URL</span>
 								<input type="text" id="contactUs_pro_background_image" onkeyup="contactUsPreview();" name="proOptions[contactUs][background_image]" value="<?php echo stripslashes($this->_options[proOptions][contactUs][background_image]);?>">
 								</label>
 								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
@@ -4262,13 +4322,13 @@ function changePopupImg(img, custom_photo_block_id){
 								
 								<h2 class="pro_h1">PRO options</h2>
 								<h3>DISPLAY RULES</h3><a class="tooltip_pro">?</a>
-								<label><p>Disable Main Page</p>
+								<label>
 									<select name="proOptions[callMe][disableMainPage]">
-										<option value="1" <?php if((int)$this->_options[proOptions][callMe][disableMainPage] == 1) echo 'selected';?>>Yes</option>
-										<option value="0" <?php if((int)$this->_options[proOptions][callMe][disableMainPage] == 0) echo 'selected';?>>No</option>
+										<option value="1" <?php if((int)$this->_options[proOptions][callMe][disableMainPage] == 1) echo 'selected';?>>Enable Site Main Page</option>
+										<option value="0" <?php if((int)$this->_options[proOptions][callMe][disableMainPage] == 0) echo 'selected';?>>Disable Site Main Page</option>
 									</select>
 								</label>
-								<label><p>Disable Exept Url Mask</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Disable Exept Url Mask</span>
 								<input type="text" name="proOptions[callMe][disableExeptPageMask][0]" value="<?php echo stripslashes($this->_options[proOptions][callMe][disableExeptPageMask][0]);?>">
 								</label>
 								<label>
@@ -4312,6 +4372,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="callMe_pro_3" onchange="callMePreview();" name="proOptions[callMe][head_color]">
+										<option value="" <?php if($this->_options[proOptions][callMe][head_color] == '') echo 'selected';?>>Heading color - Default</option>
 										<option value="pq_pro_head_color_white" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_white') echo 'selected';?>>Heading color - White</option>
 										<option value="pq_pro_head_color_iceblue" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_iceblue') echo 'selected';?>>Heading color - Iceblue</option>
 										<option value="pq_pro_head_color_beige" <?php if($this->_options[proOptions][callMe][head_color] == 'pq_pro_head_color_beige') echo 'selected';?>>Heading color - Beige</option>
@@ -4328,6 +4389,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 								<select id="callMe_pro_4" onchange="callMePreview();" name="proOptions[callMe][font]">
+									<option value="" <?php if($this->_options[proOptions][callMe][font] == '') echo 'selected';?>>Text - Default</option>
 									<option value="pq_pro_arial" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
 									<option value="pq_pro_georgia" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_georgia') echo 'selected';?>>Text - Georgia</option>
 									<option value="pq_pro_helvetica" <?php if($this->_options[proOptions][callMe][font] == 'pq_pro_helvetica') echo 'selected';?>>Text - Helvetica</option>
@@ -4353,6 +4415,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="callMe_pro_6" onchange="callMePreview();" name="proOptions[callMe][text_color]">
+										<option value="" <?php if($this->_options[proOptions][callMe][text_color] == '') echo 'selected';?>>Text color - Default</option>
 										<option value="pq_pro_text_color_white" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_white') echo 'selected';?>>Text color - White</option>
 										<option value="pq_pro_text_color_iceblue" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_iceblue') echo 'selected';?>>Text color - Iceblue</option>
 										<option value="pq_pro_text_color_beige" <?php if($this->_options[proOptions][callMe][text_color] == 'pq_pro_text_color_beige') echo 'selected';?>>Text color - Beige</option>
@@ -4439,21 +4502,22 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="callMe_pro_13" onchange="callMePreview();" name="proOptions[callMe][b_c_color]">
-										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Cross color - White</option>
-										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Cross color - Iceblue</option>
-										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Cross color - Beige</option>
-										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Cross color - Lilac</option>
-										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Cross color - Wormwood</option>
-										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Cross color - Yellow</option>
-										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Cross color - Grey</option>
-										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Cross color - Red</option>
-										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Cross color - Skyblue</option>
-										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Cross color - Blue</option>
-										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Cross color - Green</option>
-										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
+										<option value="" <?php if($this->_options[proOptions][callMe][border_color] == '') echo 'selected';?>>Close icon color - Default</option>
+										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Close icon color - White</option>
+										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Close icon color - Iceblue</option>
+										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Close icon color - Beige</option>
+										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Close icon color - Lilac</option>
+										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Close icon color - Wormwood</option>
+										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Close icon color - Yellow</option>
+										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Close icon color - Grey</option>
+										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Close icon color - Red</option>
+										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Close icon color - Skyblue</option>
+										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Close icon color - Blue</option>
+										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Close icon color - Green</option>
+										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][callMe][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Close icon color - Black</option>
 									</select>
 								</label>
-								<label><p>Background-image URL</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Background image URL</span>
 								<input type="text" id="callMe_pro_background_image" onkeyUp="callMePreview();" name="proOptions[callMe][background_image]" value="<?php echo stripslashes($this->_options[proOptions][callMe][background_image]);?>">
 								</label>
 								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
@@ -4534,6 +4598,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="thankPopup_pro_3" onchange="thankPopupPreview();" name="proOptions[thankPopup][head_color]">
+										<option value="" <?php if($this->_options[proOptions][thankPopup][head_color] == '') echo 'selected';?>>Heading color - Default</option>
 										<option value="pq_pro_head_color_white" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_white') echo 'selected';?>>Heading color - White</option>
 										<option value="pq_pro_head_color_iceblue" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_iceblue') echo 'selected';?>>Heading color - Iceblue</option>
 										<option value="pq_pro_head_color_beige" <?php if($this->_options[proOptions][thankPopup][head_color] == 'pq_pro_head_color_beige') echo 'selected';?>>Heading color - Beige</option>
@@ -4550,6 +4615,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 								<select id="thankPopup_pro_4" onchange="thankPopupPreview();" name="proOptions[thankPopup][font]">
+									<option value="" <?php if($this->_options[proOptions][thankPopup][font] == '') echo 'selected';?>>Text - Default</option>
 									<option value="pq_pro_arial" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
 									<option value="pq_pro_georgia" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_georgia') echo 'selected';?>>Text - Georgia</option>
 									<option value="pq_pro_helvetica" <?php if($this->_options[proOptions][thankPopup][font] == 'pq_pro_helvetica') echo 'selected';?>>Text - Helvetica</option>
@@ -4575,6 +4641,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="thankPopup_pro_6" onchange="thankPopupPreview();" name="proOptions[thankPopup][text_color]">
+										<option value="" <?php if($this->_options[proOptions][thankPopup][text_color] == '') echo 'selected';?>>Text color - Default</option>
 										<option value="pq_pro_text_color_white" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_white') echo 'selected';?>>Text color - White</option>
 										<option value="pq_pro_text_color_iceblue" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_iceblue') echo 'selected';?>>Text color - Iceblue</option>
 										<option value="pq_pro_text_color_beige" <?php if($this->_options[proOptions][thankPopup][text_color] == 'pq_pro_text_color_beige') echo 'selected';?>>Text color - Beige</option>
@@ -4661,21 +4728,22 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="thankPopup_pro_13" onchange="thankPopupPreview();" name="proOptions[thankPopup][b_c_color]">
-										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Cross color - White</option>
-										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Cross color - Iceblue</option>
-										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Cross color - Beige</option>
-										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Cross color - Lilac</option>
-										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Cross color - Wormwood</option>
-										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Cross color - Yellow</option>
-										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Cross color - Grey</option>
-										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Cross color - Red</option>
-										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Cross color - Skyblue</option>
-										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Cross color - Blue</option>
-										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Cross color - Green</option>
-										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
+										<option value="" <?php if($this->_options[proOptions][thankPopup][border_color] == '') echo 'selected';?>>Close icon color - Default</option>
+										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Close icon color - White</option>
+										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Close icon color - Iceblue</option>
+										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Close icon color - Beige</option>
+										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Close icon color - Lilac</option>
+										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Close icon color - Wormwood</option>
+										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Close icon color - Yellow</option>
+										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Close icon color - Grey</option>
+										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Close icon color - Red</option>
+										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Close icon color - Skyblue</option>
+										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Close icon color - Blue</option>
+										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Close icon color - Green</option>
+										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][thankPopup][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Close icon color - Black</option>
 									</select>
 								</label>
-								<label><p>Background-image URL</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Background image URL</span>
 								<input type="text" id="thankPopup_pro_background_image" onchange="thankPopupPreview();" name="proOptions[thankPopup][background_image]" value="<?php echo stripslashes($this->_options[proOptions][thankPopup][background_image]);?>">
 								</label>
 								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
@@ -4756,6 +4824,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="follow_pro_3" onchange="followPreview();" name="proOptions[follow][head_color]">
+										<option value="" <?php if($this->_options[proOptions][follow][head_color] == '') echo 'selected';?>>Heading color - Default</option>
 										<option value="pq_pro_head_color_white" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_white') echo 'selected';?>>Heading color - White</option>
 										<option value="pq_pro_head_color_iceblue" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_iceblue') echo 'selected';?>>Heading color - Iceblue</option>
 										<option value="pq_pro_head_color_beige" <?php if($this->_options[proOptions][follow][head_color] == 'pq_pro_head_color_beige') echo 'selected';?>>Heading color - Beige</option>
@@ -4772,6 +4841,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 								<select id="follow_pro_4" onchange="followPreview();" name="proOptions[follow][font]">
+									<option value="" <?php if($this->_options[proOptions][follow][font] == '') echo 'selected';?>>Text - Default</option>
 									<option value="pq_pro_arial" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_arial') echo 'selected';?>>Text - Arial</option>
 									<option value="pq_pro_georgia" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_georgia') echo 'selected';?>>Text - Georgia</option>
 									<option value="pq_pro_helvetica" <?php if($this->_options[proOptions][follow][font] == 'pq_pro_helvetica') echo 'selected';?>>Text - Helvetica</option>
@@ -4797,6 +4867,7 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="follow_pro_6" onchange="followPreview();" name="proOptions[follow][text_color]">
+										<option value="" <?php if($this->_options[proOptions][follow][text_color] == '') echo 'selected';?>>Text color - Default</option>
 										<option value="pq_pro_text_color_white" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_white') echo 'selected';?>>Text color - White</option>
 										<option value="pq_pro_text_color_iceblue" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_iceblue') echo 'selected';?>>Text color - Iceblue</option>
 										<option value="pq_pro_text_color_beige" <?php if($this->_options[proOptions][follow][text_color] == 'pq_pro_text_color_beige') echo 'selected';?>>Text color - Beige</option>
@@ -4883,21 +4954,22 @@ function changePopupImg(img, custom_photo_block_id){
 								</label>
 								<label>
 									<select id="follow_pro_13" onchange="followPreview();" name="proOptions[follow][b_c_color]">
-										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Cross color - White</option>
-										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Cross color - Iceblue</option>
-										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Cross color - Beige</option>
-										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Cross color - Lilac</option>
-										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Cross color - Wormwood</option>
-										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Cross color - Yellow</option>
-										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Cross color - Grey</option>
-										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Cross color - Red</option>
-										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Cross color - Skyblue</option>
-										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Cross color - Blue</option>
-										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Cross color - Green</option>
-										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Cross color - Black</option>
+										<option value="" <?php if($this->_options[proOptions][follow][border_color] == '') echo 'selected';?>>Close icon color - Default</option>
+										<option value="pq_pro_x_color_white" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_white') echo 'selected';?>>Close icon color - White</option>
+										<option value="pq_pro_x_color_iceblue" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_iceblue') echo 'selected';?>>Close icon color - Iceblue</option>
+										<option value="pq_pro_x_color_beige" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_beige') echo 'selected';?>>Close icon color - Beige</option>
+										<option value="pq_pro_x_color_lilac" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_lilac') echo 'selected';?>>Close icon color - Lilac</option>
+										<option name="pq_pro_x_color_wormwood" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_wormwood') echo 'selected';?>>Close icon color - Wormwood</option>
+										<option name="pq_pro_x_color_yellow" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_yellow') echo 'selected';?>>Close icon color - Yellow</option>
+										<option name="pq_pro_x_color_grey" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_grey') echo 'selected';?>>Close icon color - Grey</option>
+										<option value="pq_pro_x_color_red" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_red') echo 'selected';?>>Close icon color - Red</option>
+										<option value="pq_pro_x_color_skyblue" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_skyblue') echo 'selected';?>>Close icon color - Skyblue</option>
+										<option value="pq_pro_x_color_blue" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_blue') echo 'selected';?>>Close icon color - Blue</option>
+										<option value="pq_pro_x_color_green" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_green') echo 'selected';?>>Close icon color - Green</option>
+										<option name="pq_pro_x_color_black" <?php if($this->_options[proOptions][follow][border_color] == 'pq_pro_x_color_black') echo 'selected';?>>Close icon color - Black</option>
 									</select>
 								</label>
-								<label><p>Background-image URL</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Background image URL</span>
 								<input type="text" id="follow_pro_background_image" onkeyup="followPreview();" name="proOptions[follow][background_image]" value="<?php echo stripslashes($this->_options[proOptions][follow][background_image]);?>">
 								</label>
 								<h3>ANIMATION</h3><a class="tooltip_pro">?</a>
@@ -4937,7 +5009,7 @@ function changePopupImg(img, custom_photo_block_id){
 									<option value="pq_pro_a_slideInUp" <?php if($this->_options[proOptions][follow][animation] == 'pq_pro_a_slideInUp') echo 'selected';?>>Slideinup</option>
 								</select>
 								</label>
-								<label><p>Hover</p>
+								<label><span class="pq_for" style="margin: 15px 0 5px;">Hover</span>
 								<select name="proOptions[follow][hover_animation]" id="follow_pro_hover_animation" onchange="followPreview();">
 									<option value="" <?php if($this->_options[proOptions][follow][hover_animation] == '') echo 'selected';?>>Default</option>
 									<option value="pq_pro_ha_hvr_grow" <?php if($this->_options[proOptions][follow][hover_animation] == 'pq_pro_ha_hvr_grow') echo 'selected';?>>Grow</option>
@@ -5017,8 +5089,8 @@ function changePopupImg(img, custom_photo_block_id){
 		</div>
 		<div class="frame">
 			<iframe src="about:blank" id="PQPreviewID" width="100%" height="100%" class="pq_if"></iframe>
-			<h2>Only Design & position demo</h2>
-			<h2 class="pro">PRO Design Option Preview</h2>
+			<h2>Preview</h2>
+			<h2 class="pro">Preview</h2>
 			<p style="text-align: center; padding-top: 50px;">Your screen is too small to use. Min width is 850px.</p>
 		</div>
 		
@@ -5027,11 +5099,11 @@ function changePopupImg(img, custom_photo_block_id){
 			
 			<!--p>Latest news and plans of our team.</p>
 			<p><strong><a href="javascrip:void(0);" onclick="document.getElementById('Get_Pro').style.display='block';">Try Pro for free right now. You can enable free trial with all pro features for 3 Day</a></strong></p-->
-			<p>You can setup sharing sidebar, image sharer hover icons block (if you want more providers, email us <a href="mailto:support@profitquery.com">support@profitquery.com</a>), subscribe bar and subscribe exit intent which you can integrate with Aweber, Mailchimp and Active Campaign (if you need more mail providers just email us <a href="mailto:support@profitquery.com">support@profitquery.com</a>), you can setup Contact Us and Call Me tools which help you to get feedback from customers, emails and phone numbers. You can setup Follow popup and Thank popup and bind them after any action proceed (for example, after sharing, or after subscribing action). Also, you can order our technical specialist for generate for you some new tools. For example Bar with promoting link, or floating popup with a subscribe or exit popup with follow button. <a href="javascript:void(0)" onclick="document.getElementById('Any_tools').style.display='block';">Read more about Custom Tools</a>.</p>
+			<p>You can setup sharing sidebar, image sharer hover icons block, subscribe bar and subscribe exit intent which you can integrate with Aweber, Mailchimp and Active Campaign, you can setup Contact Us and Call Me tools which help you to get feedback from customers, emails and phone numbers. You can setup Follow popup and Thank popup and bind them after any action proceed (for example, after sharing, or after subscribing action). You can order our technical specialist for <a href="javascript:void(0)" onclick="document.getElementById('Any_tools').style.display='block';"> generate for you some new tools</a>. For example Bar with promoting link, or floating popup with a subscribe or exit popup with follow button.</p>
+			<p>If you want more share services or mail providers, just email us <a href="mailto:support@profitquery.com">support@profitquery.com</a></p>
 			<br>
 			<h1>All tools for free</h1>
-			<p>But you can can greatly upgrade each tool if you enable pro options. Each option increases the efficiency of the decision by hundreds of percent.
-			<a class="pq_pro_options_">Read more about pro options.</a></p>
+			<p>But you can greatly upgrade any tool if you enable <a class="pq_pro_options_">Pro Options</a>. Each option increases the efficiency of the decision by hundreds of percent.</p>
 			<br>
 			<img src="<?php echo plugins_url('i/lesson.png', __FILE__);?>" />
 			<br>
@@ -5046,14 +5118,34 @@ function changePopupImg(img, custom_photo_block_id){
 		</div>
 		<div id="Any_tools" class="pq_popup any_tools">
 			<h1>Generate new tool</h1>
-			<p>Great News! If you want some new tools, you can offer our technical specialist which can generate new tool for your website. For example subscribe bar with promo link, or exit popup with follow button or something else. Cost of service 5$ (single payment). Email us <a href="mailto:support@profitquery.com">support@profitquery.com</a> (with subject: Order custom popup)</p>
+			<p>Great News! If you want some new tools, you can offer our technical specialist which can generate new tool for your website. For example, subscribe bar with promo link, or exit popup with follow button or something else. Cost of service 5$ (single payment). Email us <a href="mailto:support@profitquery.com">support@profitquery.com</a> with subject 'Order custom popup'</p>
+			<input type="button" value="Close" class="marketing_submit" onclick="document.getElementById('Any_tools').style.display='none';">
 			<a class="pq_close" onclick="document.getElementById('Any_tools').style.display='none';"></a>
 		</div>	
-		<div id="affiliate_program" class="pq_popup" style="z-index:600;">
+		<div id="affiliate_program" class="pq_popup any_tools" style="z-index:600;">
 			<h1>Affiliate program</h1>
 			<p>This is a wonderful opportunity use <strong>PRO options for free</strong>! You need to invite new customers, which order PRO options. And you can use pro options for free. For more detail email us <a href="mailto:support@profitquery.com">support@profitquery.com</a> (subject:Affiliate program) For webmaster/web studios we have a <strong>special offer</strong>(subject:Affiliate program for webmaster). <strong>Do not miss, this offer is limited.</strong></p>
+			<input type="button" value="Close" class="marketing_submit" onclick="document.getElementById('affiliate_program').style.display='none';">
 			<a class="pq_close" onclick="document.getElementById('affiliate_program').style.display='none';"></a>
-		</div>	
+		</div>
+		<div class="pq_popup protection follow_desabled">
+		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+		<input type="hidden" name="action" value="disableFollow">
+			<h1>Disable Follow Popup?</h1>
+			<input type="submit" value="disable" id="pq">
+			<input type="button" value="no" class="follow_submit">
+		</form>	
+		</div>
+		
+		<div class="pq_popup protection thankyou_desabled">
+		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
+		<input type="hidden" name="action" value="disableThank">
+			<h1>Disable Thank Popup?</h1>
+			<input type="submit" value="disable" id="pq">
+			<input type="button" value="no" class="thankyou_submit">
+		</form>	
+		</div>
+		
 		<div class="pq_popup protection share_desabled">
 		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
 		<input type="hidden" name="action" value="disableSharingSidebar">
@@ -5070,9 +5162,8 @@ function changePopupImg(img, custom_photo_block_id){
 			<input type="button" value="no" class="imagesharer_submit">
 		</form>
 		</div>
-		<div class="pq_popup" id="PQActivatePlugin" style="display:none">		
-			<h1>Thanks for activate Profitquery AIO Plugin.</h1>
-			<input type="button" value="Close" class="marketing_submit" onclick="document.getElementById('PQActivatePlugin').style.display='none';">
+		<div id="PQActivatePlugin" style="display: none; margin: 0px 15px 0px 5px; text-align: center; z-index: 500000; position: fixed; right: 0px;  width: 20%; bottom: 12px; background-color: rgb(72, 232, 143);">		
+			<p style="color: white; font-size: 16px; font-family: arial; padding: 0px; margin: 0px;">Thanks for activate Profitquery AIO Plugin <a href="javascript:void(0)" onclick="document.getElementById('PQActivatePlugin').style.display='none';">[X]</a></p>
 		</div>		
 		<div class="pq_popup protection marketing_desabled">
 		<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
@@ -5105,7 +5196,8 @@ function changePopupImg(img, custom_photo_block_id){
 			<input type="submit" value="disable">
 			<input type="button" value="no" class="callme_submit">
 		</form>
-		</div>		
+		</div>
+	
 	</div>
 	<div class="pq_clear"></div>
 	<a class="question" href="javascript:void(0)" onclick="document.getElementById('Question').style.display='block';">
@@ -5166,16 +5258,22 @@ function changePopupImg(img, custom_photo_block_id){
 			<div class="question2">
 				<img src="<?php echo plugins_url('i/1.gif', __FILE__);?>"/>
 				<h1>Pro Design Option</h1>
-				<p>Create with Profitquery, you could create amazing tools, for all themes and all tasks. Your customers will appreciate your unique style. One pays for all Profitquery tools (popup, bar, thank pop up, follow, subscribe exit intent, custom tools from Profitquery etc.). This option can increase all action to 200%. </p>
+				<p>Create with Profitquery, you could create amazing tools, for all themes and all tasks. Your customers will appreciate your unique style. One pays for all Profitquery tools (popup, bar, thank pop up, follow, subscribe exit intent, custom tools from Profitquery etc.). This option can increase all action to 200%. 
+					<br><a href="http://profitquery.com/aio_wp_demo_c_pro_design.html" target="_pro_design_demo">Online Demo</a>
+				</p>
 				<img src="<?php echo plugins_url('i/2.gif', __FILE__);?>"/>
 				<h1>Pro Animation</h1>
-				<p>All visitors love beautiful visual effects, this option allows you to animate any popup or object on your website. Many animation options can satisfy even the most refined taste. You can increase conversion, loyalty to 230% right now. </p>
+				<p>All visitors love beautiful visual effects, this option allows you to animate any popup or object on your website. Many animation options can satisfy even the most refined taste. You can increase conversion, loyalty to 230% right now. 
+					<br><a href="http://profitquery.com/aio_wp_demo_c_animation.html" target="_pro_animation_demo">Online Demo</a>
+				</p>
 				<img src="<?php echo plugins_url('i/3.gif', __FILE__);?>"/>
 				<h1>Pro Hover Animation</h1>
-				<p>Hover animation can increase share action, follow action on your website. You can use all hover animation for all objects on your website. </p>
+				<p>Hover animation can increase share action, follow action on your website. You can use all hover animation for all objects on your website. 
+					<br><a href="http://profitquery.com/aio_wp_demo_hover.html" target="_pro_hover_animation_demo">Online Demo</a>
+				</p>
 				<img src="<?php echo plugins_url('i/50.png', __FILE__);?>"/>
 				<h1>Send Mail</h1>
-				<p>When you enable sending letters through Profiquery mail service from the first minute you start to collect customer contacts, feedbacks. From that moment your customers can send images, link from your website to friends without any setup. You can increase to 200% from customers' inbox, shares and loyalty. </p><a name="top"></a>
+				<p>When you enable sending letters through Profiquery mail service from the first minute you start to collect customer contacts, feedbacks. From that moment your customers can send images, link from your website to friends without any setup. You can increase to 200% from customers' inbox, shares and loyalty. </p><!--a name="top"></a-->
 				<img src="<?php echo plugins_url('i/51.png', __FILE__);?>"/>
 				<h1>Whitelabel</h1>
 				<p>You can use all amazing Profitquery tools without a copyright link, these features need to be enable for branded web sites. </p>
@@ -5196,8 +5294,8 @@ function changePopupImg(img, custom_photo_block_id){
 				<p>There is add-on for Image Sharer which can work on with image expressions which you can set up. For ex. only with JPG image. </p>
 			</div>
 			<div class="question3">
-				<p>You need help, or you want some special PRO option, or you want offer Custom Tool? No problem, email us <a href='mailto:support@profitquery.com'>support@profitquery.com</a> with subject(New PRO option, or Order custom popup)<br><br>
-					You want use pro option <strong>for free</strong>? We have affiliate program, <a href="javascript:void(0);" onclick="document.getElementById('affiliate_program').style.display='block';">read more</a>.
+				<p>Do you need help, or want some special Pro Option, or want offer Custom Tool? No problem, email us <a href='mailto:support@profitquery.com'>support@profitquery.com</a> with subject 'New Pro Options', or 'Order custom popup'<br><br>
+					Do you want use Pro Options for Free? We have a <a href="javascript:void(0);" onclick="document.getElementById('affiliate_program').style.display='block';">affiliate program</a>.
 				</p>
 			</div>
 			<!--div class="question_footer">
@@ -5208,6 +5306,76 @@ function changePopupImg(img, custom_photo_block_id){
 			</div-->
 			<a class="pq_close" onclick="document.getElementById('Question').style.display='none';"></a> 
 	</div>
+	<div id="Any_popup" class="pq_popup hello">
+			<h1>Any Popup For Any Task</h1>
+			<div class="pq_any_small" id="any_popup1">
+				<img src="<?php echo plugins_url('i/popups/01.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_small" id="any_popup2">
+				<img src="<?php echo plugins_url('i/popups/02.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_small" id="any_popup3">
+				<img src="<?php echo plugins_url('i/popups/03.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_small" id="any_popup4">
+				<img src="<?php echo plugins_url('i/popups/04.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_small" id="any_popup5">
+				<img src="<?php echo plugins_url('i/popups/05.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_small" id="any_popup6">
+				<img src="<?php echo plugins_url('i/popups/06.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_cont"></div>
+			<div class="pq_clear"></div>
+			<p>There are some of our client popup which solves different tasks. Make an order and our specialist will prepare tool for you with any design and actions you want.</p>
+			<a href="mailto:support@profitquery.com?subject=[PQ PRO] Popup Order"><input type="button" value="order support@profitquery.com" class="marketing_submit"></a>
+			<a class="pq_close" onclick="document.getElementById('Any_popup').style.display='none';"></a>
+		</div>
+		<div id="Any_floating" class="pq_popup hello">
+			<h1>Any Floating For Any Task</h1>
+			<div class="pq_any_small" id="any_floating1">
+				<img src="<?php echo plugins_url('i/floatings/01.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_small" id="any_floating2">
+				<img src="<?php echo plugins_url('i/floatings/02.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_small" id="any_floating3">
+				<img src="<?php echo plugins_url('i/floatings/03.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_small" id="any_floating4">
+				<img src="<?php echo plugins_url('i/floatings/04.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_small" id="any_floating5">
+				<img src="<?php echo plugins_url('i/floatings/05.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_small" id="any_floating6">
+				<img src="<?php echo plugins_url('i/floatings/06.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_cont"></div>
+			<div class="pq_clear"></div>
+			<p>There are some of our client floating popovers which solves different tasks. Make an order and our specialist will prepare tool for you with any design and actions you want.</p>
+			<a href="mailto:support@profitquery.com?subject=[PQ PRO] Floating Order"><input type="button" value="order support@profitquery.com" class="marketing_submit"></a>
+			<a class="pq_close" onclick="document.getElementById('Any_floating').style.display='none';"></a>
+		</div>
+		<div id="Any_bar" class="pq_popup hello">
+			<h1>Any Bar For Any Task</h1>
+			<div class="pq_any_small" id="any_bar1">
+				<img src="<?php echo plugins_url('i/bars/01.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_small" id="any_bar2">
+				<img src="<?php echo plugins_url('i/bars/02.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_small" id="any_bar3">
+				<img src="<?php echo plugins_url('i/bars/03.png', __FILE__);?>"/>
+			</div>
+			<div class="pq_any_cont"></div>
+			<div class="pq_clear"></div>
+			<p>There are some of our client marketing bar which solves different tasks. Make an order and our specialist will prepare tool for you with any design and actions you want.</p>
+			<a href="mailto:support@profitquery.com?subject=[PQ PRO] Bar Order"><input type="button" value="order support@profitquery.com" class="marketing_submit"></a>
+			<a class="pq_close" onclick="document.getElementById('Any_bar').style.display='none';"></a>
+		</div>
+		
 	
 	<!--div id="Question" class="pq_popup question" style="display:none">
 						<label class="about">
@@ -5248,7 +5416,7 @@ function changePopupImg(img, custom_photo_block_id){
 	<form action="<?php echo $this->getSettingsPageUrl();?>" method="post">
 	<input type="hidden" name="action" value="editLang">
 		
-			<h1>Default language for tools frontend side</h1>
+			<h1>Default language for tools</h1>
 		
 		<label>
 			<p>English</p><input type="radio" name="additionalOptions[lang]" value="en" <?php if($this->_options[additionalOptions][lang] == 'en') echo "checked";?>>
@@ -5359,7 +5527,7 @@ function changePopupImg(img, custom_photo_block_id){
 	<input type="hidden" name="action" value="savePro">
 		<p>You can test All Pro options for Free whole 3 Day. Without any payments. </p><br>
 		<p style="text-align:left;">1) Go to the <a href="http://api.profitquery.com/getTrial/aio/" target="_blank">trial page</a> to enable Pro Options. Set-up form fields (note:You can test all pro options on any website exept localhost and website without domain name (for ex 192.168....))<br>
-		2) We send to you email with apiKey and you pro loader filename. <a href="javascript:void(0)" onclick="document.getElementById('PQActivateProStep2').className='pq_pro2 selected'; document.getElementById('PQActivateProStep1').className='pq_pro1'; document.getElementById('PQRadioProActivate').checked=true; ">Set up</a> apiKey and pro loader filename.<br>
+		2) We send to you email with API Key and you Pro Loader filename. <a href="javascript:void(0)" onclick="document.getElementById('PQActivateProStep2').className='pq_pro2 selected'; document.getElementById('PQActivateProStep1').className='pq_pro1'; document.getElementById('PQRadioProActivate').checked=true; ">Set up</a> API Key and Pro Loader filename.<br>
 		3) Go to the frontend side your website, clear browser cache, reload page and you can see all pro options that you set-up for each tools.<br>
 		</p>
 		<br>
@@ -5371,7 +5539,7 @@ function changePopupImg(img, custom_photo_block_id){
 		<input type="submit" value="Save" class="filename_add filename_hidden"-->
 	</div>
 	<div id="PQActivateProStep2" class="pq_pro2">
-		<p>For Using Pro Options insert your <a target="_getApiKey" href="http://api.profitquery.com/cms-sign-in/?domain=<?php echo $this->getDomain();?>&cms=wp&ae=<?php echo get_settings('admin_email');?>&redirect=<?php echo str_replace(".", "%2E", urlencode($this->getSettingsPageUrl()));?>">Api Key</a></p>
+		<p>For Using Pro Options insert your <a target="_getApiKey" href="http://api.profitquery.com/cms-sign-in/?domain=<?php echo $this->getDomain();?>&cms=wp&ae=<?php echo get_settings('admin_email');?>&redirect=<?php echo str_replace(".", "%2E", urlencode($this->getSettingsPageUrl()));?>">API Key</a></p>
 		<input type="text" name="apiKey" value="<?php echo stripslashes($this->_options['apiKey']);?>" class="filename">
 		<input type="submit" value="Save" class="filename_url">
 		<br>
@@ -5484,7 +5652,7 @@ function changePopupImg(img, custom_photo_block_id){
 			<br>
 			<a href="http://api.profitquery.com/getPro/aio/" target="_blank"><input type="button" value="Order Pro Options" class="pq_order"></a>
 			<br><br>
-			You want pro tools, but can not pay for that? No problem, we have an affiliate program, you can get pro tools for free. <a href="javascript:void(0)" onclick="document.getElementById('affiliate_program').style.display='block';">Read more.</a>			
+			You want Pro Options, but can't pay? No problem, we have an <a href="javascript:void(0)" onclick="document.getElementById('affiliate_program').style.display='block';">affiliate program</a>, you can get Pro Options for free.			
 		</p>
 	</div>
 		
@@ -5611,7 +5779,30 @@ function changePopupImg(img, custom_photo_block_id){
 		var galleryBTColor = document.getElementById('sharingSideBar_popup_button_color').value;
 		var galleryBGColor = document.getElementById('sharingSideBar_popup_bg_color').value;
 		
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=sidebarShare&position='+position+'&typeBlock='+designIcons+'&hoverAnimation='+hoverAnimation+'&galleryBTColor='+galleryBTColor+'&galleryBGColor='+galleryBGColor+'&animation='+animation;
+		//providers
+		var porvider = '';
+		var providerArr = [];
+		
+		try{
+			for(var i=0; i<=19; i++){			
+				if(document.getElementById('sharingSideBar_provider['+i+']').value){				
+					providerArr[document.getElementById('sharingSideBar_provider['+i+']').value] = 1;				
+				}
+			}
+			for(var i in providerArr){
+				porvider +=i+':';
+			}
+		}catch(err){}		
+		
+		//text
+		sharingSideBar_text_g_title
+		sharingSideBar_text_g_button_title
+		var text_g_title = '';		
+		var text_g_button = '';		
+		if(document.getElementById('sharingSideBar_text_g_title').value) text_g_title = encodeURIComponent(document.getElementById('sharingSideBar_text_g_title').value);
+		if(document.getElementById('sharingSideBar_text_g_button_title').value) text_g_button = encodeURIComponent(document.getElementById('sharingSideBar_text_g_button_title').value);
+		
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=sidebarShare&position='+position+'&typeBlock='+designIcons+'&hoverAnimation='+hoverAnimation+'&galleryBTColor='+galleryBTColor+'&galleryBGColor='+galleryBGColor+'&animation='+animation+'&text_g_title='+text_g_title+'&text_g_button='+text_g_button+'&provider='+porvider;
 		document.getElementById('PQPreviewID').src = previewUrl;									
 		//document.getElementById('PQPreviewID').width = '100%';
 		
@@ -5619,7 +5810,21 @@ function changePopupImg(img, custom_photo_block_id){
 	function imageSharerPreview(){									
 		var design = document.getElementById('imageSharer_design_size').value+' pq_'+document.getElementById('imageSharer_design_form').value+' '+document.getElementById('imageSharer_design_color').value+' '+document.getElementById('imageSharer_design_shadow').value+' '+document.getElementById('imageSharer_position').value;		
 		var hoverAnimation = document.getElementById('imageSharer_hover_animation').value;
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=imageSharer&design='+design+'&hoverAnimation='+hoverAnimation;									
+		
+		//providers
+		var providerArr = []
+		var porvider = '';
+		if(document.getElementById('imageSharer_provider[FB]').checked) porvider += 'FB:';
+		if(document.getElementById('imageSharer_provider[TW]').checked) porvider += 'TW:';
+		if(document.getElementById('imageSharer_provider[GP]').checked) porvider += 'GP:';
+		if(document.getElementById('imageSharer_provider[PI]').checked) porvider += 'PI:';
+		if(document.getElementById('imageSharer_provider[TR]').checked) porvider += 'TR:';
+		if(document.getElementById('imageSharer_provider[VK]').checked) porvider += 'VK:';
+		if(document.getElementById('imageSharer_provider[OD]').checked) porvider += 'OD:';
+		if(document.getElementById('imageSharer_provider[WU]').checked) porvider += 'WU:';
+		if(document.getElementById('imageSharer_provider[Mail]').checked) porvider += 'Mail:';
+		
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=imageSharer&design='+design+'&hoverAnimation='+hoverAnimation+'&provider='+porvider;
 		document.getElementById('PQPreviewID').src = previewUrl;
 		//document.getElementById('PQPreviewID').width = '100%';
 	}
@@ -5631,7 +5836,23 @@ function changePopupImg(img, custom_photo_block_id){
 		}
 		var background_image = document.getElementById('callMe_pro_background_image').value;	
 		
+		
+		//text block
+		var text_title = '';
+		var text_subtitle = '';
+		var text_phone = '';
+		var text_name = '';
+		var text_button = '';
+		var text_l_title = '';
+		if(document.getElementById('callMe_text_title').value) text_title = encodeURIComponent(document.getElementById('callMe_text_title').value);
+		if(document.getElementById('callMe_text_subtitle').value) text_subtitle = encodeURIComponent(document.getElementById('callMe_text_subtitle').value);
+		if(document.getElementById('callMe_text_name').value) text_name = encodeURIComponent(document.getElementById('callMe_text_name').value);
+		if(document.getElementById('callMe_text_phone').value) text_phone = encodeURIComponent(document.getElementById('callMe_text_phone').value);
+		if(document.getElementById('callMe_text_l_title').value) text_l_title = encodeURIComponent(document.getElementById('callMe_text_l_title').value);		
+		if(document.getElementById('callMe_text_button').value) text_button = encodeURIComponent(document.getElementById('callMe_text_button').value);
+		
 		var design = document.getElementById('callMe_typeWindow').value+' '+document.getElementById('callMe_background').value+' '+document.getElementById('callMe_button_color').value+' '+animation;
+		
 		var img = document.getElementById('callMe_img').value;
 		var imgUrl = document.getElementById('callMeCustomFotoSrc').value;
 		var loaderBackground = document.getElementById('callMe_loader_background').value;
@@ -5654,7 +5875,8 @@ function changePopupImg(img, custom_photo_block_id){
 		if(document.getElementById('callMe_pro_13').value) design += ' '+document.getElementById('callMe_pro_13').value;		
 		
 		
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=callMe&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position+'&background_image='+encodeURIComponent(background_image);
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=callMe&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position+'&background_image='+encodeURIComponent(background_image)+
+		'&text_title='+text_title+'&text_subtitle='+text_subtitle+'&text_phone='+text_phone+'&text_name='+text_name+'&text_button='+text_button+'&text_l_title='+text_l_title;
 											
 		document.getElementById('PQPreviewID').src = previewUrl;
 		//document.getElementById('PQPreviewID').width = '100%';
@@ -5667,6 +5889,22 @@ function changePopupImg(img, custom_photo_block_id){
 			animation = 'pq_animated '+document.getElementById('contactUs_pro_animation').value;
 		}
 		var background_image = document.getElementById('contactUs_pro_background_image').value;		
+		
+		//text block
+		var text_title = '';
+		var text_subtitle = '';
+		var text_email = '';
+		var text_message = '';
+		var text_name = '';
+		var text_button = '';
+		var text_l_title = '';
+		if(document.getElementById('contactUs_text_title').value) text_title = encodeURIComponent(document.getElementById('contactUs_text_title').value);
+		if(document.getElementById('contactUs_text_subtitle').value) text_subtitle = encodeURIComponent(document.getElementById('contactUs_text_subtitle').value);
+		if(document.getElementById('contactUs_text_name').value) text_name = encodeURIComponent(document.getElementById('contactUs_text_name').value);
+		if(document.getElementById('contactUs_text_email').value) text_email = encodeURIComponent(document.getElementById('contactUs_text_email').value);
+		if(document.getElementById('contactUs_text_message').value) text_message = encodeURIComponent(document.getElementById('contactUs_text_message').value);
+		if(document.getElementById('contactUs_text_l_title').value) text_l_title = encodeURIComponent(document.getElementById('contactUs_text_l_title').value);		
+		if(document.getElementById('contactUs_text_button').value) text_button = encodeURIComponent(document.getElementById('contactUs_text_button').value);
 		
 		var design = document.getElementById('contactUs_typeWindow').value+' '+document.getElementById('contactUs_background').value+' '+document.getElementById('contactUs_button_color').value+' '+animation;
 		if(document.getElementById('contactUs_pro_1').value) design += ' '+document.getElementById('contactUs_pro_1').value;		
@@ -5690,7 +5928,8 @@ function changePopupImg(img, custom_photo_block_id){
 		var position = document.getElementById('contactUs_top').value+' '+document.getElementById('contactUs_side').value;
 		var overlay = document.getElementById('contactUs_overlay').value;
 		
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=contactUs&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position+'&background_image='+encodeURIComponent(background_image);
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=contactUs&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position+'&background_image='+encodeURIComponent(background_image)+
+		'&text_title='+text_title+'&text_subtitle='+text_subtitle+'&text_email='+text_email+'&text_name='+text_name+'&text_button='+text_button+'&text_l_title='+text_l_title+'&text_message='+text_message;
 		document.getElementById('PQPreviewID').src = previewUrl;
 		//document.getElementById('PQPreviewID').width = '100%';		
 	}
@@ -5704,6 +5943,20 @@ function changePopupImg(img, custom_photo_block_id){
 			animation = 'pq_animated '+document.getElementById('subscribeExit_pro_animation').value;
 		}
 		var design = document.getElementById('subscribeExit_typeWindow').value+' '+document.getElementById('subscribeExit_background').value+' '+document.getElementById('subscribeExit_button_color').value+' '+animation;
+				
+		//text block
+		var text_title = '';
+		var text_subtitle = '';
+		var text_email = '';
+		var text_name = '';
+		var text_button = '';
+		var provider = '';
+		if(document.getElementById('subscribeExit_text_title').value) text_title = encodeURIComponent(document.getElementById('subscribeExit_text_title').value);
+		if(document.getElementById('subscribeExit_text_subtitle').value) text_subtitle = encodeURIComponent(document.getElementById('subscribeExit_text_subtitle').value);
+		if(document.getElementById('subscribeExit_text_email').value) text_email = encodeURIComponent(document.getElementById('subscribeExit_text_email').value);
+		if(document.getElementById('subscribeExit_text_name').value) text_name = encodeURIComponent(document.getElementById('subscribeExit_text_name').value);
+		if(document.getElementById('subscribeExit_text_button').value) text_button = encodeURIComponent(document.getElementById('subscribeExit_text_button').value);		
+		if(document.getElementById('subscribeProvider').value) provider = encodeURIComponent(document.getElementById('subscribeProvider').value);		
 		
 		if(document.getElementById('subscribeExit_pro_1').value) design += ' '+document.getElementById('subscribeExit_pro_1').value;		
 		if(document.getElementById('subscribeExit_pro_2').value) design += ' '+document.getElementById('subscribeExit_pro_2').value;
@@ -5721,7 +5974,8 @@ function changePopupImg(img, custom_photo_block_id){
 		
 		var background_image = document.getElementById('subscribeExit_pro_background_image').value;		
 		var overlay = document.getElementById('subscribeExit_overlay').value;									
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=subscribeExit&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&background_image='+encodeURIComponent(background_image);
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=subscribeExit&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&background_image='+encodeURIComponent(background_image)+
+		'&text_title='+text_title+'&text_subtitle='+text_subtitle+'&text_email='+text_email+'&text_name='+text_name+'&text_button='+text_button+'&provider='+provider;
 		document.getElementById('PQPreviewID').src = previewUrl;
 		//document.getElementById('PQPreviewID').width = '100%';
 		
@@ -5734,12 +5988,28 @@ function changePopupImg(img, custom_photo_block_id){
 			animation = 'pq_animated '+document.getElementById('subscribeBar_pro_animation').value;
 		}
 		
+		//text block
+		var text_title = '';
+		var text_m_title = '';
+		var text_email = '';
+		var text_name = '';
+		var text_button = '';
+		var provider = '';
+		
+		if(document.getElementById('subscribeBar_text_title').value) text_title = encodeURIComponent(document.getElementById('subscribeBar_text_title').value);
+		if(document.getElementById('subscribeBar_text_email').value) text_email = encodeURIComponent(document.getElementById('subscribeBar_text_email').value);
+		if(document.getElementById('subscribeBar_text_name').value) text_name = encodeURIComponent(document.getElementById('subscribeBar_text_name').value);
+		if(document.getElementById('subscribeBar_text_m_title').value) text_m_title = encodeURIComponent(document.getElementById('subscribeBar_text_m_title').value);
+		if(document.getElementById('subscribeBar_button_title').value) text_button = encodeURIComponent(document.getElementById('subscribeBar_button_title').value);
+		if(document.getElementById('subscribeProvider').value) provider = encodeURIComponent(document.getElementById('subscribeProvider').value);		
+		
 		var design = document.getElementById('subscribeBar_size').value+' '+document.getElementById('subscribeBar_position').value+' '+document.getElementById('subscribeBar_background').value+' '+document.getElementById('subscribeBar_button_color').value+' '+animation;		
 		if(document.getElementById('subscribeBar_pro_1').value) design += ' '+document.getElementById('subscribeBar_pro_1').value;		
 		if(document.getElementById('subscribeBar_pro_2').value) design += ' '+document.getElementById('subscribeBar_pro_2').value;
 		if(document.getElementById('subscribeBar_pro_3').value) design += ' '+document.getElementById('subscribeBar_pro_3').value;
 		
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=subscribeBar&design='+design;									
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=subscribeBar&design='+design+
+		'&text_title='+text_title+'&text_email='+text_email+'&text_name='+text_name+'&text_m_title='+text_m_title+'&text_button='+text_button+'&provider='+provider;
 		
 		document.getElementById('PQPreviewID').src = previewUrl;									
 		//document.getElementById('PQPreviewID').width = '100%';
@@ -5755,6 +6025,16 @@ function changePopupImg(img, custom_photo_block_id){
 			animation = 'pq_animated '+document.getElementById('thankPopup_pro_animation').value;
 		}
 		var design = document.getElementById('thankPopup_typeWindow').value+' '+document.getElementById('thankPopup_background').value+' '+document.getElementById('thankPopup_button_color').value+' '+animation;
+		
+		
+		//text block
+		var text_title = '';
+		var text_subtitle = '';		
+		var text_button = '';		
+		
+		if(document.getElementById('thankPopup_text_title').value) text_title = encodeURIComponent(document.getElementById('thankPopup_text_title').value);
+		if(document.getElementById('thankPopup_text_subtitle').value) text_subtitle = encodeURIComponent(document.getElementById('thankPopup_text_subtitle').value);
+		if(document.getElementById('thankPopup_text_button').value) text_button = encodeURIComponent(document.getElementById('thankPopup_text_button').value);		
 		
 		if(document.getElementById('thankPopup_pro_1').value) design += ' '+document.getElementById('thankPopup_pro_1').value;		
 		if(document.getElementById('thankPopup_pro_2').value) design += ' '+document.getElementById('thankPopup_pro_2').value;		
@@ -5773,7 +6053,8 @@ function changePopupImg(img, custom_photo_block_id){
 		
 		var background_image = document.getElementById('thankPopup_pro_background_image').value;		
 		var overlay = document.getElementById('thankPopup_overlay').value;									
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=thankPopup&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&background_image='+encodeURIComponent(background_image);
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=thankPopup&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&background_image='+encodeURIComponent(background_image)+
+		'&text_title='+text_title+'&text_subtitle='+text_subtitle+'&text_button='+text_button;
 		document.getElementById('PQPreviewID').src = previewUrl;
 		//document.getElementById('PQPreviewID').width = '100%';
 	}
@@ -5784,7 +6065,14 @@ function changePopupImg(img, custom_photo_block_id){
 		}
 		var design = document.getElementById('follow_typeWindow').value+' '+document.getElementById('follow_background').value+' '+animation;
 		
-		var typeBlock = document.getElementById('follow_design_size').value+' pq_'+document.getElementById('follow_design_form').value+' '+document.getElementById('follow_design_color').value+' '+document.getElementById('follow_design_shadow').value;
+		//text block
+		var text_title = '';
+		var text_subtitle = '';		
+		
+		if(document.getElementById('follow_text_title').value) text_title = encodeURIComponent(document.getElementById('follow_text_title').value);
+		if(document.getElementById('follow_text_subtitle').value) text_subtitle = encodeURIComponent(document.getElementById('follow_text_subtitle').value);
+		
+		var typeBlock = document.getElementById('follow_design_size').value+' pq_'+document.getElementById('follow_design_form').value+' '+document.getElementById('follow_design_color').value;
 		var hoverAnimation = document.getElementById('follow_pro_hover_animation').value;
 		
 		if(document.getElementById('follow_pro_1').value) design += ' '+document.getElementById('follow_pro_1').value;		
@@ -5802,10 +6090,22 @@ function changePopupImg(img, custom_photo_block_id){
 		if(document.getElementById('follow_pro_13').value) design += ' '+document.getElementById('follow_pro_13').value;		
 			
 		
+		//providers
+		var providerArr = []
+		var provider = '';
+		if(document.getElementById('follow_provider[FB]').value) provider += 'FB:';
+		if(document.getElementById('follow_provider[TW]').value) provider += 'TW:';
+		if(document.getElementById('follow_provider[GP]').value) provider += 'GP:';
+		if(document.getElementById('follow_provider[PI]').value) provider += 'PI:';
+		if(document.getElementById('follow_provider[VK]').value) provider += 'VK:';
+		if(document.getElementById('follow_provider[OD]').value) provider += 'OD:';
+		if(document.getElementById('follow_provider[IG]').value) provider += 'IG:';
+		if(document.getElementById('follow_provider[RSS]').value) provider += 'RSS:';		
 		
 		var background_image = document.getElementById('follow_pro_background_image').value;		
 		var overlay = document.getElementById('follow_overlay').value;									
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3.html?utm-campaign=wp_aio_widgets&p=follow&design='+design+'&overlay='+encodeURIComponent(overlay)+'&background_image='+encodeURIComponent(background_image)+'&hoverAnimation='+encodeURIComponent(hoverAnimation)+'&typeBlock='+encodeURIComponent(typeBlock);
+		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=follow&design='+design+'&overlay='+encodeURIComponent(overlay)+'&background_image='+encodeURIComponent(background_image)+'&hoverAnimation='+encodeURIComponent(hoverAnimation)+'&typeBlock='+encodeURIComponent(typeBlock)+
+		'&text_title='+text_title+'&text_subtitle='+text_subtitle+'&provider='+provider;
 		document.getElementById('PQPreviewID').src = previewUrl;
 		//document.getElementById('PQPreviewID').width = '100%';
 	}	
@@ -5813,6 +6113,7 @@ function changePopupImg(img, custom_photo_block_id){
 	
 	jQuery(".share_tools_activate").click(function(){
 		sharingSideBarPreview();
+		document.getElementById('Hello').style.display='none';		
 		jQuery(".pq_default").removeClass("selected");
 		jQuery(".collect").removeClass("selected");
 		jQuery(".follow").removeClass("selected");
@@ -5843,6 +6144,7 @@ function changePopupImg(img, custom_photo_block_id){
 	});
 	jQuery(".follow_tools_activate").click(function(){
 		followPreview()
+		document.getElementById('Hello').style.display='none';
 		jQuery(".pq_default").removeClass("selected");
 		jQuery(".collect").removeClass("selected");
 		jQuery(".share").removeClass("selected");
@@ -5874,6 +6176,7 @@ function changePopupImg(img, custom_photo_block_id){
 	
 	jQuery(".contact_tools_activate").click(function(){
 		contactUsPreview();
+		document.getElementById('Hello').style.display='none';
 		jQuery(".pq_default").removeClass("selected");
 		jQuery(".collect").removeClass("selected");
 		jQuery(".share").removeClass("selected");
@@ -5905,6 +6208,7 @@ function changePopupImg(img, custom_photo_block_id){
 	});
 	jQuery(".callme_tools_activate").click(function(){
 		callMePreview();
+		document.getElementById('Hello').style.display='none';
 		jQuery(".pq_default").removeClass("selected");
 		jQuery(".collect").removeClass("selected");
 		jQuery(".share").removeClass("selected");
@@ -5936,6 +6240,7 @@ function changePopupImg(img, custom_photo_block_id){
 	});
 	jQuery(".exit_tools_activate").click(function(){
 		subscribeExitPreview();
+		document.getElementById('Hello').style.display='none';
 		jQuery(".pq_default").removeClass("selected");
 		jQuery(".collect").removeClass("selected");
 		jQuery(".share").removeClass("selected");
@@ -5967,6 +6272,7 @@ function changePopupImg(img, custom_photo_block_id){
 	});
 	jQuery(".imagesharer_tools_activate").click(function(){
 		imageSharerPreview();
+		document.getElementById('Hello').style.display='none';
 		jQuery(".pq_default").removeClass("selected");
 		jQuery(".collect").removeClass("selected");
 		jQuery(".share").removeClass("selected");
@@ -5997,6 +6303,7 @@ function changePopupImg(img, custom_photo_block_id){
 	});
 	jQuery(".marketing_tools_activate").click(function(){
 		subscribeBarPreview();
+		document.getElementById('Hello').style.display='none';
 		jQuery(".pq_default").removeClass("selected");
 		jQuery(".collect").removeClass("selected");
 		jQuery(".share").removeClass("selected");
@@ -6028,6 +6335,7 @@ function changePopupImg(img, custom_photo_block_id){
 	});
 	jQuery(".thankyou_tools_activate").click(function(){
 		thankPopupPreview()
+		document.getElementById('Hello').style.display='none';
 		jQuery(".pq_default").removeClass("selected");
 		jQuery(".collect").removeClass("selected");
 		jQuery(".share").removeClass("selected");
@@ -6149,13 +6457,104 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".question3").removeClass("selected");
 		jQuery(".question2").addClass("selected");
 	});
-	jQuery('a[href^="#"]').click(function(){/*!!!*/
+	/*jQuery('a[href^="#"]').click(function(){
 	var target = $(this).attr('href');
 	jQuery('.question').animate({scrollTop: $(target).offset().top}, 800);
 	return false;
-	});
+	});*/
 	jQuery(".any_tools_activate").click(function(){
-		jQuery(".any_tools").css('display','block');
+		jQuery("#Any_tools").css('display','block');
+	});
+	jQuery(".any_popup_activate").click(function(){
+		jQuery("#Any_floating").css('display','none');
+		jQuery("#Any_bar").css('display','none');
+		jQuery("#Any_popup").css('display','block');
+	});
+	jQuery(".any_floating_activate").click(function(){
+		jQuery("#Any_popup").css('display','none');
+		jQuery("#Any_bar").css('display','none');
+		jQuery("#Any_floating").css('display','block');
+	});
+	jQuery(".any_bar_activate").click(function(){
+		jQuery("#Any_popup").css('display','none');
+		jQuery("#Any_floating").css('display','none');
+		jQuery("#Any_bar").css('display','block');
+	});
+	jQuery("#any_popup1").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_popup1");
+	});
+	jQuery("#any_popup2").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_popup2");
+	});
+	jQuery("#any_popup3").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_popup3");
+	});
+	jQuery("#any_popup4").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_popup4");
+	});
+	jQuery("#any_popup5").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_popup5");
+	});
+	jQuery("#any_popup6").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_popup6");
+	});
+	jQuery("#any_floating1").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_floating1");
+	});
+	jQuery("#any_floating2").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_floating2");
+	});
+	jQuery("#any_floating3").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_floating3");
+	});
+	jQuery("#any_floating4").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_floating4");
+	});
+	jQuery("#any_floating5").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_floating5");
+	});
+	jQuery("#any_floating6").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_floating6");
+	});
+	jQuery("#any_bar1").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_bar1");
+	});
+	jQuery("#any_bar2").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_bar2");
+	});
+	jQuery("#any_bar3").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_bar3");
+	});
+	jQuery("#any_bar4").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_bar4");
+	});
+	jQuery("#any_bar5").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_bar5");
+	});
+	jQuery("#any_bar6").click(function(){
+		jQuery(".pq_any_cont").css('display','block');
+		jQuery(".pq_any_cont").addClass("any_bar6");
+	});
+	jQuery(".pq_any_cont").click(function(){
+		jQuery(".pq_any_cont").css('display','none');
+		jQuery(".pq_any_cont").removeClass("any_popup1 any_popup2 any_popup3 any_popup4 any_popup5 any_popup6 any_floating1 any_floating2 any_floating3 any_floating4 any_floating5 any_floating6 any_bar1 any_bar2 any_bar3 any_bar4 any_bar5 any_bar6");
 	});
 	jQuery(".free_activate").click(function(){
 		jQuery(".pq_pro2").removeClass("selected");
@@ -6304,6 +6703,7 @@ function changePopupImg(img, custom_photo_block_id){
 	jQuery(".pro_url").click(function(){
 		jQuery(".filename_url").removeClass("filename_hidden");
 	});
+	
 </script>
 <?php
     }

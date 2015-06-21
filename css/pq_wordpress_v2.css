@@ -6,17 +6,19 @@
 	font-weight: normal;
 	font-style: normal;}
 body {position: relative; margin: 0;}
-#profitquery { font-size: 0; position: absolute; overflow: hidden; right: 0; left: -20px; box-sizing: border-box; bottom: 0px;  top: 2px; z-index: 1; background-color: white; height: 750px; height: 95vh;}
-#profitquery>div {display: inline-block; /*height: 100vh;*/ vertical-align: top; font-family: arial;}
+#profitquery { font-size: 0; position: fixed; overflow: hidden; right: 0; left: 160px; box-sizing: border-box; bottom: 0px; top: 34px; z-index: 1; background-color: white; bottom: 1px;}
+.folded #profitquery {left: 36px;}
+#profitquery>div {display: inline-block; vertical-align: top; font-family: arial;}
 #profitquery .pq1 {width: 100%; height: 5%; background: rgb(123, 123, 123); min-height: 35px; z-index: 2; position: absolute;}
 #profitquery .pq2 {width: 22%; background: #f6f6df; font-size: 14px; overflow-y: auto;  width: 100%; position: absolute; left: 0;  top: 6%; height: 94%;}
-#profitquery .pq2 img.pq_card, #profitquery .pq2 .choise img  {display: block; margin: 4px auto;}
-#profitquery .pq2 img.pq_card+p { margin: 0;  font-size: 15px;}
+#profitquery .pq2 img.pq_card, #profitquery .pq2 .choise img  {display: block; margin: 4px auto;  max-width: 100%; height: auto;}
+#profitquery .pq2 img.pq_card+p { margin: 0;  font-size: 15px;  line-height: 1;}
 #profitquery .pq3 {width: 80%; background: white; /*display: none; */position: absolute;  right: 0;    top: 6%;  bottom: 0;}
 
 #profitquery .pq_clear {clear: both;}
 #profitquery .pq2 h2, h3 {font-family: pt sans narrow; font-weight: normal; text-align: center; text-transform: uppercase; color: rgb(68, 67, 67);}
-#profitquery .pq2 h2 {font-size: 18px; color: rgb(123, 123, 123);  margin: 10px 0;}
+#profitquery .pq2 h2 {font-size: 18px; color: rgb(123, 123, 123);  margin: 10px 0 0;}
+#profitquery .pq2 .pq_li1 h2 {margin: 10px 0;}
 #profitquery .pq2 h3 {margin: 25px 0 10px; font-size: 14px; display: inline-block; float: none;}
 #profitquery .pq2 .pq_li5 h3 {padding-left: 20px;}
 #profitquery .pq2 form {  margin: 0;}
@@ -37,7 +39,7 @@ body {position: relative; margin: 0;}
 #profitquery .pq2 .pq_li1 label div {padding: 4px 0 0;}
 #profitquery .pq2 .pq_li2 label div {padding: 10px 0 0;}
 #profitquery .pq2 form label input[type=radio]:checked ~ div {border: 2px solid #d5d5b3;}
-#profitquery .pq2 form p {display: inline-block; margin: 7px; color: rgb(102, 102, 102);}
+#profitquery .pq2 form p {display: inline-block; margin: 7px; color: rgb(147, 147, 147);}
 #profitquery .pq2 form input[type="text"], #profitquery .pq2 form select, #profitquery .pq2 form textarea {width: 100%; font-size: 14px; font-family: arial; padding: 0 3px 0 7px; line-height: 28px; margin: 0; color: darkgrey; border: 1px solid darkgrey; border-radius: 2px;}
 #profitquery .pq2 form input[type="text"], #profitquery .pq2 form select {height: 28px;}
 #profitquery .pq2 form .sm select, #profitquery .pq2 form .sm input[type="text"] {width: 84%; float: right;}
@@ -63,7 +65,7 @@ body {position: relative; margin: 0;}
 #profitquery .pq2 form .more:before {content: "\e623";}		#profitquery .pq2 form .wu:before {content: "\e626";}	
 #profitquery .pq2 form .rr:before {content: "\e624";}			#profitquery .pq2 form .wb:before {content: "\e625";}	
 #profitquery .pq2 form .rs:before {content: "\e627";}
-#profitquery .pq2 form .n01:before {content: "01";}
+/*#profitquery .pq2 form .n01:before {content: "01";}
 #profitquery .pq2 form .n02:before {content: "02";}
 #profitquery .pq2 form .n03:before {content: "03";}
 #profitquery .pq2 form .n04:before {content: "04";}
@@ -82,7 +84,7 @@ body {position: relative; margin: 0;}
 #profitquery .pq2 form .n17:before {content: "17";}
 #profitquery .pq2 form .n18:before {content: "18";}
 #profitquery .pq2 form .n19:before {content: "19";}
-#profitquery .pq2 form .n20:before {content: "20";}
+#profitquery .pq2 form .n20:before {content: "20";}*/
 #profitquery .pq2 form .question {border: 2px solid darkgrey; border-radius: 50%; box-sizing: border-box; line-height: 22px!important; color: darkgrey; float: left; width: 26px;}
 #profitquery .pq2 form .nn:before {background: none; color: darkgrey; font-size: 15px; line-height: 24px; font-family: arial; font-weight: lighter;}
 #profitquery *::-webkit-input-placeholder {color: darkgrey;}
@@ -93,12 +95,12 @@ body {position: relative; margin: 0;}
 #profitquery .pq1 li img {height: 100%; width: auto; padding: 0 5px;}
 #profitquery .pq1 li span {color: #707070; line-height: 40px; font-size: 0px; vertical-align: top; text-transform: uppercase; -webkit-transition: font-size 1s ease;}
 
-#profitquery .pq2 form .f_wrapper {display: none; /*height: 90vh;*/ overflow-y: scroll; width: 20%; vertical-align: top;   box-sizing: border-box;  position: relative; padding: 0 15px;   position: absolute; padding: 0 15px; top: 40px; bottom: 70px; text-align: center;}
+#profitquery .pq2 form .f_wrapper {display: none; overflow-y: scroll; width: 20%; vertical-align: top;   box-sizing: border-box;  position: relative; padding: 0 15px;   position: absolute; top: 40px; bottom: 70px; text-align: center;}
 #profitquery .pq2 form .selected {display: inline-block;}
 #profitquery .pq2 .pq_li1, #profitquery .pq2 .pq_li2, #profitquery .pq2 .pq_li3 {width: 75%; /*margin: 30px auto;*/}
 #profitquery .pq2 .pq_li3, #profitquery .pq2 .pq_li4 {width: 90%; /*padding: 0 15px;*/}
 #profitquery .pq2 .pq_li3 p, #profitquery .pq2 .pq_li5 p {margin: 0 0 3px; float: left;}
-#profitquery .pq_li_button {background: transparent; width: 100%; text-transform: uppercase; border: 1px solid grey; line-height: 21px;  border-radius: 2px;}
+#profitquery .pq_li_button {background: transparent; width: 100%; text-transform: uppercase; border: 1px solid grey; line-height: 21px;  border-radius: 2px;  font-size: 14px;}
 #profitquery .pq_li_button:hover {background: grey; color: white; cursor: pointer;}
 #profitquery a.minus {position: absolute; right: 0; top: 0; width: 10px; height: 10px; background: red; border-radius: 50%; color: white;
   line-height: 10px; padding: 1px; font-size: 8px;}
@@ -106,12 +108,12 @@ body {position: relative; margin: 0;}
 #profitquery a.plus {font-size: 25px; font-family: pt sans-serif; color: rgb(0, 150, 77); border: 1px solid; border-radius: 50%; width: 28px;
    display: block; margin: 7px auto;}
 #profitquery a.text {position: absolute; top: 0; right: 0; color: rgb(0, 104, 190);}
-#profitquery .picture {width: 100%; height: auto; max-height: 75px;}
+#profitquery .picture {width: 100%; height: auto; max-height: 75px;  min-height: 75px;}
 #profitquery .picture+div {position: absolute; bottom: 17px; background: none!important; display: block!important; width: 100%;  height: auto!important;}
 #profitquery .picture+div p, #profitquery .picture+div label, #profitquery .picture+div label input {display: inline-block; float: none!important; margin: 0;}
 #profitquery .picture+div p{ vertical-align: top; margin: 5px!important;} 
 #profitquery .picture+div label{width: 130px;} #profitquery .picture+div label input {width: 100px!important;}
-#profitquery .pq_button_group {position: absolute; bottom: 0; box-sizing: border-box; WIDTH: 20%; left: 0;  padding: 0 30px 0 15px;  font-size: 0; display: none;   background-color: rgb(246, 246, 223);}
+#profitquery .pq_button_group {position: absolute; bottom: 0; box-sizing: border-box; WIDTH: 20%; left: 0;  padding: 0 30px 0 15px;  font-size: 0; display: none;   background-color: rgb(246, 246, 223); }
 #profitquery .pq_button_group input[type="button"]{margin: 0 0 3px; width: 49%; text-transform: uppercase;  background: #48e88f; border: none; color: white; font-family: pt sans narrow; font-size: 16px;  cursor: pointer;}
 #profitquery .pq_button_group input[type="button"]:hover {background-color: rgb(18, 192, 95);}
 #profitquery .pq_button_group input[type="button"]:first-child {margin-right:2%;}
@@ -145,11 +147,11 @@ body {position: relative; margin: 0;}
 #profitquery .pq1 span.pro {background: #1b80e9; color: white;}
 #profitquery .pq1 input.pro {  position: absolute; top: 5px; right: 15px; height: 28px; background: transparent; border: 2px solid rgb(72, 232, 143); color: rgb(72, 232, 143); text-transform: uppercase; font-family: pt sans narrow; font-size: 18px; width: 240px; line-height: 14px; border-radius: 4px; cursor: pointer;}
 #profitquery .pq1 input.pro:hover {background: rgb(72, 232, 143); color: white;}
-#profitquery .pq2 form label div input.task {background: transparent;  padding: 5px 0px; font-family: arial; text-transform: uppercase; border-radius: 2px; width: 40%; box-sizing: border-box; margin-top: 19px; display: none;  cursor: pointer;}
+#profitquery .pq2 form label div input.task {background: transparent;  padding: 5px 0px; font-family: arial; text-transform: uppercase; border-radius: 2px; width: 45%; box-sizing: border-box; margin-top: 19px; display: none;  cursor: pointer;  font-size: 14px;}
 #profitquery .pq2 form label div input.task.any_tools_activate {width: 60%;}
 #profitquery .pq2 form .pq_li1 label:hover div input.activate {display:inline-block;}
 #profitquery .pq2 form .pq_li1 label:hover div p, #profitquery .pq2 form .pq_li1 label:hover div img.pq_card{display:none;}
-#profitquery .pq2 form label div input.activate {border: 1px solid #36d57d; color: #36d57d;}
+#profitquery .pq2 form label div input.activate {border: 1px solid #36d57d; color: #36d57d;  width: 60%;}
 #profitquery .pq2 form label div input.activate:hover {  background-color: #36d57d; color: white;} 
 #profitquery .pq2 form label img.active, #profitquery .pq2 form label img.pro {display: none;}
 #profitquery .pq2 form label input[type=checkbox]:checked + div img.active  {position: absolute; left: 0; top: 0; display: block;}
@@ -165,7 +167,7 @@ body {position: relative; margin: 0;}
 #profitquery .pq3 label input[type=radio]:checked ~ div {background:#e6e6c1;  margin-bottom: 2px;}
 #profitquery .pq3 .frame {position: absolute; width: 100%; top: 40px; bottom: 1px; right: 1px;   background-repeat: no-repeat; background-image: url('http://api.profitquery.com/lib/img/back.png');  background-size: initial;  background-position: center center;}
 #profitquery .pq3 .frame.pq_share {background-image: url('http://api.profitquery.com/lib/img/back_share.png');}
-#profitquery a.question {  position: fixed; bottom: 25px; right: 35px; background-color: rgb(35, 40, 45); overflow: hidden; border-radius: 50%;   height: 50px;  width: 50px; z-index: 500;}
+#profitquery a.question {  position: fixed; bottom: 25px; right: 35px; background-color: rgb(249, 28, 53); overflow: hidden; border-radius: 50%;   height: 50px;  width: 50px; z-index: 500;}
 #profitquery a.question:hover {background-color: rgb(0, 0, 0);}
 #profitquery a.question img{margin: 11px;}
 #profitquery .pq_popup {position: absolute;  display: block;  background-color: white;  padding: 25px;  box-sizing: border-box; box-shadow: 0 1px 1px 1px lightgrey;border-radius: 3px; text-align: center; display: none; Z-INDEX: 50; color: rgb(123, 123, 123);}
@@ -188,16 +190,17 @@ body {position: relative; margin: 0;}
 #profitquery .pq_popup .pq_close {  position: absolute;  top: 10px;  right: 10px;  height: 20px;  width: 20px;  font-size: 14px;  font-family: Profitquery;  color: rgb(208, 208, 208);}
 #profitquery .pq_popup.protection input+input:hover {background-color: #C03943!important; color: white; border: 1px solid #C03943;}
 #profitquery .pq_popup .pq_close:after {content: "\e628";}
-#profitquery .pq_popup.emailsettings {width: 30%; top: 4.5%; left: 20%; padding-top: 40px;}
+#profitquery .pq_popup.emailsettings {width: 30%; top: 4.5%; left: 20%; min-width: 280px;}
+#profitquery .pq_popup.emailsettings h1{font-size: 22px;}
 #profitquery .pq_popup.emailsettings select, #profitquery .pq_popup.emailsettings textarea, #profitquery .pq_popup.emailsettings input[type="text"] {width: 100%;}
 #profitquery .pq_popup.emailsettings p {font-size: 14px; margin: 14px 0 3px; display: inline-block; float: left;}
 #profitquery .pq_popup.emailsettings p + a {font-size: 14px; display: inline-block; float: right; margin: 14px 0 3px; text-decoration: none;}
-#profitquery .pq_popup.analytics {width: 25%; bottom: 0; left: 20%; padding-top: 50px;}
+#profitquery .pq_popup.analytics {width: 25%; bottom: 0; left: 20%; padding-top: 50px;  min-width: 275px;}
 #profitquery .pq_popup.analytics label {position: relative; border-bottom: 1px solid lightgray;  border-top: 1px solid lightgray; margin: 10px 10px 0; display: block;}
 #profitquery .pq_popup.analytics label+label {margin: -1px 10px 10px;}
 #profitquery .pq_popup.analytics p{width: 100%; margin: 5px 0; text-align: left; text-transform: none; font-size: 15px; display: inline-block; padding: 0;}
 #profitquery .pq_popup.analytics input[type="radio"]{top: 12px; left: initial; right: 0;}
-#profitquery .pq_popup.lang {width: 25%;  top: 4.5%;  right: 260px; }
+#profitquery .pq_popup.lang {width: 25%;  top: 4.5%;  right: 260px;  min-width: 240px;}
 #profitquery .pq_popup.lang h1 {font-size: 22px; line-height: 1.2;}
 #profitquery .pq_popup.lang input[type="submit"] {margin-top: 20px;}
 #profitquery .pq_popup.lang label {position: relative; border-bottom: 1px solid lightgray;  border-top: 1px solid lightgray; margin: 10px 10px 0; display: block;}
@@ -251,7 +254,7 @@ body {position: relative; margin: 0;}
 
 #profitquery .pq_result {background-color: rgb(236, 236, 236); padding: 15px;}
 #profitquery .pq_result a {font-size: 15px; display: block; text-decoration: none;}
-#profitquery .pq_popup.getpro {width: 50%; right: 15px; top: 2px;  left: initial; padding: 0 0 20px; max-height: 100%; overflow-y: auto; bottom: inherit;  bottom: initial; z-index: 502; max-width: 600px; min-height: 600px;}
+#profitquery .pq_popup.getpro {width: 50%; right: 15px; top: 2px;  left: initial; padding: 0 0 20px; max-height: 100%; overflow-y: auto; bottom: inherit;  bottom: initial; z-index: 502; max-width: 600px; min-height: 600px; min-width: 500px;}
 #profitquery .pq_popup.getpro h1 {text-transform: uppercase; font-size: 22px; margin: 25px 0 10px;}
 #profitquery .pq_popup.getpro h2 {text-transform: uppercase; font-size: 15px; margin: 25px 0 5px;}
 #profitquery .pq_popup.getpro input[type="text"] {margin: 5px auto; width: 90%; color: rgb(195, 195, 195);}
@@ -263,7 +266,7 @@ body {position: relative; margin: 0;}
 #profitquery .pq_popup.getpro input[type="button"], #profitquery .pq_popup.getpro input[type="submit"] {background-color: rgb(72, 232, 143); color: white; min-width: 35%;  margin: 10px;}
 #profitquery .pq_popup.getpro input[type="button"]:hover, #profitquery .pq_popup.getpro input[type="submit"]:hover {background-color: rgb(25, 197, 101);}
 #profitquery .pq_popup.getpro input.pq_order {margin: 10px 0; background-color: rgb(72, 232, 143); color: white;}
-#profitquery .pq_popup.getpro input.pq_order:hover {  background-color: rgb(14, 166, 81);  border: 2px solid rgb(14, 166, 81);}
+#profitquery .pq_popup.getpro input.pq_order:hover {background-color: rgb(14, 166, 81);}
 #profitquery .pq_popup.getpro a {font-size: 15px; /*color: black; */display: block; cursor: pointer;}
 #profitquery .pq_popup.getpro a.pq_more_btn {margin-bottom: 25px;}
 #profitquery .pq_popup.getpro label {width: 30%; display: inline-block; margin: 0; }
@@ -307,15 +310,68 @@ body {position: relative; margin: 0;}
 #profitquery .pq3 .pro h2.pro {display: block;}
 @media only screen and (max-width: 1400px){
 #profitquery .pq3 iframe.pq_bar {transform: scale(0.8);  transform-origin: 0 0;  width: 125%;  height: 125%;  border-width: 47px 3px 3px;}}
-
-@media only screen and (max-width: 1150px){
+@media only screen and (max-device-width: 1280px){
+#profitquery .picture+div label {width: 100px;}
+#profitquery .pq2 form .sm select, #profitquery .pq2 form .sm input[type="text"]{width: 82%;}
+#profitquery .pq_button_group{padding: 0 27px 0 10px;}
+#profitquery .pq2 form .f_wrapper{padding: 0 10px;}}
+@media only screen and (max-device-width: 1152px){
 #profitquery .pq3 iframe.pq_bar {transform: scale(0.66667);  transform-origin: 0 0;  width: 150%;  height: 150%;  border-width: 57px 3px 3px;  border-radius: 4px;}
-#profitquery .pq3 .frame {background-size: contain;}}
-  
-@media only screen and (max-height: 720px){#profitquery {height: 94vh;}}
-@media only screen and (max-height: 600px){#profitquery {height: 93vh;}}
+#profitquery .pq3 .frame {background-size: contain;}
+#profitquery .pq2 form .sm select, #profitquery .pq2 form .sm input[type="text"] {width: 80%;}
+#profitquery .picture+div label { width: 85px;}
+#profitquery .pq1 p{font-size: 16px;  margin: 5px 0 0;}
+#profitquery .pq2 form label div input.task {font-size: 12px;}
+#profitquery .pq_li_button{font-size: 12px;}}
+@media only screen and (max-device-width: 1024px){
+#profitquery .pq2 form .sm select, #profitquery .pq2 form .sm input[type="text"]{width: 75%;}
+#profitquery .pq2 form label div input.task {font-size: 10px;}
+#profitquery .picture+div label {width: 70px;}
+#profitquery .pq1 p {font-size: 14px; margin: 7px 0 0;}
+#profitquery .pq1 input.pro{width: 200px;}
+#profitquery .pq1 a.pq_adds{right: 225px;}
+#profitquery .pq_popup.lang{right: 220px;}
+#profitquery .pq1 img{left: 7px;}
+#profitquery .pq_li_button{font-size: 10px;}}
+@media only screen and (max-device-width: 980px){
+#profitquery .pq1 img{left: 3px;}
+#profitquery .pq1 p {font-size: 10px; margin: 10px 0 0;}
+#profitquery .pq1 p+a{font-size: 10px;}
+#profitquery .pq2 img.pq_card+p{font-size: 12px;}
+#profitquery .pq2 form label div input.task {width: 75%; margin-top: 10%;}
+#profitquery .pq2 form label div input.activate {margin-top: 20%;}
+#profitquery .pq1 p+a:before {display: none;}
+#profitquery .pq_button_group input[type="submit"]{font-size: 10px;}
+#profitquery .pq_button_group input[type="button"]{font-size: 12px;}
+#profitquery .pq1 p.pq_tooltip1, #profitquery .pq1 p.pq_tooltip2 {font-size: 9px;}
+#profitquery .pq_popup p {font-size: 12px!important;}
+#profitquery .pq_popup h1 {font-size: 22px!important;}
+#profitquery .pq2 form .sm:before, #profitquery .pq_checkbox:before {width: 18px;}
+#profitquery .pq_li_button{font-size: 9px;}
+#profitquery .pq2 form label .pq_checkbox {width: 20px; height: 22px;}
+#profitquery .pq2 form .sm:before, #profitquery .pq_checkbox:before{margin: -3px 0 0 -2px;}
+#profitquery .pq_li3 .imagesharer input[type=checkbox]{left: 11px;}
+#profitquery .pq2 a.pq_question {margin: 4px 0 0 0px;}
+#profitquery .pq2 form input[type="text"], #profitquery .pq2 form select, #profitquery .pq2 form textarea{line-height: 22px;  font-size: 12px;}
+#profitquery .picture+div label { width: 50px;}
+#profitquery .picture+div p {margin: -1px!important;}}
+@media only screen and (max-device-height: 864px){
+#profitquery .pq1 input.pro {height: 24px;  font-size: 17px;}} 
+@media only screen and (max-device-height: 720px){
+#profitquery .pq1 img {top: 3px;}
+#profitquery .pq3 .frame{background-size: contain;}
+#profitquery .pq1 input.pro {font-size: 14px;}
+#profitquery .pq2 h2 {font-size: 14px;}
+#profitquery .ganalytics{font-size: 10px;}}
+@media only screen and (max-device-height: 600px){
+#profitquery .pq2{top: 7%; height: 93%;}
+#profitquery .pq3 {top: 7%;}
+#profitquery .pq_popup.hello {top: 9%;}
+#profitquery .pq2 form input[type="text"], #profitquery .pq2 form select {height: 24px;}
+#profitquery .pq_popup.any_tools{left: 0;}}
 
 @media only screen and (max-width: 850px){#profitquery .pq3 iframe {display: none;}}
+
 .rtl #profitquery { left: 0; right: -20px;}
 .rtl #profitquery .pq3 {right: initial; left: 0;}
 .rtl #profitquery .ganalytics {left: initial; right: 0; padding: 0 0 0 15px;}
@@ -335,6 +391,29 @@ body {position: relative; margin: 0;}
 .rtl #profitquery .pq2 h2, h3 {  font-family: pt sans narrow!important;  font-weight: normal!important;  text-align: center;  text-transform: uppercase;  color: rgb(68, 67, 67);}
 .rtl #profitquery .pq3 iframe.pq_bar { transform-origin: 100% 0;}
 .rtl #profitquery .pq2 form .choise {  display: none;}
-#profitquery .pq_popup.any_tools {top: 90px; width: 60%; left: 20%;  z-index: 505;}
+@media only screen and (max-device-width: 1024px){.rtl #profitquery .pq1 a.pq_adds{left: 225px;}
+.rtl #profitquery .pq_popup.lang{left: 220px;}}
+#profitquery .pq_popup.any_tools {top: 90px; width: 60%; left: 20%;  z-index: 505; background: rgb(255, 255, 195);  min-width: 480px;}
 #profitquery .pq_popup.any_tools h1{}
 #profitquery .pq_popup.any_tools p {}
+#profitquery span.pq_for {display: block; width: 100%; margin: -10px 0 15px; font-size: 11px; font-family: pt sans narrow; text-transform: uppercase; color: rgb(132, 132, 132);}
+#profitquery .pq_any_small {display: inline-block; width: 350px; overflow: hidden; float: none;  margin: 10px;  vertical-align: top;  cursor: pointer;}
+#profitquery .pq_popup.hello .pq_any_small img {max-height: inherit;max-height: initial;  border: 2px solid lightgrey; box-sizing: border-box;}
+#profitquery .pq_popup.hello .pq_any_small p{padding: 5px;}
+#profitquery .pq_popup.hello .pq_any_cont {position: absolute; top: 50px; left: 100px; right: 100px; display: none; background: rgb(234, 234, 234); background-repeat: no-repeat; background-size: initial; background-position: center center; z-index: 600; border: 1px solid lightgray; border-radius: 3px; height: 500px;}
+#profitquery .pq_popup.hello .pq_any_cont:after {content: "\e628"; position: absolute; top: 10px; right: 10px; color: rgb(123, 123, 123); font-size: 18px;  font-family: profitquery; cursor: pointer;}
+#profitquery .pq_popup.hello .pq_any_cont.any_popup1 {background-image: url('http://api.profitquery.com/lib/img/popups/1.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_popup2 {background-image: url('http://api.profitquery.com/lib/img/popups/2.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_popup3 {background-image: url('http://api.profitquery.com/lib/img/popups/3.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_popup4 {background-image: url('http://api.profitquery.com/lib/img/popups/4.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_popup5 {background-image: url('http://api.profitquery.com/lib/img/popups/5.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_popup6 {background-image: url('http://api.profitquery.com/lib/img/popups/6.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_floating1 {background-image: url('http://api.profitquery.com/lib/img/floatings/1.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_floating2 {background-image: url('http://api.profitquery.com/lib/img/floatings/2.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_floating3 {background-image: url('http://api.profitquery.com/lib/img/floatings/3.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_floating4 {background-image: url('http://api.profitquery.com/lib/img/floatings/4.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_floating5 {background-image: url('http://api.profitquery.com/lib/img/floatings/5.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_floating6 {background-image: url('http://api.profitquery.com/lib/img/floatings/6.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_bar1 {background-image: url('http://api.profitquery.com/lib/img/bars/1.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_bar2 {background-image: url('http://api.profitquery.com/lib/img/bars/2.png');}
+#profitquery .pq_popup.hello .pq_any_cont.any_bar3 {background-image: url('http://api.profitquery.com/lib/img/bars/3.png');}

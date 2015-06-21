@@ -1,126 +1,123 @@
-=== Share + Subscribe + Contact | AIO Widget ===
+=== Share Subscribe Contact Any Popover's | AIO  ===
 Contributors: schemotechnik, ilya_v, frenly_girl
 Donate link: http://profitquery.com/aio_widgets.html
 Tags: free tools, social marketing, free widgets, marketing, subscription, e-mail, aweber, aweber subscribe, aweber subscription, conversion tools, growth tools, share buttons, share button, add to any, add this, contact form, email, feedback, profitquery, profitquery widgets, content marketing, custom popup, svg, ccs3, animation, bookmark, bookmarking, floating buttons, sidebar, share sidebar, sharing sidebar, share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets, Share, share this, sharing buttons, social marketing, subscription button, twitter, Website Tools, like, monarch, image, images, share links, sharethis, sociable, social, social bookmarking, social bookmarks, social share, social sharing, socialize, statistics, stats, vector, newsletter, Hubspot, lightbox, mailing list, social media, image bookmarking, inbound marketing, popover, popup, social plugin, welcome bar, hello bar, social network, social media, Active Campaign, activecampaign, activehosted, image sharing
 Requires at least: 2.9
 Tested up to: 4.2.2
-Stable tag: 3.1.1
+Stable tag: 3.2
 License: GPL 2. See License below for copyright jots and tittles.
-Next level free widgets for growth email, subscription, feedback, phone number, share visitors, social network referral's, folllowers
+Any popovers for solving many website tasks. Growth email, subscription, feedback, phone number, shares, referral's, followers, etc.
 
 == Description ==
-<strong>Social sidebar, follow us button, mailchimp & aweber subscribe bar, exit popup, image sharer by Profitquery</strong> there are more than words. There are most popular tools which can make your blog more popular, make you content virals, turn casual visitors into loyal customers.
+Use Profitquery tools with many special add-ons you can solve, perhaps, any task you want. Growth emails, contact information, referrals, shares, image shares, increase sales using promo popovers, growth feedbacks, social network followers and more that you can imagine. <strong>This tools for your website growth.<strong>
+If you webmaster, developer, webstudio then Profitquery definitely for you. You can solve any task your clients with Profitquery faster that you can imagine.
 
 = Why use Profitquery Marketing Intelligence Platform? =
->Profitquery is fast-growing intelligence system for boost any website. For now we have over 20 smart tools some of them are unique. And this is just the beginning.
->Our team make the complex simple. Make pro version similar tools - free. And it's all thanks unprecedented use of the Latest Technology. Vector graphics, 2D & 3D animation, more than you can imagine for your website for free right now.
+>Profitquery is fast-growing intelligence system to boost any website. We create unique tools for making your tasks, solve faster and make your website grow from first minutes using.
+>Our team makes the complex simple. Make pro version similar tools - free. And it's all thanks unprecedented use of the Latest Technology. Vector graphics, 2D & 3D animation, more than you can imagine for your website for free right now.
 >
->Profitquery use over 1 000 000 people around the world per day. For wordpress community we prepare a few plugin for demonstration a small part profitquery platform features. Choosing profitquery you get access to the latest developments, <a href="https://wordpress.org/support/view/plugin-reviews/share-subscribe-contact-aio-widget">great support team</a> and you can influence the course of development.
->We work hard seven days a week to make your website smarter and growth faster.
+>Choosing Profitquery you get access to the latest developments, <a href="https://wordpress.org/support/view/plugin-reviews/share-subscribe-contact-aio-widget">great support team</a> and you can influence the course of development.
+>We work hard seven days a week to make your website smarter and grow faster.
 >
->AIO Widgets collect most popular tools for growth your email subscribers, social subscribers, for get feedback from customers, for make your content virals. You do not need to go to the any dashboard, all tools can set up on your admin area.
->All tools can be use for free or pro version(for more efficient, intelligent use). Thats why you can trust Profitquery Platform to increase your blog, website, ecommerce or any online business. 
+>AIO Widgets collect most popular tools for growth your email subscribers, social subscribers, for getting feedback from customers, for making your content viral. All tools can set up on your admin area.
+>All tools can be used for free or pro version (for more efficient, intelligent use). That's why you can trust Profitquery Platform to increase your blog, website, eCommerce or any online business.
 >
 ><strong>Let's rock your website with Profitquery</strong>.
 
 = Features =
-* All product for free right now
+* Many tools for free right now
 * Mobile adaptation
 * Asynchronous loading. Load Optimized
 * All features setup on your admin area
-* You can customized most option and even more
-* Vector Icons is pixel-perfect at any size (SVG icons)
-* Support latest Technologys HTML5 CSS3 (2D 3D animation)
-* Event Hanlder support(exit event)
-* Profitquery library already minimize and load from your host. WordPress Optimized
-* Mailchimp subscribe bar
-* Mailchimp exit intent subscription
-* Active Campaign subscribe bar
-* Active Campaign exit intent subscription
-* Aweber subscribe bar
-* Aweber exit intent subscription
+* You can customize most options and even more
+* Vector Icons are pixel-perfect at any size (SVG icons)
+* Support latest Technology HTML5, CSS3 (2D, 3D animation)
+* Event Handler support (exit event)
+* Profitquery library already minimizes and load from your host. WordPress Optimized
+* Mailchimp subscription
+* Active Campaign subscription
+* Aweber subscription 
 * Very easy integration with Mailchimp
-* Quickly growth your email newsletter list
+* Quickly grow your email newsletter list
 * Automatic add Facebook, Twitter, and Pinterest and more share button to your images
-* Skip photo tag for disable share banner logo or any images on your website
-* On hover Image sharer can help to promote your photo blog in social network
+* Skip photo tag for the disable share banner, logo or any images on your website
+* On hover Image sharer can help to promote your photo blog in a social network
 * Exact image share even Twitter Image Share without any apps
-* Chose mechanism image sharer
-* Smart trigger. Action procced event
-* After sharer, subscription or any proceed action you can triger Thank popup or Follow Us floating popup
+* After sharer, subscription, or any proceed action you can trigger Thank popup or Follow Us floating popup
 * Smart lock mechanism. After close subscribe bar or popup, system lock them
 * Collect phone customers phone numbers with Call me bookmark
 * Contact Form to get feedback from your visitors
-* Contact Form have pre validation mechanism.
+* Contact Form has a pre validation mechanism.
 * All widgets already ready to increase your blog. Very simple installation and integration.
-* Share sidebar for share your website page. Many position, size and type icons you can setup on your admin area
+* Share sidebar for sharing your website page. Many positions, size and type icons you can setup on your admin area
 * Customize all profitquery popup. 
 * You can input custom image to the exit or thank popup. That can make your popup very beautiful and informative.
-* All widget action you can see on the Google Analytics (open popup, share twiiter, share pinterest, facebook share etc.)
-* All tools have preview winodw on your admin area
+* All widget action you can see on the Google Analytics (open popup, share twitter, share pinterest, Facebook share etc.)
+* All tools have a preview window on your admin area
 * Bookmarks design and position options. You can set up position, color for the bookmarks
-* Stay with Profitquery, we like use new technologies and make them available for all Profitquery Customers. 
-
 
 
 
 = Sharing Sidebar  = 
-Sharing sidebar is next level social share button's which can icrease sharer website content up to 3x. They always on the screen, there are no need to find how to share liked content.
-You can choose which side of your page it appears on, you can control how many share buttons show up on the admin area. Awesome on hover effect, many social network providers, mobile adaptation all that makes this tools best free distribution sidebar share.
-Also you can set up show follow us popup or thank popup after sharer.
+Sharing sidebar is next level social share button's which can increase sharer website content up to 3x. They always on the screen, there is no need to find how to share liked the content.
+You can choose which side of your page it appears on, you can control how many share buttons show up in the admin area. Awesome on hover effect, many social network providers, mobile adaptation all that makes these tools best free distribution sidebar share.
+Also, you can set up show follow us popup or thank popup after sharer.
 
 <br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=sidebarShare" target="_blank">Sharing Sidebar Live Demo</a><br>
 
 
 = On Hover Image Sharer =
-Perhaps the best on hover image sharer. Why? Free distribution, vector graphics, fade animation, many icon types, providers, you can disable logo and header photo, asynchronous loading (the most optimum loading), Twitter image sharer without any apps. Facebook share throught app or native. A few work mechanism, native share or through gateway page.
-Also you can set up show follow us popup or thank popup after sharer.
+Perhaps the best on hover image sharer. Why? Free distribution, vector graphics, fade animation, many icon types, providers, you can disable logo and header photo, asynchronous loading (the most optimum loading), Twitter image sharer without any apps. Facebook share throughout app or native. A few work mechanism, native share or through gateway page.
+Also, you can set up show follow us popup or thank popup after sharer.
 
 
 <br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=imageSharer" target="_blank">Image Sharer Live Demo</a><br>
 
 
 = Subscribe Bar =
-Your email list it's most important on your blog, because it's way to contact with your reading audience. All you doing it's all for your followers. When you want to promote your blog all time you need contact information your customers to send him laterst news or link with amazing post on your blog. Thats why subscribe bar is most popular tools for wordpress blog.
+Your email list, it's most important on your blog, because it's way to contact with your reading audience. All you do, it's all for your followers. When you want to promote your blog all time you need contact information your customers to send him latest news or link to amazing posts on your blog. That's why subscribing bar is most popular tools for Wordpress blog.
 And we can get you a few way ask customers email. It is marketing bar, always on the top, with amazing animation effect, custom color, mobile adaptation and lock mechanism, and exit popup, which work when your customers move mouse to close page, or click on the close icon in the mobile version.
-Subscribe bar and exit popup integrate each other, that mean that if your customers proceed one of them second tools will be close and locked too. On the admin area you can customization many text, design, animation option. Thats way you can usage in the different language.
-All Latest Technology for your website, to make collect contact information easily. Support Mailchimp and Aweber integration, also you can ask us integrate with any service you want. By the way, you can set up follow Us popup or just thank popup after procced action.
+Subscribe bar and exit popup integrate each other, that mean that if your customers proceed one of them second tools will be close and locked too. On the admin area you can customization many text, design, animation option.
+All Latest Technology for your website, to make collect contact information easily. Support Mailchimp, Aweber and ActiveCampaign integration, also you can ask us integrate with any service you want. By the way, you can set up follow Us popup or just thank popup after procced action.
 
 <br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=subscribeBar" target="_blank">Subscribe Bar Live Demo</a><br>
 
 
 = Exit Popup =
-It is subscription floating popup, last chance to ask email outgoing customers. Thats way we develope them with fun animation (you can turned it off on your admin area) Color, size, 3D animation, color overlay and more another options all for you and your customers.
-Perhaps the most attractive is that Exit popup have free distribution too. After proceed exit popup you can set up to show popup with follow us buttons or thank popup. Support Mailchimp and Aweber integration, also you can ask us integrate with any service you want.
+It is a subscription floating popup, last chance to ask email outgoing customers. That's the way we develop them with fun animation (you can turn it off on your admin area) Color, size, 3D animation, color overlay and more other options all for you and your customers.
+Perhaps the most attractive is that Exit popup has free distribution too. After proceeding exit popup you can set up to show popup with follow us buttons or thank popup. Support Mailchimp, Aweber and ActiveCampaign integration, also you can ask us integrate with any service you want.
 
 <br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=subscribeExit" target="_blank">Exit Popup Live Demo</a><br>
 
 
 = Contact Form =
-This is floating bookmarks, that you can set on the right or left side, on the top, mibble or bottom position on your blog. After click you will see popup with amazing animation which help you to get feedback from your customers. This amazing bookmark work on the desktop and mobile devices.
-Also you can set up your custom image to the contact form popup. You can set up text option, design, animation, image on the top, color bookmark, even overlay color when popup show up. And all this for free.
+This is floating bookmarks, that you can set on the right or left side, on the top, middle or bottom position on your blog. After click you will see a popup with amazing animation which help you to get feedback from your customers. This amazing bookmark work on the desktop and mobile devices.
+Also, you can set up your custom image to the contact form popup. You can set up text option, design, animation, image on the top, color bookmark, even overlay color when popup shows up. And all this for free.
 
 <br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=contactUs" target="_blank">Contact Form Live Demo</a><br>
 
 
 = Сall Me Now =
-This bookmark for collect phone numbers from your visitors. It is a fastest way to contact your users. All phone number would be in your mail inbox. Bookmark and floating popup you can customication on your admin area.
+This bookmark for collecting phone numbers from your visitors. It is a fastest way to contact your users. All phone numbers would be in your mail inbox. Bookmark and floating popup you can customization on your admin area.
 
 <br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=callMe" target="_blank">Сall Me Now Live Demo</a><br>
 
 
 = Following =
-Follow us popup is tools which can get your new followers in social network, most important features is that this popup work with smart event handler mechanism, you can triggered show up popup after procced any action(after shrer on the sidebar, or image sharer, after customer suscription or send your feedback or phone number) This is smazing trigger, because you get immediately 2 customers action.
-3D animation, hover effect on the SVG icon, many design option all that do it very strong and smarter tool.
+Follow us popup is the tools which can get your new followers in social networks, the most important features is that this popup work with smart event handler mechanism, you can triggered show up popup after procced any action (after shower on the sidebar, or image sharer, after customer subscription or send your feedback or phone number) This is amazing trigger, because you get immediately 2 customers action.
+3D animation, hover effect on the SVG icon, many design option all that make it very strong and smarter tool.
 
 <br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=follow" target="_blank">Following Live Demo</a><br>
 
 
 = Thank Popup =
-This is thank popup which you can triggered after proceed any action like follow popup. There you can set up your text and say thank or get very interesting marketing message, like a promo your new article or contact information or something else.
-All features customize on your admin area and all for free.
+This is to thank pop up which you can trigger after proceed any action like follow popup. There you can set up your text and say thank or get a very interesting marketing message, like a promo your new article or contact information or something else.
 
 <br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=thankPopup" target="_blank">Thank Popup Live Demo</a><br>
+
+= Custom Popovers  = 
+You can use any popovers for solving your website tasks. For example Hello bar with promo link, floating popup with subscribe action and follow us icons, exit popup with discount offers etc.
+
 
 
 = Translators = 
@@ -134,7 +131,7 @@ You can write any article about Profitquery for your customers, friends and <a h
 For an automatic installation through WordPress:
 
 1. Go to the 'Add New' plugins screen in your WordPress admin area
-1. Search for 'aio widget profitquery'
+1. Search for 'aio profitquery'
 1. Click 'Install Now' and activate the plugin
 
 For a manual installation via FTP:
@@ -149,13 +146,13 @@ To upload the plugin through WordPress, instead of FTP:
 == Frequently Asked Questions ==
 
 = Why use Profitquery? =
-Profitquery is fast-growing intelligence system for boost any website. For now we have over 20 smart tools some of them are unique. And this is just the beginning.
-Our team make the complex simple. Make pro version similar tools - free. And it's all thanks unprecedented use of the Latest Technology. Vector graphics, 2D & 3D animation, more than you can imagine for your website for free right now.
+Profitquery is fast-growing intelligence system to boost any website. We create unique tools for making your tasks, solve faster and make your website grow from first minutes using.
+Our team makes the complex simple. Make pro version similar tools - free. And it's all thanks unprecedented use of the Latest Technology. Vector graphics, 2D & 3D animation, more than you can imagine for your website for free right now.
 
-= I want to write article about Profitquery Marketing Intelligence platform =
-Thats wonderfull! You can write about profitquery and send us content link. We paste your work on <a href="http://profitquery.com/blog.html">Profitquery Blog</a>
+= I want to write articles about the Profitquery Marketing Intelligence platform =
+That's wonderful!  You can write about profitquery and send us content link. We paste your work on <a href="http://profitquery.com/blog.html">Profitquery Blog</a>
 
-= I want to translate default profitquery text to the another language =
+= I want to translate default profitquery text to the other language =
 Thats Great! Email us <a href="mailto:info@profitquery.com">info@profitquery.com</a> And we write about your work on the plugin notes.
 
 = I think in pro version must be that features... =
@@ -171,16 +168,16 @@ Don't worry. First of all try clear you browser cache and reopen page or admin a
 You can write about problem on the plugin forum or email us <a href="mailto:support@profitquery.com">support@profitquery.com</a>
 
 = Is plugin by Profitquery free? =
-Yes, it's free.
+Yes, it's free, but you can greatly upgrade any tool if you enable Pro Options. Each option increases the efficiency of the decision by hundreds of percent.
 
 = Do I need to create an account? =
-No. All needfull information profitquery get automatically. That's why Profitquery can generate secure apiKey without any sign-up.
+No. All needfull information profitquery get automatically.
 
 = Is JavaScript required? =
 All of the options required through this plugin require javascript. JavaScript must be enabled. We load the actual interface via JavaScript at run-time, which allows us to upgrade the functionality of the all tools itself automatically everywhere.
 
 = How Profitquery work =
-Profitquery is SaaS marketing intelligence platform, thats why for correct work on any website we need load javascript library from our cdn server. 
+Profitquery is a SaaS marketing intelligence platform, that's why to right work on any website we need load javascript library from our Cdn server.
 Profitquery javascript library already minimized and have asynchronous mode loading for optimized your website.
 
 == Screenshots ==
@@ -194,6 +191,12 @@ Profitquery javascript library already minimized and have asynchronous mode load
 7. Many header images popup
 
 == Changelog ==
+
+= 3.2 =
+* major update
+* more tools
+* more offers
+* more features
 
 = 3.1.1 =
 * follow icons bug fixed
@@ -354,19 +357,20 @@ update mechanism load library
 == Marketing Bar not displaying  ==
 * <a href="http://profitquery.com/mailchimp.html">Mailchimp integration</a>
 * <a href="http://profitquery.com/aweber.html">Aweber integration</a>
+* <a href="http://profitquery.com/acampaign.html">Active Campaign</a>
 * You need a new provider integration ? Email us <a href="mailto:support@profitquery.com">support@profitquery.com</a>
 
 
 == Tools Not displaying But I have any cache plugin  ==
-If you have any cache plugin like wp cache, you need to find on them exception JS and save that lite.profitquery.min.js do not need to minimized.
-Profitquery library already minimized and load from your website.
+If you have any cache plugin like WP cache, you need to find on them exception JS and save that profitquery. men. gas and aio.plugin.profitquery.min.js do not need to minimize.
+Profitquery library already minimized and load of your website.
 
 == Image sharer skip tag  ==
 You can skip any photo you want. For example header logo, or any banner.
-For do that you need to edit image tag and set up new option on there
+To do that you need to edit image tag and set up new options on there
 `<img src="<any photo>" data-pq-skip-photo="1"...>` skip tag
 
 = Contact form / Call me displayed, but not working =
 In free version we use default mailto function. You can set up it. For example, <a href="https://sites.google.com/a/umich.edu/going-google/helpdesk-reps/set-google-chrome-to-be-the-default-mail-handler">Set Google Chrome to be the Default Mail Handler</a>
-In pro version all email send by profitquery service. Get pro, email us <a href="mailto:info@profitquery.com">info@profitquery.com</a>
+In pro version all email is sent by profitquery service. Get pro, increase your website.
 

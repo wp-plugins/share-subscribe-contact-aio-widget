@@ -19,16 +19,16 @@
 * +--------------------------------------------------------------------------+
 */
 /**
-* Plugin Name: Share + Subscribe + Contact | AIO Widget
+* Plugin Name: Share Subscribe Contact Any Popover's | AIO
 * Plugin URI: http://profitquery.com/aio_widgets.html
-* Description: Next level widgets for growth your customers feedback, visitors contact information, share's, social networks referral's, folllowers and all for free.
-* Version: 3.1.1
+* Description: Any popovers for solving many website tasks. Growth email, subscription, feedback, phone number, shares, referral's, followers, etc.
+* Version: 3.2
 *
 * Author: Profitquery Team <support@profitquery.com>
 * Author URI: http://profitquery.com/?utm_campaign=aio_widgets_wp
 */
 
-
+//update_option('profitquery', array());
 $profitquery = get_option('profitquery');
 
 
@@ -148,6 +148,53 @@ function profitquery_is_subscribe_enabled($profitquery){
 	return $return;
 }
 
+function profitquery_is_thank_enabled($profitquery){
+	$ret = false;
+	if((int)$profitquery[contactUs][afterProceed][thank] == 1){
+		$ret = true;
+	}
+	if((int)$profitquery[callMe][afterProceed][thank] == 1){
+		$ret = true;
+	}
+	if((int)$profitquery[subscribeExit][afterProceed][thank] == 1){
+		$ret = true;
+	}
+	if((int)$profitquery[subscribeBar][afterProceed][thank] == 1){
+		$ret = true;
+	}
+	if((int)$profitquery[sharingSideBar][afterProceed][thank] == 1){
+		$ret = true;
+	}
+	if((int)$profitquery[imageSharer][afterProceed][thank] == 1){
+		$ret = true;
+	}
+	return $ret;
+}
+
+
+function profitquery_is_follow_enabled($profitquery){
+	$ret = false;
+	if((int)$profitquery[contactUs][afterProceed][follow] == 1){
+		$ret = true;
+	}
+	if((int)$profitquery[callMe][afterProceed][follow] == 1){
+		$ret = true;
+	}
+	if((int)$profitquery[subscribeExit][afterProceed][follow] == 1){
+		$ret = true;
+	}
+	if((int)$profitquery[subscribeBar][afterProceed][follow] == 1){
+		$ret = true;
+	}
+	if((int)$profitquery[sharingSideBar][afterProceed][follow] == 1){
+		$ret = true;
+	}
+	if((int)$profitquery[imageSharer][afterProceed][follow] == 1){
+		$ret = true;
+	}
+	return $ret;
+}
+
 function profitquery_is_follow_enabled_and_not_setup($profitquery){
 	$return = false;
 	$ifSetFollowAfterProceed = false;
@@ -246,6 +293,7 @@ function profitquery_prepare_sctructure_product($data){
 				if($k == 'VK') $return[follow_socnet][$k][url] = 'http://vk.com/'.$v;
 				if($k == 'RSS') $return[follow_socnet][$k][url] = $v;				
 				if($k == 'IG') $return[follow_socnet][$k][url] = 'http://instagram.com/'.$v;				
+				if($k == 'OD') $return[follow_socnet][$k][url] = 'http://ok.ru/'.$v;				
 			}
 		}
 		
@@ -598,7 +646,7 @@ function profitquery_smart_widgets_insert_code(){
 			var _isPQLibraryLoaded = false;
 			s.type = 'text/javascript';
 			s.async = true;			
-			s.src = 'http://api.profitquery.com/lib/profitquery.min.js?version=v3.0.4&lang=".stripslashes($profitquery[additionalOptions][lang])."&pro_loader_name=".stripslashes($profitquery[proOptions][proLoaderFilename])."&apiKey=".stripslashes($profitquery[apiKey])."';
+			s.src = '//api.profitquery.com/lib/profitquery.min.js?version=v3.0.4&lang=".stripslashes($profitquery[additionalOptions][lang])."&pro_loader_name=".stripslashes($profitquery[proOptions][proLoaderFilename])."&apiKey=".stripslashes($profitquery[apiKey])."';
 			s.onload = function(){
 				if ( !_isPQLibraryLoaded )
 				{					
@@ -628,5 +676,6 @@ function profitquery_smart_widgets_insert_code(){
 	</script>	
 	";
 }
+
 
 add_filter('plugin_action_links', 'profitquery_wordpress_admin_link', 10, 2);
