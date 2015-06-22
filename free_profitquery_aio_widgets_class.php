@@ -536,11 +536,12 @@ class ProfitQuerySmartWidgetsClass
 		
 		//deleteProOptions
 		if($_GET[action] == 'deleteProOptions'){
-			$proLoaderFilename = $this->_options['proOptions'][proLoaderFilename];
+			//$proLoaderFilename = $this->_options['proOptions'][proLoaderFilename];
 			$mainPageUrl = $this->_options['proOptions'][mainPageUrl];
 			$this->_options['proOptions'] = array();
-			$this->_options['proOptions'][proLoaderFilename] = $proLoaderFilename;
+			//$this->_options['proOptions'][proLoaderFilename] = $proLoaderFilename;
 			$this->_options['proOptions'][mainPageUrl] = $mainPageUrl;			
+			$this->_options['apiKey'] = '';			
 			update_option('profitquery', $this->_options);				
 		}		
 		
