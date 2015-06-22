@@ -1339,7 +1339,7 @@ function changePopupImg(img, custom_photo_block_id){
 						<label>
 							<input type="radio" name="task" value="13" class="">
 							<input type="checkbox" name="" class="">
-							<div><img src="<?php echo plugins_url('i/bar.png', __FILE__);?>" class="pq_card" /><p>Any Bar</p><input type="button" class="task activate any_bar_activate" value="More info"></div>
+							<div><img src="<?php echo plugins_url('i/bar.png', __FILE__);?>" class="pq_card" /><p>Any Marketing Bar</p><input type="button" class="task activate any_bar_activate" value="More info"></div>
 						</label>
 						<label>
 							<input type="radio" name="task" value="13" class="">
@@ -5348,6 +5348,9 @@ function changePopupImg(img, custom_photo_block_id){
 	</div>
 	<div id="Any_popup" class="pq_popup hello">
 			<h1>Any Popup For Any Task</h1>
+			<p>There are some of our client popup which solves different tasks. Make an order and our specialist will prepare tool for you with any design and actions you want.</p>
+			<a href="mailto:support@profitquery.com?subject=[PQ PRO] Popup Order"><input type="button" value="order popup support@profitquery.com" class="marketing_submit"></a>
+			<div class="pq_clear"></div>
 			<div class="pq_any_small" id="any_popup1">
 				<img src="<?php echo plugins_url('i/popups/01.png', __FILE__);?>"/>
 			</div>
@@ -5368,12 +5371,13 @@ function changePopupImg(img, custom_photo_block_id){
 			</div>
 			<div class="pq_any_cont"></div>
 			<div class="pq_clear"></div>
-			<p>There are some of our client popup which solves different tasks. Make an order and our specialist will prepare tool for you with any design and actions you want.</p>
-			<a href="mailto:support@profitquery.com?subject=[PQ PRO] Popup Order"><input type="button" value="order support@profitquery.com" class="marketing_submit"></a>
 			<a class="pq_close" onclick="document.getElementById('Any_popup').style.display='none';"></a>
 		</div>
 		<div id="Any_floating" class="pq_popup hello">
 			<h1>Any Floating For Any Task</h1>
+			<p>There are some of our client floating popovers which solves different tasks. Make an order and our specialist will prepare tool for you with any design and actions you want.</p>
+			<a href="mailto:support@profitquery.com?subject=[PQ PRO] Floating Order"><input type="button" value="order floating support@profitquery.com" class="marketing_submit"></a>
+			<div class="pq_clear"></div>
 			<div class="pq_any_small" id="any_floating1">
 				<img src="<?php echo plugins_url('i/floatings/01.png', __FILE__);?>"/>
 			</div>
@@ -5394,12 +5398,13 @@ function changePopupImg(img, custom_photo_block_id){
 			</div>
 			<div class="pq_any_cont"></div>
 			<div class="pq_clear"></div>
-			<p>There are some of our client floating popovers which solves different tasks. Make an order and our specialist will prepare tool for you with any design and actions you want.</p>
-			<a href="mailto:support@profitquery.com?subject=[PQ PRO] Floating Order"><input type="button" value="order support@profitquery.com" class="marketing_submit"></a>
 			<a class="pq_close" onclick="document.getElementById('Any_floating').style.display='none';"></a>
 		</div>
 		<div id="Any_bar" class="pq_popup hello">
 			<h1>Any Bar For Any Task</h1>
+			<p>There are some of our client marketing bar which solves different tasks. Make an order and our specialist will prepare tool for you with any design and actions you want.</p>
+			<a href="mailto:support@profitquery.com?subject=[PQ PRO] Bar Order"><input type="button" value="order bar support@profitquery.com" class="marketing_submit"></a>
+			<div class="pq_clear"></div>
 			<div class="pq_any_small" id="any_bar1">
 				<img src="<?php echo plugins_url('i/bars/01.png', __FILE__);?>"/>
 			</div>
@@ -5411,8 +5416,6 @@ function changePopupImg(img, custom_photo_block_id){
 			</div>
 			<div class="pq_any_cont"></div>
 			<div class="pq_clear"></div>
-			<p>There are some of our client marketing bar which solves different tasks. Make an order and our specialist will prepare tool for you with any design and actions you want.</p>
-			<a href="mailto:support@profitquery.com?subject=[PQ PRO] Bar Order"><input type="button" value="order support@profitquery.com" class="marketing_submit"></a>
 			<a class="pq_close" onclick="document.getElementById('Any_bar').style.display='none';"></a>
 		</div>
 		
