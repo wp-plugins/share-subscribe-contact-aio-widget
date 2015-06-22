@@ -19,10 +19,10 @@
 * +--------------------------------------------------------------------------+
 */
 /**
-* Plugin Name: Share Subscribe Contact Any Popover's | AIO
+* Plugin Name: Share Subscribe Contact Any Popover's | Profitquery AIO
 * Plugin URI: http://profitquery.com/aio_widgets.html
-* Description: Any popovers for solving many website tasks. Growth email, subscription, feedback, phone number, shares, referral's, followers, etc.
-* Version: 3.2
+* Description: Any popovers by Profitquery for solving many website tasks. Growth email, subscription, feedback, phone number, shares, referral's, followers, etc.
+* Version: 3.2.1
 *
 * Author: Profitquery Team <support@profitquery.com>
 * Author URI: http://profitquery.com/?utm_campaign=aio_widgets_wp

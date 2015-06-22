@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 3.2
+* @version  SVN: 3.2.1
 */
 
 
@@ -235,6 +235,9 @@ class ProfitQuerySmartWidgetsClass
 		if($_POST[subscribeProvider] == 'aweber'){
 			$return = $this->_parseAweberForm();
 		}
+		if($_POST[subscribeProvider] == 'getresponse'){
+			$return = $this->_parseGetResponseForm();
+		}		
 		return $return;
 	}
 	
@@ -258,6 +261,42 @@ class ProfitQuerySmartWidgetsClass
 				$array[is_error] = 1;
 			}			
 		}
+		return $array;
+	}
+	
+	
+	
+	function _parseGetResponseForm()
+	{
+		$txt = trim($_POST[subscribeProviderFormContent]);		
+		$array = array();
+		$matches = array();
+		$hiddenField = array();		
+		if($txt){
+			$txt = stripslashes($txt);
+			$txt = str_replace("\t", ' ', $txt);
+			$txt = str_replace("\r", '', $txt);
+			$txt = str_replace("\n", '', $txt);
+			$txt = str_replace("  ", " ", $txt);
+			$txt = str_replace("  ", " ", $txt);			
+			preg_match_all('/(\<)(.*)(form)(.*)(action=)(.*)([\"\'])(.*)([\"\'])(.*)(\>)/Ui', $txt, $matches);
+			$array[formAction] = trim($matches[8][0]);			
+			if(!strstr($array[formAction], 'getresponse.com')){
+				$array[formAction] = '';
+				$array[is_error] = 1;
+			} else {
+				preg_match_all('/(\<)(.*)(input)(.*)(hidden)(.*)(name=)(.*)([\"\'])(.*)([\"\'])(.*)(value=)(.*)([\"\'])(.*)([\"\'])(.*)(\>)/Ui', $txt, $matches);				
+				foreach((array)$matches[10] as $k => $v){
+					$hiddenField[$v] = $matches[16][$k];
+				}				
+				if($hiddenField[webform_id]){
+					$array[hidden] = $hiddenField;
+				} else {
+					$array[formAction] = '';
+					$array[is_error] = 1;
+				}
+			}
+		}		
 		return $array;
 	}
 	
@@ -5100,7 +5139,7 @@ function changePopupImg(img, custom_photo_block_id){
 			
 			<!--p>Latest news and plans of our team.</p>
 			<p><strong><a href="javascrip:void(0);" onclick="document.getElementById('Get_Pro').style.display='block';">Try Pro for free right now. You can enable free trial with all pro features for 3 Day</a></strong></p-->
-			<p>You can setup sharing sidebar, image sharer hover icons block, subscribe bar and subscribe exit intent which you can integrate with Aweber, Mailchimp and Active Campaign, you can setup Contact Us and Call Me tools which help you to get feedback from customers, emails and phone numbers. You can setup Follow popup and Thank popup and bind them after any action proceed (for example, after sharing, or after subscribing action). You can order our technical specialist for <a href="javascript:void(0)" onclick="document.getElementById('Any_tools').style.display='block';"> generate for you some new tools</a>. For example Bar with promoting link, or floating popup with a subscribe or exit popup with follow button.</p>
+			<p>You can setup sharing sidebar, image sharer hover icons block, subscribe bar and subscribe exit intent which you can integrate with Aweber, Mailchimp, Active Campaign, GetRsponse, you can setup Contact Us and Call Me tools which help you to get feedback from customers, emails and phone numbers. You can setup Follow popup and Thank popup and bind them after any action proceed (for example, after sharing, or after subscribing action). You can order our technical specialist for <a href="javascript:void(0)" onclick="document.getElementById('Any_tools').style.display='block';"> generate for you some new tools</a>. For example Bar with promoting link, or floating popup with a subscribe or exit popup with follow button.</p>
 			<p>If you want more share services or mail providers, just email us <a href="mailto:support@profitquery.com">support@profitquery.com</a></p>
 			<br>
 			<h1>All tools for free</h1>
@@ -5245,7 +5284,7 @@ function changePopupImg(img, custom_photo_block_id){
 				<p>This section for setup your email address. Some profitquery tools send email to website admin.</p>
 				<img src="<?php echo plugins_url('i/46.png', __FILE__);?>"/>
 				<h1>Subscribe Provider Setup</h1>
-				<p>This section for setup, subscribe sign in form. You can choose one of the provider (<a href="http://profitquery.com/mailchimp.html" target="_blank">Mailchimp</a>, <a href="http://profitquery.com/aweber.html" target="_blank">Aweber</a>, <a href="http://profitquery.com/acampaign.html" target="_blank">ActiveCampaign</a>) and paste sign-in form which you need to create on the chosen provider website. If you paste the wrong sign-in code, we will write Error Message. For use Bar and Exit popup you need a setup provider. If you want another mail provider which can generate sign-in form (not another plugin, only external mail service like mailchimp) you can email us <a href="mailto:support@profitquery.com">support@profitquery.com</a></p>
+				<p>This section for setup, subscribe sign in form. You can choose one of the provider (<a href="http://profitquery.com/mailchimp.html" target="_blank">Mailchimp</a>, <a href="http://profitquery.com/aweber.html" target="_blank">Aweber</a>, <a href="http://profitquery.com/acampaign.html" target="_blank">ActiveCampaign</a>, <a href="http://profitquery.com/getresponse.html" target="_blank">GetResponse</a>) and paste sign-in form which you need to create on the chosen provider website. If you paste the wrong sign-in code, we will write Error Message. For use Bar and Exit popup you need a setup provider. If you want another mail provider which can generate sign-in form (not another plugin, only external mail service like mailchimp) you can email us <a href="mailto:support@profitquery.com">support@profitquery.com</a></p>
 				<img src="<?php echo plugins_url('i/47.png', __FILE__);?>"/>
 				<h1>Provider Setup Status</h1>
 				<p>If you right set-up your subscribe provider by the click to the Email Settings you will see that window. Also, you can change provider sign in form by the click Settings. </p>
@@ -5445,6 +5484,7 @@ function changePopupImg(img, custom_photo_block_id){
 					<option value="mailchimp" <?php if($this->_options[subscribeProvider] == '' || $this->_options[subscribeProvider] == 'mailchimp') echo "selected";?>>MailChimp</option>
 					<option value="aweber" <?php if($this->_options[subscribeProvider] == 'aweber') echo "selected";?>>AWeber</option>
 					<option value="acampaign" <?php if($this->_options[subscribeProvider] == 'acampaign') echo "selected";?>>Active Campaign</option>
+					<option value="getresponse" <?php if($this->_options[subscribeProvider] == 'getresponse') echo "selected";?>>GetResponse</option>
 				</select>
 			</label>
 			<label>
@@ -5472,6 +5512,9 @@ function changePopupImg(img, custom_photo_block_id){
 			}
 			if(document.getElementById('subscribeProvider').value == 'acampaign'){
 				document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/acampaign.html';
+			}
+			if(document.getElementById('subscribeProvider').value == 'getresponse'){
+				document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/getresponse.html';
 			}
 			if(withCheckCurrent == '1'){
 				if(currentSubscribeProvider){
