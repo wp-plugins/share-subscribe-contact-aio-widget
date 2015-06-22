@@ -9,8 +9,8 @@ License: GPL 2. See License below for copyright jots and tittles.
 Any popovers for solving many website tasks. Growth email, subscription, feedback, phone number, shares, referral's, followers, etc.
 
 == Description ==
-Use Profitquery tools with many special add-ons you can solve, perhaps, any task you want. Growth emails, contact information, referrals, shares, image shares, increase sales using promo popovers, growth feedbacks, social network followers and more that you can imagine. <strong>This tools for your website growth.<strong>
-If you webmaster, developer, webstudio then Profitquery definitely for you. You can solve any task your clients with Profitquery faster that you can imagine.
+Use Profitquery tools with many special add-ons you can solve, perhaps, any task you want. Growth emails, contact information, referrals, shares, image shares, increase sales using promo popovers, growth feedbacks, social network followers and more that you can imagine. <strong>This tools for your website growth.</strong>
+If you <strong>webmaster, developer, webstudio</strong> then Profitquery definitely for you. You can solve any task your clients with Profitquery faster that you can imagine.
 
 = Why use Profitquery Marketing Intelligence Platform? =
 >Profitquery is fast-growing intelligence system to boost any website. We create unique tools for making your tasks, solve faster and make your website grow from first minutes using.
