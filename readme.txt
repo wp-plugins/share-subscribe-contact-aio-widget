@@ -10,6 +10,8 @@ Any popovers for solving many website tasks. Growth email, subscription, feedbac
 
 == Description ==
 Use Profitquery tools with many special add-ons you can solve, perhaps, any task you want. Growth emails, contact information, referrals, shares, image shares, increase sales using promo popovers, growth feedbacks, social network followers and more that you can imagine. <strong>This tools for your website growth.</strong>
+
+
 If you <strong>webmaster, developer, webstudio</strong> then Profitquery definitely for you. You can solve any task your clients with Profitquery faster that you can imagine.
 
 = Why use Profitquery Marketing Intelligence Platform? =
