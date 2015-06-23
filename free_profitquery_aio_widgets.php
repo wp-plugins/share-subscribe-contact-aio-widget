@@ -103,18 +103,11 @@ add_action('init', 'profitquery_smart_widgets_init');
 function profitquery_smart_widgets_init(){
 	global $profitquery;
 	global $ProfitQuerySmartWidgetsClass;	
-	if ( !is_admin()){
-		add_action('wp_head', 'profitquery_smart_widgets_insert_cache_hack_code');		
-		add_action('wp_footer', 'profitquery_smart_widgets_insert_code');		
+	if ( !is_admin()){		
+		add_action('wp_head', 'profitquery_smart_widgets_insert_code');		
 	}		
 }
 
-function profitquery_smart_widgets_insert_cache_hack_code(){
-	global $profitquery;
-	if($profitquery[apiKey]){		
-		echo '<script>var profitqueryLiteAPIKey="'.$profitquery[apiKey].'";</script>';		
-	}
-}
 
 function printr($array){
 	echo '<pre>';
@@ -632,6 +625,7 @@ function profitquery_smart_widgets_insert_code(){
 	print "
 	<script>
 	(function () {
+			var profitqueryLiteAPIKey='".$profitquery[apiKey]."';
 			var PQInit = function(){
 				profitquery.loadFunc.callAfterPQInit(function(){					
 					profitquery.loadFunc.callAfterPluginsInit(						
