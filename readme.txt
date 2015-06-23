@@ -67,7 +67,7 @@ Sharing sidebar is next level social share button's which can increase sharer we
 You can choose which side of your page it appears on, you can control how many share buttons show up in the admin area. Awesome on hover effect, many social network providers, mobile adaptation all that makes these tools best free distribution sidebar share.
 Also, you can set up show follow us popup or thank popup after sharer.
 
-<br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=sidebarShare" target="_blank">Sharing Sidebar Live Demo</a><br>
+<br>
 
 
 = On Hover Image Sharer =
@@ -75,7 +75,7 @@ Perhaps the best on hover image sharer. Why? Free distribution, vector graphics,
 Also, you can set up show follow us popup or thank popup after sharer.
 
 
-<br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=imageSharer" target="_blank">Image Sharer Live Demo</a><br>
+<br>
 
 
 = Subscribe Bar =
@@ -84,40 +84,40 @@ And we can get you a few way ask customers email. It is marketing bar, always on
 Subscribe bar and exit popup integrate each other, that mean that if your customers proceed one of them second tools will be close and locked too. On the admin area you can customization many text, design, animation option.
 All Latest Technology for your website, to make collect contact information easily. Support Mailchimp, Aweber, ActiveCampaign and GetReponse integration, also you can ask us integrate with any service you want. By the way, you can set up follow Us popup or just thank popup after procced action.
 
-<br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=subscribeBar" target="_blank">Subscribe Bar Live Demo</a><br>
+<br>
 
 
 = Exit Popup =
 It is a subscription floating popup, last chance to ask email outgoing customers. That's the way we develop them with fun animation (you can turn it off on your admin area) Color, size, 3D animation, color overlay and more other options all for you and your customers.
 Perhaps the most attractive is that Exit popup has free distribution too. After proceeding exit popup you can set up to show popup with follow us buttons or thank popup. Support Mailchimp, Aweber and ActiveCampaign integration, also you can ask us integrate with any service you want.
 
-<br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=subscribeExit" target="_blank">Exit Popup Live Demo</a><br>
+<br>
 
 
 = Contact Form =
 This is floating bookmarks, that you can set on the right or left side, on the top, middle or bottom position on your blog. After click you will see a popup with amazing animation which help you to get feedback from your customers. This amazing bookmark work on the desktop and mobile devices.
 Also, you can set up your custom image to the contact form popup. You can set up text option, design, animation, image on the top, color bookmark, even overlay color when popup shows up. And all this for free.
 
-<br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=contactUs" target="_blank">Contact Form Live Demo</a><br>
+<br>
 
 
 = Сall Me Now =
 This bookmark for collecting phone numbers from your visitors. It is a fastest way to contact your users. All phone numbers would be in your mail inbox. Bookmark and floating popup you can customization on your admin area.
 
-<br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=callMe" target="_blank">Сall Me Now Live Demo</a><br>
+<br>
 
 
 = Following =
 Follow us popup is the tools which can get your new followers in social networks, the most important features is that this popup work with smart event handler mechanism, you can triggered show up popup after procced any action (after shower on the sidebar, or image sharer, after customer subscription or send your feedback or phone number) This is amazing trigger, because you get immediately 2 customers action.
 3D animation, hover effect on the SVG icon, many design option all that make it very strong and smarter tool.
 
-<br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=follow" target="_blank">Following Live Demo</a><br>
+<br>
 
 
 = Thank Popup =
 This is to thank pop up which you can trigger after proceed any action like follow popup. There you can set up your text and say thank or get a very interesting marketing message, like a promo your new article or contact information or something else.
 
-<br><a href="http://profitquery.com/aio_wp_demo_carousel_v2.html?p=thankPopup" target="_blank">Thank Popup Live Demo</a><br>
+<br>
 
 = Custom Popovers  = 
 You can use any popovers for solving your website tasks. For example Hello bar with promo link, floating popup with subscribe action and follow us icons, exit popup with discount offers etc.
