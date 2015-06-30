@@ -8,10 +8,12 @@
 body {position: relative; margin: 0;}
 #profitquery { font-size: 0; position: fixed; overflow: hidden; right: 0; left: 160px; -webkit-box-sizing: border-box; box-sizing: border-box; bottom: 0px; top: 34px; z-index: 1; background-color: white; bottom: 1px;}
 .folded #profitquery {left: 36px;}
+@media only screen and (max-device-width: 782px), screen and (max-width: 782px){.folded #profitquery {left: 0px; top: 46px;}}
 #profitquery>div {display: inline-block; vertical-align: top; font-family: arial;}
 #profitquery .pq1 {width: 100%; height: 5%; background: rgb(123, 123, 123); min-height: 35px; z-index: 2; position: absolute;}
 #profitquery .pq2 {width: 22%; background: #f6f6df; font-size: 14px; overflow-y: auto;  width: 100%; position: absolute; left: 0;  top: 6%; height: 94%;}
 #profitquery .pq2 img.pq_card, #profitquery .pq2 .choise img  {display: block; margin: 4px auto;  max-width: 100%; height: auto;}
+#profitquery .pq2 .pq_fail img {opacity: 0;}
 #profitquery .pq2 img.pq_card+p { margin: 0;  font-size: 15px;  line-height: 1;}
 #profitquery .pq3 {width: 80%; background: white; /*display: none; */position: absolute;  right: 0;    top: 6%;  bottom: 0;}
 
@@ -28,6 +30,8 @@ body {position: relative; margin: 0;}
 #profitquery .pq2 form a.tooltip_pro {color: rgb(255, 37, 100); font-size: 10px; display: inline-block; height: 14px; width: 14px; border: 1px solid; -webkit-border-radius: 50px; border-radius: 50%; text-align: center; float: right; margin-top: 25px; cursor: pointer; text-decoration: none; line-height: 14px;}
 #profitquery .pq2 .pq_li3 .pq_li_button {margin: 0px;}
 #profitquery .pq2 form .pq_li1  label {margin: 0 0 5px;}
+#profitquery .pq2 form .pq_li1  label a.pq_question {position: absolute; top: 0; right: 0; margin: 5px; font-size: 10px; background-color: grey; color: white; width: 12px;  height: 12px; line-height: 12px;}
+#profitquery .pq2 form .pq_li1  label a.pq_question:hover {background-color: black; border-color: black;}
 #profitquery .pq2 form .choise, #profitquery .pq3 .choise  {width: 5%; display: inline-block; margin: 0; height: 40px;  background-color: white;}
 #profitquery .pq3 .choise  img{ padding: 4px 4px 0;}
 #profitquery .pq2 .pq_li1 label:hover div, #profitquery .pq2 .pq_li2 label:hover div{border: 2px solid #d5d5b3;}
@@ -135,6 +139,7 @@ body {position: relative; margin: 0;}
 #profitquery .pq1 img {position: absolute; top: 5px; left: 15px;}
 #profitquery .pq1 p {color: white; font-size: 18px; width: 20%; text-align: center; text-transform: uppercase; font-family: pt sans narrow; margin: 4px 0 0; display: inline-block; padding: 0px; display:none;}
 #profitquery .pq1 p.selected {display:inline-block;}
+#profitquery .pq1 p.selected>a.pq_question {color: white; border: 1px solid white; border-radius: 20px; padding: 0 5px; font-size: 12px; margin-left: 7px;  text-decoration: none;}
 #profitquery .pq1 p+a {border-left-style: dotted; font-size: 14px; font-family: pt sans narrow; padding-left: 15px; color: white; text-transform: uppercase;  text-decoration: none;}
 #profitquery .pq1 a.pq_adds { border: none;  position: absolute;  right: 275px;  top: 25%;}
 #profitquery .pq1 p+a:hover {opacity: .7;}
@@ -171,6 +176,9 @@ body {position: relative; margin: 0;}
 #profitquery a.question:hover {background-color: rgb(0, 0, 0);}
 #profitquery a.question img{margin: 18px 15px;}
 #profitquery .pq_popup {position: absolute;  display: block;  background-color: white;  padding: 25px;  -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-box-shadow: 0 1px 1px 2px lightgrey; box-shadow: 0 1px 1px 1px lightgrey; -webkit-border-radius: 3px; border-radius: 3px; text-align: center; display: none; Z-INDEX: 50; color: rgb(123, 123, 123);}
+#profitquery .pq_popup_about {width: 60%; margin: 50px 20%;  background-color: rgb(232, 232, 232);}
+#profitquery .pq_popup.pq_popup_about h2 {position: static; text-transform: none; margin: 0;}
+#profitquery .pq_popup_about p {margin: 10px 0 25px;}
 #profitquery .pq_popup.protection {top: 90px; width: 60%; left: 20%; background: rgb(255, 229, 229);}
 #profitquery .pq_popup.hello { top: 7%; width: 100%; left: 0;  bottom: 0;  overflow-y: auto; padding: 15px 30px;}
 #profitquery .pq_popup.hello.selected {display: block;}
@@ -322,7 +330,8 @@ body {position: relative; margin: 0;}
 #profitquery .picture+div label { width: 85px;}
 #profitquery .pq1 p{font-size: 16px;  margin: 5px 0 0;}
 #profitquery .pq2 form label div input.task {font-size: 12px;}
-#profitquery .pq_li_button{font-size: 12px;}}
+#profitquery .pq_li_button{font-size: 12px;}
+#profitquery .pq1 img{left: 3px;}}
 @media only screen and (max-device-width: 1024px), and (max-width: 1024px){
 #profitquery .pq2 form .sm select, #profitquery .pq2 form .sm input[type="text"]{width: 75%;}
 #profitquery .pq2 form label div input.task {font-size: 10px;}
@@ -331,10 +340,10 @@ body {position: relative; margin: 0;}
 #profitquery .pq1 input.pro{width: 200px;}
 #profitquery .pq1 a.pq_adds{right: 225px;}
 #profitquery .pq_popup.lang{right: 220px;}
-#profitquery .pq1 img{left: 7px;}
+
 #profitquery .pq_li_button{font-size: 10px;}}
 @media only screen and (max-device-width: 980px), screen and (max-width: 980px){
-#profitquery .pq1 img{left: 3px;}
+
 #profitquery .pq1 p {font-size: 10px; margin: 10px 0 0;}
 #profitquery .pq1 p+a{font-size: 10px;}
 #profitquery .pq2 img.pq_card+p{font-size: 12px;}
@@ -417,3 +426,4 @@ body {position: relative; margin: 0;}
 #profitquery .pq_popup.hello .pq_any_cont.any_bar1 {background-image: url('http://api.profitquery.com/lib/img/bars/1.png');}
 #profitquery .pq_popup.hello .pq_any_cont.any_bar2 {background-image: url('http://api.profitquery.com/lib/img/bars/2.png');}
 #profitquery .pq_popup.hello .pq_any_cont.any_bar3 {background-image: url('http://api.profitquery.com/lib/img/bars/3.png');}
+#profitquery .pq2 .pq_fail+.pq_failure {display: block;  position: absolute;  width: 15%;  height: 40px; top: 0; left: 5%; background-color: white;}

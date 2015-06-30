@@ -1,7 +1,7 @@
 === Share Subscribe Contact Any Popover | AIO  ===
 Contributors: schemotechnik, ilya_v, frenly_girl
 Donate link: http://profitquery.com/aio_widgets.html
-Tags: free tools, social marketing, free widgets, marketing, subscription, e-mail, aweber, aweber subscribe, aweber subscription, getResponse, getResponse signup form,conversion tools, growth tools, share buttons, share button, add to any, add this, contact form, email, feedback, profitquery, profitquery widgets, content marketing, custom popup, svg, ccs3, animation, bookmark, bookmarking, floating buttons, sidebar, share sidebar, sharing sidebar, share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets, Share, share this, sharing buttons, social marketing, subscription button, twitter, Website Tools, like, monarch, image, images, share links, sharethis, sociable, social, social bookmarking, social bookmarks, social share, social sharing, socialize, statistics, stats, vector, newsletter, Hubspot, lightbox, mailing list, social media, image bookmarking, inbound marketing, popover, popup, social plugin, welcome bar, hello bar, social network, social media, Active Campaign, activecampaign, activehosted, image sharing
+Tags: free tools, social marketing, free widgets, marketing, subscription, e-mail, aweber, aweber subscribe, aweber subscription, Klick Mail, klickmail, getResponse, getResponse signup form,conversion tools, growth tools, share buttons, share button, add to any, add this, contact form, email, feedback, profitquery, profitquery widgets, content marketing, custom popup, svg, ccs3, animation, bookmark, bookmarking, floating buttons, sidebar, share sidebar, sharing sidebar, share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, e-mail, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, admin, Post, posts, mailchimp, mailchimp subscribe, free widgets, Share, share this, sharing buttons, social marketing, subscription button, twitter, Website Tools, like, monarch, image, images, share links, sharethis, sociable, social, social bookmarking, social bookmarks, social share, social sharing, socialize, statistics, stats, vector, newsletter, Hubspot, lightbox, mailing list, social media, image bookmarking, inbound marketing, popover, popup, social plugin, welcome bar, hello bar, social network, social media, Active Campaign, activecampaign, activehosted, image sharing
 Requires at least: 2.9
 Tested up to: 4.2.2
 Stable tag: 3.2.1
@@ -40,6 +40,7 @@ If you <strong>webmaster, developer, webstudio</strong> then Profitquery definit
 * Mailchimp subscription
 * Active Campaign subscription
 * Aweber subscription 
+* Klick Mail subscription 
 * GetResponse subscription 
 * Very easy integration with Mailchimp
 * Quickly grow your email newsletter list
@@ -82,7 +83,7 @@ Also, you can set up show follow us popup or thank popup after sharer.
 Your email list, it's most important on your blog, because it's way to contact with your reading audience. All you do, it's all for your followers. When you want to promote your blog all time you need contact information your customers to send him latest news or link to amazing posts on your blog. That's why subscribing bar is most popular tools for Wordpress blog.
 And we can get you a few way ask customers email. It is marketing bar, always on the top, with amazing animation effect, custom color, mobile adaptation and lock mechanism, and exit popup, which work when your customers move mouse to close page, or click on the close icon in the mobile version.
 Subscribe bar and exit popup integrate each other, that mean that if your customers proceed one of them second tools will be close and locked too. On the admin area you can customization many text, design, animation option.
-All Latest Technology for your website, to make collect contact information easily. Support Mailchimp, Aweber, ActiveCampaign and GetReponse integration, also you can ask us integrate with any service you want. By the way, you can set up follow Us popup or just thank popup after procced action.
+All Latest Technology for your website, to make collect contact information easily. Support Mailchimp, Aweber, ActiveCampaign, GetReponse and Klick Mail integration, also you can ask us integrate with any service you want. By the way, you can set up follow Us popup or just thank popup after procced action.
 
 <br>
 
@@ -198,6 +199,7 @@ Profitquery javascript library already minimized and have asynchronous mode load
 
 = 3.2.1 =
 * add GetResponse mail provider
+* add Klick Mail mail provider
 
 = 3.2 =
 * major update
@@ -366,6 +368,7 @@ update mechanism load library
 * <a href="http://profitquery.com/aweber.html">Aweber integration</a>
 * <a href="http://profitquery.com/acampaign.html">Active Campaign</a>
 * <a href="http://profitquery.com/getresponse.html">GetResponse</a>
+* <a href="http://profitquery.com/klickmail.html" target="_subscribe">Klick Mail</a>
 * You need a new provider integration ? Email us <a href="mailto:support@profitquery.com">support@profitquery.com</a>
 
 

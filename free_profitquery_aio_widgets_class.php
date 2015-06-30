@@ -237,7 +237,11 @@ class ProfitQuerySmartWidgetsClass
 		}
 		if($_POST[subscribeProvider] == 'getresponse'){
 			$return = $this->_parseGetResponseForm();
-		}		
+		}
+		if($_POST[subscribeProvider] == 'klickmail'){
+			$return = $this->_parseGetKlickmailForm();
+		}
+		
 		return $return;
 	}
 	
@@ -264,7 +268,39 @@ class ProfitQuerySmartWidgetsClass
 		return $array;
 	}
 	
-	
+	function _parseGetKlickmailForm()
+	{
+		$txt = trim($_POST[subscribeProviderFormContent]);		
+		$array = array();
+		$matches = array();
+		$hiddenField = array();		
+		if($txt){
+			$txt = stripslashes($txt);
+			$txt = str_replace("\t", ' ', $txt);
+			$txt = str_replace("\r", '', $txt);
+			$txt = str_replace("\n", '', $txt);
+			$txt = str_replace("  ", " ", $txt);
+			$txt = str_replace("  ", " ", $txt);			
+			preg_match_all('/(\<)(.*)(form)(.*)(action=)(.*)([\"\'])(.*)([\"\'])(.*)(\>)/Ui', $txt, $matches);
+			$array[formAction] = trim($matches[8][0]);			
+			if(!strstr($array[formAction], 'klickmail.com.br')){
+				$array[formAction] = '';
+				$array[is_error] = 1;
+			} else {
+				preg_match_all('/(\<)(.*)(input)(.*)(hidden)(.*)(name=)(.*)([\"\'])(.*)([\"\'])(.*)(value=)(.*)([\"\'])(.*)([\"\'])(.*)(\>)/Ui', $txt, $matches);				
+				foreach((array)$matches[10] as $k => $v){
+					$hiddenField[$v] = $matches[16][$k];
+				}				
+				if($hiddenField[FormValue_FormID]){
+					$array[hidden] = $hiddenField;
+				} else {
+					$array[formAction] = '';
+					$array[is_error] = 1;
+				}
+			}
+		}		
+		return $array;
+	}
 	
 	function _parseGetResponseForm()
 	{
@@ -1211,7 +1247,7 @@ class ProfitQuerySmartWidgetsClass
 			if(trim($this->_options[subscribeProvider]) == '' || (int)$this->_options['subscribeProviderOption'][$this->_options['subscribeProvider']][is_error] == 1){
 				echo '
 					<div id="subscribeProviderError" style="display: block;width: auto; margin: 0 15px 0 5px; text-align: center; z-index: 500000;  position: fixed;  background-color: rgb(255, 107, 107);  right: 0;  width: 20%;  bottom: 180px;">
-						<p style="color: white; font-size: 15px; font-family: arial; padding: 5px 25px; margin: 0px;">For complete install Subscribe tools please copy/paste correct sign up form from selected provider <a href="javascript:void(0)" onclick="document.getElementById(\'subscribeProviderError\').style.display=\'none\';">[X]</a></p>
+						<p style="color: white; font-size: 15px; font-family: arial; padding: 5px 25px; margin: 0px;">For complete install Subscribe tools please <a href="javascript:void(0);" onclick="document.getElementById(\'SProviderSettings\').style.display=\'block\';">copy/paste correct sign up form</a> from selected provider <a href="javascript:void(0)" onclick="document.getElementById(\'subscribeProviderError\').style.display=\'none\';">[X]</a></p>
 					</div>
 				';
 			}
@@ -1242,13 +1278,13 @@ function changePopupImg(img, custom_photo_block_id){
 	<div class="pq1">
 		<a href="http://profitquery.com/?utm-campaign=wp_aio_widgets_logo" target="_blank"> <img src="<?php echo plugins_url('i/profitquery.png', __FILE__);?>" /></a>				
 		<p class="pq_default selected">Select tools</p>
-		<p class="share">Sharing Sidebar</p>
+		<p class="share">Sharing Sidebar<a class="pq_question" href="javascript:void(0)" onclick="document.getElementById('about_sidebar').style.display='block';">?</a></p>
 		<p class="imagesharer">Image Sharer</p>
-		<p class="marketing">Subscribe Bar</p>
-		<p class="exit">Exit Intent Popup</p>
+		<p class="marketing">Subscribe Bar<a class="pq_question" href="javascript:void(0)" onclick="document.getElementById('about_marketing_bar').style.display='block';">?</a></p>
+		<p class="exit">Exit Intent Popup<a class="pq_question" href="javascript:void(0)" onclick="document.getElementById('about_exit').style.display='block';">?</a></p>
 		<p class="collect">Floating Popup</p>
-		<p class="contact">Contact Form</p>
-		<p class="callme">Call Me Popup</p>
+		<p class="contact">Contact Form<a class="pq_question" href="javascript:void(0)" onclick="document.getElementById('about_contact_form').style.display='block';">?</a></p>
+		<p class="callme">Call Me Popup<a class="pq_question" href="javascript:void(0)" onclick="document.getElementById('about_callme').style.display='block';">?</a></p>
 		<p class="follow">Follow Popup</p>
 		<p class="thankyou">Thankyou Popup</p>
 		<a href="javascript:void(0)" onclick="document.getElementById('SProviderSettings').style.display='block';">Email settings</a>
@@ -1267,16 +1303,17 @@ function changePopupImg(img, custom_photo_block_id){
 						<label class="choise home">
 							<input type="radio" name="choise" class="choise1" onclick="document.getElementById('Hello').style.display='block';document.getElementById('PQPreviewID').src = 'about:blank';" checked="checked" value="1">
 							<div><img src="<?php echo plugins_url('i/32.png', __FILE__);?>" /></div>
-						</label><label class="choise set2">
+						</label><label class="choise set2 pq_fail">
 							<input type="radio" name="choise" class="choise2" value="2">
 							<div><img src="<?php echo plugins_url('i/33.png', __FILE__);?>" /></div>
-						</label><label class="choise set3">
+						</label><label class="choise set3 pq_fail">
 							<input type="radio" name="choise" class="choise3" value="3">
 							<div><img src="<?php echo plugins_url('i/34.png', __FILE__);?>" /></div>
-						</label><label class="choise set4">
+						</label><label class="choise set4 pq_fail">
 							<input type="radio" name="choise" class="choise4" value="4">
 							<div><img src="<?php echo plugins_url('i/35.png', __FILE__);?>" /></div>							
 						</label>
+						<div class="pq_failure"></div>
 						<div class="pq_clear"></div>
 					<div class="f_wrapper pq_li1 selected">
 					<div><h2>Main Page</h2></div>
@@ -1284,6 +1321,7 @@ function changePopupImg(img, custom_photo_block_id){
 							<input type="radio" name="task" value="1" class="share_tools">
 							<input type="checkbox" name="sharingSideBar[enabled]" <?php if((int)$this->_options[sharingSideBar][disabled] == 0) echo 'checked';?> class="share_checked">
 							<div><img src="<?php echo plugins_url('i/2.png', __FILE__);?>" class="pq_card" /><p>Sharing Sidebar</p><input type="button" class="task activate share_tools_activate" value="Activate"><input type="button" class="task settings share_tools_activate" value="settings"><input type="button" class="task desabled share_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+							<a class="pq_question" onclick="document.getElementById('about_sidebar').style.display='block';">?</a>
 						</label>
 						<label>
 							<input type="radio" name="task" value="6" class="imagesharer_tools">
@@ -1294,11 +1332,13 @@ function changePopupImg(img, custom_photo_block_id){
 							<input type="radio" name="task" value="12" class="marketing_tools">
 							<input type="checkbox" name="subscribeBar[enabled]" <?php if((int)$this->_options[subscribeBar][disabled] == 0) echo 'checked';?> class="marketing_checked">
 							<div><img src="<?php echo plugins_url('i/1.png', __FILE__);?>" class="pq_card" /><p>Subscribe Bar</p><input type="button" class="task activate marketing_tools_activate" value="Activate"><input type="button" class="task settings marketing_tools_activate" value="settings"><input type="button" class="task desabled marketing_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+							<a class="pq_question" onclick="document.getElementById('about_marketing_bar').style.display='block';">?</a>
 						</label>
 						<label>
 							<input type="radio" name="task" value="6" class="exit_tools">
 							<input type="checkbox" name="subscribeExit[enabled]" <?php if((int)$this->_options[subscribeExit][disabled] == 0) echo 'checked';?> class="exit_checked">
 							<div><img src="<?php echo plugins_url('i/9.png', __FILE__);?>" class="pq_card" /><p>Exit Intent Popup</p><input type="button" class="task activate exit_tools_activate" value="Activate"><input type="button" class="task settings exit_tools_activate" value="settings"><input type="button" class="task desabled exit_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+							<a class="pq_question" onclick="document.getElementById('about_exit').style.display='block';">?</a>
 						</label>
 						<!--label>
 							<input type="radio" name="task" value="1" class="collect_tools">
@@ -1308,12 +1348,14 @@ function changePopupImg(img, custom_photo_block_id){
 						<label>
 							<input type="radio" name="task" value="7" class="contact_tools">
 							<input type="checkbox" name="contactUs[enabled]" <?php if((int)$this->_options[contactUs][disabled] == 0) echo 'checked';?> class="contact_checked">
-							<div><img src="<?php echo plugins_url('i/7.png', __FILE__);?>" class="pq_card" /><p>Contact Form</p><input type="button" class="task activate contact_tools_activate" value="Activate"><input type="button" class="task settings contact_tools_activate" value="settings"><input type="button" class="task desabled contact_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>							
+							<div><img src="<?php echo plugins_url('i/7.png', __FILE__);?>" class="pq_card" /><p>Contact Form</p><input type="button" class="task activate contact_tools_activate" value="Activate"><input type="button" class="task settings contact_tools_activate" value="settings"><input type="button" class="task desabled contact_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>	
+							<a class="pq_question" onclick="document.getElementById('about_contact_form').style.display='block';">?</a>
 						</label>
 						<label>
 							<input type="radio" name="task" value="5" class="callme_tools">
 							<input type="checkbox" name="callMe[enabled]" <?php if((int)$this->_options[callMe][disabled] == 0) echo 'checked';?> class="callme_checked">
 							<div><img src="<?php echo plugins_url('i/8.png', __FILE__);?>" class="pq_card" /><p>Call Me Now</p><input type="button" class="task activate callme_tools_activate" value="Activate"><input type="button" class="task settings callme_tools_activate" value="settings"><input type="button" class="task desabled callme_tools_desabled" value="Disable"><img src="<?php echo plugins_url('i/36.png', __FILE__);?>" class="active" /><img src="<?php echo plugins_url('i/37.png', __FILE__);?>" class="pro" /></div>
+							<a class="pq_question" onclick="document.getElementById('about_callme').style.display='block';">?</a>
 						</label>
 						<label>
 							<input type="radio" name="task" value="2" class="follow_tools">
@@ -1409,7 +1451,7 @@ function changePopupImg(img, custom_photo_block_id){
 							
 						</div>
 						
-						<div class="settings share selected">
+						<div class="settings share">
 							<div class="sidebar selected">
 							<h3>SHOW SERVICES</h3>
 								<label class="n01">							
@@ -2561,7 +2603,7 @@ function changePopupImg(img, custom_photo_block_id){
 							</div>
 							
 						</div>
-						<div class="settings share selected">
+						<div class="settings share">
 							<div class="sidebar selected">
 							<h3>ICONS SERVICES</h3>
 								<label>
@@ -3511,7 +3553,7 @@ function changePopupImg(img, custom_photo_block_id){
 						</div>
 					<div class="f_wrapper pq_li5">
 					
-						<div class="settings share selected">
+						<div class="settings share">
 							<div class="sidebar selected">
 								
 								
@@ -5139,7 +5181,7 @@ function changePopupImg(img, custom_photo_block_id){
 			
 			<!--p>Latest news and plans of our team.</p>
 			<p><strong><a href="javascrip:void(0);" onclick="document.getElementById('Get_Pro').style.display='block';">Try Pro for free right now. You can enable free trial with all pro features for 3 Day</a></strong></p-->
-			<p>You can setup sharing sidebar, image sharer hover icons block, subscribe bar and subscribe exit intent which you can integrate with Aweber, Mailchimp, Active Campaign, GetRsponse, you can setup Contact Us and Call Me tools which help you to get feedback from customers, emails and phone numbers. You can setup Follow popup and Thank popup and bind them after any action proceed (for example, after sharing, or after subscribing action). You can order our technical specialist for <a href="javascript:void(0)" onclick="document.getElementById('Any_tools').style.display='block';"> generate for you some new tools</a>. For example Bar with promoting link, or floating popup with a subscribe or exit popup with follow button.</p>
+			<p>You can setup sharing sidebar, image sharer hover icons block, subscribe bar and subscribe exit intent which you can integrate with Aweber, Mailchimp, Active Campaign, GetRsponse, Klick Mail, you can setup Contact Us and Call Me tools which help you to get feedback from customers, emails and phone numbers. You can setup Follow popup and Thank popup and bind them after any action proceed (for example, after sharing, or after subscribing action). You can order our technical specialist for <a href="javascript:void(0)" onclick="document.getElementById('Any_tools').style.display='block';"> generate for you some new tools</a>. For example Bar with promoting link, or floating popup with a subscribe or exit popup with follow button.</p>
 			<p>If you want more share services or mail providers, just email us <a href="mailto:support@profitquery.com">support@profitquery.com</a></p>
 			<br>
 			<h1>All tools for free</h1>
@@ -5237,7 +5279,85 @@ function changePopupImg(img, custom_photo_block_id){
 			<input type="button" value="no" class="callme_submit">
 		</form>
 		</div>
-	
+		
+		<div class="pq_popup pq_popup_about" id="about_sidebar">
+			<h1>Sidebar Info</h1>
+			<h2>Why you need this tool?</h2>
+				<p>Sharing sidebar is next level social share button's which can increase sharer website content up to 3x. They always on the screen, there is no need to find how to share liked the content. You can choose which side of your page it appears on, you can control how many share buttons show up in the admin area. Awesome on hover effect, many social network providers, mobile adaptation all that makes these tools best free distribution sidebar share.</p>
+				<br>
+				<h2>Pro Features</h2>
+				<p style="text-align: left;">1) Use profitquery mail service for customers, which want to send your url address to friends, without any OS and browser setup.<br>
+				2) Use whitelabel for More Popup, for popup to share images from page (works with Tumblr, Pinterest, Vk networks), for mail which your customers send to friends.<br>
+				3) Use "Main Page disable" and "Disable Exept Url Mask" options for setup showing tool on any page you want<br>
+				4) Use Pro hover effects, Pro Animation, Pro Design options for make amazing tool for your customers and for your website theme<br>
+				
+			</p>
+			<a onclick="document.getElementById('about_sidebar').style.display='none';"><input type="button" value="close"></a>
+		</div>
+		<div class="pq_popup pq_popup_about" id="about_marketing_bar">
+			<h1>Marketing Bar Info</h1>
+			<h2>Why you need this tool?</h2>				
+				<p>For growth your email subscribers, for sales growth up to 300% Also, you can <a href="mailto:support@profitquery.com" target="_support">order</a> from us any bar you want, with a promo link or any information and action you want.
+				For right work this tool you need to integrate with one of mail providers (<a href="http://profitquery.com/aweber.html" target="_subscribe">Aweber</a>, <a href="http://profitquery.com/mailchimp.html" target="_subscribe">Mailchimp</a>, <a href="http://profitquery.com/acampaign.html" target="_subscribe">ActiveCampaign</a>, <a href="http://profitquery.com/getresponse.html" target="_subscribe">GetResponse</a>, <a href="http://profitquery.com/klickmail.html" target="_subscribe">Klick Mail</a>). Create sign-in form from the provider and paste this html code to the <a href="javascript:void(0)" onclick="document.getElementById('SProviderSettings').style.display='block';">mail setting section</a>.
+				<br></p>				
+				<h2>Lock mechanism (disable bar and exit popup)</h2>
+				<p>This tool has a lock mechanism (only website front-end side), after proceeding for 300 days, after close for 1 hour. All of this for your customers, which don't want to see the bar again if already subscribed. For clear lock mechanism, clear your browser cache and reload page.
+				<br></p>
+				<h2>Pro Options</h2>
+				<p style="text-align: left;">1) Whitelabel for disable Profitquery copyright<br>
+				2) Pro Design, Pro Animation for creating an amazing tool for your customers and for your website theme<br>
+				3) Use "Main Page disable" and "Disable Exept Url Mask" options for setup showing tool on any page you want<br>
+			</p>
+			<a onclick="document.getElementById('about_marketing_bar').style.display='none';"><input type="button" value="close"></a>
+		</div>
+		<div class="pq_popup pq_popup_about" id="about_exit">
+			<h1>Exit Popup Info</h1>
+			<h2>Why you need this tool?</h2>				
+				<p>It is a subscription popup, last chance to ask email outgoing customers. Use this tool for subscribers growth up to 500%. Also, you can <a href="mailto:support@profitquery.com" target="_support">order</a> from us any popup you want, with a promo link or any information and action you want.
+				For right work this tool you need to integrate with one of mail providers (<a href="http://profitquery.com/aweber.html" target="_subscribe">Aweber</a>, <a href="http://profitquery.com/mailchimp.html" target="_subscribe">Mailchimp</a>, <a href="http://profitquery.com/acampaign.html" target="_subscribe">ActiveCampaign</a>, <a href="http://profitquery.com/getresponse.html" target="_subscribe">GetResponse</a>, <a href="http://profitquery.com/klickmail.html" target="_subscribe">Klick Mail</a>). Create sign-in form from the provider and paste this html code to the <a href="javascript:void(0)" onclick="document.getElementById('SProviderSettings').style.display='block';">mail setting section</a>.
+				<br></p>
+				<h2>Lock mechanism (disable bar and exit popup)</h2>
+				<p>This tool has a lock mechanism (only website front-end side), after proceeding for 300 days, after close for 1 hour. All of this for your customers, which don't want to see the bar again if already subscribed. For clear lock mechanism, clear your browser cache and reload page.
+				<br></p>
+				<h2>Pro Options</h2>
+				<p style="text-align: left;">1) Whitelabel for disable Profitquery copyright<br>
+				2) Pro Design, Pro Animation for creating an amazing tool for your customers and for your website theme<br>
+				3) Use "Main Page disable" and "Disable Exept Url Mask" options for setup showing tool on any page you want<br>
+			</p>
+			<a onclick="document.getElementById('about_exit').style.display='none';"><input type="button" value="close"></a>
+		</div>
+		<div class="pq_popup pq_popup_about" id="about_contact_form">
+			<h1>Contact Form Info</h1>
+			<h2>Why you need this tool?</h2>
+				<p>For feedback, customers email growth up to 300%
+				<br></p>
+				<h2>Free mailto function</h2>				
+				<p>This features need for setup browser and OS setup each customer which want to send in your feedback or any special information. That's why you need to use the Profitquery Mail service, all mail would be sent through mail service and no need to setup any browser. Also, you can <a href="mailto:support@profitquery.com" target="_support">order</a> from us any contact form you want, with special design, form, actions, side, events etc.
+				<br></p>
+				<h2>Pro Options</h2>
+				<p style="text-align: left;">1) Use profitquery mail service for customers, which want to send your url address to friends, without any OS and browser setup<br>
+				2) Whitelabel for disable Profitquery copyright<br>
+				3) Pro Design, Pro Animation for creating an amazing tool for your customers and for your website theme<br>
+				4) Use "Main Page disable" and "Disable Exept Url Mask" options for setup showing tool on any page you want<br>
+			</p>
+			<a onclick="document.getElementById('about_contact_form').style.display='none';"><input type="button" value="close"></a>
+		</div>
+		<div class="pq_popup pq_popup_about" id="about_callme">
+			<h1>Call Me Info</h1>
+			<h2>Why you need this tool?</h2>
+				<p>To be in touch with your customers, for contact information growth up to 300%
+				<br></p>
+				<h2>Free mailto function</h2>				
+				<p>This features need for setup browser and OS setup each customer which want to send in your feedback or any special information. That's why you need to use the Profitquery Mail service, all mail would be sent through mail service and no need to setup any browser. Also, you can <a href="mailto:support@profitquery.com" target="_support">order</a> from us any popup you want, with special design, form, actions, side, events etc.
+				<br></p>
+				<h2>Pro Options</h2>
+				<p style="text-align: left;">1) Use profitquery mail service for customers, which want to send your url address to friends, without any OS and browser setup<br>
+				2) Whitelabel for disable Profitquery copyright<br>
+				3) Pro Design, Pro Animation for creating an amazing tool for your customers and for your website theme<br>
+				4) Use "Main Page disable" and "Disable Exept Url Mask" options for setup showing tool on any page you want<br>
+			</p>
+			<a onclick="document.getElementById('about_callme').style.display='none';"><input type="button" value="close"></a>
+		</div>
 	</div>
 	<div class="pq_clear"></div>
 	<a class="question" href="javascript:void(0)" onclick="document.getElementById('Question').style.display='block';">
@@ -5284,7 +5404,7 @@ function changePopupImg(img, custom_photo_block_id){
 				<p>This section for setup your email address. Some profitquery tools send email to website admin.</p>
 				<img src="<?php echo plugins_url('i/46.png', __FILE__);?>"/>
 				<h1>Subscribe Provider Setup</h1>
-				<p>This section for setup, subscribe sign in form. You can choose one of the provider (<a href="http://profitquery.com/mailchimp.html" target="_blank">Mailchimp</a>, <a href="http://profitquery.com/aweber.html" target="_blank">Aweber</a>, <a href="http://profitquery.com/acampaign.html" target="_blank">ActiveCampaign</a>, <a href="http://profitquery.com/getresponse.html" target="_blank">GetResponse</a>) and paste sign-in form which you need to create on the chosen provider website. If you paste the wrong sign-in code, we will write Error Message. For use Bar and Exit popup you need a setup provider. If you want another mail provider which can generate sign-in form (not another plugin, only external mail service like mailchimp) you can email us <a href="mailto:support@profitquery.com">support@profitquery.com</a></p>
+				<p>This section for setup, subscribe sign in form. You can choose one of the provider (<a href="http://profitquery.com/mailchimp.html" target="_blank">Mailchimp</a>, <a href="http://profitquery.com/aweber.html" target="_blank">Aweber</a>, <a href="http://profitquery.com/acampaign.html" target="_blank">ActiveCampaign</a>, <a href="http://profitquery.com/getresponse.html" target="_blank">GetResponse</a>, <a href="http://profitquery.com/klickmail.html" target="_subscribe">Klick Mail</a>) and paste sign-in form which you need to create on the chosen provider website. If you paste the wrong sign-in code, we will write Error Message. For use Bar and Exit popup you need a setup provider. If you want another mail provider which can generate sign-in form (not another plugin, only external mail service like mailchimp) you can email us <a href="mailto:support@profitquery.com">support@profitquery.com</a></p>
 				<img src="<?php echo plugins_url('i/47.png', __FILE__);?>"/>
 				<h1>Provider Setup Status</h1>
 				<p>If you right set-up your subscribe provider by the click to the Email Settings you will see that window. Also, you can change provider sign in form by the click Settings. </p>
@@ -5488,6 +5608,7 @@ function changePopupImg(img, custom_photo_block_id){
 					<option value="aweber" <?php if($this->_options[subscribeProvider] == 'aweber') echo "selected";?>>AWeber</option>
 					<option value="acampaign" <?php if($this->_options[subscribeProvider] == 'acampaign') echo "selected";?>>Active Campaign</option>
 					<option value="getresponse" <?php if($this->_options[subscribeProvider] == 'getresponse') echo "selected";?>>GetResponse</option>
+					<option value="klickmail" <?php if($this->_options[subscribeProvider] == 'klickmail') echo "selected";?>>Klick Mail</option>
 				</select>
 			</label>
 			<label>
@@ -5519,6 +5640,10 @@ function changePopupImg(img, custom_photo_block_id){
 			if(document.getElementById('subscribeProvider').value == 'getresponse'){
 				document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/getresponse.html';
 			}
+			if(document.getElementById('subscribeProvider').value == 'klickmail'){
+				document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/klickmail.html';
+			}
+			
 			if(withCheckCurrent == '1'){
 				if(currentSubscribeProvider){
 					if(currentSubscribeProvider == document.getElementById('subscribeProvider').value){
@@ -5736,6 +5861,20 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".pq_tooltip1").removeClass("selected");
 		jQuery(".pq_tooltip2").removeClass("selected");
 		jQuery(".frame").removeClass("pro");
+		jQuery(".share").removeClass("selected");
+		jQuery(".imagesharer").removeClass("selected");
+		jQuery(".marketing").removeClass("selected");
+		jQuery(".exit").removeClass("selected");
+		jQuery(".collect").removeClass("selected");
+		jQuery(".contact").removeClass("selected");
+		jQuery(".callme").removeClass("selected");
+		jQuery(".follow").removeClass("selected");
+		jQuery(".thankyou").removeClass("selected");
+		jQuery(".pq_default").addClass("selected");
+		document.getElementById('Hello').style.display='block';
+		jQuery(".set2").addClass("pq_fail");
+		jQuery(".set3").addClass("pq_fail");
+		jQuery(".set4").addClass("pq_fail");
 	});
 	jQuery(".home").click(function(){
 		jQuery(".pq_li3").removeClass("selected");
@@ -5748,15 +5887,56 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".pq_tooltip1").removeClass("selected");
 		jQuery(".pq_tooltip2").removeClass("selected");
 		jQuery(".frame").removeClass("pro");
+		jQuery(".share").removeClass("selected");
+		jQuery(".imagesharer").removeClass("selected");
+		jQuery(".marketing").removeClass("selected");
+		jQuery(".exit").removeClass("selected");
+		jQuery(".collect").removeClass("selected");
+		jQuery(".contact").removeClass("selected");
+		jQuery(".callme").removeClass("selected");
+		jQuery(".follow").removeClass("selected");
+		jQuery(".thankyou").removeClass("selected");
+		jQuery(".pq_default").addClass("selected");
+		document.getElementById('Hello').style.display='block';
+		jQuery(".set2").addClass("pq_fail");
+		jQuery(".set3").addClass("pq_fail");
+		jQuery(".set4").addClass("pq_fail");
+		
 	});
 	jQuery(".set2").click(function(){
-		jQuery(".choise2").prop('checked', false);
+		jQuery(".pq_li1").removeClass("selected");
+		jQuery(".pq_li4").removeClass("selected");
+		jQuery(".pq_li5").removeClass("selected");
+		jQuery(".button_group_li4").removeClass("selected");
+		jQuery(".button_group_li5").removeClass("selected");
+		jQuery(".pq_li3").addClass("selected");
+		jQuery(".button_group_li3").addClass("selected");
+		jQuery(".choise2").prop('checked', true);
+		jQuery(".frame").removeClass("pro");
 	});
 	jQuery(".set3").click(function(){
-		jQuery(".choise3").prop('checked', false);
+		jQuery(".pq_li1").removeClass("selected");
+		jQuery(".pq_li3").removeClass("selected");
+		jQuery(".button_group_li3").removeClass("selected");
+		jQuery(".pq_li5").removeClass("selected");
+		jQuery(".button_group_li5").removeClass("selected");
+		jQuery(".pq_li4").addClass("selected");
+		jQuery(".button_group_li4").addClass("selected");
+		jQuery(".choise2").prop('checked', false);
+		jQuery(".choise4").prop('checked', false);
+		jQuery(".choise3").prop('checked', true);
+		jQuery(".frame").removeClass("pro");
 	});
 	jQuery(".set4").click(function(){
-		jQuery(".choise4").prop('checked', false);
+		jQuery(".pq_li3").removeClass("selected");
+		jQuery(".pq_li4").removeClass("selected");
+		jQuery(".button_group_li3").removeClass("selected");
+		jQuery(".button_group_li4").removeClass("selected");
+		jQuery(".pq_li5").addClass("selected");
+		jQuery(".button_group_li5").addClass("selected");
+		jQuery(".choise3").prop('checked', false);
+		jQuery(".choise4").prop('checked', true);
+		jQuery(".frame").addClass("pro");
 	});
 	jQuery(".ToLi3").click(function(){
 		jQuery(".pq_li1").removeClass("selected");
@@ -5817,6 +5997,10 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".hello").removeClass("selected");
 		jQuery(".pq_if").removeClass("pq_bar");
 		jQuery(".frame").removeClass("pq_share");
+		jQuery(".set2").removeClass("pq_fail");
+		jQuery(".set3").removeClass("pq_fail");
+		jQuery(".set4").removeClass("pq_fail");
+		
 	});
 	function sharingSideBarPreview(){									
 		var designIcons = 'pq-social-block '+document.getElementById('sharingSideBar_design_size').value+' pq_'+document.getElementById('sharingSideBar_design_form').value+' '+document.getElementById('sharingSideBar_design_color').value;
@@ -6188,6 +6372,10 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".hello").removeClass("selected");
 		jQuery(".pq_if").removeClass("pq_bar");
 		jQuery(".frame").addClass("pq_share");
+		jQuery(".set2").removeClass("pq_fail");
+		jQuery(".set3").removeClass("pq_fail");
+		jQuery(".set4").removeClass("pq_fail");
+		
 	});
 	jQuery(".follow_tools_activate").click(function(){
 		followPreview()
@@ -6219,6 +6407,10 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".hello").removeClass("selected");
 		jQuery(".pq_if").removeClass("pq_bar");
 		jQuery(".frame").removeClass("pq_share");
+		jQuery(".set2").removeClass("pq_fail");
+		jQuery(".set3").removeClass("pq_fail");
+		jQuery(".set4").removeClass("pq_fail");
+		
 	});
 	
 	jQuery(".contact_tools_activate").click(function(){
@@ -6252,6 +6444,10 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".hello").removeClass("selected");
 		jQuery(".pq_if").removeClass("pq_bar");
 		jQuery(".frame").removeClass("pq_share");
+		jQuery(".set2").removeClass("pq_fail");
+		jQuery(".set3").removeClass("pq_fail");
+		jQuery(".set4").removeClass("pq_fail");
+		
 	});
 	jQuery(".callme_tools_activate").click(function(){
 		callMePreview();
@@ -6284,6 +6480,10 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".hello").removeClass("selected");
 		jQuery(".pq_if").removeClass("pq_bar");
 		jQuery(".frame").removeClass("pq_share");
+		jQuery(".set2").removeClass("pq_fail");
+		jQuery(".set3").removeClass("pq_fail");
+		jQuery(".set4").removeClass("pq_fail");
+		
 	});
 	jQuery(".exit_tools_activate").click(function(){
 		subscribeExitPreview();
@@ -6316,6 +6516,10 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".hello").removeClass("selected");
 		jQuery(".pq_if").removeClass("pq_bar");
 		jQuery(".frame").removeClass("pq_share");
+		jQuery(".set2").removeClass("pq_fail");
+		jQuery(".set3").removeClass("pq_fail");
+		jQuery(".set4").removeClass("pq_fail");
+		
 	});
 	jQuery(".imagesharer_tools_activate").click(function(){
 		imageSharerPreview();
@@ -6347,6 +6551,10 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".hello").removeClass("selected");
 		jQuery(".pq_if").removeClass("pq_bar");
 		jQuery(".frame").addClass("pq_share");
+		jQuery(".set2").removeClass("pq_fail");
+		jQuery(".set3").removeClass("pq_fail");
+		jQuery(".set4").removeClass("pq_fail");
+		
 	});
 	jQuery(".marketing_tools_activate").click(function(){
 		subscribeBarPreview();
@@ -6379,6 +6587,10 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".hello").removeClass("selected");
 		jQuery(".pq_if").addClass("pq_bar");
 		jQuery(".frame").removeClass("pq_share");
+		jQuery(".set2").removeClass("pq_fail");
+		jQuery(".set3").removeClass("pq_fail");
+		jQuery(".set4").removeClass("pq_fail");
+		
 	});
 	jQuery(".thankyou_tools_activate").click(function(){
 		thankPopupPreview()
@@ -6410,6 +6622,10 @@ function changePopupImg(img, custom_photo_block_id){
 		jQuery(".hello").removeClass("selected");
 		jQuery(".pq_if").removeClass("pq_bar");
 		jQuery(".frame").removeClass("pq_share");
+		jQuery(".set2").removeClass("pq_fail");
+		jQuery(".set3").removeClass("pq_fail");
+		jQuery(".set4").removeClass("pq_fail");
+		
 	});
 	
 	jQuery('#pq').change(function(){
