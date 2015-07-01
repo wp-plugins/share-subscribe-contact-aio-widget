@@ -235,6 +235,9 @@ class ProfitQuerySmartWidgetsClass
 		if($_POST[subscribeProvider] == 'aweber'){
 			$return = $this->_parseAweberForm();
 		}
+		if($_POST[subscribeProvider] == 'madmini'){
+			$return = $this->_parseMadMiniForm();
+		}
 		if($_POST[subscribeProvider] == 'getresponse'){
 			$return = $this->_parseGetResponseForm();
 		}
@@ -265,6 +268,34 @@ class ProfitQuerySmartWidgetsClass
 				$array[is_error] = 1;
 			}			
 		}
+		return $array;
+	}
+	
+	function _parseMadMiniForm()
+	{
+		$txt = trim($_POST[subscribeProviderFormContent]);		
+		$array = array();
+		$matches = array();
+		$hiddenField = array();		
+		if($txt){
+			$txt = stripslashes($txt);
+			$txt = str_replace("\t", ' ', $txt);
+			$txt = str_replace("\r", '', $txt);
+			$txt = str_replace("\n", '', $txt);
+			$txt = str_replace("  ", " ", $txt);
+			$txt = str_replace("  ", " ", $txt);			
+			preg_match_all('/(\<)(.*)(form)(.*)(action=)(.*)([\"\'])(.*)([\"\'])(.*)(\>)/Ui', $txt, $matches);
+			$array[formAction] = trim($matches[8][0]);			
+			if(!strstr($array[formAction], 'madmimi.com/signups/')){
+				$array[formAction] = '';
+				$array[is_error] = 1;
+			} else {
+				preg_match_all('/(\<)(.*)(input)(.*)(hidden)(.*)(name=)(.*)([\"\'])(.*)([\"\'])(.*)(value=)(.*)([\"\'])(.*)([\"\'])(.*)(\>)/Ui', $txt, $matches);				
+				foreach((array)$matches[10] as $k => $v){
+					$hiddenField[$v] = $matches[16][$k];
+				}
+			}
+		}		
 		return $array;
 	}
 	
@@ -5181,7 +5212,7 @@ function changePopupImg(img, custom_photo_block_id){
 			
 			<!--p>Latest news and plans of our team.</p>
 			<p><strong><a href="javascrip:void(0);" onclick="document.getElementById('Get_Pro').style.display='block';">Try Pro for free right now. You can enable free trial with all pro features for 3 Day</a></strong></p-->
-			<p>You can setup sharing sidebar, image sharer hover icons block, subscribe bar and subscribe exit intent which you can integrate with Aweber, Mailchimp, Active Campaign, GetRsponse, Klick Mail, you can setup Contact Us and Call Me tools which help you to get feedback from customers, emails and phone numbers. You can setup Follow popup and Thank popup and bind them after any action proceed (for example, after sharing, or after subscribing action). You can order our technical specialist for <a href="javascript:void(0)" onclick="document.getElementById('Any_tools').style.display='block';"> generate for you some new tools</a>. For example Bar with promoting link, or floating popup with a subscribe or exit popup with follow button.</p>
+			<p>You can setup sharing sidebar, image sharer hover icons block, subscribe bar and subscribe exit intent which you can integrate with Aweber, Mailchimp, Active Campaign, GetRsponse, Klick Mail, Mad Mini you can setup Contact Us and Call Me tools which help you to get feedback from customers, emails and phone numbers. You can setup Follow popup and Thank popup and bind them after any action proceed (for example, after sharing, or after subscribing action). You can order our technical specialist for <a href="javascript:void(0)" onclick="document.getElementById('Any_tools').style.display='block';"> generate for you some new tools</a>. For example Bar with promoting link, or floating popup with a subscribe or exit popup with follow button.</p>
 			<p>If you want more share services or mail providers, just email us <a href="mailto:support@profitquery.com">support@profitquery.com</a></p>
 			<br>
 			<h1>All tools for free</h1>
@@ -5298,7 +5329,7 @@ function changePopupImg(img, custom_photo_block_id){
 			<h1>Marketing Bar Info</h1>
 			<h2>Why you need this tool?</h2>				
 				<p>For growth your email subscribers, for sales growth up to 300% Also, you can <a href="mailto:support@profitquery.com" target="_support">order</a> from us any bar you want, with a promo link or any information and action you want.
-				For right work this tool you need to integrate with one of mail providers (<a href="http://profitquery.com/aweber.html" target="_subscribe">Aweber</a>, <a href="http://profitquery.com/mailchimp.html" target="_subscribe">Mailchimp</a>, <a href="http://profitquery.com/acampaign.html" target="_subscribe">ActiveCampaign</a>, <a href="http://profitquery.com/getresponse.html" target="_subscribe">GetResponse</a>, <a href="http://profitquery.com/klickmail.html" target="_subscribe">Klick Mail</a>). Create sign-in form from the provider and paste this html code to the <a href="javascript:void(0)" onclick="document.getElementById('SProviderSettings').style.display='block';">mail setting section</a>.
+				For right work this tool you need to integrate with one of mail providers (<a href="http://profitquery.com/aweber.html" target="_subscribe">Aweber</a>, <a href="http://profitquery.com/mailchimp.html" target="_subscribe">Mailchimp</a>, <a href="http://profitquery.com/acampaign.html" target="_subscribe">ActiveCampaign</a>, <a href="http://profitquery.com/getresponse.html" target="_subscribe">GetResponse</a>, <a href="http://profitquery.com/klickmail.html" target="_subscribe">Klick Mail</a>, <a href="http://profitquery.com/madmini.html" target="_subscribe">Mad Mini</a>). Create sign-in form from the provider and paste this html code to the <a href="javascript:void(0)" onclick="document.getElementById('SProviderSettings').style.display='block';">mail setting section</a>.
 				<br></p>				
 				<h2>Lock mechanism (disable bar and exit popup)</h2>
 				<p>This tool has a lock mechanism (only website front-end side), after proceeding for 300 days, after close for 1 hour. All of this for your customers, which don't want to see the bar again if already subscribed. For clear lock mechanism, clear your browser cache and reload page.
@@ -5314,7 +5345,7 @@ function changePopupImg(img, custom_photo_block_id){
 			<h1>Exit Popup Info</h1>
 			<h2>Why you need this tool?</h2>				
 				<p>It is a subscription popup, last chance to ask email outgoing customers. Use this tool for subscribers growth up to 500%. Also, you can <a href="mailto:support@profitquery.com" target="_support">order</a> from us any popup you want, with a promo link or any information and action you want.
-				For right work this tool you need to integrate with one of mail providers (<a href="http://profitquery.com/aweber.html" target="_subscribe">Aweber</a>, <a href="http://profitquery.com/mailchimp.html" target="_subscribe">Mailchimp</a>, <a href="http://profitquery.com/acampaign.html" target="_subscribe">ActiveCampaign</a>, <a href="http://profitquery.com/getresponse.html" target="_subscribe">GetResponse</a>, <a href="http://profitquery.com/klickmail.html" target="_subscribe">Klick Mail</a>). Create sign-in form from the provider and paste this html code to the <a href="javascript:void(0)" onclick="document.getElementById('SProviderSettings').style.display='block';">mail setting section</a>.
+				For right work this tool you need to integrate with one of mail providers (<a href="http://profitquery.com/aweber.html" target="_subscribe">Aweber</a>, <a href="http://profitquery.com/mailchimp.html" target="_subscribe">Mailchimp</a>, <a href="http://profitquery.com/acampaign.html" target="_subscribe">ActiveCampaign</a>, <a href="http://profitquery.com/getresponse.html" target="_subscribe">GetResponse</a>, <a href="http://profitquery.com/klickmail.html" target="_subscribe">Klick Mail</a>, <a href="http://profitquery.com/madmini.html" target="_subscribe">Mad Mini</a>). Create sign-in form from the provider and paste this html code to the <a href="javascript:void(0)" onclick="document.getElementById('SProviderSettings').style.display='block';">mail setting section</a>.
 				<br></p>
 				<h2>Lock mechanism (disable bar and exit popup)</h2>
 				<p>This tool has a lock mechanism (only website front-end side), after proceeding for 300 days, after close for 1 hour. All of this for your customers, which don't want to see the bar again if already subscribed. For clear lock mechanism, clear your browser cache and reload page.
@@ -5404,7 +5435,7 @@ function changePopupImg(img, custom_photo_block_id){
 				<p>This section for setup your email address. Some profitquery tools send email to website admin.</p>
 				<img src="<?php echo plugins_url('i/46.png', __FILE__);?>"/>
 				<h1>Subscribe Provider Setup</h1>
-				<p>This section for setup, subscribe sign in form. You can choose one of the provider (<a href="http://profitquery.com/mailchimp.html" target="_blank">Mailchimp</a>, <a href="http://profitquery.com/aweber.html" target="_blank">Aweber</a>, <a href="http://profitquery.com/acampaign.html" target="_blank">ActiveCampaign</a>, <a href="http://profitquery.com/getresponse.html" target="_blank">GetResponse</a>, <a href="http://profitquery.com/klickmail.html" target="_subscribe">Klick Mail</a>) and paste sign-in form which you need to create on the chosen provider website. If you paste the wrong sign-in code, we will write Error Message. For use Bar and Exit popup you need a setup provider. If you want another mail provider which can generate sign-in form (not another plugin, only external mail service like mailchimp) you can email us <a href="mailto:support@profitquery.com">support@profitquery.com</a></p>
+				<p>This section for setup, subscribe sign in form. You can choose one of the provider (<a href="http://profitquery.com/mailchimp.html" target="_blank">Mailchimp</a>, <a href="http://profitquery.com/aweber.html" target="_blank">Aweber</a>, <a href="http://profitquery.com/acampaign.html" target="_blank">ActiveCampaign</a>, <a href="http://profitquery.com/getresponse.html" target="_blank">GetResponse</a>, <a href="http://profitquery.com/klickmail.html" target="_subscribe">Klick Mail</a>, <a href="http://profitquery.com/madmini.html" target="_subscribe">Mad Mini</a>) and paste sign-in form which you need to create on the chosen provider website. If you paste the wrong sign-in code, we will write Error Message. For use Bar and Exit popup you need a setup provider. If you want another mail provider which can generate sign-in form (not another plugin, only external mail service like mailchimp) you can email us <a href="mailto:support@profitquery.com">support@profitquery.com</a></p>
 				<img src="<?php echo plugins_url('i/47.png', __FILE__);?>"/>
 				<h1>Provider Setup Status</h1>
 				<p>If you right set-up your subscribe provider by the click to the Email Settings you will see that window. Also, you can change provider sign in form by the click Settings. </p>
@@ -5609,6 +5640,7 @@ function changePopupImg(img, custom_photo_block_id){
 					<option value="acampaign" <?php if($this->_options[subscribeProvider] == 'acampaign') echo "selected";?>>Active Campaign</option>
 					<option value="getresponse" <?php if($this->_options[subscribeProvider] == 'getresponse') echo "selected";?>>GetResponse</option>
 					<option value="klickmail" <?php if($this->_options[subscribeProvider] == 'klickmail') echo "selected";?>>Klick Mail</option>
+					<option value="madmini" <?php if($this->_options[subscribeProvider] == 'madmini') echo "selected";?>>Mad Mini</option>
 				</select>
 			</label>
 			<label>
@@ -5633,6 +5665,9 @@ function changePopupImg(img, custom_photo_block_id){
 			}
 			if(document.getElementById('subscribeProvider').value == 'aweber'){
 				document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/aweber.html';
+			}
+			if(document.getElementById('subscribeProvider').value == 'madmini'){
+				document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/madmini.html';
 			}
 			if(document.getElementById('subscribeProvider').value == 'acampaign'){
 				document.getElementById('subscribeProviderHelpUrl').href = 'http://profitquery.com/acampaign.html';
