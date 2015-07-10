@@ -1,12 +1,12 @@
-=== Share Subscribe Contact Any Popover | AIO  ===
+=== Share + Subscribe + Contact + Custom Widgets  ===
 Contributors: schemotechnik, ilya_v, frenly_girl
 Donate link: http://profitquery.com/aio_widgets.html
 Tags: free tools, social marketing, free widgets, subscription, e-mail, aweber, aweber subscribe, aweber subscription, Mad Mini, madmini subscription, Klick Mail, klickmail, getResponse, getResponse signup form, conversion tools, growth tools, share buttons, share button, add to any, add this, contact form, email, feedback, profitquery, profitquery widgets, content marketing, custom popup, bookmark, bookmarking, floating buttons, sidebar, share sidebar, sharing sidebar, share button, onhover sharing, on hover sharer, image sharer, photo sharer, widget, widgets, aio widget, ecommerce tools, pinterest, share this, subscription button, floating sidebar, follow us, Post, posts, mailchimp, mailchimp subscribe, free widgets, Share, share this, sharing buttons, subscription button, twitter, Website Tools, like, monarch, image, images, share links, sharethis, sociable, social, social bookmarking, social bookmarks, social share, social sharing, socialize, newsletter, lightbox, mailing list, social media, image bookmarking, popover, popup, welcome bar, hello bar, social network, social media, Active Campaign, activecampaign, activehosted, image sharing
 Requires at least: 2.9
 Tested up to: 4.2.2
-Stable tag: 3.2.1
+Stable tag: 3.3.0
 License: GPL 2. See License below for copyright jots and tittles.
-Any popovers for solving many website tasks. Growth email, subscription, feedback, phone number, shares, referral's, followers, etc.
+Any tools for solving many website tasks. Growth email, subscription, feedback, phone number, shares, referral's, followers, etc.
 
 == Description ==
 Use Profitquery tools with many special add-ons you can solve, perhaps, any task you want. Growth emails, contact information, referrals, shares, image shares, increase sales using promo popovers, growth feedbacks, social network followers and more that you can imagine. <strong>This tools for your website growth.</strong>
@@ -197,6 +197,10 @@ Profitquery javascript library already minimized and have asynchronous mode load
 7. Select tools for setup
 
 == Changelog ==
+
+= 3.3.0 =
+* Major update. Make Loading Faster.
+* Add load from CDN
 
 = 3.2.1 =
 * add GetResponse mail provider

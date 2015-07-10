@@ -23,7 +23,7 @@
 * @package  Wordpress_Plugin
 * @author   ShemOtechnik Profitquery Team <support@profitquery.com>
 * @license  http://www.php.net/license/3_01.txt  PHP License 3.01
-* @version  SVN: 3.2.1
+* @version  SVN: 3.3.0
 */
 
 
@@ -105,9 +105,9 @@ class ProfitQuerySmartWidgetsClass
      */
     function ProfitquerySmartWidgetsMenu()
     {
-		add_menu_page( 'Profitquery Settings', 'Profitquery AIO', 'manage_options', PROFITQUERY_SMART_WIDGETS_PAGE_NAME, array($this, 'ProfitquerySmartWidgetsOptions'), plugins_url( 'i/pq_icon_2.png', __FILE__ ), 103.787 );        
+		add_menu_page( 'Profitquery Settings', 'Profitquery', 'manage_options', PROFITQUERY_SMART_WIDGETS_PAGE_NAME, array($this, 'ProfitquerySmartWidgetsOptions'), plugins_url( 'i/pq_icon_2.png', __FILE__ ), 103.787 );        
 		 add_options_page(
-            'AIO Widgets | Profitquery', 'Share + Subscribe + Contact | Profitquery',
+            'Profitquery', 'Profitquery',
             'manage_options', PROFITQUERY_SMART_WIDGETS_PAGE_NAME,
             array($this, 'ProfitquerySmartWidgetsOptions')
         );

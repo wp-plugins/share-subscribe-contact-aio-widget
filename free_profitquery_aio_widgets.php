@@ -19,10 +19,10 @@
 * +--------------------------------------------------------------------------+
 */
 /**
-* Plugin Name: Share Subscribe Contact Any Popover | Profitquery AIO
+* Plugin Name: Share + Subscribe + Contact + Custom Widgets
 * Plugin URI: http://profitquery.com/aio_widgets.html
 * Description: Any popovers by Profitquery for solving many website tasks. Growth email, subscription, feedback, phone number, shares, referral's, followers, etc.
-* Version: 3.2.1
+* Version: 3.3.0
 *
 * Author: Profitquery Team <support@profitquery.com>
 * Author URI: http://profitquery.com/?utm_campaign=aio_widgets_wp
@@ -622,17 +622,28 @@ function profitquery_smart_widgets_insert_code(){
 	if((int)$profitquery[additionalOptions][enableGA] == 0 && isset($profitquery[additionalOptions])){
 		$additionalOptionText = 'profitquery.productOptions.disableGA = 1;';
 	}
+	$url     = get_option('siteurl');
+    $urlobj  = parse_url($url);
+	$scheme = $urlobj[scheme];
+	
+	if($scheme == 'https'){
+		$PQlibSource = 'https://profitquery-a.akamaihd.net/lib/profitquery.min.js';
+		$PQPluginSource = 'https://profitquery-a.akamaihd.net/lib/plugins/aio.plugin.profitquery.min.js';
+	}else{
+		$PQlibSource = 'http://pq-cdn.profitquery.com/lib/profitquery.min.js';
+		$PQPluginSource = 'http://pq-cdn.profitquery.com/lib/plugins/aio.plugin.profitquery.min.js';
+	}
+	
 	print "
 	<script>
-	(function () {
-			var profitqueryLiteAPIKey='".$profitquery[apiKey]."';
+	(function () {			
 			var PQInit = function(){
 				profitquery.loadFunc.callAfterPQInit(function(){					
 					profitquery.loadFunc.callAfterPluginsInit(						
 						function(){							
 							PQLoadTools();
 						}
-						, ['//api.profitquery.com/plugins/aio.plugin.profitquery.min.js']
+						, ['".$PQPluginSource."']
 					);
 				});
 			};
@@ -640,7 +651,10 @@ function profitquery_smart_widgets_insert_code(){
 			var _isPQLibraryLoaded = false;
 			s.type = 'text/javascript';
 			s.async = true;			
-			s.src = '//api.profitquery.com/lib/profitquery.min.js?version=v3.0.4&lang=".stripslashes($profitquery[additionalOptions][lang])."&pro_loader_name=".stripslashes($profitquery[proOptions][proLoaderFilename])."&apiKey=".stripslashes($profitquery[apiKey])."';
+			s.profitqueryAPIKey = '".stripslashes($profitquery[apiKey])."';
+			s.profitqueryPROLoader = '".stripslashes($profitquery[proOptions][proLoaderFilename])."';
+			s.profitqueryLang = '".stripslashes($profitquery[additionalOptions][lang])."';			
+			s.src = '".$PQlibSource."';			
 			s.onload = function(){
 				if ( !_isPQLibraryLoaded )
 				{					
