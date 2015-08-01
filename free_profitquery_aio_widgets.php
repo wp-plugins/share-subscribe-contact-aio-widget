@@ -626,7 +626,7 @@ function profitquery_smart_widgets_insert_code(){
     $urlobj  = parse_url($url);
 	$scheme = $urlobj[scheme];
 	
-	if($scheme == 'https'){
+	if($scheme == 'https' || $_SERVER[HTTPS] == 'on'){
 		$PQlibSource = 'https://profitquery-a.akamaihd.net/lib/profitquery.min.js';
 		$PQPluginSource = 'https://profitquery-a.akamaihd.net/lib/plugins/aio.plugin.profitquery.min.js';
 	}else{

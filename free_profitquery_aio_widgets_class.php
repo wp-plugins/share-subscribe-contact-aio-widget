@@ -203,7 +203,12 @@ class ProfitQuerySmartWidgetsClass
 		
 		$this->_options[aio_widgets_loaded] = 1;
 		$this->_options[proOptions]['proLoaderFilename'] = $this->getDomain().'.pq_pro_loader';
-		$this->_options[proOptions]['mainPageUrl'] = 'http://'.$this->getDomain();
+		
+		if($_SERVER[HTTPS] == 'on'){
+			$this->_options[proOptions]['mainPageUrl'] = 'https://'.$this->getDomain();
+		}else{
+			$this->_options[proOptions]['mainPageUrl'] = 'http://'.$this->getDomain();
+		}
 		update_option('profitquery', $this->_options);
 	}	
 		
@@ -604,7 +609,7 @@ class ProfitQuerySmartWidgetsClass
             );
         }
 		echo "			
-			<link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&amp;subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+			<link href='//fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&amp;subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 			<link rel='stylesheet'  href='".plugins_url()."/".PROFITQUERY_SMART_WIDGETS_PLUGIN_NAME."/".PROFITQUERY_SMART_WIDGETS_ADMIN_CSS_PATH."pq_wordpress_v2.css' type='text/css' media='all' />			
 		<noscript>				
 				<p>Please enable JavaScript in your browser.</p>				
@@ -6068,7 +6073,7 @@ function changePopupImg(img, custom_photo_block_id){
 		if(document.getElementById('sharingSideBar_text_g_title').value) text_g_title = encodeURIComponent(document.getElementById('sharingSideBar_text_g_title').value);
 		if(document.getElementById('sharingSideBar_text_g_button_title').value) text_g_button = encodeURIComponent(document.getElementById('sharingSideBar_text_g_button_title').value);
 		
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=sidebarShare&position='+position+'&typeBlock='+designIcons+'&hoverAnimation='+hoverAnimation+'&galleryBTColor='+galleryBTColor+'&galleryBGColor='+galleryBGColor+'&animation='+animation+'&text_g_title='+text_g_title+'&text_g_button='+text_g_button+'&provider='+porvider;
+		var previewUrl = '//profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=sidebarShare&position='+position+'&typeBlock='+designIcons+'&hoverAnimation='+hoverAnimation+'&galleryBTColor='+galleryBTColor+'&galleryBGColor='+galleryBGColor+'&animation='+animation+'&text_g_title='+text_g_title+'&text_g_button='+text_g_button+'&provider='+porvider;
 		document.getElementById('PQPreviewID').src = previewUrl;									
 		//document.getElementById('PQPreviewID').width = '100%';
 		
@@ -6090,7 +6095,7 @@ function changePopupImg(img, custom_photo_block_id){
 		if(document.getElementById('imageSharer_provider[WU]').checked) porvider += 'WU:';
 		if(document.getElementById('imageSharer_provider[Mail]').checked) porvider += 'Mail:';
 		
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=imageSharer&design='+design+'&hoverAnimation='+hoverAnimation+'&provider='+porvider;
+		var previewUrl = '//profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=imageSharer&design='+design+'&hoverAnimation='+hoverAnimation+'&provider='+porvider;
 		document.getElementById('PQPreviewID').src = previewUrl;
 		//document.getElementById('PQPreviewID').width = '100%';
 	}
@@ -6141,7 +6146,7 @@ function changePopupImg(img, custom_photo_block_id){
 		if(document.getElementById('callMe_pro_13').value) design += ' '+document.getElementById('callMe_pro_13').value;		
 		
 		
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=callMe&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position+'&background_image='+encodeURIComponent(background_image)+
+		var previewUrl = '//profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=callMe&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position+'&background_image='+encodeURIComponent(background_image)+
 		'&text_title='+text_title+'&text_subtitle='+text_subtitle+'&text_phone='+text_phone+'&text_name='+text_name+'&text_button='+text_button+'&text_l_title='+text_l_title;
 											
 		document.getElementById('PQPreviewID').src = previewUrl;
@@ -6194,7 +6199,7 @@ function changePopupImg(img, custom_photo_block_id){
 		var position = document.getElementById('contactUs_top').value+' '+document.getElementById('contactUs_side').value;
 		var overlay = document.getElementById('contactUs_overlay').value;
 		
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=contactUs&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position+'&background_image='+encodeURIComponent(background_image)+
+		var previewUrl = '//profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=contactUs&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&loaderDesign='+loaderBackground+'&position='+position+'&background_image='+encodeURIComponent(background_image)+
 		'&text_title='+text_title+'&text_subtitle='+text_subtitle+'&text_email='+text_email+'&text_name='+text_name+'&text_button='+text_button+'&text_l_title='+text_l_title+'&text_message='+text_message;
 		document.getElementById('PQPreviewID').src = previewUrl;
 		//document.getElementById('PQPreviewID').width = '100%';		
@@ -6240,7 +6245,7 @@ function changePopupImg(img, custom_photo_block_id){
 		
 		var background_image = document.getElementById('subscribeExit_pro_background_image').value;		
 		var overlay = document.getElementById('subscribeExit_overlay').value;									
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=subscribeExit&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&background_image='+encodeURIComponent(background_image)+
+		var previewUrl = '//profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=subscribeExit&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&background_image='+encodeURIComponent(background_image)+
 		'&text_title='+text_title+'&text_subtitle='+text_subtitle+'&text_email='+text_email+'&text_name='+text_name+'&text_button='+text_button+'&provider='+provider;
 		document.getElementById('PQPreviewID').src = previewUrl;
 		//document.getElementById('PQPreviewID').width = '100%';
@@ -6274,7 +6279,7 @@ function changePopupImg(img, custom_photo_block_id){
 		if(document.getElementById('subscribeBar_pro_2').value) design += ' '+document.getElementById('subscribeBar_pro_2').value;
 		if(document.getElementById('subscribeBar_pro_3').value) design += ' '+document.getElementById('subscribeBar_pro_3').value;
 		
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=subscribeBar&design='+design+
+		var previewUrl = '//profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=subscribeBar&design='+design+
 		'&text_title='+text_title+'&text_email='+text_email+'&text_name='+text_name+'&text_m_title='+text_m_title+'&text_button='+text_button+'&provider='+provider;
 		
 		document.getElementById('PQPreviewID').src = previewUrl;									
@@ -6319,7 +6324,7 @@ function changePopupImg(img, custom_photo_block_id){
 		
 		var background_image = document.getElementById('thankPopup_pro_background_image').value;		
 		var overlay = document.getElementById('thankPopup_overlay').value;									
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=thankPopup&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&background_image='+encodeURIComponent(background_image)+
+		var previewUrl = '//profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=thankPopup&design='+design+'&overlay='+encodeURIComponent(overlay)+'&img='+encodeURIComponent(img)+'&imgUrl='+encodeURIComponent(imgUrl)+'&background_image='+encodeURIComponent(background_image)+
 		'&text_title='+text_title+'&text_subtitle='+text_subtitle+'&text_button='+text_button;
 		document.getElementById('PQPreviewID').src = previewUrl;
 		//document.getElementById('PQPreviewID').width = '100%';
@@ -6370,7 +6375,7 @@ function changePopupImg(img, custom_photo_block_id){
 		
 		var background_image = document.getElementById('follow_pro_background_image').value;		
 		var overlay = document.getElementById('follow_overlay').value;									
-		var previewUrl = 'http://profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=follow&design='+design+'&overlay='+encodeURIComponent(overlay)+'&background_image='+encodeURIComponent(background_image)+'&hoverAnimation='+encodeURIComponent(hoverAnimation)+'&typeBlock='+encodeURIComponent(typeBlock)+
+		var previewUrl = '//profitquery.com/aio_widgets_iframe_demo_v3_1.html?utm-campaign=wp_aio_widgets&p=follow&design='+design+'&overlay='+encodeURIComponent(overlay)+'&background_image='+encodeURIComponent(background_image)+'&hoverAnimation='+encodeURIComponent(hoverAnimation)+'&typeBlock='+encodeURIComponent(typeBlock)+
 		'&text_title='+text_title+'&text_subtitle='+text_subtitle+'&provider='+provider;
 		document.getElementById('PQPreviewID').src = previewUrl;
 		//document.getElementById('PQPreviewID').width = '100%';
